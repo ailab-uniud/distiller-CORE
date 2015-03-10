@@ -17,6 +17,8 @@
 
 package org.uniud.dcore.annotation;
 
+import org.uniud.dcore.persistence.DocumentModel;
+
 /**
  * The Annotator interface sholud be implemented by any class that reads the whole text
  * and produces an annotated version of it.
@@ -28,6 +30,7 @@ package org.uniud.dcore.annotation;
  */
 public interface Annotator {
     
+    public DocumentModel annotate(DocumentModel input);
     
     
 }
