@@ -45,6 +45,13 @@ public class DocumentModel {
     }   
     // </editor-fold>
       
-    private List<Sentence> sentences;
+    private String rawText;
+    private ConceptUnit[] structure;
+    
+    public void CreateDocument(String RawText, ConceptUnit[] structure)
+    {
+        this.rawText = RawText;
+        this.structure = structure;
+    }
     
 }
