@@ -21,9 +21,30 @@ import java.util.List;
 
 /**
  *
- * @author Dado
+ * @author Marco Basaldella, Dario De Nart
  */
 public class DocumentModel {
+    
+    // <editor-fold desc="Singleton Pattern">
+    /**
+     * Instance of the singleton.
+     */ 
+    private final static DocumentModel INSTANCE = new DocumentModel();
+    
+    /**
+     * Private constuctor for the singleton design pattern.
+     */
+    private DocumentModel() { }
+        
+    /**
+     * The singleton of the class. 
+     * @return the document model.
+     */
+    public static DocumentModel Instance() {
+        return INSTANCE;
+    }   
+    // </editor-fold>
+      
     private List<Sentence> sentences;
     
 }

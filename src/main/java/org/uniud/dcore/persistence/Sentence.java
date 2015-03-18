@@ -21,13 +21,15 @@ import java.util.HashMap;
 
 /**
  * The Sentence class contains a document's sentence with all its annotations
- * @author Dado
+ * @author Dario De Nart, Marco Basaldella
  */
 public class Sentence {
+    
+    
     // the sentence
     private String sentence;
     // its tokenized version
-    private String[] tokenizedSentence;
+    private Token[] tokenizedSentence;
     // annotations are string arrays and are packed in this HashMap
     // annotation arrays mus be coherent with tokenizedSentence
     /*
@@ -38,35 +40,39 @@ public class Sentence {
     */
     private HashMap<String, String[]> annotations;
 
-    public HashMap<String, String[]> getAnnotations() {
-        return annotations;
-    }
-
-    public String getSentence() {
-        return sentence;
-    }
-
-    public String[] getTokenzedSentence() {
-        return tokenizedSentence;
+    
+    // <editor-fold desc="Getters and setters">
+    public void setSentence(String sentence) throws IllegalStateException {
+        if (sentence.isEmpty())
+            this.sentence = sentence;
+        else
+            throw new IllegalStateException();
     }
     
-    //maybe we should put a few constraints in this method to force consistency between
-    // the tokenizedSentence and the annotation.
+    public String getRawText() {
+        return sentence;
+    }
+    
     public void addAnnotation(String label, String[] annotation){
         annotations.put(label, annotation);
     }
 
-    public void setAnnotations(HashMap<String, String[]> annotations) {
-        this.annotations = annotations;
+    public HashMap<String, String[]> getAnnotations() {
+        return annotations;
     }
-
-    public void setSentence(String sentence) {
-        this.sentence = sentence;
+    
+    public Token[] getTokenzedSentence() {
+        return tokenizedSentence;
     }
+      
 
-    public void setTokenzedSentence(String[] tokenzedSentence) {
+    public void setTokenzedSentence(Token[] tokenzedSentence) {
         this.tokenizedSentence = tokenzedSentence;
     }
+    
+    // </editor-fold>
+
+    
     
     // writing the sentence with all annotations
     @Override

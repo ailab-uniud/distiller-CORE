@@ -20,13 +20,13 @@ package org.uniud.dcore.annotation;
 import org.uniud.dcore.persistence.DocumentModel;
 
 /**
- * The Annotator interface sholud be implemented by any class that reads the whole text
+ * The Annotator interface should be implemented by any class that reads the whole text
  * and produces an annotated version of it.
  * 
  * Part-Of-Speech taggers and Named-Entity-Recognition modules are examples of annotators.
  * 
  * 
- * @author Dado
+ * @author Marco Basaldella, Dario De Nart
  */
 public interface Annotator {
     
