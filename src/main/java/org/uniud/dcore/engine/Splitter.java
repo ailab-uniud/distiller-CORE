@@ -14,13 +14,36 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Distiller-CORE.  If not, see <http://www.gnu.org/licenses/>.
  */
-package engine;
+package org.uniud.dcore.engine;
+
+import org.uniud.dcore.persistence.*;
 
 /**
  *
  * @author Marco Basaldella <basaldella.marco.1 at spes.uniud.it>
  * @author Dario De Nart <denart. dario at uniud.it>
  */
-class GramGenerator {
+abstract class Splitter {
+    
+    protected abstract ConceptUnit[] Split(String rawText);
+    
+    public void Run(String rawText) throws Exception {
+        
+        ConceptUnit[] splitted = Split(rawText);
+        
+        // check di coerenza...
+        String check = "";
+        for (ConceptUnit cu:splitted)
+        {
+            check = check.concat(cu.getRawText());
+        }
+        
+        if (check.equals(rawText))
+            throw new Exception();
+        else
+            DocumentModel.Instance().CreateDocument(rawText, splitted);
+        
+                
+    }
     
 }

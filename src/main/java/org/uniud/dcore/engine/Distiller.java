@@ -14,13 +14,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Distiller-CORE.  If not, see <http://www.gnu.org/licenses/>.
  */
-package engine;
+package org.uniud.dcore.engine;
 
 /**
  *
  * @author Marco Basaldella <basaldella.marco.1 at spes.uniud.it>
  * @author Dario De Nart <denart. dario at uniud.it>
  */
-class Evaluator {
+public class Distiller {
+    
+    public Splitter _splitter;
+    
+    public PreProcessor _preProcessor;
+    
+    public GramGenerator _gramGenerator;
+    
+    public Evaluator _evaluator;
     
 }
+
