@@ -21,7 +21,8 @@ import java.util.List;
 
 /**
  *
- * @author Marco Basaldella, Dario De Nart
+ * @author Marco Basaldella
+ * @author Dario De Nart
  */
 public class DocumentModel {
     

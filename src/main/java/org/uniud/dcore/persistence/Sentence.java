@@ -21,7 +21,8 @@ import java.util.HashMap;
 
 /**
  * The Sentence class contains a document's sentence with all its annotations
- * @author Dario De Nart, Marco Basaldella
+ * @author Dario De Nart
+ * @author Marco Basaldella
  */
 public class Sentence {
     
@@ -43,10 +44,10 @@ public class Sentence {
     
     // <editor-fold desc="Getters and setters">
     public void setSentence(String sentence) throws IllegalStateException {
-        if (sentence.isEmpty())
+        if (this.sentence.isEmpty() || this.sentence == null)
             this.sentence = sentence;
         else
-            throw new IllegalStateException();
+            throw new IllegalStateException("Trying to set the content of the sentence twice.");
     }
     
     public String getRawText() {

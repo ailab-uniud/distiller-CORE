@@ -14,28 +14,13 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Distiller-CORE.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.uniud.dcore.engine;
+package org.uniud.dcore.persistence;
 
 /**
- * The keyphrase extractor object. 
- * 
- * 
+ *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public class Distiller {
-    
-    // TODO: insert bean here
-    public Splitter _splitter;
-    
-    // TODO: insert bean here
-    public PreProcessor _preProcessor;
-    
-    // TODO: insert bean here
-    public GramGenerator _gramGenerator;
-    
-    // TODO: insert bean here
-    public Evaluator _evaluator;
+public class ConceptBlock {
     
 }
-

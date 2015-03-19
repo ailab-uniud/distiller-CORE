@@ -18,9 +18,9 @@ package org.uniud.dcore.engine;
 
 /**
  *
- * @author Marco Basaldella <basaldella.marco.1 at spes.uniud.it>
- * @author Dario De Nart <denart. dario at uniud.it>
+ * @author Marco Basaldella
+ * @author Dario De Nart
  */
-class GramGenerator {
+public class GramGenerator {
     
 }

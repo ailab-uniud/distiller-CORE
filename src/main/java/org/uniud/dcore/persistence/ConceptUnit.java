@@ -18,10 +18,37 @@ package org.uniud.dcore.persistence;
 
 /**
  *
- * @author red
+ * @author Marco Basaldella
+ * @author Dario De Nart
  */
 public abstract class ConceptUnit {
     
+    // <editor-fold desc="abstract methods">
     public abstract String getRawText() ;
+    // </editor-fold>
+    
+    /**
+     * The language of the concept unit.
+     */
+    private String language;
+    
+    /**
+     * Sets the language of the concept unit.
+     * 
+     * @param language the language of the unit, specified with the IETF language tag. 
+     * @throws IllegalStateException if the language is set more than once.
+     * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a> specification.
+     */
+    public void setLanguage(String language) throws IllegalStateException
+    {
+        if (this.language != null && !this.language.isEmpty())
+            this.language = language;
+        else 
+            throw new IllegalStateException(String.format(
+                    "Trying to set language %s on ConceptUnit which is already set as %s",
+                    language,this.language));
+    }
+    
+
     
 }

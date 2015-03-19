@@ -21,7 +21,8 @@ import java.util.HashMap;
 
 /**
  *
- * @author Dado
+ * @author Dario De Nart
+ * @author Marco Basaldella
  */
 // the Gram is the data structure in which we will store all the data concerning a n-gram
 public class Gram {
