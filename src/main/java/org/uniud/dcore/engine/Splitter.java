@@ -54,8 +54,6 @@ public abstract class Splitter {
         }
         else
             DocumentModel.Instance().CreateDocument(rawText, splitted);
-        
-                
     }
     
 }

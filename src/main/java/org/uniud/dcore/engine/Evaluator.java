@@ -22,7 +22,13 @@
 package org.uniud.dcore.engine;
 
 /**
- *
+ * This module reads the {@link org.uniud.dcore.persistence.Feature}s produced 
+ * by the {@link org.uniud.dcore.engine.GramGenerator} and evaluates them to 
+ * generate the output of the Distiller.
+ * 
+ * To correctly evaluate features, the module must know their syntax.
+ * See the GramGenerator you're using to check how it outputs its result. 
+ * 
  * @author Marco Basaldella
  * @author Dario De Nart
  */

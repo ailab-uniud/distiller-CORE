@@ -20,7 +20,8 @@ package org.uniud.dcore.persistence;
 import java.util.HashMap;
 
 /**
- * The Sentence class contains a document's sentence with all its annotations
+ * The Sentence class contains a document's sentence with all its annotations.
+ * 
  * @author Dario De Nart
  * @author Marco Basaldella
  */

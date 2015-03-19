@@ -22,7 +22,12 @@
 package org.uniud.dcore.engine;
 
 /**
- *
+ * The PreProcessor analyzes the document and annotates it with PoS tags, stems,
+ * entities and other annotators. 
+ * 
+ * While all annotators share the same interface, the PoS tagger and the stemmer
+ * are mandatory. 
+ * 
  * @author Marco Basaldella
  * @author Dario De Nart
  */

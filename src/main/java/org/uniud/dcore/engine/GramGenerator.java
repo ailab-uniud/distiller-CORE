@@ -22,7 +22,16 @@
 package org.uniud.dcore.engine;
 
 /**
- *
+ * This module generates the n-grams of the document, using the 
+ * {@link org.uniud.dcore.persistence.Annotation}s produced by the
+ * {@link org.uniud.dcore.engine.PreProcessor} and assigns them
+ * {@link org.uniud.dcore.persistence.Feature}s accordingly. 
+ * 
+ * To correctly evaluate annotations, the module must know their syntax.
+ * See the single Annotators to check how they output their result. 
+ * For example, different PoS taggers for the same language can use different
+ * tag sets.
+ * 
  * @author Marco Basaldella
  * @author Dario De Nart
  */

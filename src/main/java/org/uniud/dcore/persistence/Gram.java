@@ -25,11 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * The Gram is the data structure in which all the data concerning a NGram
+ * is stored. 
+ * 
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-// the Gram is the data structure in which we will store all the data concerning a n-gram
 public class Gram {
 
     private String type;  // n-grams could came in different shapes: the default type is "text", which means that
