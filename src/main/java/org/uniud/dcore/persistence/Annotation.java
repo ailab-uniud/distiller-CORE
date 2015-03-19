@@ -19,13 +19,12 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package org.uniud.dcore.engine;
+package org.uniud.dcore.persistence;
 
 /**
  *
  * @author Marco Basaldella
- * @author Dario De Nart
  */
-public class Evaluator {
+public class Annotation {
     
 }

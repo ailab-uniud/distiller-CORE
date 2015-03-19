@@ -1,20 +1,25 @@
 <#if licenseFirst??>
 ${licenseFirst}
 </#if>
-${licensePrefix}    This file is part of Distiller-CORE.
+${licensePrefix}	Copyright (C) ${date?date?string("yyyy")} Artificial Intelligence
+${licensePrefix}	Laboratory @ University of Udine.
 ${licensePrefix}
-${licensePrefix}    Distiller-CORE is free software: you can redistribute it and/or modify
-${licensePrefix}    it under the terms of the GNU General Public License as published by
-${licensePrefix}    the Free Software Foundation, either version 3 of the License, or
-${licensePrefix}    (at your option) any later version.
+${licensePrefix}	This file is part of the Distiller-CORE library.
 ${licensePrefix}
-${licensePrefix}    Distiller-CORE is distributed in the hope that it will be useful,
-${licensePrefix}    but WITHOUT ANY WARRANTY; without even the implied warranty of
-${licensePrefix}    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-${licensePrefix}    GNU General Public License for more details.
-${licensePrefix}
-${licensePrefix}    You should have received a copy of the GNU General Public License
-${licensePrefix}    along with Distiller-CORE.  If not, see <http://www.gnu.org/licenses/>.
+${licensePrefix}	Distiller-CORE is free software; you can redistribute it and/or
+${licensePrefix}	modify it under the terms of the GNU Lesser General Public
+${licensePrefix}	License as published by the Free Software Foundation; either
+${licensePrefix}	version 2.1 of the License, or (at your option) any later version.
+${licensePrefix?	replace(" +$", "", "r")}
+${licensePrefix}	Distiller-CORE is distributed in the hope that it will be useful,
+${licensePrefix}	but WITHOUT ANY WARRANTY; without even the implied warranty of
+${licensePrefix}	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+${licensePrefix}	Lesser General Public License for more details.
+${licensePrefix?	replace(" +$", "", "r")}
+${licensePrefix}	You should have received a copy of the GNU Lesser General Public
+${licensePrefix}	License along with this library; if not, write to the Free Software
+${licensePrefix}	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+${licensePrefix}	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
 <#if licenseLast??>
 ${licenseLast}
 </#if>

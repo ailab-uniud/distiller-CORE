@@ -27,48 +27,67 @@ import java.util.HashMap;
 public class Sentence {
     
     
-    // the sentence
-    private String sentence;
-    // its tokenized version
-    private Token[] tokenizedSentence;
-    // annotations are string arrays and are packed in this HashMap
-    // annotation arrays mus be coherent with tokenizedSentence
-    /*
-        tokenizedSentence   w1|w2|w3|w4|...
-        annotation1         a1|a2|a3|a4|...
-        annotation2           |b1|  |  |...
+    /**
+     * The raw string that represents the sentence.
+     */
+    private String rawString;
     
-    */
-    private HashMap<String, String[]> annotations;
+    /**
+     * The language of the sentence.
+     */
+    private String language;
+    
+    /**
+     * The {@link org.uniud.dcore.persistence.Token}s that form the sentence.
+     */
+    private Token[] tokenizedSentence;
 
     
     // <editor-fold desc="Getters and setters">
     public void setSentence(String sentence) throws IllegalStateException {
-        if (this.sentence.isEmpty() || this.sentence == null)
-            this.sentence = sentence;
+        if (this.rawString.isEmpty() || this.rawString == null)
+            this.rawString = sentence;
         else
             throw new IllegalStateException("Trying to set the content of the sentence twice.");
     }
     
     public String getRawText() {
-        return sentence;
-    }
-    
-    public void addAnnotation(String label, String[] annotation){
-        annotations.put(label, annotation);
-    }
-
-    public HashMap<String, String[]> getAnnotations() {
-        return annotations;
+        return rawString;
     }
     
     public Token[] getTokenzedSentence() {
         return tokenizedSentence;
-    }
-      
+    }      
 
     public void setTokenzedSentence(Token[] tokenzedSentence) {
         this.tokenizedSentence = tokenzedSentence;
+    }
+    
+    /**
+     * Returns the language of the sentence, formatted as an IETF language tag.
+     * 
+     * @return the language of the sentence.
+     * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a> specification.
+     */
+    public String GetLanguage() {
+        return this.language;
+    }
+    
+    /**
+     * Sets the language of the sentence
+     * 
+     * @param language the language of the sentence, specified with the IETF language tag. 
+     * @throws IllegalStateException if the language is set more than once.
+     * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a> specification.
+     */
+    public void setLanguage(String language) throws IllegalStateException
+    {
+        if (this.language != null && !this.language.isEmpty())
+            this.language = language;
+        else 
+            throw new IllegalStateException(String.format(
+                    "Trying to set language %s on sentence which is already set as %s",
+                    language,this.language));
     }
     
     // </editor-fold>
@@ -79,20 +98,20 @@ public class Sentence {
     @Override
     public String toString(){
         String out = "";
-        for(int i=0; i< tokenizedSentence.length; i++){
-            out+=tokenizedSentence[i];
-            // writing all non-void annotations
-            for(String label:annotations.keySet()){
-                String[] annotation= annotations.get(label);
-                if(null!=annotation[i] && !"".equals(annotation[i])){
-                    out+="/" + annotation[i];
-                }
-            }
-            //
-            if(i!=tokenizedSentence.length-1){
-                out+= " ";
-            }
-        }
+//        for(int i=0; i< tokenizedSentence.length; i++){
+//            out+=tokenizedSentence[i];
+//            // writing all non-void annotations
+//            for(String label:annotations.keySet()){
+//                String[] annotation= annotations.get(label);
+//                if(null!=annotation[i] && !"".equals(annotation[i])){
+//                    out+="/" + annotation[i];
+//                }
+//            }
+//            
+//            if(i!=tokenizedSentence.length-1){
+//                out+= " ";
+//            }
+//        }
         return out;
     }
     
