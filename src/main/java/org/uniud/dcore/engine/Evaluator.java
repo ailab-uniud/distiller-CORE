@@ -32,6 +32,6 @@ package org.uniud.dcore.engine;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public class Evaluator {
+public abstract class Evaluator {
     
 }

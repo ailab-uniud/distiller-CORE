@@ -35,6 +35,6 @@ package org.uniud.dcore.engine;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public class GramGenerator {
+public abstract class NGramGenerator {
     
 }

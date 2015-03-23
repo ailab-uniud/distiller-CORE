@@ -21,26 +21,42 @@
  */
 package org.uniud.dcore.engine;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
+
 /**
- * The keyphrase extractor object. 
- * 
- * 
+ * The keyphrase extractor object.
+ *
+ *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
 public class Distiller {
-    
-    // TODO: insert bean here
-    public Splitter _splitter;
-    
-    // TODO: insert bean here
-    public PreProcessor _preProcessor;
-    
-    // TODO: insert bean here
-    public GramGenerator _gramGenerator;
-    
-    // TODO: insert bean here
-    public Evaluator _evaluator;
-    
-}
 
+    // all these fields will be injected via setter method
+    private Splitter splitter;
+    private PreProcessor preProcessor;
+    private NGramGenerator gramGenerator;
+    private Evaluator evaluator;
+
+    @Required
+    public void setEvaluator(Evaluator evaluator) {
+        this.evaluator = evaluator;
+    }
+    
+    @Required
+    public void setGramGenerator(NGramGenerator gramGenerator) {
+        this.gramGenerator = gramGenerator;
+    }
+    
+    @Required
+    public void setPreProcessor(PreProcessor preProcessor) {
+        this.preProcessor = preProcessor;
+    }
+    
+    @Required
+    public void setSplitter(Splitter splitter) {
+        this.splitter = splitter;
+    }
+
+}
