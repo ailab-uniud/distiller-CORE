@@ -34,4 +34,6 @@ package org.uniud.dcore.engine;
  */
 public abstract class Evaluator {
     
+    public abstract void run();
+    
 }

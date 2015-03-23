@@ -37,4 +37,6 @@ package org.uniud.dcore.engine;
  */
 public abstract class NGramGenerator {
     
+    public abstract void generateNGrams();
+    
 }

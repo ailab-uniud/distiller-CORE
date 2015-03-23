@@ -26,5 +26,25 @@ package org.uniud.dcore.persistence;
  * @author Marco Basaldella
  */
 public class Annotation {
+    private String word;
+    private String label;
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getWord() {
+        return word;
+    }
+    
+    
     
 }

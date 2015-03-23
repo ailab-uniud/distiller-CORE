@@ -38,7 +38,7 @@ public abstract class Splitter {
     
     protected abstract ConceptUnit[] Split(String rawText);
     
-    public void Run(String rawText) throws IllegalStateException {
+    public void buildModel(String rawText) throws IllegalStateException {
         
         ConceptUnit[] splitted = Split(rawText);
         

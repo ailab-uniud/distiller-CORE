@@ -33,4 +33,6 @@ package org.uniud.dcore.engine;
  */
 public abstract class PreProcessor {
     
+    public abstract void generateAnnotations();
+    
 }

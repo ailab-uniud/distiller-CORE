@@ -58,5 +58,12 @@ public class Distiller {
     public void setSplitter(Splitter splitter) {
         this.splitter = splitter;
     }
+    
+    public void extract(String text){
+        splitter.buildModel(text);
+        preProcessor.generateAnnotations();
+        gramGenerator.generateNGrams();
+        evaluator.run();
+    }
 
 }

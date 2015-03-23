@@ -17,7 +17,9 @@
 
 package org.uniud.dcore.annotation;
 
-import org.uniud.dcore.persistence.DocumentModel;
+import java.util.List;
+import org.uniud.dcore.persistence.Annotation;
+
 
 /**
  * The Annotator interface should be implemented by any class that reads the whole text
@@ -30,7 +32,7 @@ import org.uniud.dcore.persistence.DocumentModel;
  */
 public interface Annotator {
     
-    public DocumentModel annotate(DocumentModel input);
+    public List<Annotation> annotate(String[] sentence);
     
     
 }
