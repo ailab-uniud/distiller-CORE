@@ -39,9 +39,9 @@ public class Sentence {
     private String language;
     
     /**
-     * The {@link org.uniud.dcore.persistence.Token}s that form the sentence.
+     * The {@link org.uniud.dcore.persistence.Word}s that form the sentence.
      */
-    private Token[] tokenizedSentence;
+    private Word[] tokenizedSentence;
 
     
     // <editor-fold desc="Getters and setters">
@@ -56,11 +56,19 @@ public class Sentence {
         return rawString;
     }
     
-    public Token[] getTokenzedSentence() {
+    public Word[] getTokenzedSentence() {
         return tokenizedSentence;
     }      
+    
+    public String[] getPosTaggedSentence() {
+        String[] output = new String[tokenizedSentence.length];
+        for (int i = 0; i < tokenizedSentence.length; i++) {
+            output[i] = tokenizedSentence[i].getPoS();
+        }
+        return output;
+    }
 
-    public void setTokenzedSentence(Token[] tokenzedSentence) {
+    public void setTokenzedSentence(Word[] tokenzedSentence) {
         this.tokenizedSentence = tokenzedSentence;
     }
     

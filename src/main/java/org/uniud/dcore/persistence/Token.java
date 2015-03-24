@@ -25,6 +25,22 @@ package org.uniud.dcore.persistence;
  *
  * @author Marco Basaldella
  */
-class Token {
+public class Token {
+
+    /**
+     * @return the type of the token.
+     */
+    public TokenType getType() {
+        return type;
+    }
+    
+    public enum TokenType {
+        Generic,
+        Annotated,
+        NGram
+    }
+    
+    private TokenType type;
+    
     
 }
