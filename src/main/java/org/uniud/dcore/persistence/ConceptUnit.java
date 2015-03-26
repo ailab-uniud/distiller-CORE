@@ -28,7 +28,17 @@ package org.uniud.dcore.persistence;
  */
 public abstract class ConceptUnit {
     
+    
+    
     // <editor-fold desc="abstract methods">
+
+    /**
+     *
+     * @return
+     * @throws org.uniud.dcore.persistence.EndOfTreeException
+     */
+        public abstract ConceptBlock[] getSubBlocks() throws EndOfTreeException;
+        
     public abstract String getRawText() ;
     // </editor-fold>
     

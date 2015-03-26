@@ -21,10 +21,55 @@
  */
 package org.uniud.dcore.persistence;
 
+import java.util.HashMap;
+
 /**
  *
- * @author Marco Basaldella
+ *
  */
-class Token {
+public class Token {
+   
+    private String identifier;
+    private String stem;
+    private HashMap<String, String> annotations;
     
+    public Token(){
+        annotations = new HashMap<>();
+    }
+    
+    // single annotation handling
+    public void setAnnotation(String name, String value) {
+        annotations.put(name, value);
+    }
+    
+        public String getAnnotation(String name) {
+        return annotations.get(name);
+    }
+
+    public void setAnnotations(HashMap<String, String> annotations) {
+        this.annotations = annotations;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setStem(String stem) {
+        this.stem = stem;
+    }
+
+    public HashMap<String, String> getAnnotations() {
+        return annotations;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public String getStem() {
+        return stem;
+    }
+    
+    
+            
 }

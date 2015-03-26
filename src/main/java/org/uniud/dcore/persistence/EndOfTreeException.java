@@ -22,48 +22,10 @@
 
 package org.uniud.dcore.persistence;
 
-import java.util.List;
-
 /**
  *
- * @author Marco Basaldella
- * @author Dario De Nart
+ * @author Dado
  */
-public class DocumentModel {
-    
-    // <editor-fold desc="Singleton Pattern">
-    /**
-     * Instance of the singleton.
-     */ 
-    private final static DocumentModel INSTANCE = new DocumentModel();
-    
-    /**
-     * Private constuctor for the singleton design pattern.
-     */
-    private DocumentModel() { }
-        
-    /**
-     * The singleton of the class. 
-     * @return the document model.
-     */
-    public static DocumentModel Instance() {
-        return INSTANCE;
-    }   
-    // </editor-fold>
-      
-    private String rawText;
-    private ConceptUnit[] structure;
-    
-    public void CreateDocument(String RawText, ConceptUnit[] structure)
-    {
-        this.rawText = RawText;
-        this.structure = structure;
-    }
-
-    public ConceptUnit[] getStructure() {
-        return structure;
-    }
-    
-    
+public class EndOfTreeException extends Exception {
     
 }

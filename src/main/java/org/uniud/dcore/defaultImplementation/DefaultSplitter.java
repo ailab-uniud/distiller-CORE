@@ -20,50 +20,23 @@
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
 
-package org.uniud.dcore.persistence;
+package org.uniud.dcore.defaultImplementation;
 
-import java.util.List;
+import org.uniud.dcore.engine.Splitter;
+import org.uniud.dcore.persistence.ConceptUnit;
+import org.uniud.dcore.persistence.DocumentModel;
 
 /**
  *
- * @author Marco Basaldella
- * @author Dario De Nart
+ * @author Dado
  */
-public class DocumentModel {
+public class DefaultSplitter extends Splitter {
     
-    // <editor-fold desc="Singleton Pattern">
-    /**
-     * Instance of the singleton.
-     */ 
-    private final static DocumentModel INSTANCE = new DocumentModel();
-    
-    /**
-     * Private constuctor for the singleton design pattern.
-     */
-    private DocumentModel() { }
+    @Override
+    protected ConceptUnit[] Split(String rawText) {
         
-    /**
-     * The singleton of the class. 
-     * @return the document model.
-     */
-    public static DocumentModel Instance() {
-        return INSTANCE;
-    }   
-    // </editor-fold>
-      
-    private String rawText;
-    private ConceptUnit[] structure;
-    
-    public void CreateDocument(String RawText, ConceptUnit[] structure)
-    {
-        this.rawText = RawText;
-        this.structure = structure;
+        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    public ConceptUnit[] getStructure() {
-        return structure;
-    }
-    
-    
     
 }

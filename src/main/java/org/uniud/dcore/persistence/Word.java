@@ -27,4 +27,6 @@ package org.uniud.dcore.persistence;
  */
 public class Word {
     
+
+    
 }

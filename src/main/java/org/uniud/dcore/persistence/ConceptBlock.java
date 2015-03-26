@@ -30,7 +30,8 @@ public class ConceptBlock extends ConceptUnit {
     
     private ConceptBlock[] subBlocks;
     //<editor-fold desc="Getters and setters">
-     public ConceptBlock[] getSubBlocks() {
+    @Override
+     public ConceptBlock[] getSubBlocks() throws EndOfTreeException{
         return subBlocks;
     }
      
