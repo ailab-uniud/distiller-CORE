@@ -23,7 +23,7 @@ package org.uniud.dcore.persistence;
 
 /**
  *
- * @author Marco Basaldella
+ *
  */
 public class Annotation {
     private String word;

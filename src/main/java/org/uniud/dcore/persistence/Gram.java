@@ -23,6 +23,8 @@ package org.uniud.dcore.persistence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * The Gram is the data structure in which all the data concerning a NGram
@@ -36,26 +38,29 @@ public class Gram {
     private String type;  // n-grams could came in different shapes: the default type is "text", which means that
     // the n-gram is part of the text read; another type is "meta", that stands for metadata
     // and means that the words forming the n-gram are read from metadata.
-    private String ngram; // the real n-gram
-    private String ngramStem; // stemmed n-gram, useful for statistical purposes
-    private String posTag;    // pretty self-explicatory
-    private String hook; // reference entity in external knowledge
-    private ArrayList<String> relatedWords;
-    private ArrayList<String> hypernyms;
+    private String identifier; // in a nutshell the stemmed NGRAM
+    private String surface; // the NGRAM as it appears in the text and as it will be printed
+    private ArrayList<Token> words; // the words forming the first occurrence of the NGRAM
+    private HashSet<ConceptUnit> locations; // the concept Units in which the NGRAM appears
     private HashMap<String, Double> features; // all the n-gram's numeric features will be stored here
 
     // CONSTRUCTOR and type management
-    public Gram() {
-        ngram = "VOID";
+    public Gram(List<Token> sequence) {
+        words= new ArrayList<>();
+        words.addAll(sequence);
         type = "text";
         features = new HashMap<String, Double>();
+        locations = new HashSet<>();
     }
 
-    public Gram(String type) {
-        ngram = "VOID";
+    public Gram(String type, List<Token> sequence) {
+        words= new ArrayList<>();
+        words.addAll(sequence);
         this.type = type;
         features = new HashMap<String, Double>();
+        locations = new HashSet<>();
     }
+    
 
     public void setType(String type) {
         this.type = type;
@@ -95,65 +100,6 @@ public class Gram {
         this.features = features;
     }
 
-    // get and set methods to read and write private variables
-    public String getPosTag() {
-        return posTag;
-    }
-
-    public void setPosTag(String posTag) {
-        this.posTag = posTag;
-    }
-
-//    public double getOccurrencies() {
-//        return Occurrencies;
-//    }
-//
-//    public void setOccurrencies(double Occurrencies) {
-//        this.Occurrencies = Occurrencies;
-//    }
-    public String getNgram() {
-        return ngram;
-    }
-
-    public void setNgram(String ngram) {
-        this.ngram = ngram;
-        hook = ngram;
-    }
-
-    public void setNgramStem(String stem) {
-        this.ngramStem = stem;
-    }
-
-    public String getNgramStem() {
-        return ngramStem;
-    }
-
-    @Override
-    public String toString() {
-        return ngram;
-    }
-
-    public ArrayList<String> getHypernyms() {
-        return hypernyms;
-    }
-
-    public ArrayList<String> getRelatedWords() {
-        return relatedWords;
-    }
-
-    public void setHypernyms(ArrayList<String> hypernyms) {
-        this.hypernyms = hypernyms;
-    }
-
-    public void setRelatedWords(ArrayList<String> relatedWords) {
-        this.relatedWords = relatedWords;
-    }
-
-    public void setHook(String hook) {
-        this.hook = hook;
-    }
-
-    public String getHook() {
-        return hook;
-    }
+    // Location management
+  
 }
