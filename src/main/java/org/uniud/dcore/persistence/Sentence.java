@@ -37,7 +37,7 @@ public class Sentence extends ConceptUnit {
     private String language;
 
     /**
-     * The {@link org.uniud.dcore.persistence.Token}s that form the sentence.
+     * The {@link org.uniud.dcore.persistence.Word}s that form the sentence.
      */
     private Token[] tokenizedSentence;
 
@@ -50,12 +50,22 @@ public class Sentence extends ConceptUnit {
         }
     }
 
+    @Override
     public String getRawText() {
         return rawString;
     }
 
     public Token[] getTokenzedSentence() {
+
         return tokenizedSentence;
+    }      
+    
+    public String[] getPosTaggedSentence() {
+        String[] output = new String[tokenizedSentence.length];
+        for (int i = 0; i < tokenizedSentence.length; i++) {
+            output[i] = tokenizedSentence[i].getAnnotation("POS");
+        }
+        return output;
     }
 
     public void setTokenzedSentence(Token[] tokenzedSentence) {

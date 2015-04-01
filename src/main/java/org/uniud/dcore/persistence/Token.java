@@ -28,10 +28,25 @@ import java.util.HashMap;
  *
  */
 public class Token {
-   
+
     private String identifier;
     private String stem;
     private HashMap<String, String> annotations;
+
+    /**
+     * @return the type of the token.
+     */
+    public TokenType getType() {
+        return type;
+    }
+    
+    public enum TokenType {
+        Generic,
+        Annotated,
+        NGram
+    }
+    
+    private TokenType type;
     
     public Token(){
         annotations = new HashMap<>();
