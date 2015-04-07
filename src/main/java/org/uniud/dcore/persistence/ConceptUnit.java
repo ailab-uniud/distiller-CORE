@@ -21,14 +21,29 @@
  */
 package org.uniud.dcore.persistence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public abstract class ConceptUnit {
+public abstract class ConceptUnit {  
+
+    private List<String> Annotations;
     
+    public ConceptUnit() {
+        Annotations = new ArrayList<String>();
+    }
     
+    public void addAnnotation(String annotation) {
+        Annotations.add(annotation);
+    }
+    
+    public List<String> getAnnotations() {
+        return Annotations;
+    }
     
     // <editor-fold desc="abstract methods">
 
@@ -37,7 +52,7 @@ public abstract class ConceptUnit {
      * @return
      * @throws org.uniud.dcore.persistence.EndOfTreeException
      */
-        public abstract ConceptBlock[] getSubBlocks() throws EndOfTreeException;
+    public abstract ConceptBlock[] getSubBlocks() throws EndOfTreeException;
         
     public abstract String getRawText() ;
     // </editor-fold>

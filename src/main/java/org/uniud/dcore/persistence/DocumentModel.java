@@ -22,6 +22,7 @@
 
 package org.uniud.dcore.persistence;
 
+import java.util.AbstractMap;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class DocumentModel {
     private final static DocumentModel INSTANCE = new DocumentModel();
     
     /**
-     * Private constuctor for the singleton design pattern.
+     * Private constructor for the singleton design pattern.
      */
     private DocumentModel() { }
         
@@ -51,19 +52,65 @@ public class DocumentModel {
     }   
     // </editor-fold>
       
+    /**
+     * The full raw text of the document.
+     */
     private String rawText;
-    private ConceptUnit[] structure;
+    /**
+     * The root block of the document. 
+     */
+    private ConceptUnit document;
     
-    public void CreateDocument(String RawText, ConceptUnit[] structure)
+    /**
+     * Container for the annotations of the document.
+     */
+    private AbstractMap<String,Annotation> AnnotationContainer;
+    /**
+     * Container for the n-grams of the document.
+     */
+    private AbstractMap<String,Gram> GramContainer;
+        
+    
+    public void createDocument(String RawText, ConceptUnit document)
     {
         this.rawText = RawText;
-        this.structure = structure;
+        this.document = document;
     }
 
-    public ConceptUnit[] getStructure() {
-        return structure;
+    public ConceptUnit getStructure() {
+        return document;
     }
     
+    public String getText() {
+        return rawText;
+    }
     
+    /**
+     * Adds an annotation in the appropriate container.
+     * 
+     * @param unit
+     * @param annotatedText
+     * @param annotationName
+     * @param annotationContent 
+     */
+    public void AddAnnotation(ConceptUnit unit,String annotatedText,
+            String annotationName,String annotationContent) {
+        
+        String key = generateContainerKey(annotatedText,annotationName);
+        
+        Annotation annotation = AnnotationContainer.get(key);
+        
+        if (annotation == null)
+            annotation = new Annotation(annotationName,annotatedText,annotationContent);
+        
+        annotation.addAppaerance(unit);
+        unit.addAnnotation(key);
+    }
     
+    // <editor-fold desc="utility methods" >
+    private String generateContainerKey(String containedType,String containedText)
+    {
+        return String.join("$", containedType,containedText);
+    }
+    // </editor-fold>   
 }

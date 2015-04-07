@@ -21,20 +21,40 @@
  */
 package org.uniud.dcore.persistence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
- *
+ * @author Marco Basaldella
  */
 public class Annotation {
-    private String word;
+    private String type;
     private String label;
+    private String text;
+    
+    private List<ConceptUnit> appearsIn; 
 
-    public void setLabel(String label) {
+    /**
+     * An annotation over a specified text. The text can be annotated with every
+     * kind of information; for example, an entity detector can annotate a string
+     * with its entity. A practical example may be an annotation of type 
+     * "Wikipedia-en", the text "Software Engineering", and as label the link
+     * at the Software Engineering page on the English Wikipedia.
+     * 
+     * @param type the type of the annotation.
+     * @param text the annotated text.
+     * @param label the label of the annotation.
+     */
+    public Annotation(String type,String text,String label) {
+        this.type = type;
+        this.text = text;
         this.label = label;
+        appearsIn = new ArrayList<ConceptUnit>();
     }
-
-    public void setWord(String word) {
-        this.word = word;
+    
+    public String getText() {
+        return text;
     }
 
     public String getLabel() {
@@ -42,7 +62,15 @@ public class Annotation {
     }
 
     public String getWord() {
-        return word;
+        return type;
+    }
+    
+    public void addAppaerance(ConceptUnit unit) {
+        appearsIn.add(unit);
+    }
+    
+    public List<ConceptUnit> getAppaerances() {
+        return appearsIn;
     }
     
     

@@ -41,9 +41,8 @@ public class Token {
     }
     
     public enum TokenType {
-        Generic,
-        Annotated,
-        NGram
+        Punctuation,
+        Word,
     }
     
     private TokenType type;
