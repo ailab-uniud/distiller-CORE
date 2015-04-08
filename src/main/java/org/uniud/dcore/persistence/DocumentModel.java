@@ -97,7 +97,7 @@ public class DocumentModel {
      * @param gram
      * @param annotationContent 
      */
-    public void AddGram(ConceptUnit unit,Gram newGram) {        
+    public void addGram(ConceptUnit unit,Gram newGram) {        
         
         Gram gram = GramContainer.get(newGram.getSignature());
         
@@ -109,10 +109,9 @@ public class DocumentModel {
         unit.addGram(gram.getSignature());
     }
     
-    // <editor-fold desc="utility methods" >
-    private String generateContainerKey(String containedType,String containedText)
-    {
-        return "";
+        
+    public Gram[] getGrams() {
+        return GramContainer.values().toArray(new Gram[GramContainer.size()]);
     }
-    // </editor-fold>   
+    
 }
