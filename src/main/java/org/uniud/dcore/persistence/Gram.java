@@ -34,49 +34,28 @@ import java.util.List;
  * @author Marco Basaldella
  */
 public class Gram {
-
-    private String type;  // n-grams could came in different shapes: the default type is "text", which means that
-    // the n-gram is part of the text read; another type is "meta", that stands for metadata
-    // and means that the words forming the n-gram are read from metadata.
+    
     private String identifier; // in a nutshell the stemmed NGRAM
     private String surface; // the NGRAM as it appears in the text and as it will be printed
     private ArrayList<Token> words; // the words forming the first occurrence of the NGRAM
-    private List<ConceptUnit> appareances;  // the concept Units in which the NGRAM appears
+    private List<DocumentComponent> appareances;  // the concept Units in which the NGRAM appears
     private HashMap<String, Double> features; // all the n-gram's numeric features will be stored here
     
     
     // CONSTRUCTOR and type management
     public Gram(List<Token> sequence) {
-        this("text",sequence);
-    }
-
-    public Gram(String type, List<Token> sequence) {
         words= new ArrayList<>();
         words.addAll(sequence);
-        this.type = type;
         features = new HashMap<String, Double>();
-        appareances = new ArrayList<ConceptUnit>();
+        appareances = new ArrayList<DocumentComponent>();
     }
-    
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
+     
+    public String getSignature() {
+        // TODO: generate a consistent signature
+        return this.surface; 
     }
 
-    // boolean methods for quick type checking
-    public boolean isText() {
-        return (type == null ? "text" == null : type.equals("text"));
-    }
-
-    public boolean isMeta() {
-        return (type == null ? "meta" == null : type.equals("meta"));
-    }
-
-    // FEATURES management
+    // <editor-fold desc="Feature Management">
     public void putFeature(String feature, double value) {
         features.put(feature, value);
     }
@@ -89,27 +68,25 @@ public class Gram {
         return features.get(feature);
     }
 
-    public HashMap getFeatures() {
-        return features;
+    public Feature[] getFeatures() {
+        // TODO: implement get
+        return new Feature[0];
     }
 
     public void setFeatures(HashMap features) {
         this.features = features;
     }
-
-    // Location management   
-      
-    public void addAppaerance(ConceptUnit unit) {
+    // </editor-fold> 
+    
+    // <editor-fold desc="Location Management">      
+    public void addAppaerance(DocumentComponent unit) {
         appareances.add(unit);
     }
     
-    public List<ConceptUnit> getAppaerances() {
+    public List<DocumentComponent> getAppaerances() {
         return appareances;
     }
+    // </editor-fold>
 
-    public String getSignature() {
-        // TODO: generate a consistent signature
-        return this.toString(); 
-    }
   
 }

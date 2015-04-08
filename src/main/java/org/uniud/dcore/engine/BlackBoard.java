@@ -20,34 +20,37 @@
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
 
-package org.uniud.dcore.persistence;
+package org.uniud.dcore.engine;
 
 import java.util.AbstractMap;
 import java.util.List;
+import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.Feature;
+import org.uniud.dcore.persistence.Gram;
 
 /**
  *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public class DocumentModel {
+public class BlackBoard {
     
     // <editor-fold desc="Singleton Pattern">
     /**
      * Instance of the singleton.
      */ 
-    private final static DocumentModel INSTANCE = new DocumentModel();
+    private final static BlackBoard INSTANCE = new BlackBoard();
     
     /**
      * Private constructor for the singleton design pattern.
      */
-    private DocumentModel() { }
+    private BlackBoard() { }
         
     /**
      * The singleton of the class. 
      * @return the document model.
      */
-    public static DocumentModel Instance() {
+    public static BlackBoard Instance() {
         return INSTANCE;
     }   
     // </editor-fold>
@@ -60,7 +63,7 @@ public class DocumentModel {
     /**
      * The root block of the document. 
      */
-    private ConceptUnit document;
+    private DocumentComponent document;
     
     /**
      * Container for the annotations of the document.
@@ -72,13 +75,13 @@ public class DocumentModel {
     private AbstractMap<String,Gram> GramContainer;
         
     
-    public void createDocument(String RawText, ConceptUnit document)
+    public void createDocument(String RawText, DocumentComponent document)
     {
         this.rawText = RawText;
         this.document = document;
     }
 
-    public ConceptUnit getStructure() {
+    public DocumentComponent getStructure() {
         return document;
     }
     
@@ -86,18 +89,14 @@ public class DocumentModel {
         return rawText;
     }
     
-    
-        
-    
     /**
-     * Adds an annotation in the appropriate container.
+     * Adds a Gram in the Gram Container. If the gram is already present, 
+     * the method updates it adding the new occurrence.
      * 
-     * @param unit
-     * @param featureValue
-     * @param gram
-     * @param annotationContent 
+     * @param unit the concept unit where the gram appears
+     * @param newGram the gram to add
      */
-    public void addGram(ConceptUnit unit,Gram newGram) {        
+    public void addGram(DocumentComponent unit,Gram newGram) {        
         
         Gram gram = GramContainer.get(newGram.getSignature());
         
@@ -109,7 +108,11 @@ public class DocumentModel {
         unit.addGram(gram.getSignature());
     }
     
-        
+    /**
+     * Retrieves the grams found in the document.
+     * 
+     * @return an array of {@link org.uniud.dcore.persistence.Gram}s.
+     */
     public Gram[] getGrams() {
         return GramContainer.values().toArray(new Gram[GramContainer.size()]);
     }

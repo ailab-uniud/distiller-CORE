@@ -19,12 +19,14 @@ package org.uniud.dcore.persistence;
 import java.util.HashMap;
 
 /**
- * The Sentence class contains a document's sentence with all its annotations.
+ * The Sentence class contains a document's sentence with all its annotations 
+ * and is the most basic concept unit of a document. In the Composite pattern, 
+ * this is the leaf of the structure.
  *
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-public class Sentence extends ConceptUnit {
+public class Sentence extends DocumentComponent {
 
     /**
      * The raw string that represents the sentence.
@@ -37,7 +39,7 @@ public class Sentence extends ConceptUnit {
     private String language;
 
     /**
-     * The {@link org.uniud.dcore.persistence.Word}s that form the sentence.
+     * The {@link org.uniud.dcore.persistence.Token}s that form the sentence.
      */
     private Token[] tokenizedSentence;
 
@@ -125,7 +127,7 @@ public class Sentence extends ConceptUnit {
     }
 
     @Override
-    public ConceptBlock[] getSubBlocks() throws EndOfTreeException {
+    public DocumentComposite[] getSubBlocks() throws EndOfTreeException {
         throw new EndOfTreeException(); //To change body of generated methods, choose Tools | Templates.
     }
 

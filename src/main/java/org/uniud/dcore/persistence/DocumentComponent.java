@@ -25,15 +25,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * An abstract conceptual unit of the document. This can be a sentence, a chapter, 
+ * a paragraph, and so on. In the Composite pattern, this is the root of 
+ * the structure-
+ * 
  *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public abstract class ConceptUnit {  
+public abstract class DocumentComponent {  
 
     private List<String> Feature;
     
-    public ConceptUnit() {
+    public DocumentComponent() {
         Feature = new ArrayList<String>();
     }
     
@@ -52,7 +56,7 @@ public abstract class ConceptUnit {
      * @return
      * @throws org.uniud.dcore.persistence.EndOfTreeException
      */
-    public abstract ConceptBlock[] getSubBlocks() throws EndOfTreeException;
+    public abstract DocumentComponent[] getSubBlocks() throws EndOfTreeException;
         
     public abstract String getRawText() ;
     // </editor-fold>

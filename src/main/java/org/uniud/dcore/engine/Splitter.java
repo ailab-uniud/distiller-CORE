@@ -24,36 +24,32 @@ package org.uniud.dcore.engine;
 import org.uniud.dcore.persistence.*;
 
 /**
- * The entry point of a text in the Distiller. This class splits the text into an array of 
- * {@link org.uniud.dcore.persistence.ConceptUnit}, which mimic the structure of a document.
- * For example, when a document is divided in two chapters, every chapter is a Concept Unit. 
- * If a chapter has two subsection, each subsection is a Concept Unit, and the chapter should 
- * reference them; and so on. The basic Concept Unit is the {@link org.uniud.dcore.persistence.Sentence}; 
- * any other superior Concept Unit is a {@link org.uniud.dcore.persistence.ConceptBlock}.
+ * The entry point of a text in the Distiller. This class splits the text into a
+ * tree of {@link org.uniud.dcore.persistence.DocumentComponent}, which mimics 
+ * the structure of a document. For example, when a document is divided in 
+ * two chapters, every chapter is a DocumentComponent. If a chapter has two 
+ * subsections, each subsection is a DocumentComponent, and the chapter should 
+ * reference them; and so on. The basic component is the {@link org.uniud.dcore.persistence.Sentence}; 
+ * any other composite part of the document is a {@link org.uniud.dcore.persistence.DocumentComposite}.
+ * In this example, chapters and subsections should actually be DocumentComposite.
  * 
  * @author Marco Basaldella
  * @author Dario De Nart
  */
 public abstract class Splitter {
     
-    protected abstract ConceptUnit[] Split(String rawText);
+    protected abstract DocumentComponent Split(String rawText);
     
     public void buildModel(String rawText) throws IllegalStateException {
         
-        ConceptUnit[] splitted = Split(rawText);
+        DocumentComponent splitted = Split(rawText);
         
-        // TODO: Check this coherence check
-        String check = "";
-        for (ConceptUnit cu:splitted)
-        {
-            check = check.concat(cu.getRawText());
-        }
-        
-        if (check.equals(rawText)) {
+        // TODO: Check this coherence check             
+        if (splitted.getRawText().equals(rawText)) {
             throw new IllegalStateException("Document built after splitting is different from original text.");            
         }
         else
-            DocumentModel.Instance().CreateDocument(rawText, splitted);
+            BlackBoard.Instance().createDocument(rawText, splitted);
     }
     
 }

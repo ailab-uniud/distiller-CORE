@@ -21,17 +21,15 @@
  */
 package org.uniud.dcore.persistence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Marco Basaldella
  */
 public class Feature {
-    private String type;
-    private double value;
-        /**
+    private final String type;
+    private final double value;
+    
+    /**
      * A feature.
      * 
      * @param type the type of the annotation.

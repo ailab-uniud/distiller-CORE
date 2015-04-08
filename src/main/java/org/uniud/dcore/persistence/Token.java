@@ -40,6 +40,7 @@ public class Token {
         return type;
     }
     
+    // TODO: is it really useful?
     public enum TokenType {
         Punctuation,
         Word,
@@ -56,7 +57,7 @@ public class Token {
         annotations.put(name, value);
     }
     
-        public String getAnnotation(String name) {
+    public String getAnnotation(String name) {
         return annotations.get(name);
     }
 
@@ -72,9 +73,10 @@ public class Token {
         this.stem = stem;
     }
 
-    public HashMap<String, String> getAnnotations() {
-        return annotations;
-    }
+    public Annotation[] getAnnotations() {
+        // TODO: fix this
+        return new Annotation[0];
+    } 
 
     public String getIdentifier() {
         return identifier;

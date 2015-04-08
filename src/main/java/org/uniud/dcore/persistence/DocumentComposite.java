@@ -22,22 +22,25 @@
 package org.uniud.dcore.persistence;
 
 /**
+ * A part of a document which is composed by other sub-parts. For example, a Section
+ * may be divided in Chapters, a Chapter in Paragraphs, and so on. In the Composite 
+ * pattern, this is the "composite" class of the structure.
  *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public class ConceptBlock extends ConceptUnit {
+public class DocumentComposite extends DocumentComponent {
     
-    private ConceptBlock[] subBlocks;
+    private DocumentComponent[] subUnits;
     //<editor-fold desc="Getters and setters">
     @Override
-     public ConceptBlock[] getSubBlocks() throws EndOfTreeException{
-        return subBlocks;
+     public DocumentComponent[] getSubBlocks() throws EndOfTreeException{
+        return subUnits;
     }
      
-     public void setSubBlocks(ConceptBlock[] subBlocks) throws IllegalStateException {
-         if (this.subBlocks == null)
-             this.subBlocks = subBlocks;
+     public void setSubBlocks(DocumentComposite[] subBlocks) throws IllegalStateException {
+         if (this.subUnits == null)
+             this.subUnits = subBlocks;
          else
              throw new IllegalStateException("Trying to set SubBlocks of a ConceptBlock more than once.");                     
      }
@@ -49,7 +52,7 @@ public class ConceptBlock extends ConceptUnit {
         
         String output = "";
         
-        for (ConceptBlock cb:subBlocks) {
+        for (DocumentComponent cb:subUnits) {
             output = output.concat(cb.getRawText());
         }
         

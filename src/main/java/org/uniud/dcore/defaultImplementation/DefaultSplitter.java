@@ -23,8 +23,8 @@
 package org.uniud.dcore.defaultImplementation;
 
 import org.uniud.dcore.engine.Splitter;
-import org.uniud.dcore.persistence.ConceptUnit;
-import org.uniud.dcore.persistence.DocumentModel;
+import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.engine.BlackBoard;
 
 /**
  *
@@ -33,7 +33,7 @@ import org.uniud.dcore.persistence.DocumentModel;
 public class DefaultSplitter extends Splitter {
     
     @Override
-    protected ConceptUnit[] Split(String rawText) {
+    protected DocumentComponent[] Split(String rawText) {
         
         
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

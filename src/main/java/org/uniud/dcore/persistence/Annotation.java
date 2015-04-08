@@ -25,53 +25,6 @@ package org.uniud.dcore.persistence;
  *
  * @author Marco Basaldella
  */
-public class Word {
+public class Annotation {
     
-    private String stem;
-    private String PoS;
-    
-    private Feature[] annotations;
-
-    /**
-     * @return the stem
-     */
-    public String getStem() {
-        return stem;
-    }
-
-    /**
-     * @param stem the stem to set
-     */
-    public void setStem(String stem) {
-        this.stem = stem;
-    }
-
-    /**
-     * @return the PoS
-     */
-    public String getPoS() {
-        return PoS;
-    }
-
-    /**
-     * @param PoS the PoS to set
-     */
-    public void setPoS(String PoS) {
-        this.PoS = PoS;
-    }
-
-    /**
-     * @return the annotations
-     */
-    public Feature[] getAnnotations() {
-        return annotations;
-    }
-
-    /**
-     * @param annotations the annotations to set
-     */
-    public void setAnnotations(Feature[] annotations) {
-        this.annotations = annotations;
-    }
-
 }
