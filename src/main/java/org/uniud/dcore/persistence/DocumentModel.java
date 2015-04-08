@@ -112,7 +112,7 @@ public class DocumentModel {
     // <editor-fold desc="utility methods" >
     private String generateContainerKey(String containedType,String containedText)
     {
-        return String.join("$", containedType,containedText);
+        return "";
     }
     // </editor-fold>   
 }

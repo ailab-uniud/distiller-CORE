@@ -34,7 +34,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Required;
 import org.uniud.dcore.engine.NGramGenerator;
-import org.uniud.dcore.persistence.ConceptBlock;
 import org.uniud.dcore.persistence.ConceptUnit;
 import org.uniud.dcore.persistence.DocumentModel;
 import org.uniud.dcore.persistence.EndOfTreeException;
@@ -95,11 +94,10 @@ public class DefaultNGramGenerator extends NGramGenerator {
 
     @Override
     public void generateNGrams() {
-        ConceptUnit[] document = getDocument();
-        for (ConceptUnit block : document) {
+        ConceptUnit document = getDocument();
             // there be awesome
-            spotNGrams(block);
-        }
+            spotNGrams(document);
+
     }
 
     private void spotNGrams(ConceptUnit block) {
@@ -164,7 +162,7 @@ public class DefaultNGramGenerator extends NGramGenerator {
         return nounValue;
     }
 
-    private ConceptUnit[] getDocument() {
+    private ConceptUnit getDocument() {
         return DocumentModel.Instance().getStructure();
     }
 
