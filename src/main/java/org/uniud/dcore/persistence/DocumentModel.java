@@ -56,6 +56,7 @@ public class DocumentModel {
      * The full raw text of the document.
      */
     private String rawText;
+    
     /**
      * The root block of the document. 
      */
@@ -64,7 +65,7 @@ public class DocumentModel {
     /**
      * Container for the annotations of the document.
      */
-    private AbstractMap<String,Annotation> AnnotationContainer;
+    private AbstractMap<String,Feature> AnnotationContainer;
     /**
      * Container for the n-grams of the document.
      */
@@ -85,26 +86,27 @@ public class DocumentModel {
         return rawText;
     }
     
+    
+        
+    
     /**
      * Adds an annotation in the appropriate container.
      * 
      * @param unit
-     * @param annotatedText
-     * @param annotationName
+     * @param featureValue
+     * @param gram
      * @param annotationContent 
      */
-    public void AddAnnotation(ConceptUnit unit,String annotatedText,
-            String annotationName,String annotationContent) {
+    public void AddGram(ConceptUnit unit,Gram newGram) {        
         
-        String key = generateContainerKey(annotatedText,annotationName);
+        Gram gram = GramContainer.get(newGram.getSignature());
         
-        Annotation annotation = AnnotationContainer.get(key);
+        if (gram == null) {
+            gram = GramContainer.put(newGram.getSignature(), newGram);
+        }
         
-        if (annotation == null)
-            annotation = new Annotation(annotationName,annotatedText,annotationContent);
-        
-        annotation.addAppaerance(unit);
-        unit.addAnnotation(key);
+        gram.addAppaerance(unit);
+        unit.addGram(gram.getSignature());
     }
     
     // <editor-fold desc="utility methods" >

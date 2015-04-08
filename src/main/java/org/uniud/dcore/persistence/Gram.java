@@ -41,16 +41,13 @@ public class Gram {
     private String identifier; // in a nutshell the stemmed NGRAM
     private String surface; // the NGRAM as it appears in the text and as it will be printed
     private ArrayList<Token> words; // the words forming the first occurrence of the NGRAM
-    private HashSet<ConceptUnit> locations; // the concept Units in which the NGRAM appears
+    private List<ConceptUnit> appareances;  // the concept Units in which the NGRAM appears
     private HashMap<String, Double> features; // all the n-gram's numeric features will be stored here
-
+    
+    
     // CONSTRUCTOR and type management
     public Gram(List<Token> sequence) {
-        words= new ArrayList<>();
-        words.addAll(sequence);
-        type = "text";
-        features = new HashMap<String, Double>();
-        locations = new HashSet<>();
+        this("text",sequence);
     }
 
     public Gram(String type, List<Token> sequence) {
@@ -58,7 +55,7 @@ public class Gram {
         words.addAll(sequence);
         this.type = type;
         features = new HashMap<String, Double>();
-        locations = new HashSet<>();
+        appareances = new ArrayList<ConceptUnit>();
     }
     
 
@@ -100,6 +97,19 @@ public class Gram {
         this.features = features;
     }
 
-    // Location management
+    // Location management   
+      
+    public void addAppaerance(ConceptUnit unit) {
+        appareances.add(unit);
+    }
+    
+    public List<ConceptUnit> getAppaerances() {
+        return appareances;
+    }
+
+    public String getSignature() {
+        // TODO: generate a consistent signature
+        return this.toString(); 
+    }
   
 }

@@ -31,18 +31,18 @@ import java.util.List;
  */
 public abstract class ConceptUnit {  
 
-    private List<String> Annotations;
+    private List<String> Feature;
     
     public ConceptUnit() {
-        Annotations = new ArrayList<String>();
+        Feature = new ArrayList<String>();
     }
     
-    public void addAnnotation(String annotation) {
-        Annotations.add(annotation);
+    public void addGram(String feature) {
+        Feature.add(feature);
     }
     
     public List<String> getAnnotations() {
-        return Annotations;
+        return Feature;
     }
     
     // <editor-fold desc="abstract methods">

@@ -30,7 +30,7 @@ public class Word {
     private String stem;
     private String PoS;
     
-    private Annotation[] annotations;
+    private Feature[] annotations;
 
     /**
      * @return the stem
@@ -63,14 +63,14 @@ public class Word {
     /**
      * @return the annotations
      */
-    public Annotation[] getAnnotations() {
+    public Feature[] getAnnotations() {
         return annotations;
     }
 
     /**
      * @param annotations the annotations to set
      */
-    public void setAnnotations(Annotation[] annotations) {
+    public void setAnnotations(Feature[] annotations) {
         this.annotations = annotations;
     }
 
