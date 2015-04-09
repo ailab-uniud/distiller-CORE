@@ -65,7 +65,7 @@ public class Sentence extends DocumentComponent {
     public String[] getPosTaggedSentence() {
         String[] output = new String[tokenizedSentence.length];
         for (int i = 0; i < tokenizedSentence.length; i++) {
-            output[i] = tokenizedSentence[i].getAnnotation("POS");
+            output[i] = tokenizedSentence[i].getPoS();
         }
         return output;
     }

@@ -21,7 +21,8 @@
  */
 package org.uniud.dcore.persistence;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -31,52 +32,22 @@ public class Token {
 
     private String identifier;
     private String stem;
-    private HashMap<String, String> annotations;
+    private String PoS;
+    private List<Annotation> annotations;
 
-    /**
-     * @return the type of the token.
-     */
-    public TokenType getType() {
-        return type;
-    }
-    
-    // TODO: is it really useful?
-    public enum TokenType {
-        Punctuation,
-        Word,
-    }
-    
-    private TokenType type;
-    
-    public Token(){
-        annotations = new HashMap<>();
-    }
-    
-    // single annotation handling
-    public void setAnnotation(String name, String value) {
-        annotations.put(name, value);
-    }
-    
-    public String getAnnotation(String name) {
-        return annotations.get(name);
-    }
-
-    public void setAnnotations(HashMap<String, String> annotations) {
-        this.annotations = annotations;
-    }
-
-    public void setIdentifier(String identifier) {
+    public Token(String identifier){
+        annotations = new ArrayList<Annotation>();
         this.identifier = identifier;
     }
-
+    
+    // <editor-fold desc="Id, stem and PoS">
     public void setStem(String stem) {
         this.stem = stem;
     }
-
-    public Annotation[] getAnnotations() {
-        // TODO: fix this
-        return new Annotation[0];
-    } 
+    
+    public void setPoS(String PoS) {
+        this.PoS = PoS;
+    }   
 
     public String getIdentifier() {
         return identifier;
@@ -86,6 +57,32 @@ public class Token {
         return stem;
     }
     
+    public String getPoS() {
+        return PoS;
+    }
     
+    // </editor-fold>
+    
+    // <editor-fold desc="Annotations">
+    
+    /**
+     * Adds an annotation to the token.
+     * 
+     * @param annotation the annotation to add.
+     */
+    public void setAnnotation(Annotation annotation) {
+        annotations.add(annotation);
+    }
+    
+    /**
+     * Gets all the annotations associated with the token.
+     * 
+     * @return the annotations associated to the token.
+     */
+    public Annotation[] getAnnotations() {
+        return annotations.toArray(new Annotation[annotations.size()]);
+    } 
+
+    // </editor-fold>
             
 }

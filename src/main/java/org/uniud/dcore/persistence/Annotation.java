@@ -50,8 +50,40 @@ public class Annotation {
         return text;
     }
     
+    public String getAnnotator() {
+        return annotator;
+    }
+    
     public String getAnnotation() {
         return annotation;
     }
     
+    /**
+     * Two annotations are the same if the annotator, the annotated
+     * text and the annotation are the same. 
+     * 
+     * For example, the words "Software" and "Engineering" may be annotated by
+     * the same annotation from a "Wikipedia" annotator, the annotates the 
+     * text "Software Engineering" with the name of the "Software_Engineering"
+     * page. Then, they may have two separated "Software" and "Engineering" 
+     * annotations that point to the respective pages in Wikipedia.
+     * 
+     * @param obj
+     * @return 
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Annotation other = (Annotation) obj;
+        
+        return (this.text.equals(other.getText())) &&
+                (this.annotator.equals(other.getAnnotator())) &&
+                (this.annotation.equals(other.getAnnotation()));
+    }
+
 }

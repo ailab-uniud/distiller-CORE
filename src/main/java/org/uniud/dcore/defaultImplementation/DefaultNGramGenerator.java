@@ -100,9 +100,9 @@ public class DefaultNGramGenerator extends NGramGenerator {
     }
 
     private void spotNGrams(DocumentComponent component) {
-            
+
         DocumentComponent[] children = component.getComponents();
-        
+
         // are we a sentence? if yes, spot the nGrams
         if (children == null) {
             Sentence sent = (Sentence) component;
@@ -140,19 +140,19 @@ public class DefaultNGramGenerator extends NGramGenerator {
             spotNGrams(child);
         }
     }
-    
-        private Integer EvaluatePos(List<Token> candidate) {
-            // building the tagged String by merging the positions of the array
-            String taggedString ="";
-            for(int i = 0; i<candidate.size(); i++){
-                taggedString+=candidate.get(i).getAnnotation("POS");
-                if(i<candidate.size()-1){
-                    taggedString+="/";
-                }
+
+    private Integer EvaluatePos(List<Token> candidate) {
+        // building the tagged String by merging the positions of the array
+        String taggedString = "";
+        for (int i = 0; i < candidate.size(); i++) {
+            taggedString += candidate.get(i).getPoS();
+            if (i < candidate.size() - 1) {
+                taggedString += "/";
             }
-            
+        }
+
         // now dead simple
-            Integer nounValue;
+        Integer nounValue;
         if (validPOSPatterns.containsKey(taggedString)) {
             nounValue = validPOSPatterns.get(taggedString);
         } else {
@@ -165,7 +165,6 @@ public class DefaultNGramGenerator extends NGramGenerator {
     private DocumentComponent getDocument() {
         return BlackBoard.Instance().getStructure();
     }
-
 
     private Token[] getTokens(Sentence sent) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
