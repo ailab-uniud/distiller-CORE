@@ -33,7 +33,7 @@ import org.uniud.dcore.engine.BlackBoard;
 public class DefaultSplitter extends Splitter {
     
     @Override
-    protected DocumentComponent[] Split(String rawText) {
+    protected DocumentComponent Split(String rawText) {
         
         
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

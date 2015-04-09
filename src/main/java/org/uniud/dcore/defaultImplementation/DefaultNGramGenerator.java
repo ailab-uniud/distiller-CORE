@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.uniud.dcore.engine.NGramGenerator;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.engine.BlackBoard;
-import org.uniud.dcore.persistence.EndOfTreeException;
 import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
@@ -95,49 +94,50 @@ public class DefaultNGramGenerator extends NGramGenerator {
     @Override
     public void generateNGrams() {
         DocumentComponent document = getDocument();
-            // there be awesome
-            spotNGrams(document);
+        // there be awesome
+        spotNGrams(document);
 
     }
 
-    private void spotNGrams(DocumentComponent block) {
-        // TRVE RECVRSION OF STEEL
-        try {
-            for (DocumentComponent cu : block.getComponents()) {
-                spotNGrams(cu);
-            }
-        } catch (EndOfTreeException ex) {
-
-            Sentence sent = (Sentence) block;
+    private void spotNGrams(DocumentComponent component) {
+            
+        DocumentComponent[] children = component.getComponents();
+        
+        // are we a sentence? if yes, spot the nGrams
+        if (children == null) {
+            Sentence sent = (Sentence) component;
             // we have a sentence, let's find the goddamnn NGRAMS inside that bitch
             Token[] allWords = getTokens(sent);
 
-            
             ArrayList<Token>[] buffer = new ArrayList[maxNgramSize];
             //initializing arrayLists
-            for(int size = 0; size<maxNgramSize; size++){
+            for (int size = 0; size < maxNgramSize; size++) {
                 buffer[size] = new ArrayList<>();
             }
             for (int i = 0; i < allWords.length; i++) {
-                Token word= allWords[i];
-            for(int size = 0; size<maxNgramSize; size++){
-                // if the buffer is not full...
-                if(buffer[size].size()<size+1){
-                    buffer[size].add(word);
-                } else{
-                    // removing the head of the list
-                    buffer[size].remove(0);
-                    buffer[size].add(word);
-                }
-                if (i>= size){
-                   Integer nounValue = EvaluatePos(buffer[size]);
-                   if (nounValue >0){
-                       // NGRAm detected! let's generate the Ngram
-                       // TO-DO
-                   }
+                Token word = allWords[i];
+                for (int size = 0; size < maxNgramSize; size++) {
+                    // if the buffer is not full...
+                    if (buffer[size].size() < size + 1) {
+                        buffer[size].add(word);
+                    } else {
+                        // removing the head of the list
+                        buffer[size].remove(0);
+                        buffer[size].add(word);
+                    }
+                    if (i >= size) {
+                        Integer nounValue = EvaluatePos(buffer[size]);
+                        if (nounValue > 0) {
+                            // TO-DO : Generate the N-Gram
+                        }
+                    }
                 }
             }
-            }
+        }
+
+        // if not and we're a section, 
+        for (DocumentComponent child : children) {
+            spotNGrams(child);
         }
     }
     

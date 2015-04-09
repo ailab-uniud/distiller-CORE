@@ -35,20 +35,19 @@ import java.util.List;
  */
 public abstract class DocumentComponent {  
 
-    private List<Gram> grams;
+    private List<String> GramIDs;
     
     public DocumentComponent() {
-        grams = new ArrayList<Gram>();
+        GramIDs = new ArrayList<String>();
     }
     
-    public void addGram(Gram gram) {
-        grams.add(gram);
+    public void addGram(String feature) {
+        GramIDs.add(feature);
     }
     
-    public List<Gram> getGrams() {
-        return grams;
+    public List<String> getGrams() {
+        return GramIDs;
     }
-    
     
     // <editor-fold desc="abstract methods">
 
