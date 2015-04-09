@@ -103,7 +103,7 @@ public class DefaultNGramGenerator extends NGramGenerator {
     private void spotNGrams(DocumentComponent block) {
         // TRVE RECVRSION OF STEEL
         try {
-            for (DocumentComponent cu : block.getSubBlocks()) {
+            for (DocumentComponent cu : block.getComponents()) {
                 spotNGrams(cu);
             }
         } catch (EndOfTreeException ex) {

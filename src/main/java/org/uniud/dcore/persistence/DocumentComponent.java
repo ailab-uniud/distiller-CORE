@@ -35,28 +35,31 @@ import java.util.List;
  */
 public abstract class DocumentComponent {  
 
-    private List<String> Feature;
+    private List<Gram> grams;
     
     public DocumentComponent() {
-        Feature = new ArrayList<String>();
+        grams = new ArrayList<Gram>();
     }
     
-    public void addGram(String feature) {
-        Feature.add(feature);
+    public void addGram(Gram gram) {
+        grams.add(gram);
     }
     
-    public List<String> getAnnotations() {
-        return Feature;
+    public List<Gram> getGrams() {
+        return grams;
     }
+    
     
     // <editor-fold desc="abstract methods">
 
     /**
+     * Returns the children of the document component, or null if the current 
+     * concept unit has no children (a sentence, the leaf of the tree).
      *
-     * @return
-     * @throws org.uniud.dcore.persistence.EndOfTreeException
+     * @return the children of the document component, or null if the current 
+     * concept unit has no children.
      */
-    public abstract DocumentComponent[] getSubBlocks() throws EndOfTreeException;
+    public abstract DocumentComponent[] getComponents();
         
     public abstract String getRawText() ;
     // </editor-fold>

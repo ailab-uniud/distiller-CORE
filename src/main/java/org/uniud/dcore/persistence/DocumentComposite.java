@@ -34,11 +34,11 @@ public class DocumentComposite extends DocumentComponent {
     private DocumentComponent[] subUnits;
     //<editor-fold desc="Getters and setters">
     @Override
-     public DocumentComponent[] getSubBlocks() throws EndOfTreeException{
+     public DocumentComponent[] getComponents() {
         return subUnits;
     }
      
-     public void setSubBlocks(DocumentComposite[] subBlocks) throws IllegalStateException {
+     public void setComponents(DocumentComposite[] subBlocks) throws IllegalStateException {
          if (this.subUnits == null)
              this.subUnits = subBlocks;
          else

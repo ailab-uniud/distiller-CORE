@@ -23,7 +23,6 @@
 package org.uniud.dcore.engine;
 
 import java.util.AbstractMap;
-import java.util.List;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;

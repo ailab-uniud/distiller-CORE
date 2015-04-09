@@ -57,7 +57,7 @@ public class Sentence extends DocumentComponent {
         return rawString;
     }
 
-    public Token[] getTokenzedSentence() {
+    public Token[] getTokens() {
 
         return tokenizedSentence;
     }      
@@ -70,7 +70,7 @@ public class Sentence extends DocumentComponent {
         return output;
     }
 
-    public void setTokenzedSentence(Token[] tokenzedSentence) {
+    public void setTokens(Token[] tokenzedSentence) {
         this.tokenizedSentence = tokenzedSentence;
     }
 
@@ -81,7 +81,7 @@ public class Sentence extends DocumentComponent {
      * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a>
      * specification.
      */
-    public String GetLanguage() {
+    public String getLanguage() {
         return this.language;
     }
 
@@ -126,9 +126,15 @@ public class Sentence extends DocumentComponent {
         return out;
     }
 
+    /**
+     * A sentence has no sub-components in the document model, so a null value
+     * is returned.
+     * 
+     * @return null, because the sentence has no children.
+     */
     @Override
-    public DocumentComposite[] getSubBlocks() throws EndOfTreeException {
-        throw new EndOfTreeException(); //To change body of generated methods, choose Tools | Templates.
+    public DocumentComposite[] getComponents() {
+        return null;
     }
 
 }
