@@ -27,4 +27,31 @@ package org.uniud.dcore.persistence;
  */
 public class Annotation {
     
+    /**
+     * The identifier of the annotator that generated the current annotation instance. 
+     */
+    private String annotator;
+    /**
+     * The annotated string. For example, "software engineering".
+     */
+    private String text;
+    /**
+     * The annotation. For example, address of the Wikipedia page 
+     * "Software_Engineering".
+     */
+    private String annotation ;
+    
+    public Annotation(String annotator, String text, String annotation) {
+        this.text = text;
+        this.annotation = annotation;
+    }
+    
+    public String getText() {
+        return text;
+    }
+    
+    public String getAnnotation() {
+        return annotation;
+    }
+    
 }
