@@ -30,14 +30,14 @@ import java.util.List;
  */
 public class Token {
 
-    private String identifier;
+    private String word;
     private String stem;
     private String PoS;
     private List<Annotation> annotations;
 
-    public Token(String identifier){
+    public Token(String word){
         annotations = new ArrayList<Annotation>();
-        this.identifier = identifier;
+        this.word = word;
     }
     
     // <editor-fold desc="Id, stem and PoS">
@@ -49,8 +49,8 @@ public class Token {
         this.PoS = PoS;
     }   
 
-    public String getIdentifier() {
-        return identifier;
+    public String getWord() {
+        return word;
     }
 
     public String getStem() {

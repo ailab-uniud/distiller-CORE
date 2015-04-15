@@ -18,7 +18,9 @@
 package org.uniud.dcore.annotation;
 
 import java.util.List;
+import org.uniud.dcore.persistence.Annotation;
 import org.uniud.dcore.persistence.Feature;
+import org.uniud.dcore.persistence.Sentence;
 
 
 /**
@@ -32,7 +34,12 @@ import org.uniud.dcore.persistence.Feature;
  */
 public interface Annotator {
     
-    public List<Feature> annotate(String[] sentence);
+    /**
+     *
+     * @param sentence
+     * @return
+     */
+    public List<Annotation> annotate(Sentence sentence);
     
     
 }
