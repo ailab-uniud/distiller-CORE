@@ -122,21 +122,25 @@ public class TagMeAnnotator implements Annotator {
 
     @Override
     public List<Annotation> annotate(Sentence sentence) {
+        List<Annotation> out = new ArrayList<>();
         // transforming the Sentence into a string
         String text = sentence.getRawText();
         // calling the big badass private method that does everything
         HashMap<String, String> tuasorella = tagDocument(text, sentence.getLanguage());
-        // slapping the data in the sentence
+        // slapping the data in a practical annotation list;
         for( Token t : sentence.getTokens()){
             String part = t.getWord();
             for(String surface: tuasorella.keySet()){
                 if(surface.contains(part)){
                     Annotation ann = new Annotation("TagMe", part, tuasorella.get(surface));
-                    t.setAnnotation(ann);
+                    //t.setAnnotation(ann);
+                    out.add(ann);
                 }
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //now GTFO of my lawn
+        return out;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
