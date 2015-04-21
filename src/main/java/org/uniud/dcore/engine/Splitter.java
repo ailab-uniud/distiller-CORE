@@ -59,13 +59,7 @@ public abstract class Splitter {
     public void buildModel(String rawText) throws IllegalStateException {
         
         DocumentComponent splitted = Split(rawText);
-        
-        // TODO: Check this coherence check             
-        if (splitted.getRawText().equals(rawText)) {
-            throw new IllegalStateException("Document built after splitting is different from original text.");            
-        }
-        else
-            BlackBoard.Instance().createDocument(rawText, splitted);
+        BlackBoard.Instance().createDocument(rawText, splitted);            
     }
     
 }

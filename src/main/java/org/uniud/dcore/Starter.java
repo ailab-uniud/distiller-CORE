@@ -19,38 +19,21 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package org.uniud.dcore.wrappers.linguisticutils;
+package org.uniud.dcore;
 
-import static it.uniud.linguisticutils.LinguisticUtils.sentenceSplitCUE;
-import java.util.List;
-import java.util.Locale;
-import org.uniud.dcore.engine.Splitter;
-import org.uniud.dcore.persistence.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.uniud.dcore.engine.Distiller;
 
 /**
  *
- * @author Dante Degl'Innocenti
+ * @author Marco Basaldella
  */
-public class DanteSplitter extends Splitter {   
-
-    @Override
-    protected DocumentComponent Split(String rawText,Locale locale) {
-        List<String> splittedText = sentenceSplitCUE(rawText,locale);
-        
-        DocumentComposite splittedDocument = new DocumentComposite();
-        
-        for (String s : splittedText) {
-            DocumentComponent sentence = new Sentence(s,locale);
-            splittedDocument.addComponent(sentence);
-        }
-        
-        return splittedDocument;
-    }
-
-    @Override
-    protected DocumentComponent Split(String rawText) {
-        // TODO: Detect actual language.
-        return Split(rawText,Locale.ITALIAN);
-    }
+public class Starter {
     
+    public static void main(String[] args)  {
+        ApplicationContext context= new ClassPathXmlApplicationContext("bean.xml");
+        Distiller distiller = (Distiller) context.getBean("reportGenerator");
+        distiller.extract("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+    }
 }

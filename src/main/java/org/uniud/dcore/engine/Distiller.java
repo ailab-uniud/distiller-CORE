@@ -22,6 +22,7 @@
 package org.uniud.dcore.engine;
 
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -71,7 +72,7 @@ public class Distiller {
     @Required
     public void setLocale(String locale) throws IllegalArgumentException {
         
-        if (!locale.equals("auto"))
+        if (!locale.equals(""))
         {
             try {
                 Locale detectedLocale = Locale.forLanguageTag(locale);
@@ -85,9 +86,11 @@ public class Distiller {
     
     public void extract(String text){
         splitter.buildModel(text);
-        preProcessor.generateAnnotations();
-        gramGenerator.generateNGrams();
-        evaluator.run();
+        
+        System.out.println(BlackBoard.Instance().getStructure().getComponents().size());
+//        preProcessor.generateAnnotations();
+//        gramGenerator.generateNGrams();
+//        evaluator.run();
     }
 
 }
