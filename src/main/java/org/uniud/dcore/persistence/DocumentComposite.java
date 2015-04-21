@@ -42,8 +42,8 @@ public class DocumentComposite extends DocumentComponent {
     
     //<editor-fold desc="Getters and setters">
     @Override
-     public DocumentComponent[] getComponents() {
-        return components.toArray(new DocumentComponent[components.size()]);
+     public List<DocumentComponent> getComponents() {
+        return components;
     }
      
      public void addComponent(DocumentComponent component) {

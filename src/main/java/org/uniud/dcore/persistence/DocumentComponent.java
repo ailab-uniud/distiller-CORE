@@ -58,7 +58,7 @@ public abstract class DocumentComponent {
      * @return the children of the document component, or null if the current 
      * concept unit has no children.
      */
-    public abstract DocumentComponent[] getComponents();
+    public abstract List<DocumentComponent> getComponents();
         
     public abstract String getRawText() ;
     // </editor-fold>

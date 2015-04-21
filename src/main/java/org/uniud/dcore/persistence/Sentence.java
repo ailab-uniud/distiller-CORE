@@ -17,6 +17,7 @@
 package org.uniud.dcore.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -142,7 +143,7 @@ public class Sentence extends DocumentComponent {
      * @return null, because the sentence has no children.
      */
     @Override
-    public DocumentComposite[] getComponents() {
+    public List<DocumentComponent> getComponents() {
         return null;
     }
 

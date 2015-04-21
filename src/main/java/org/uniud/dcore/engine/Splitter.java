@@ -38,7 +38,7 @@ import org.uniud.dcore.persistence.*;
  * @author Dario De Nart
  */
 public abstract class Splitter {
-    
+        
     /**
      * Splits the provided text auto-detecting its language.
      * 

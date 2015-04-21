@@ -101,7 +101,7 @@ public class DefaultNGramGenerator extends NGramGenerator {
 
     private void spotNGrams(DocumentComponent component) {
 
-        DocumentComponent[] children = component.getComponents();
+        List<DocumentComponent> children = component.getComponents();
 
         // are we a sentence? if yes, spot the nGrams
         if (children == null) {
