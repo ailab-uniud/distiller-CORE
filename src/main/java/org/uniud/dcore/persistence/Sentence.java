@@ -17,6 +17,7 @@
 package org.uniud.dcore.persistence;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * The Sentence class contains a document's sentence with all its annotations 
@@ -27,6 +28,17 @@ import java.util.HashMap;
  * @author Marco Basaldella
  */
 public class Sentence extends DocumentComponent {
+    
+    
+    
+    public Sentence(String rawString) {
+        this.rawString = rawString;
+    }
+    
+    public Sentence(String rawString,Locale language) {
+        this.rawString = rawString;
+        this.language = language;
+    }
 
     /**
      * The raw string that represents the sentence.
@@ -36,7 +48,7 @@ public class Sentence extends DocumentComponent {
     /**
      * The language of the sentence.
      */
-    private String language;
+    private Locale language;
 
     /**
      * The {@link org.uniud.dcore.persistence.Token}s that form the sentence.
@@ -81,26 +93,23 @@ public class Sentence extends DocumentComponent {
      * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a>
      * specification.
      */
-    public String getLanguage() {
+    public Locale getLanguage() {
         return this.language;
     }
 
     /**
      * Sets the language of the sentence
      *
-     * @param language the language of the sentence, specified with the IETF
-     * language tag.
+     * @param language the language of the sentence.
      * @throws IllegalStateException if the language is set more than once.
-     * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a>
-     * specification.
      */
-    public void setLanguage(String language) throws IllegalStateException {
-        if (this.language != null && !this.language.isEmpty()) {
+    public void setLanguage(Locale language) throws IllegalStateException {
+        if (this.language != null) {
             this.language = language;
         } else {
             throw new IllegalStateException(String.format(
                     "Trying to set language %s on sentence which is already set as %s",
-                    language, this.language));
+                    language.toLanguageTag(), this.language));
         }
     }
 

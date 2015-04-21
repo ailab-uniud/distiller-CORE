@@ -21,6 +21,9 @@
  */
 package org.uniud.dcore.persistence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A part of a document which is composed by other sub-parts. For example, a Section
  * may be divided in Chapters, a Chapter in Paragraphs, and so on. In the Composite 
@@ -31,18 +34,24 @@ package org.uniud.dcore.persistence;
  */
 public class DocumentComposite extends DocumentComponent {
     
-    private DocumentComponent[] subUnits;
+    private List<DocumentComponent> components;
+    
+    public DocumentComposite() {
+        components = new ArrayList<DocumentComponent>();
+    }
+    
     //<editor-fold desc="Getters and setters">
     @Override
      public DocumentComponent[] getComponents() {
-        return subUnits;
+        return components.toArray(new DocumentComponent[components.size()]);
     }
      
-     public void setComponents(DocumentComposite[] subBlocks) throws IllegalStateException {
-         if (this.subUnits == null)
-             this.subUnits = subBlocks;
-         else
-             throw new IllegalStateException("Trying to set SubBlocks of a ConceptBlock more than once.");                     
+     public void addComponent(DocumentComponent component) {
+         this.components.add(component);
+     }
+     
+     public void setComponents(List<DocumentComponent> components)  {
+         this.components = components;
      }
     //</editor-fold>
      
@@ -52,7 +61,7 @@ public class DocumentComposite extends DocumentComponent {
         
         String output = "";
         
-        for (DocumentComponent cb:subUnits) {
+        for (DocumentComponent cb:components) {
             output = output.concat(cb.getRawText());
         }
         

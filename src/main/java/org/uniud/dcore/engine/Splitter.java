@@ -21,6 +21,7 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.Locale;
 import org.uniud.dcore.persistence.*;
 
 /**
@@ -38,7 +39,22 @@ import org.uniud.dcore.persistence.*;
  */
 public abstract class Splitter {
     
+    /**
+     * Splits the provided text auto-detecting its language.
+     * 
+     * @param rawText the text to split.
+     * @return the split document.
+     */
     protected abstract DocumentComponent Split(String rawText);
+    
+    /**
+     * Splits the provided text using the language specified in input.
+     * 
+     * @param rawText the text to split.
+     * @param language the language of the text.
+     * @return the split text.
+     */
+    protected abstract DocumentComponent Split(String rawText,Locale language);
     
     public void buildModel(String rawText) throws IllegalStateException {
         

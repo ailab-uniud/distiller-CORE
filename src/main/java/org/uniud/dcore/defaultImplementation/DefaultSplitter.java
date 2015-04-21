@@ -22,6 +22,7 @@
 
 package org.uniud.dcore.defaultImplementation;
 
+import java.util.Locale;
 import org.uniud.dcore.engine.Splitter;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.engine.BlackBoard;
@@ -36,6 +37,11 @@ public class DefaultSplitter extends Splitter {
     protected DocumentComponent Split(String rawText) {
         
         
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected DocumentComponent Split(String rawText, Locale language) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

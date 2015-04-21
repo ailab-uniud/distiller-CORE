@@ -44,7 +44,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.uniud.dcore.persistence.Annotation;
-import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
@@ -125,22 +124,20 @@ public class TagMeAnnotator implements Annotator {
         List<Annotation> out = new ArrayList<>();
         // transforming the Sentence into a string
         String text = sentence.getRawText();
-        // calling the big badass private method that does everything
-        HashMap<String, String> tuasorella = tagDocument(text, sentence.getLanguage());
-        // slapping the data in a practical annotation list;
+        // call the big badass private method that does everything
+        HashMap<String, String> taggedSentence = tagDocument(text, sentence.getLanguage().getLanguage());
+        // put the data in a practical annotation list;
         for( Token t : sentence.getTokens()){
             String part = t.getWord();
-            for(String surface: tuasorella.keySet()){
+            for(String surface: taggedSentence.keySet()){
                 if(surface.contains(part)){
-                    Annotation ann = new Annotation("TagMe", part, tuasorella.get(surface));
+                    Annotation ann = new Annotation("TagMe", part, taggedSentence.get(surface));
                     //t.setAnnotation(ann);
                     out.add(ann);
                 }
             }
         }
-        //now GTFO of my lawn
         return out;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

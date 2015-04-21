@@ -21,6 +21,7 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -38,6 +39,7 @@ public class Distiller {
     private PreProcessor preProcessor;
     private NGramGenerator gramGenerator;
     private Evaluator evaluator;
+    private String locale;
 
     @Required
     public void setEvaluator(Evaluator evaluator) {
@@ -57,6 +59,29 @@ public class Distiller {
     @Required
     public void setSplitter(Splitter splitter) {
         this.splitter = splitter;
+    }
+    
+    /**
+     * Sets the locale in which the text extraction will be performed, using
+     * "auto" for auto-detection of the locale of the IETF formatted language
+     * tag if manual locale setting is desired. For example, wiring "en-US" will
+     * set the locale to English.
+     * 
+     * @param locale 
+     */
+    @Required
+    public void setLocale(String locale) throws IllegalArgumentException {
+        
+        if (!locale.equals("auto"))
+        {
+            try {
+                Locale detectedLocale = Locale.forLanguageTag(locale);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Unsupported language tag: "+locale);
+            }
+        }
+        
+        this.locale = locale;
     }
     
     public void extract(String text){
