@@ -31,10 +31,13 @@
   </bean>
    
   <!-- associa il bean 'reportGenerator' al nostro ReportGenerator -->
-  <bean id="reportGenerator" class="org.uniud.dcore.engine.Distiller">
-    <!-- indica al setter 'report' del reportGenerator di riferirsi ad oggetti -->
-    <!-- istanziati con il bean 'report' (quindi, in questo caso, TxtReport)-->
-    <property name="splitter" ref="dantesplitter" />
+  <bean id="distiller" class="org.uniud.dcore.engine.Distiller">
+    <property name="annotators">
+        <list>
+            <ref bean="dantesplitter" />
+        </list>
+    </property>
+    
   </bean>
    
 </beans>

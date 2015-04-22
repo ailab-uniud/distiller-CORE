@@ -22,7 +22,6 @@
 package org.uniud.dcore.engine;
 
 import java.util.Locale;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -35,7 +34,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class Distiller {
 
     // all these fields will be injected via setter method
-    private Splitter splitter;
+    private Annotator[] annotators;
     private PreProcessor preProcessor;
     private NGramGenerator gramGenerator;
     private Evaluator evaluator;
@@ -57,8 +56,8 @@ public class Distiller {
     }
     
     @Required
-    public void setSplitter(Splitter splitter) {
-        this.splitter = splitter;
+    public void setAnnotators(Annotator[] annotators) {
+        this.annotators = annotators;
     }
     
     /**
@@ -85,9 +84,14 @@ public class Distiller {
     }
     
     public void extract(String text){
-        splitter.buildModel(text);
+                
+        BlackBoard.Instance().createDocument(text);
         
-        System.out.println(BlackBoard.Instance().getStructure().getComponents().size());
+        for (Annotator a : annotators) {
+            a.annotate(BlackBoard.Instance().getStructure());
+        }
+        
+        System.out.println("Detected sentences: "+ BlackBoard.Instance().getStructure().getComponents().size());
 //        preProcessor.generateAnnotations();
 //        gramGenerator.generateNGrams();
 //        evaluator.run();

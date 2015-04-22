@@ -15,12 +15,9 @@
     along with Distiller-CORE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.uniud.dcore.annotation;
+package org.uniud.dcore.engine;
 
-import java.util.List;
-import org.uniud.dcore.persistence.Annotation;
-import org.uniud.dcore.persistence.Feature;
-import org.uniud.dcore.persistence.Sentence;
+import org.uniud.dcore.persistence.DocumentComponent;
 
 
 /**
@@ -35,11 +32,16 @@ import org.uniud.dcore.persistence.Sentence;
 public interface Annotator {
     
     /**
-     *
-     * @param sentence
+     * The abstract annotation class. All classes that perform some kind of 
+     * annotation (splitting, PoS tagging, entity linking...) must inherit from
+     * Annotator. They annotate the component that is passed as parameter and
+     * then return the annotated object to the caller, that writes it on the 
+     * {@link org.uniud.dcore.engine.BlackBoard}.
+     * 
+     * @param the component to annotate.
      * @return
      */
-    public List<Annotation> annotate(Sentence sentence);
+    public void annotate(DocumentComponent component);
     
     
 }

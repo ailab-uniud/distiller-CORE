@@ -24,6 +24,7 @@ package org.uniud.dcore.engine;
 
 import java.util.AbstractMap;
 import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.DocumentComposite;
 import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;
 
@@ -74,10 +75,10 @@ public class BlackBoard {
     private AbstractMap<String,Gram> GramContainer;
         
     
-    public void createDocument(String RawText, DocumentComponent document)
+    public void createDocument(String rawText)
     {
-        this.rawText = RawText;
-        this.document = document;
+        this.rawText = rawText;
+        this.document = new DocumentComposite();
     }
 
     public DocumentComponent getStructure() {

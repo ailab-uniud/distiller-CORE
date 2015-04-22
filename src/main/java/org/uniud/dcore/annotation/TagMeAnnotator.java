@@ -21,6 +21,7 @@
  */
 package org.uniud.dcore.annotation;
 
+import org.uniud.dcore.engine.Annotator;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.uniud.dcore.persistence.Annotation;
+import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
@@ -119,7 +121,6 @@ public class TagMeAnnotator implements Annotator {
         return output;
     }
 
-    @Override
     public List<Annotation> annotate(Sentence sentence) {
         List<Annotation> out = new ArrayList<>();
         // transforming the Sentence into a string
@@ -138,6 +139,11 @@ public class TagMeAnnotator implements Annotator {
             }
         }
         return out;
+    }
+
+    @Override
+    public void annotate(DocumentComponent component) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

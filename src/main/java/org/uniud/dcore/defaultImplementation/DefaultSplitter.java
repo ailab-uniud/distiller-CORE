@@ -22,6 +22,7 @@
 
 package org.uniud.dcore.defaultImplementation;
 
+import java.util.List;
 import java.util.Locale;
 import org.uniud.dcore.engine.Splitter;
 import org.uniud.dcore.persistence.DocumentComponent;
@@ -32,16 +33,14 @@ import org.uniud.dcore.engine.BlackBoard;
  * @author Dado
  */
 public class DefaultSplitter extends Splitter {
-    
+
     @Override
-    protected DocumentComponent Split(String rawText) {
-        
-        
+    protected List<DocumentComponent> Split(String rawText) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    protected DocumentComponent Split(String rawText, Locale language) {
+    protected List<DocumentComponent> Split(String rawText, Locale language) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

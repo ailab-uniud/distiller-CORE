@@ -21,6 +21,7 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.List;
 import java.util.Locale;
 import org.uniud.dcore.persistence.*;
 
@@ -37,7 +38,7 @@ import org.uniud.dcore.persistence.*;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public abstract class Splitter {
+public abstract class Splitter implements Annotator {
         
     /**
      * Splits the provided text auto-detecting its language.
@@ -45,7 +46,7 @@ public abstract class Splitter {
      * @param rawText the text to split.
      * @return the split document.
      */
-    protected abstract DocumentComponent Split(String rawText);
+    protected abstract List<DocumentComponent> Split(String rawText);
     
     /**
      * Splits the provided text using the language specified in input.
@@ -54,12 +55,18 @@ public abstract class Splitter {
      * @param language the language of the text.
      * @return the split text.
      */
-    protected abstract DocumentComponent Split(String rawText,Locale language);
+    protected abstract List<DocumentComponent> Split(String rawText,Locale language);
     
-    public void buildModel(String rawText) throws IllegalStateException {
+    @Override
+    public void annotate(DocumentComponent component) {
         
-        DocumentComponent splitted = Split(rawText);
-        BlackBoard.Instance().createDocument(rawText, splitted);            
+        // You can't split a sentence!
+        if (component.getClass().equals(Sentence.class))
+            return;
+                
+        for (DocumentComponent c : Split(component.getRawText())) {
+            ((DocumentComposite)component).addComponent(c);
+        }   
     }
     
 }
