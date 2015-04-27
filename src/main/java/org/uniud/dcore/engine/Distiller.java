@@ -23,6 +23,7 @@ package org.uniud.dcore.engine;
 
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
+import static org.uniud.dcore.utils.DocumentUtils.getAnnotatedComponent;
 
 /**
  * The keyphrase extractor object.
@@ -92,6 +93,8 @@ public class Distiller {
         }
         
         System.out.println("Detected sentences: "+ BlackBoard.Instance().getStructure().getComponents().size());
+        
+        System.out.println(getAnnotatedComponent(BlackBoard.Instance().getStructure()));
 //        preProcessor.generateAnnotations();
 //        gramGenerator.generateNGrams();
 //        evaluator.run();

@@ -24,17 +24,19 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xsi:schemaLocation ="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
  
-  <!-- Indica che il bean 'report' è implementato da TxtReport -->
-  <bean id="dantesplitter" class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter">
-  </bean>
+    
+  <!-- Annotators -->  
+  <bean id="dantesplitter" class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>
+  <bean id="stanford" class="org.uniud.dcore.wrappers.stanford.StanfordBootstrapper" />
    
-  <!-- associa il bean 'reportGenerator' al nostro ReportGenerator -->
+  
+  <!-- The main object, the distiller, that receives the annotations defined before -->
   <bean id="distiller" class="org.uniud.dcore.engine.Distiller">
     <property name="annotators">
         <list>
-            <ref bean="dantesplitter" />
+            <ref bean="stanford" />
         </list>
     </property>
     

@@ -30,10 +30,15 @@ import org.uniud.dcore.engine.Distiller;
  * @author Marco Basaldella
  */
 public class Starter {
-    
-    public static void main(String[] args)  {
-        ApplicationContext context= new ClassPathXmlApplicationContext("bean.xml");
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("bean.xml");
         Distiller distiller = (Distiller) context.getBean("distiller");
-        distiller.extract("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        
+        // Extract information from the incipit of "The Idiot", by Fyodor Dostoyevsky.
+        
+        distiller.extract("Towards the end of November, during a thaw, at nine o'clock one morning, a train on the Warsaw and Petersburg railway was approaching the latter city at full speed. The morning was so damp and misty that it was only with great difficulty that the day succeeded in breaking; and it was impossible to distinguish anything more than a few yards away from the carriage windows. Some of the passengers by this particular train were returning from abroad; but the third-class carriages were the best filled, chiefly with insignificant persons of various occupations and degrees, picked up at the different stations nearer town. All of them seemed weary, and most of them had sleepy eyes and a shivering expression, while their complexions generally appeared to have taken on the colour of the fog outside. When day dawned, two passengers in one of the third-class carriages found themselves opposite each other. Both were young fellows, both were rather poorly dressed, both had remarkable faces, and both were evidently anxious to start a conversation. If they had but known why, at this particular moment, they were both remarkable persons, they would undoubtedly have wondered at the strange chance which had set them down opposite to one another in a third-class carriage of the Warsaw Railway Company. ");
+        
+        
     }
 }

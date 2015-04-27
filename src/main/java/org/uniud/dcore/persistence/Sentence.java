@@ -16,6 +16,7 @@
  */
 package org.uniud.dcore.persistence;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +39,8 @@ public class Sentence extends DocumentComponent {
     public Sentence(String text) {
         this(text,null);
     }
+    
+    // <editor-fold desc="Private fields">
 
     /**
      * The raw string that represents the sentence.
@@ -54,6 +57,8 @@ public class Sentence extends DocumentComponent {
      */
     private Token[] tokenizedSentence;
 
+    // </editor-fold>
+    
     // <editor-fold desc="Getters and setters">
     public void setSentence(String sentence) throws IllegalStateException {
         if (this.rawString.isEmpty() || this.rawString == null) {
@@ -111,22 +116,7 @@ public class Sentence extends DocumentComponent {
     // writing the sentence with all annotations
     @Override
     public String toString() {
-        String out = "";
-//        for(int i=0; i< tokenizedSentence.length; i++){
-//            out+=tokenizedSentence[i];
-//            // writing all non-void annotations
-//            for(String label:annotations.keySet()){
-//                String[] annotation= annotations.get(label);
-//                if(null!=annotation[i] && !"".equals(annotation[i])){
-//                    out+="/" + annotation[i];
-//                }
-//            }
-//            
-//            if(i!=tokenizedSentence.length-1){
-//                out+= " ";
-//            }
-//        }
-        return out;
+        return getText();
     }
 
     /**
@@ -138,6 +128,17 @@ public class Sentence extends DocumentComponent {
     @Override
     public List<DocumentComponent> getComponents() {
         return null;
+    }
+
+    @Override
+    public List<Annotation> getAnnotations() {
+        List<Annotation> ret = new ArrayList<Annotation>();
+        for (Token t : getTokens())
+        {
+            ret.addAll(t.getAnnotations());
+        }
+        
+        return ret;
     }
 
 }

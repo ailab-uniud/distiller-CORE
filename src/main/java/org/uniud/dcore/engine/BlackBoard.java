@@ -83,8 +83,7 @@ public class BlackBoard {
 
     public DocumentComponent getStructure() {
         return document;
-    }
-    
+    }    
     public String getText() {
         return rawText;
     }
@@ -116,5 +115,5 @@ public class BlackBoard {
     public Gram[] getGrams() {
         return GramContainer.values().toArray(new Gram[GramContainer.size()]);
     }
-    
+
 }

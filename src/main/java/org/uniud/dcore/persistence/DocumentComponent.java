@@ -50,6 +50,8 @@ public abstract class DocumentComponent {
         this(text,null);
     }
     
+    // <editor-fold desc="getters and setters">
+    
     public void addGram(String feature) {
         GramIDs.add(feature);
     }
@@ -58,6 +60,17 @@ public abstract class DocumentComponent {
         return GramIDs;
     }
     
+    public String getText() {
+        return text;
+    }
+    
+    public boolean hasComponents() {
+        List<DocumentComponent> comps = getComponents();
+        return !(comps == null);
+    }
+    
+    // </editor-fold>
+        
     // <editor-fold desc="abstract methods">
 
     /**
@@ -69,9 +82,19 @@ public abstract class DocumentComponent {
      */
     public abstract List<DocumentComponent> getComponents();
         
-    public String getText() {
+    /**
+     * Returns all the annotations associated on a component.
+     * 
+     * @return the list of annotations.
+     */
+    public abstract List<Annotation> getAnnotations() ;
+    
+    
+    // </editor-fold>
+    
+    @Override
+    public String toString() {
         return text;
     }
-    // </editor-fold>
     
 }

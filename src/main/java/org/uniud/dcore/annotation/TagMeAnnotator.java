@@ -129,7 +129,7 @@ public class TagMeAnnotator implements Annotator {
         HashMap<String, String> taggedSentence = tagDocument(text, sentence.getLanguage().getLanguage());
         // put the data in a practical annotation list;
         for( Token t : sentence.getTokens()){
-            String part = t.getWord();
+            String part = t.getText();
             for(String surface: taggedSentence.keySet()){
                 if(surface.contains(part)){
                     Annotation ann = new Annotation("TagMe", part, taggedSentence.get(surface));

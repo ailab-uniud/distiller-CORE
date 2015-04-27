@@ -26,40 +26,50 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A part of a document which is composed by other sub-parts. For example, a Section
- * may be divided in Chapters, a Chapter in Paragraphs, and so on. In the Composite 
- * pattern, this is the "composite" class of the structure.
+ * A part of a document which is composed by other sub-parts. For example, a
+ * Section may be divided in Chapters, a Chapter in Paragraphs, and so on. In
+ * the Composite pattern, this is the "composite" class of the structure.
  *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
 public class DocumentComposite extends DocumentComponent {
-    
+
     private List<DocumentComponent> components;
-    
-    public DocumentComposite(String text,Locale language) {
-        super(text,language);
+
+    public DocumentComposite(String text, Locale language) {
+        super(text, language);
         components = new ArrayList<DocumentComponent>();
     }
-    
+
     public DocumentComposite(String text) {
-        this(text,null);
+        this(text, null);
     }
-    
+
     //<editor-fold desc="Getters and setters">
     @Override
-     public List<DocumentComponent> getComponents() {
+    public List<DocumentComponent> getComponents() {
         return components;
     }
-     
-     public void addComponent(DocumentComponent component) {
-         this.components.add(component);
-     }
-     
-     public void setComponents(List<DocumentComponent> components)  {
-         this.components = components;
-     }
+
+    @Override
+    public List<Annotation> getAnnotations() {
+        List<Annotation> ret = new ArrayList<Annotation>();
+        for (DocumentComponent c : getComponents())
+        {
+            ret.addAll(c.getAnnotations());
+        }
+        
+        return ret;
+    }
+
+    public void addComponent(DocumentComponent component) {
+        this.components.add(component);
+    }
+
+    public void setComponents(List<DocumentComponent> components) {
+        this.components = components;
+    }
     //</editor-fold>
-    
-    
+
 }
