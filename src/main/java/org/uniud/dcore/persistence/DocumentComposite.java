@@ -23,6 +23,7 @@ package org.uniud.dcore.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A part of a document which is composed by other sub-parts. For example, a Section
@@ -36,8 +37,13 @@ public class DocumentComposite extends DocumentComponent {
     
     private List<DocumentComponent> components;
     
-    public DocumentComposite() {
+    public DocumentComposite(String text,Locale language) {
+        super(text,language);
         components = new ArrayList<DocumentComponent>();
+    }
+    
+    public DocumentComposite(String text) {
+        this(text,null);
     }
     
     //<editor-fold desc="Getters and setters">
@@ -54,19 +60,6 @@ public class DocumentComposite extends DocumentComponent {
          this.components = components;
      }
     //</editor-fold>
-     
-     //<editor-fold desc="overrides">     
-     @Override
-    public String getRawText() {
-        
-        String output = "";
-        
-        for (DocumentComponent cb:components) {
-            output = output.concat(cb.getRawText());
-        }
-        
-        return output;    
-    }
-    //</editor-fold>
+    
     
 }

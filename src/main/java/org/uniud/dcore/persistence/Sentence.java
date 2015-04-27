@@ -30,15 +30,13 @@ import java.util.Locale;
  */
 public class Sentence extends DocumentComponent {
     
-    
-    
-    public Sentence(String rawString) {
-        this.rawString = rawString;
+       
+    public Sentence(String text,Locale language) {
+        super(text,language);
     }
     
-    public Sentence(String rawString,Locale language) {
-        this.rawString = rawString;
-        this.language = language;
+    public Sentence(String text) {
+        this(text,null);
     }
 
     /**
@@ -64,12 +62,7 @@ public class Sentence extends DocumentComponent {
             throw new IllegalStateException("Trying to set the content of the sentence twice.");
         }
     }
-
-    @Override
-    public String getRawText() {
-        return rawString;
-    }
-
+    
     public Token[] getTokens() {
 
         return tokenizedSentence;

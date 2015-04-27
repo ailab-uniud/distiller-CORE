@@ -64,7 +64,7 @@ public abstract class Splitter implements Annotator {
         if (component.getClass().equals(Sentence.class))
             return;
                 
-        for (DocumentComponent c : Split(component.getRawText())) {
+        for (DocumentComponent c : Split(component.getText())) {
             ((DocumentComposite)component).addComponent(c);
         }   
     }

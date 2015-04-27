@@ -78,7 +78,7 @@ public class BlackBoard {
     public void createDocument(String rawText)
     {
         this.rawText = rawText;
-        this.document = new DocumentComposite();
+        this.document = new DocumentComposite(rawText);
     }
 
     public DocumentComponent getStructure() {

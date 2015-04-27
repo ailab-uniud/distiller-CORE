@@ -124,7 +124,7 @@ public class TagMeAnnotator implements Annotator {
     public List<Annotation> annotate(Sentence sentence) {
         List<Annotation> out = new ArrayList<>();
         // transforming the Sentence into a string
-        String text = sentence.getRawText();
+        String text = sentence.getText();
         // call the big badass private method that does everything
         HashMap<String, String> taggedSentence = tagDocument(text, sentence.getLanguage().getLanguage());
         // put the data in a practical annotation list;

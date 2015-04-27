@@ -23,6 +23,7 @@ package org.uniud.dcore.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An abstract conceptual unit of the document. This can be a sentence, a chapter, 
@@ -36,9 +37,17 @@ import java.util.List;
 public abstract class DocumentComponent {  
 
     private List<String> GramIDs;
+    private String text;
+    private Locale language;
     
-    public DocumentComponent() {
+    public DocumentComponent(String text,Locale language) {
         GramIDs = new ArrayList<String>();
+        this.text = text;
+        this.language = language;
+    }
+    
+    public DocumentComponent(String text) {
+        this(text,null);
     }
     
     public void addGram(String feature) {
@@ -60,7 +69,9 @@ public abstract class DocumentComponent {
      */
     public abstract List<DocumentComponent> getComponents();
         
-    public abstract String getRawText() ;
+    public String getText() {
+        return text;
+    }
     // </editor-fold>
     
 }
