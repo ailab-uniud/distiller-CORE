@@ -71,7 +71,7 @@ public class StanfordBootstrapper implements Annotator {
 
         for (CoreMap stanfordSentence : sentences) {
 
-            Sentence distilledSentence = new Sentence(stanfordSentence.toShorterString("text"));
+            Sentence distilledSentence = new Sentence(stanfordSentence.toString()); 
             
             distilledSentence.setLanguage(Locale.ENGLISH);
             // traversing the words in the current sentence
