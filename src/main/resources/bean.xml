@@ -30,6 +30,7 @@
   <!-- Annotators -->  
   <bean id="dantesplitter" class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>
   <bean id="stanford" class="org.uniud.dcore.wrappers.stanford.StanfordBootstrapper" />
+  <bean id="tagme" class="org.uniud.dcore.annotation.TagMeAnnotator" />
    
   
   <!-- The main object, the distiller, that receives the annotations defined before -->
@@ -37,6 +38,7 @@
     <property name="annotators">
         <list>
             <ref bean="stanford" />
+            <ref bean="tagme" />
         </list>
     </property>
     

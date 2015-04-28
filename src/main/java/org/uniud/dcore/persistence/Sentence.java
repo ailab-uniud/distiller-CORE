@@ -108,7 +108,7 @@ public class Sentence extends DocumentComponent {
      * @throws IllegalStateException if the language is set more than once.
      */
     public void setLanguage(Locale language) throws IllegalStateException {
-        if (this.language != null) {
+        if (this.language == null) {
             this.language = language;
         } else {
             throw new IllegalStateException(String.format(

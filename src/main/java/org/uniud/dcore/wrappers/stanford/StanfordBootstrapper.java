@@ -34,6 +34,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.DocumentComponent;
@@ -71,6 +72,8 @@ public class StanfordBootstrapper implements Annotator {
         for (CoreMap stanfordSentence : sentences) {
 
             Sentence distilledSentence = new Sentence(stanfordSentence.toShorterString("text"));
+            
+            distilledSentence.setLanguage(Locale.ENGLISH);
             // traversing the words in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
             for (CoreLabel token : stanfordSentence.get(TokensAnnotation.class)) {
@@ -90,7 +93,7 @@ public class StanfordBootstrapper implements Annotator {
                 String ne = token.get(NamedEntityTagAnnotation.class);
                 
                 
-                t.setAnnotation(
+                t.addAnnotation(
                     new org.uniud.dcore.persistence.Annotation("StanfordNER",word,ne));
                 
                 distilledSentence.addToken(t);

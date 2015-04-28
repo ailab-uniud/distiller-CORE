@@ -70,7 +70,7 @@ public class Token {
      * 
      * @param annotation the annotation to add.
      */
-    public void setAnnotation(Annotation annotation) {
+    public void addAnnotation(Annotation annotation) {
         annotations.add(annotation);
     }
     

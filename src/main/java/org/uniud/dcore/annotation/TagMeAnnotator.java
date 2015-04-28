@@ -71,7 +71,7 @@ public class TagMeAnnotator implements Annotator {
         HashMap<String, String> output = new HashMap();
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(tagmeEndpoint);
-// Request parameters and other properties.
+        // Request parameters and other properties.
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("text", text));
         params.add(new BasicNameValuePair("key", apiKey));
@@ -121,29 +121,36 @@ public class TagMeAnnotator implements Annotator {
         return output;
     }
 
-    public List<Annotation> annotate(Sentence sentence) {
-        List<Annotation> out = new ArrayList<>();
-        // transforming the Sentence into a string
+    public void annotateSentence(Sentence sentence) {
+        
+        
         String text = sentence.getText();
-        // call the big badass private method that does everything
+        // Retrieve the tagMe annotations using the internal TagMe wrapper
         HashMap<String, String> taggedSentence = tagDocument(text, sentence.getLanguage().getLanguage());
-        // put the data in a practical annotation list;
-        for( Token t : sentence.getTokens()){
+        
+        // Put the annotations in the appropriate token
+        for (Token t : sentence.getTokens()) {
             String part = t.getText();
-            for(String surface: taggedSentence.keySet()){
-                if(surface.contains(part)){
+            for (String surface : taggedSentence.keySet()) {
+                if (surface.contains(part)) {
                     Annotation ann = new Annotation("TagMe", part, taggedSentence.get(surface));
                     //t.setAnnotation(ann);
-                    out.add(ann);
+                    t.addAnnotation(ann);
                 }
             }
         }
-        return out;
     }
 
     @Override
     public void annotate(DocumentComponent component) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        if (!component.hasComponents()) {
+            annotateSentence((Sentence)component);
+        } else {
+            for (DocumentComponent c : component.getComponents()) {
+                annotate(c);
+            }
+        }
     }
 
 }
