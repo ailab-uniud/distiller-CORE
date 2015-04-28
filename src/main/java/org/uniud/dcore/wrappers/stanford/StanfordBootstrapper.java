@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.DocumentComposite;
+import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
 /**
@@ -51,7 +52,7 @@ public class StanfordBootstrapper implements Annotator {
 
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // read some text in the text variable
@@ -67,12 +68,12 @@ public class StanfordBootstrapper implements Annotator {
         // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
         List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 
-        for (CoreMap sentence : sentences) {
+        for (CoreMap stanfordSentence : sentences) {
 
-            DocumentComposite c = new DocumentComposite(sentence.toShorterString("text"));
+            Sentence distilledSentence = new Sentence(stanfordSentence.toShorterString("text"));
             // traversing the words in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
-            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+            for (CoreLabel token : stanfordSentence.get(TokensAnnotation.class)) {
                 
                 
                 // this is the text of the token
@@ -91,9 +92,11 @@ public class StanfordBootstrapper implements Annotator {
                 
                 t.setAnnotation(
                     new org.uniud.dcore.persistence.Annotation("StanfordNER",word,ne));
+                
+                distilledSentence.addToken(t);
             }
 
-            ((DocumentComposite) component).addComponent(c);
+            ((DocumentComposite) component).addComponent(distilledSentence);
         }
 
     }

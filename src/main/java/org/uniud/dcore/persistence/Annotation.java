@@ -42,6 +42,7 @@ public class Annotation {
     private String annotation ;
     
     public Annotation(String annotator, String text, String annotation) {
+        this.annotator = annotator;
         this.text = text;
         this.annotation = annotation;
     }

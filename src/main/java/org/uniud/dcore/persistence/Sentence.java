@@ -34,6 +34,7 @@ public class Sentence extends DocumentComponent {
        
     public Sentence(String text,Locale language) {
         super(text,language);
+        tokenizedSentence = new ArrayList<>();
     }
     
     public Sentence(String text) {
@@ -55,7 +56,7 @@ public class Sentence extends DocumentComponent {
     /**
      * The {@link org.uniud.dcore.persistence.Token}s that form the sentence.
      */
-    private Token[] tokenizedSentence;
+    private List<Token> tokenizedSentence;
 
     // </editor-fold>
     
@@ -68,21 +69,25 @@ public class Sentence extends DocumentComponent {
         }
     }
     
-    public Token[] getTokens() {
+    public List<Token> getTokens() {
 
         return tokenizedSentence;
     }      
     
     public String[] getPosTaggedSentence() {
-        String[] output = new String[tokenizedSentence.length];
-        for (int i = 0; i < tokenizedSentence.length; i++) {
-            output[i] = tokenizedSentence[i].getPoS();
+        String[] output = new String[tokenizedSentence.size()];
+        for (int i = 0; i < tokenizedSentence.size(); i++) {
+            output[i] = tokenizedSentence.get(i).getPoS();
         }
         return output;
     }
 
-    public void setTokens(Token[] tokenzedSentence) {
+    public void setTokens(List<Token> tokenzedSentence) {
         this.tokenizedSentence = tokenzedSentence;
+    }
+    
+    public void addToken(Token t) {
+        this.tokenizedSentence.add(t);
     }
 
     /**
