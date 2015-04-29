@@ -28,14 +28,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Required;
 import org.uniud.dcore.engine.NGramGenerator;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.engine.BlackBoard;
+import org.uniud.dcore.persistence.Gram;
 import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
@@ -43,106 +46,56 @@ import org.uniud.dcore.persistence.Token;
  *
  * @author Dado
  */
-public class DefaultNGramGenerator extends NGramGenerator {
+public class DefaultNGramGenerator implements NGramGenerator {
 
-    private String posPatternsFilePath;
-    private String lang;
+    /**
+     * Path to the local POS Pattern JSON file.
+     */
+    private final String posDatabasePath;
+
+    private final String language;
     private final HashMap<String, Integer> validPOSPatterns;
     private int maxNgramSize;
 
-    // Constructor
-    public DefaultNGramGenerator() throws IOException, ParseException {
-        HashMap<String, Integer> buffer = new HashMap<>();
-        // let's read the POS Patterns file!
-        BufferedReader reader = new BufferedReader(new FileReader(posPatternsFilePath));
-        // it's a muddafakkin' JSON!
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(reader);
-        JSONObject fileblock = (JSONObject) obj;
-        JSONArray pagesBlock = (JSONArray) fileblock.get("languages");
-        // let's find the right language
-        Iterator<JSONObject> iterator = pagesBlock.iterator();
-        while (iterator.hasNext()) {
-            JSONObject languageblock = (iterator.next());
-            String currLanguage = (String) languageblock.get("language");
-            if (currLanguage == null ? lang == null : currLanguage.equals(lang)) {
-                // allright, there we are! Now it's time to retrieve 
-                // all the meaningful POS patterns from the file
-                JSONArray patternBlock = (JSONArray) languageblock.get("patterns");
-                Iterator<JSONObject> patternIterator = patternBlock.iterator();
-                while (patternIterator.hasNext()) {
-                    JSONObject pattern = (patternIterator.next());
-                    String POSpattern = (String) pattern.get("pattern");
-                    Long nounCount = (Long) pattern.get("nounCount");
-                    // time to show the patterns who's the boss and slap 'em into the hashmap!
-                    buffer.put(POSpattern, nounCount.intValue());
-                }
-            }
-        }
-        validPOSPatterns = buffer;
-    }
-
     /**
-     *
-     * @param posPatternsFilePath
+     * Initializes the nGram generator. Please note that the database is not
+     * loaded until the actual extraction is performed.
+     * 
+     * @param posDatabasePath the path of the JSON file used as database
+     * @param language the language in which the generation will be performed
      */
-    @Required
-    public void setPosPatternsFilePath(String posPatternsFilePath) {
-        this.posPatternsFilePath = posPatternsFilePath;
+    public DefaultNGramGenerator(String posDatabasePath, Locale language) {
+
+        validPOSPatterns = new HashMap<>();
+        this.posDatabasePath = posDatabasePath;
+        this.language = language.getLanguage();
+
     }
 
     @Override
-    public void generateNGrams() {
-        DocumentComponent document = getDocument();
-        // there be awesome
-        spotNGrams(document);
+    public void generateNGrams(DocumentComponent component) {
 
-    }
-
-    private void spotNGrams(DocumentComponent component) {
-
-        // are we a sentence? if yes, spot the nGrams
-        if (component.hasComponents()) {
-            List<DocumentComponent> children = component.getComponents();
-
-            // if not and we're a section, 
-            for (DocumentComponent child : children) {
-                spotNGrams(child);
-            }
-
-        } else {
-            Sentence sent = (Sentence) component;
-            // we have a sentence, let's find the goddamnn NGRAMS inside that bitch
-            Token[] allWords = getTokens(sent);
-
-            ArrayList<Token>[] buffer = new ArrayList[maxNgramSize];
-            //initializing arrayLists
-            for (int size = 0; size < maxNgramSize; size++) {
-                buffer[size] = new ArrayList<>();
-            }
-            for (int i = 0; i < allWords.length; i++) {
-                Token word = allWords[i];
-                for (int size = 0; size < maxNgramSize; size++) {
-                    // if the buffer is not full...
-                    if (buffer[size].size() < size + 1) {
-                        buffer[size].add(word);
-                    } else {
-                        // removing the head of the list
-                        buffer[size].remove(0);
-                        buffer[size].add(word);
-                    }
-                    if (i >= size) {
-                        Integer nounValue = EvaluatePos(buffer[size]);
-                        if (nounValue > 0) {
-                            // TO-DO : Generate the N-Gram
-                        }
-                    }
-                }
-            }
+        // load the database, then
+        // TODO: handle exceptions better
+        try {
+            loadDatabase();
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(DefaultNGramGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
 
-    private Integer EvaluatePos(List<Token> candidate) {
+        // do the actual nGram generation.
+        spotNGrams(component);
+
+    }
+    
+    /**
+     * Checks if a list of POS-tagged tokens contains a n-gram that could be
+     * a valid keyphrase. 
+     * 
+     * @param candidate the list of tokens candidate to be a keyphrase
+     * @return true if the tokens' POS pattern is in the database.
+     */
+    private boolean checkCandidateNGram(List<Token> candidate) {
         // building the tagged String by merging the positions of the array
         String taggedString = "";
         for (int i = 0; i < candidate.size(); i++) {
@@ -152,23 +105,116 @@ public class DefaultNGramGenerator extends NGramGenerator {
             }
         }
 
-        // now dead simple
+        // check if the pattern is contained in the database
         Integer nounValue;
         if (validPOSPatterns.containsKey(taggedString)) {
             nounValue = validPOSPatterns.get(taggedString);
         } else {
             nounValue = -1;
-
         }
-        return nounValue;
+        
+        // if the pattern is in the database AND contains a noun, then
+        // it's a nGram that could be a keyphrase.        
+        return nounValue > 0;
     }
 
-    private DocumentComponent getDocument() {
-        return BlackBoard.Instance().getStructure();
+    /**
+     * Loads the nGram database according to the path and language specified in the
+     * constructor.
+     * 
+     * @throws IOException if the database file is nonexistent or non accessible
+     * @throws ParseException if the database file is malformed
+     * @throws NullPointerException if the language requested is not in the database
+     */
+    private void loadDatabase() throws IOException, ParseException {
+        // Get the POS pattern file and parse it.
+        BufferedReader reader = new BufferedReader(new FileReader(posDatabasePath));
+
+        Object obj = (new JSONParser()).parse(reader);
+        JSONObject fileblock = (JSONObject) obj;
+        JSONArray pagesBlock = (JSONArray) fileblock.get("languages");
+
+        // Find the required language in the specified file
+        Iterator<JSONObject> iterator = pagesBlock.iterator();
+        JSONObject languageBlock = null;
+        while (iterator.hasNext()) {
+            languageBlock = (iterator.next());
+            String currLanguage = (String) languageBlock.get("language");
+            if (currLanguage.equals(language)) {
+                break;
+            }
+        }
+
+        // If the language is not supported by the database, stop the execution.
+        if (languageBlock == null) {
+            throw new NullPointerException("Language " + language + " not found in file " + posDatabasePath);
+        }
+
+        JSONArray patternBlock = (JSONArray) languageBlock.get("patterns");
+        Iterator<JSONObject> patternIterator = patternBlock.iterator();
+        
+        // put the patterns in the hashmap
+        while (patternIterator.hasNext()) {
+            JSONObject pattern = (patternIterator.next());
+            String POSpattern = (String) pattern.get("pattern");
+            Long nounCount = (Long) pattern.get("nounCount");
+            validPOSPatterns.put(POSpattern, nounCount.intValue());
+        }
     }
 
-    private Token[] getTokens(Sentence sent) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * Performs the actual work, by checking in a document if there are valid
+     * nGram sequences that can be used as keyphrase.
+     * 
+     * @param component the DocumentComponent to analyze.
+     */
+    private void spotNGrams(DocumentComponent component) {
+
+        // are we a sentence? if yes, spot the nGrams
+        if (component.hasComponents()) {
+            List<DocumentComponent> children = component.getComponents();
+
+            // if not and we're a section, traverse the document tree recursively
+            for (DocumentComponent child : children) {
+                spotNGrams(child);
+            }
+
+        } else {
+            
+            Sentence sent = (Sentence) component;
+            List<Token> allWords = sent.getTokens();
+
+            // we keep n buffers of the last n words scanned 
+            // (where n = maxngramsize ). The first buffer is of size 1, 
+            // the second of size 2, ... and so on.
+            // then, we compare these buffers with the valid known PoS patterns
+            // and save the ngram if it matches.
+            
+            ArrayList<Token>[] lastReadBuffers = new ArrayList[maxNgramSize];
+            for (int size = 0; size < maxNgramSize; size++) {
+                lastReadBuffers[size] = new ArrayList<>();
+            }
+            for (int i = 0; i < allWords.size(); i++) {
+                Token word = allWords.get(i);
+                for (int size = 0; size < maxNgramSize; size++) {
+                    // if the buffer is not full, fill it
+                    if (lastReadBuffers[size].size() < size + 1) {
+                        lastReadBuffers[size].add(word);
+                    } else {
+                        // else, cut the head and put the new word at the tail
+                        lastReadBuffers[size].remove(0);
+                        lastReadBuffers[size].add(word);
+                    }
+                    if (i >= size) {
+                        if (checkCandidateNGram(lastReadBuffers[size])) {
+                            Gram g = new Gram(lastReadBuffers[size]);
+                            BlackBoard.Instance().addGram(component, g);
+                        }
+                    }
+                } // for
+            } // for
+        } // if 
     }
 
+    
 }

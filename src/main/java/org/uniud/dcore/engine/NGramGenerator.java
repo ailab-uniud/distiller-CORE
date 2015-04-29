@@ -21,6 +21,8 @@
  */
 package org.uniud.dcore.engine;
 
+import org.uniud.dcore.persistence.DocumentComponent;
+
 /**
  * This module generates the n-grams of the document, using the 
  * {@link org.uniud.dcore.persistence.Annotation}s produced by the
@@ -35,8 +37,8 @@ package org.uniud.dcore.engine;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public abstract class NGramGenerator {
+public interface NGramGenerator {
     
-    public abstract void generateNGrams();
+    public abstract void generateNGrams(DocumentComponent component);
     
 }

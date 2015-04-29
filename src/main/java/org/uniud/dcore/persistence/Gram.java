@@ -52,7 +52,7 @@ public class Gram {
         words.addAll(sequence);
         //features = new HashMap<String, Double>();
         features = new FeatureContainer();
-        appareances = new ArrayList<DocumentComponent>();
+        appareances = new ArrayList<>();
     }
      
     public String getSignature() {
