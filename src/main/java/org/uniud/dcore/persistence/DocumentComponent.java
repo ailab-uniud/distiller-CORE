@@ -46,6 +46,7 @@ public abstract class DocumentComponent {
         this.language = language;
     }
     
+    
     public DocumentComponent(String text) {
         this(text,null);
     }
@@ -62,6 +63,14 @@ public abstract class DocumentComponent {
     
     public String getText() {
         return text;
+    }
+    
+    public void setLanguage(Locale language) {
+        this.language = language;
+        if (hasComponents()) {
+            for (DocumentComponent c : getComponents())
+                c.setLanguage(language);
+        }
     }
     
     public boolean hasComponents() {

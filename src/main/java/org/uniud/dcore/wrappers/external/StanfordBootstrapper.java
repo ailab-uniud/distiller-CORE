@@ -22,7 +22,7 @@
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
 
-package org.uniud.dcore.wrappers.stanford;
+package org.uniud.dcore.wrappers.external;
 
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;

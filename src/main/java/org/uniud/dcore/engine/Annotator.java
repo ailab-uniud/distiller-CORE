@@ -41,7 +41,7 @@ public interface Annotator {
      * @param the component to annotate.
      * @return
      */
-    public void annotate(DocumentComponent component);
+    public void annotate(DocumentComponent component) ;
     
     
 }
