@@ -26,7 +26,7 @@ import org.uniud.dcore.persistence.DocumentComponent;
 /**
  * This module generates the n-grams of the document, using the 
  * {@link org.uniud.dcore.persistence.Annotation}s produced by the
- * {@link org.uniud.dcore.engine.PreProcessor} and assigns them
+ * {@link org.uniud.dcore.engine.PreProcessor} and assigning them
  * {@link org.uniud.dcore.persistence.Feature}s accordingly. 
  * 
  * To correctly evaluate annotations, the module must know their syntax.

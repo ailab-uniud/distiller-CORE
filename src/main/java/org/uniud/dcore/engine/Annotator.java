@@ -21,11 +21,11 @@ import org.uniud.dcore.persistence.DocumentComponent;
 
 
 /**
- * The Annotator interface should be implemented by any class that reads the whole text
- * and produces an annotated version of it.
+ * The Annotator interface should be implemented by any class that reads 
+ * the whole text (or parts of it) and produces annotations over it.
  * 
- * Part-Of-Speech taggers and Named-Entity-Recognition modules are examples of annotators.
- * 
+ * Part-Of-Speech taggers and Named-Entity-Recognition modules are examples
+ * of annotators.
  * 
  * @author Marco Basaldella, Dario De Nart
  */
@@ -38,10 +38,9 @@ public interface Annotator {
      * then return the annotated object to the caller, that writes it on the 
      * {@link org.uniud.dcore.engine.BlackBoard}.
      * 
-     * @param the component to annotate.
-     * @return
+     * @param component component to annotate.
      */
-    public void annotate(DocumentComponent component) ;
+    public void annotate(DocumentComponent component);
     
     
 }

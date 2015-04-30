@@ -32,12 +32,22 @@ import org.uniud.dcore.persistence.AnnotatorException;
 import org.uniud.dcore.persistence.DocumentComponent;
 
 /**
- *
+ * Wrapper for the Cybozu Language Detector Library.
+ * 
  * @author Marco Basaldella
+ * @see <a href="https://code.google.com/p/language-detection/">language-detection</a>
  */
 public class CybozuLanguageDetector implements Annotator {
 
 
+    /**
+     * Wraps the Cybozu lybrary and detects the language over a specified
+     * text.
+     * 
+     * @param text the text to analyze.
+     * @return the code of the language detected
+     * @throws LangDetectException 
+     */
     public String detect(String text) throws LangDetectException {
         
         // retrieve the language database embedded in the jar
@@ -48,6 +58,15 @@ public class CybozuLanguageDetector implements Annotator {
         return detector.detect();
     }
     
+    /**
+     * Wraps the Cybozu lybrary and detects the most used probable language 
+     * of the specified {@link org.uniud.dcore.persistence.DocumentComponent}.
+     * Note: the component supports only components written in a single language
+     * and with no children.
+     * 
+     * @param component
+     * @throws AnnotatorException 
+     */
     @Override
     public void annotate(DocumentComponent component) throws AnnotatorException {
         

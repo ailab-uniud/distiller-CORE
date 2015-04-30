@@ -89,9 +89,15 @@ public class Distiller {
                 
         BlackBoard.Instance().createDocument(text);
         
+        // *** STEP 1 *** //
+        // Language recognition. 
+        
         languageDetector.annotate(BlackBoard.Instance().getStructure());
         
-        // now the language detector may have detected one or more languages in
+        // *** STEP 2 *** //
+        // Splitting and annotation.        
+        
+        // Now the language detector may have detected one or more languages in
         // the document, so it may or may have not splitted the document in one
         // or more subsections.
         
@@ -124,9 +130,15 @@ public class Distiller {
         System.out.println("Detected sentences: " + BlackBoard.Instance().getStructure().getComponents().size());
 
         System.out.println(getAnnotatedComponent(BlackBoard.Instance().getStructure()));
-//        preProcessor.generateAnnotations();
-//        gramGenerator.generateNGrams();
-//        evaluator.run();
+        
+        // *** STEP 3 *** //
+        // N-gram generation.
+        
+        
+        // *** STEP 4 *** //
+        // Evaluation and scoring.
+        
+
     }
 
 }

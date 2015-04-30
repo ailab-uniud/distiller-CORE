@@ -43,11 +43,21 @@ import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
 /**
+ * A bootstrapper annotator for the English language developed using the 
+ * Stanford Core NLP library. The annotator splits the document, performs PoS
+ * tagging and Named Entity Recognition. This annotator supports only the 
+ * English language.
  *
  * @author Marco Basaldella
  */
 public class StanfordBootstrapper implements Annotator {
 
+    /**
+     * Annotate the document by splitting the document, performing PoS tagging  
+     * and Named Entity Recognition using the Stanford Core NLP tools.
+     * 
+     * @param component the component to annotate.
+     */
     @Override
     public void annotate(DocumentComponent component) {
 
@@ -101,7 +111,6 @@ public class StanfordBootstrapper implements Annotator {
 
             ((DocumentComposite) component).addComponent(distilledSentence);
         }
-
     }
 
 }
