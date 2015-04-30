@@ -95,6 +95,7 @@ public class Distiller {
     public void extract(String text){
                 
         BlackBoard.Instance().createDocument(text);
+        boolean singleLanguage = true;
         
         // *** STEP 1 *** //
         // Language recognition. 
@@ -108,11 +109,15 @@ public class Distiller {
         // the document, so it may or may have not splitted the document in one
         // or more subsections.
         
-        if (BlackBoard.Instance().getStructure().getComponents().size() > 0) {
+        singleLanguage = 
+                BlackBoard.Instance().getStructure().getComponents().isEmpty();
+        
+        if (!singleLanguage) {
             // complex case: the text has been splitted
             // we have to iterate between the different components, 
             // iterate between the different preprocessors and apply the
             // one with the matching language
+            
             for (DocumentComponent c : BlackBoard.Instance().
                     getStructure().getComponents()) {
                 for (PreProcessor p : preProcessors) {
