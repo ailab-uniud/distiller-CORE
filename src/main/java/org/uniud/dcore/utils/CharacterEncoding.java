@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
+// TO-DO: produce some decent comments for this class
+
 /**
  * The FINAL SOLUTION to character encoding issues. STFU & GTFO
  *

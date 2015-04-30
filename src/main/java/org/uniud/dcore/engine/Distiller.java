@@ -23,6 +23,8 @@ package org.uniud.dcore.engine;
 
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.uniud.dcore.persistence.DocumentComponent;
 import static org.uniud.dcore.utils.DocumentUtils.getAnnotatedComponent;
 
@@ -85,6 +87,11 @@ public class Distiller {
         this.locale = locale;
     }
     
+    /**
+     * Perform the extraction of keyphrases of a specified string.
+     * 
+     * @param text the text to distill.
+     */
     public void extract(String text){
                 
         BlackBoard.Instance().createDocument(text);
@@ -140,5 +147,18 @@ public class Distiller {
         
 
     }
+    
+    // <editor-fold desc="Support methods">
+    /**
+     * Instantiates a Distiller object using the default configuration and 
+     * returns it.
+     * 
+     * @return a Distiller ready to work.
+     */
+    public static Distiller getDefault() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("bean.xml");
+        return (Distiller) context.getBean("distiller");
+    }    
+    // </editor-fold>
 
 }
