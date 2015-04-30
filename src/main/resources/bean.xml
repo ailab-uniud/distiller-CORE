@@ -31,21 +31,32 @@
   <bean id="dantesplitter" class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>
   <bean id="stanford" class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
   <bean id="tagme" class="org.uniud.dcore.annotation.TagMeAnnotator" />
+  <bean id="cybozu" class="org.uniud.dcore.wrappers.external.CybozuLanguageDetector"/>
   <bean id="nGramGenerator" class="org.uniud.dcore.defaultImplementation.DefaultNGramGenerator" >
       <constructor-arg value="/"/>
       <constructor-arg value="en"/>          
   </bean>
-   
   
-  <!-- The main object, the distiller, that receives the annotations defined before -->
-  <bean id="distiller" class="org.uniud.dcore.engine.Distiller">
-    <property name="annotators">
+  <bean id="engPreprocessor" class="org.uniud.dcore.engine.PreProcessor">
+      <property name="languageTag" value="en"/>
+      <property name="annotators">
         <list>
             <ref bean="stanford" />
             <ref bean="tagme" />
         </list>
     </property>
-    
+  </bean>
+  
+   
+  
+  <!-- The main object, the distiller, that receives the annotations defined before -->
+  <bean id="distiller" class="org.uniud.dcore.engine.Distiller">
+    <property name="languageDetector" ref="cybozu"/>
+    <property name="preProcessors">
+        <list>
+            <ref bean="engPreprocessor"/>
+        </list>
+    </property>
   </bean>
    
 </beans>

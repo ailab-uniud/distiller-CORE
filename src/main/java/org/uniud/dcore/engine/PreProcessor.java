@@ -21,6 +21,10 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.Locale;
+import org.springframework.beans.factory.annotation.Required;
+import org.uniud.dcore.persistence.DocumentComponent;
+
 /**
  * The PreProcessor analyzes the document and annotates it with PoS tags, stems,
  * entities and other annotators. 
@@ -31,8 +35,35 @@ package org.uniud.dcore.engine;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public abstract class PreProcessor {
+public class PreProcessor {
     
-    public abstract void generateAnnotations();
+    private Annotator[] annotators;
+    private Locale language;
     
+    // <editor-fold desc="getters and setters">
+    @Required
+    public void setAnnotators(Annotator[] annotators) {
+        this.annotators = annotators;
+    }
+    
+    public void setLanguage(Locale language) {
+        this.language = language;
+    }
+    
+    @Required
+    public void setLanguageTag(String language) {
+        this.language = Locale.forLanguageTag(language);
+    }
+    
+    public Locale getLanguage() {
+        return language;
+    }
+           
+    // </editor-fold>
+    
+    public void generateAnnotations(DocumentComponent c) {
+        for (Annotator a : annotators) {
+            a.annotate(c);
+        }
+    }
 }

@@ -73,6 +73,12 @@ public abstract class DocumentComponent {
         }
     }
     
+    
+    public Locale getLanguage() {
+        return this.language;
+    }
+    
+    
     public boolean hasComponents() {
         List<DocumentComponent> comps = getComponents();
         return !(comps == null);
@@ -105,5 +111,5 @@ public abstract class DocumentComponent {
     public String toString() {
         return text;
     }
-    
+
 }

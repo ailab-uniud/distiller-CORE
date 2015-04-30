@@ -39,7 +39,10 @@ public class CybozuLanguageDetector implements Annotator {
 
 
     public String detect(String text) throws LangDetectException {
-        DetectorFactory.loadProfile("trunk/profile");
+        
+        // retrieve the language database embedded in the jar
+        DetectorFactory.loadProfile(
+            getClass().getClassLoader().getResource("cybozu").getFile());
         Detector detector = DetectorFactory.create();
         detector.append(text);
         return detector.detect();
@@ -54,11 +57,9 @@ public class CybozuLanguageDetector implements Annotator {
         } catch (LangDetectException ex) {
             throw new AnnotatorException("CybozuLanguageDetector - error during language detection",ex);
         }
-
         if (lang.isEmpty()) {
             throw new AnnotatorException("CybozuLanguageDetector could not detect a language");
-        }
-        
+        }        
         Locale loc = Locale.forLanguageTag(lang);
         component.setLanguage(loc);
     }
