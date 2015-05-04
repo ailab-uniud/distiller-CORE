@@ -39,6 +39,13 @@ import org.uniud.dcore.persistence.DocumentComponent;
  */
 public class CybozuLanguageDetector implements Annotator {
 
+    /**
+     * The Cybozu detector object. The field is marked static to be optimized
+     * for re-use, so that subsequent calls of annotate() don't have to reload
+     * definitions every time, even for different instances of the annotator..
+     */
+    Detector detector = null;
+    
 
     /**
      * Wraps the Cybozu lybrary and detects the language over a specified
@@ -46,18 +53,20 @@ public class CybozuLanguageDetector implements Annotator {
      * 
      * @param text the text to analyze.
      * @return the code of the language detected
-     * @throws LangDetectException 
+     * @throws LangDetectException
      */
     public String detect(String text) throws LangDetectException {
-        
-        // retrieve the language database embedded in the jar
-        DetectorFactory.loadProfile(
-            getClass().getClassLoader().getResource("cybozu").getFile());
-        Detector detector = DetectorFactory.create();
+
+        if (detector == null) {
+            // retrieve the language database embedded in the jar
+            DetectorFactory.loadProfile(
+                    getClass().getClassLoader().getResource("cybozu").getFile());
+            detector = DetectorFactory.create();
+        }
         detector.append(text);
         return detector.detect();
     }
-    
+
     /**
      * Wraps the Cybozu lybrary and detects the most used probable language 
      * of the specified {@link org.uniud.dcore.persistence.DocumentComponent}.

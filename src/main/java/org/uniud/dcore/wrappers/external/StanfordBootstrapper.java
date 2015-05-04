@@ -51,6 +51,13 @@ import org.uniud.dcore.persistence.Token;
  * @author Marco Basaldella
  */
 public class StanfordBootstrapper implements Annotator {
+    
+    /**
+     * The Stanford NLP pipeline. The field is marked static to be optimized
+     * for re-use, so that subsequent calls of annotate() don't have to reload
+     * definitions every time, even for different instances of the annotator.
+     */
+    private static StanfordCoreNLP pipeline = null;
 
     /**
      * Annotate the document by splitting the document, performing PoS tagging  
@@ -61,10 +68,14 @@ public class StanfordBootstrapper implements Annotator {
     @Override
     public void annotate(DocumentComponent component) {
 
-        // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        
+        
+        if (pipeline == null) {
+            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
+            Properties props = new Properties();
+            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
+            pipeline = new StanfordCoreNLP(props);
+        }
 
         // read some text in the text variable
         String text = component.getText();
