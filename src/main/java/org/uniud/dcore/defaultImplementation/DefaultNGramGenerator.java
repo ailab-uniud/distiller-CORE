@@ -51,9 +51,16 @@ public class DefaultNGramGenerator implements NGramGenerator {
     /**
      * Path to the local POS Pattern JSON file.
      */
-    private final String posDatabasePath;
+    private String posDatabasePath;
 
-    private final String language;
+    /**
+     * The languages that the n-gram generator will process.
+     */
+    private List<Locale> languages;
+    
+    /**
+     * The POS patterns found.
+     */
     private final HashMap<String, Integer> validPOSPatterns;
     private int maxNgramSize;
 
@@ -62,14 +69,20 @@ public class DefaultNGramGenerator implements NGramGenerator {
      * loaded until the actual extraction is performed.
      * 
      * @param posDatabasePath the path of the JSON file used as database
-     * @param language the language in which the generation will be performed
      */
-    public DefaultNGramGenerator(String posDatabasePath, Locale language) {
+    public DefaultNGramGenerator(String posDatabasePath) {
 
         validPOSPatterns = new HashMap<>();
+        languages = new ArrayList<>();
+        maxNgramSize = 3;
         this.posDatabasePath = posDatabasePath;
-        this.language = language.getLanguage();
-
+    }
+    
+    public DefaultNGramGenerator() {
+        // a neat trick to load the database: instead of doing this.getClass(), 
+        // since you can't use this in a constructor call (like this(this.. )), 
+        // we call getClass on the BlackBoard instance.
+        this((BlackBoard.Instance().getClass().getClassLoader().getResource("ailab/posPatterns.json").getFile()));
     }
 
     @Override
@@ -78,7 +91,7 @@ public class DefaultNGramGenerator implements NGramGenerator {
         // load the database, then
         // TODO: handle exceptions better
         try {
-            loadDatabase();
+            loadDatabase(component.getLanguage());
         } catch (IOException | ParseException ex) {
             Logger.getLogger(DefaultNGramGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -122,11 +135,12 @@ public class DefaultNGramGenerator implements NGramGenerator {
      * Loads the nGram database according to the path and language specified in the
      * constructor.
      * 
+     * @param lang the language to search in the database
      * @throws IOException if the database file is nonexistent or non accessible
      * @throws ParseException if the database file is malformed
      * @throws NullPointerException if the language requested is not in the database
      */
-    private void loadDatabase() throws IOException, ParseException {
+    private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
         BufferedReader reader = new BufferedReader(new FileReader(posDatabasePath));
 
@@ -140,14 +154,14 @@ public class DefaultNGramGenerator implements NGramGenerator {
         while (iterator.hasNext()) {
             languageBlock = (iterator.next());
             String currLanguage = (String) languageBlock.get("language");
-            if (currLanguage.equals(language)) {
+            if (currLanguage.equals(lang.getLanguage())) {
                 break;
             }
         }
 
         // If the language is not supported by the database, stop the execution.
         if (languageBlock == null) {
-            throw new NullPointerException("Language " + language + " not found in file " + posDatabasePath);
+            throw new NullPointerException("Language " + lang.getLanguage() + " not found in file " + posDatabasePath);
         }
 
         JSONArray patternBlock = (JSONArray) languageBlock.get("patterns");
@@ -214,6 +228,17 @@ public class DefaultNGramGenerator implements NGramGenerator {
                 } // for
             } // for
         } // if 
+    }
+
+    @Override
+    public void setGramLanguages(List<Locale> langs) {
+        this.languages = langs;
+            
+    }
+
+    @Override
+    public List<Locale> getGramLanguages() {
+        return this.languages;
     }
 
     

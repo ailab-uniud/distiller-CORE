@@ -17,7 +17,6 @@
 package org.uniud.dcore.persistence;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -107,6 +106,7 @@ public class Sentence extends DocumentComponent {
      * @param language the language of the sentence.
      * @throws IllegalStateException if the language is set more than once.
      */
+    @Override
     public void setLanguage(Locale language) throws IllegalStateException {
         if (this.language == null) {
             this.language = language;

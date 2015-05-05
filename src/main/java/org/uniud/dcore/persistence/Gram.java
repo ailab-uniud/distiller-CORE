@@ -23,7 +23,6 @@ package org.uniud.dcore.persistence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.*;
 
@@ -46,17 +45,30 @@ public class Gram {
     
     
     
-    // CONSTRUCTOR and type management
+    /**
+     * A n-gram, which is composed by a list of sequences, and has a list of 
+     * features.
+     * 
+     * @param sequence 
+     */
     public Gram(List<Token> sequence) {
         words= new ArrayList<>();
         words.addAll(sequence);
+        identifier = "";
         //features = new HashMap<String, Double>();
         features = new FeatureContainer();
         appareances = new ArrayList<>();
     }
      
     public String getSignature() {
-        // TODO: generate a consistent signature
+        // lazily generate the identifier
+        if (identifier.isEmpty())
+        {
+            identifier = identifier + words.get(0).getText();
+            for (int i = 1; i < words.size(); i++)
+                identifier = identifier + " " + words.get(i).getStem();
+        }
+        
         return this.identifier; 
     }
 
@@ -112,7 +124,7 @@ class FeatureContainer {
     private HashMap<String,Double> container;
     
     public FeatureContainer() {
-        container = new HashMap<String,Double>();
+        container = new HashMap<>();
     }
     
     public void put(Feature f) {

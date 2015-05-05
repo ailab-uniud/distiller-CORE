@@ -41,7 +41,7 @@ public abstract class DocumentComponent {
     private Locale language;
     
     public DocumentComponent(String text,Locale language) {
-        GramIDs = new ArrayList<String>();
+        GramIDs = new ArrayList<>();
         this.text = text;
         this.language = language;
     }

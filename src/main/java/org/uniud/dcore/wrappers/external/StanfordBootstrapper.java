@@ -1,5 +1,3 @@
-
-
 /*
  * 	Copyright (C) 2015 Artificial Intelligence
  * 	Laboratory @ University of Udine.
@@ -24,6 +22,7 @@
 
 package org.uniud.dcore.wrappers.external;
 
+import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -105,15 +104,14 @@ public class StanfordBootstrapper implements Annotator {
                 
                 Token t = new Token(word);                
                 
-                // this is the POS tag of the token
-                String pos = token.get(PartOfSpeechAnnotation.class);
+                // this is the POS tag of the token                
+                t.setPoS(token.get(PartOfSpeechAnnotation.class));
                 
-                t.setPoS(pos);
+                // this is the Stem
+                t.setStem(token.get(LemmaAnnotation.class));
                                 
                 // this is the NER label of the token
                 String ne = token.get(NamedEntityTagAnnotation.class);
-                
-                
                 t.addAnnotation(
                     new org.uniud.dcore.persistence.Annotation("StanfordNER",word,ne));
                 

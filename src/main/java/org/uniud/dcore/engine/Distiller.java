@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.Gram;
 import static org.uniud.dcore.utils.DocumentUtils.getAnnotatedComponent;
 
 /**
@@ -40,7 +41,7 @@ public class Distiller {
     // all these fields will be injected via setter method
     private Annotator languageDetector;
     private PreProcessor[] preProcessors;
-    private NGramGenerator gramGenerator;
+    private NGramGenerator[] gramGenerators;
     private Evaluator evaluator;
     private String locale;
 
@@ -50,8 +51,8 @@ public class Distiller {
     }
     
     @Required
-    public void setGramGenerator(NGramGenerator gramGenerator) {
-        this.gramGenerator = gramGenerator;
+    public void setGramGenerators(NGramGenerator gramGenerators[]) {
+        this.gramGenerators = gramGenerators;
     }
     
     @Required
@@ -138,13 +139,45 @@ public class Distiller {
                 }
             }
         }
-
-        System.out.println("Detected sentences: " + BlackBoard.Instance().getStructure().getComponents().size());
-
-        System.out.println(getAnnotatedComponent(BlackBoard.Instance().getStructure()));
+        
+//        System.out.println("Detected sentences: " + BlackBoard.Instance().getStructure().getComponents().size());
+//
+//        System.out.println(getAnnotatedComponent(BlackBoard.Instance().getStructure()));
         
         // *** STEP 3 *** //
         // N-gram generation.
+        
+        if (!singleLanguage) {
+            // same as step 2
+            
+            // warning: it will be used the FIRST n-gram generator that
+            // matches the desired language
+            
+            for (DocumentComponent c : BlackBoard.Instance().
+                    getStructure().getComponents()) {
+                for (NGramGenerator g:  gramGenerators) {
+                    if (g.getGramLanguages().contains(c.getLanguage())) {
+                        g.generateNGrams(c);
+                        break;
+                    }
+                }
+
+            }
+        } else {
+            for (NGramGenerator g : gramGenerators) {
+                if (g.getGramLanguages().contains(BlackBoard.Instance().getStructure().getLanguage())) {
+                    g.generateNGrams(BlackBoard.Instance().getStructure());
+                    break;
+                }
+            }
+        }
+        
+        System.out.println("Detected grams: " + BlackBoard.Instance().getGrams().size());
+        
+        for (Gram g : BlackBoard.Instance().getGrams().values())
+            System.out.print(g.getSignature() + ", ");
+        
+        System.out.println();
         
         
         // *** STEP 4 *** //

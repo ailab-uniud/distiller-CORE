@@ -22,7 +22,8 @@
 
 package org.uniud.dcore.engine;
 
-import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.DocumentComposite;
 import org.uniud.dcore.persistence.Feature;
@@ -44,7 +45,9 @@ public class BlackBoard {
     /**
      * Private constructor for the singleton design pattern.
      */
-    private BlackBoard() { }
+    private BlackBoard() { 
+        gramContainer = new HashMap<>();
+    }
         
     /**
      * The singleton of the class. 
@@ -68,11 +71,11 @@ public class BlackBoard {
     /**
      * Container for the annotations of the document.
      */
-    private AbstractMap<String,Feature> AnnotationContainer;
+    private Map<String,Feature> AnnotationContainer;
     /**
      * Container for the n-grams of the document.
      */
-    private AbstractMap<String,Gram> GramContainer;
+    private Map<String,Gram> gramContainer;
         
     
     public void createDocument(String rawText)
@@ -97,10 +100,11 @@ public class BlackBoard {
      */
     public void addGram(DocumentComponent unit,Gram newGram) {        
         
-        Gram gram = GramContainer.get(newGram.getSignature());
+        Gram gram = gramContainer.get(newGram.getSignature());
         
         if (gram == null) {
-            gram = GramContainer.put(newGram.getSignature(), newGram);
+            gramContainer.put(newGram.getSignature(), newGram);
+            gram = newGram;
         }
         
         gram.addAppaerance(unit);
@@ -112,8 +116,8 @@ public class BlackBoard {
      * 
      * @return an array of {@link org.uniud.dcore.persistence.Gram}s.
      */
-    public Gram[] getGrams() {
-        return GramContainer.values().toArray(new Gram[GramContainer.size()]);
+    public Map<String,Gram> getGrams() {
+        return gramContainer;
     }
 
 }

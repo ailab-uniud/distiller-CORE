@@ -21,6 +21,8 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.List;
+import java.util.Locale;
 import org.uniud.dcore.persistence.DocumentComponent;
 
 /**
@@ -38,7 +40,36 @@ import org.uniud.dcore.persistence.DocumentComponent;
  * @author Dario De Nart
  */
 public interface NGramGenerator {
-    
+        
+    /**
+     * Generates the n-grams of a {@link org.uniud.dcore.persistence.DocumentComponent}
+     * by using the POS patterns and other annotations produced by the Annotators.
+     * A NGram generator should offer support for a set of languages, so the 
+     * Engine can decide what generator should use if there are more than one.
+     * 
+     * @param component 
+     */
     public abstract void generateNGrams(DocumentComponent component);
+    
+    /**
+     * Sets the languages that the n-gram generator should process in a determined
+     * execution pipeline. Note that these languages can be a subset of the 
+     * languages effectively supported by the generator, but a specific pipeline
+     * can purposely ignore them. As an example, we may have two generators that
+     * both support English and Klingon; but only one of them should run in a
+     * language pipeline, so one will be used with language "en" and the other
+     * with language "tlh" (the ISO 639-2 code for the Klingon language).
+     * 
+     * @param langs the languages that the generator will process.
+     */
+    public abstract void setGramLanguages(List<Locale> langs);
+    
+    /**
+     * Gets the languages that the n-gram generator should process in a determined
+     * execution pipeline.
+     * 
+     * @return the languages that the generator will process.
+     */
+    public abstract List<Locale> getGramLanguages();
     
 }

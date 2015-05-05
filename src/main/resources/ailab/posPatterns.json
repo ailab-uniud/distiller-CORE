@@ -1,0 +1,925 @@
+{ 
+	"languages":[
+			{ 
+				"language": "en",
+				"patterns":[
+				 {
+					"pattern":"NN",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"NNS",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"NNP",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"NNPS",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NN",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNS",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/VB",
+					"nounCount": 0
+				 },
+				 				 {
+					"pattern":"JJ/VBG",
+					"nounCount": 0
+				 },
+				 				 {
+					"pattern":"JJ/NNP",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNPS",
+					"nounCount": 1
+				 },
+				  				 {
+					"pattern":"NNS/NN",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NNS/NNS",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NNS/VB",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"NNS/VBG",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"NNS/NNP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NNS/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NN/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NN/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNP/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNP/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNPS/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNPS/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNPS",
+					"nounCount": 2
+				 },
+				 
+				 {
+					"pattern":"JJ/NN/VB",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNS/VB",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNP/VB",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNPS/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"JJ/JJ/VB",
+					"nounCount": 0
+				 },
+				 {
+					"pattern":"NNS/NN/VB",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NNS/NNS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNS/NNP/VB",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NNS/NNPS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNS/JJ/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NN/NN/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNP/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNPS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/JJ/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNP/NN/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNP/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNPS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/JJ/VB",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNPS/NN/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNP/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNPS/VB",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/JJ/VB",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NN/VBG",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNS/VBG",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNP/VBG",
+					"nounCount": 1
+				 },
+				 				 {
+					"pattern":"JJ/NNPS/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"JJ/JJ/VBG",
+					"nounCount": 0
+				 },
+				 {
+					"pattern":"NNS/NN/VBG",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NNS/NNS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNS/NNP/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNS/NNPS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNS/JJ/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NN/NN/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNP/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NNPS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/JJ/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNP/NN/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNP/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NNPS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/JJ/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNPS/NN/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNP/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NNPS/VBG",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/JJ/VBG",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"JJ/NN/NN",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNS/NN",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNP/NN",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNPS/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/JJ/NN",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNS/NN/NN",
+					"nounCount": 3
+				 },
+				 				 {
+					"pattern":"NNS/NNS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNP/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNPS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/JJ/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NN/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNP/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNPS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/JJ/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NN/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNP/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNPS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/JJ/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NN/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNP/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNPS/NN",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/JJ/NN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/NN/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/NNS/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/NNP/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/NNPS/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/JJ/NNS",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNS/NN/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNP/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNPS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/JJ/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NN/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNP/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNPS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/JJ/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NN/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNP/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNPS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/JJ/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NN/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNP/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNPS/NNS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/JJ/NNS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/NN/NNPS",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNS/NNPS",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNP/NNPS",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNPS/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/JJ/NNPS",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNS/NN/NNPS",
+					"nounCount": 3
+				 },
+				 				 {
+					"pattern":"NNS/NNS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNP/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNPS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/JJ/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NN/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNP/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNPS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/JJ/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NN/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNP/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNPS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/JJ/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NN/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNP/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNPS/NNPS",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/JJ/NNPS",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/NN/NNP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNS/NNP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNP/NNP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"JJ/NNPS/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"JJ/JJ/NNP",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NNS/NN/NNP",
+					"nounCount": 3
+				 },
+				 				 {
+					"pattern":"NNS/NNS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNP/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/NNPS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNS/JJ/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NN/NN/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNP/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/NNPS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NN/JJ/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNP/NN/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNP/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/NNPS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNP/JJ/NNP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NNPS/NN/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNP/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/NNPS/NNP",
+					"nounCount": 3
+				 },
+				 {
+					"pattern":"NNPS/JJ/NNP",
+					"nounCount": 2
+				 }
+				]
+			},
+			{
+				"language": "it-tree",
+				"patterns":[
+				 {
+					"pattern":"NPR",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOM",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOM/ADJ",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"ADJ/NOM",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOM/NOM",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NPR/NOM",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NPR/NPR",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NOM/NPR",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOM/PRE/NOM",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOM/PRE/NPR",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOM/PRE/NOM/NOM",
+					"nounCount": 3
+				 }
+				 
+				]
+			},
+                        {
+				"language": "itwac",
+				"patterns":[
+				 {
+					"pattern":"NPR",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOUN",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOUN/ADJ",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"ADJ/NOUN",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOUN/NOUN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NPR/NOUN",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NPR/NPR",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NOUN/NPR",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOUN/PRE/NOUN",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOUN/PRE/NPR",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOUN/PRE/NOUN/NOUN",
+					"nounCount": 3
+				 }
+				 
+				]
+			},
+                        {
+				"language": "it",
+				"patterns":[
+				 {
+					"pattern":"SP",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"S",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"S/A",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"A/N",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"S/S",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"SP/S",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"SP/SP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"S/SP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"S/E/S",
+					"nounCount": 2
+				 },
+                                 			 {
+					"pattern":"S/EA/S",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"S/E/SP",
+					"nounCount": 2
+				 },
+                                  				 {
+					"pattern":"S/EA/SP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"S/E/S/S",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/EA/S/S",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/EA/S/SP",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/E/S/SP",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/EA/SP/SP",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/E/SP/SP",
+					"nounCount": 3
+				 }
+				 
+				]
+			}
+		]
+}
+				 
