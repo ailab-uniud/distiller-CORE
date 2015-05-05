@@ -21,9 +21,15 @@
  */
 package org.uniud.dcore.grams;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.springframework.beans.factory.annotation.Required;
+import org.uniud.dcore.engine.BlackBoard;
 import org.uniud.dcore.engine.Evaluator;
 import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;
 
 /**
@@ -31,10 +37,32 @@ import org.uniud.dcore.persistence.Gram;
  * @author Marco Basaldella
  */
 public class LinearEvaluator extends Evaluator {
+    
+    private Map<String,Double> weights;
+    
+    @Required
+    public void setWeights(HashMap<String,Double> weights) {
+        this.weights = weights;
+    }
 
     @Override
     public Map<Gram, Double> Score(DocumentComponent c) {
-        return null;
-    }
-    
+        generateAnnotations(c);
+        
+        HashMap<Gram,Double> scoredGrams = new HashMap<>();
+        
+        for(Gram g : BlackBoard.Instance().getGrams().values())
+        {
+            double score = 0;
+            for (Feature f : g.getFeatures()) {
+                if (weights.containsKey(f.getType())) {
+                    score += f.getValue() * weights.get(f.getType());
+                }
+            }            
+            g.putFeature(SCORE, score);
+            scoredGrams.put(g, score);
+        }
+        
+        return scoredGrams;       
+    }    
 }

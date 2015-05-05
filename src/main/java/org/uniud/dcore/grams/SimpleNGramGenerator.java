@@ -67,7 +67,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
      * The identifier for the annotation produced by the n-gram generator, which
      * counts the number of nouns in a n-gram.
      */
-    public static final String NOUNVALUE = "nv";
+    public static final String NOUNVALUE = "NounValue";
 
     // <editor-fold desc="private fields">
     /**

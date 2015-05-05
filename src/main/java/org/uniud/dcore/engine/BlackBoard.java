@@ -82,6 +82,7 @@ public class BlackBoard {
     {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText);
+        this.gramContainer = new HashMap<>();
     }
 
     public DocumentComponent getStructure() {

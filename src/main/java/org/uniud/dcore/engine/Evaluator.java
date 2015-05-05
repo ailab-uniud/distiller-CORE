@@ -40,6 +40,8 @@ import org.uniud.dcore.persistence.Gram;
  */
 public abstract class Evaluator {
     
+    public static final String SCORE = "Score";
+    
     private Annotator[] annotators;
     private Locale language;
     

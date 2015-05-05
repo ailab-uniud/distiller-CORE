@@ -21,7 +21,11 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -171,17 +175,21 @@ public class Distiller {
             }
         }
         
-        System.out.println("Detected grams: " + BlackBoard.Instance().getGrams().size());
-        
-        for (Gram g : BlackBoard.Instance().getGrams().values())
-            System.out.print(g.getSignature() + ", ");
-        
-        System.out.println();
-        
-        
         // *** STEP 4 *** //
         // Evaluation and scoring.
         
+        Map<Gram,Double> scores = evaluator.Score(BlackBoard.Instance().getStructure());
+
+        System.out.println("** SCORES **");
+        
+        Stream<Map.Entry<Gram,Double>> ordered = 
+                scores.entrySet().stream().sorted(
+                        Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);        
+        
+        for (Map.Entry<Gram,Double> e : ordered.collect(Collectors.toList())) {
+            System.out.println(e.getKey().getSignature() + " : " + e.getValue());
+        }
+
 
     }
     
