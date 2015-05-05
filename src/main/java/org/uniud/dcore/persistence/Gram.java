@@ -81,11 +81,11 @@ public class Gram {
         features.put(f);
     }
     
-    public Feature getFeature(String featureName) {
-        return features.get(featureName);
+    public boolean hasFeature(String featureName) {
+        return features.get(featureName) != null;
     }
 
-    public double getFeatureValue(String featureName) {
+    public double getFeature(String featureName) {
         // null check; if the feature is not specified, we assume it's 0.
         if (features.get(featureName) == null) {
             return 0;

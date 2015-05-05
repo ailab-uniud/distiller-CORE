@@ -108,7 +108,7 @@ public class BlackBoard {
         }
         
         gram.addAppaerance(unit);
-        unit.addGram(gram.getSignature());
+        unit.addGram(gram);
     }
     
     /**

@@ -28,7 +28,12 @@ import org.uniud.dcore.persistence.Sentence;
 import org.uniud.dcore.persistence.Token;
 
 /**
- *
+ * Utilies for the {@link org.uniud.dcore.persistence.DocumentComponent} 
+ * interface and its composite pattern classes 
+ * {@link org.uniud.dcore.persistence.DocumentComposite} and
+ * {@link org.uniud.dcore.persistence.Sentence}, used to perform common
+ * operations on a document (or parts of it).
+ * 
  * @author Marco Basaldella
  */
 public class DocumentUtils {

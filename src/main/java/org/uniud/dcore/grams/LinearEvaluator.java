@@ -19,33 +19,22 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package org.uniud.dcore.persistence;
+package org.uniud.dcore.grams;
+
+import java.util.Map;
+import org.uniud.dcore.engine.Evaluator;
+import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.Gram;
 
 /**
  *
  * @author Marco Basaldella
  */
-public class Feature {
-    
-    private final String type;
-    private final double value;
-    
-    /**
-     * A feature.
-     * 
-     * @param type the type of the annotation.
-     * @param value the annotated text.
-     */
-    public Feature(String type,double value) {
-        this.type = type;
-        this.value = value;
+public class LinearEvaluator extends Evaluator {
+
+    @Override
+    public Map<Gram, Double> Score(DocumentComponent c) {
+        return null;
     }
     
-    public String getType() {
-        return type;
-    }
-    
-    public double getValue() {
-        return value;
-    }  
 }

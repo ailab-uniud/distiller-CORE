@@ -36,12 +36,12 @@ import java.util.Locale;
  */
 public abstract class DocumentComponent {  
 
-    private List<String> GramIDs;
+    private List<Gram> grams;
     private String text;
     private Locale language;
     
     public DocumentComponent(String text,Locale language) {
-        GramIDs = new ArrayList<>();
+        grams = new ArrayList<>();
         this.text = text;
         this.language = language;
     }
@@ -53,12 +53,12 @@ public abstract class DocumentComponent {
     
     // <editor-fold desc="getters and setters">
     
-    public void addGram(String feature) {
-        GramIDs.add(feature);
+    public void addGram(Gram g) {
+        grams.add(g);
     }
     
-    public List<String> getGrams() {
-        return GramIDs;
+    public List<Gram> getGrams() {
+        return grams;
     }
     
     public String getText() {

@@ -51,7 +51,7 @@
     
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
-          class="org.uniud.dcore.defaultImplementation.DefaultNGramGenerator" >
+          class="org.uniud.dcore.grams.SimpleNGramGenerator" >
         <property name="gramLanguages">
             <list>
                 <bean class="java.util.Locale">
@@ -60,6 +60,9 @@
             </list>
         </property>    
     </bean>
+    
+    <bean id="linearEvaluator"
+          class="org.uniud.dcore.grams.LinearEvaluator"/>
     
     <!-- The main object, the distiller, that receives the beans defined above -->
     <bean id="distiller" class="org.uniud.dcore.engine.Distiller">
@@ -74,6 +77,7 @@
                 <ref bean="nGramGenerator"/>
             </list>
         </property>
+        <property name="evaluator" ref="linearEvaluator"/>
     </bean>
    
 </beans>

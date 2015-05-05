@@ -27,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.Gram;
-import static org.uniud.dcore.utils.DocumentUtils.getAnnotatedComponent;
 
 /**
  * The keyphrase extractor object.
