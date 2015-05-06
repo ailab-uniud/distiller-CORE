@@ -21,7 +21,6 @@
  */
 package org.uniud.dcore.wrappers.linguisticutils;
 
-import static it.uniud.linguisticutils.LinguisticUtils.sentenceSplitCUE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -36,16 +35,17 @@ public class DanteSplitter extends Splitter {
 
     @Override
     protected List<DocumentComponent> Split(String rawText,Locale locale) {
-        List<String> splittedText = sentenceSplitCUE(rawText,locale);
-        
-        List<DocumentComponent> splittedDocument = new ArrayList<DocumentComponent>();
-        
-        for (String s : splittedText) {
-            DocumentComponent sentence = new Sentence(s,locale);
-            splittedDocument.add(sentence);
-        }
-        
-        return splittedDocument;
+//        List<String> splittedText = sentenceSplitCUE(rawText,locale);
+//        
+//        List<DocumentComponent> splittedDocument = new ArrayList<DocumentComponent>();
+//        
+//        for (String s : splittedText) {
+//            DocumentComponent sentence = new Sentence(s,locale);
+//            splittedDocument.add(sentence);
+//        }
+//        
+//        return splittedDocument;
+        return null;
     }
 
     @Override
