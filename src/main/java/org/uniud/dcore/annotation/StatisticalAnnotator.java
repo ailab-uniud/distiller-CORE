@@ -94,16 +94,18 @@ public class StatisticalAnnotator implements Annotator {
                 g.putFeature(DEPTH, depth);
                 
                 // check if it's the first appaerance
-                // if not, set the height
+                // if not, set the height as the depth
                 if (!g.hasFeature(HEIGHT))
-                    g.putFeature(HEIGHT, 1- depth);
+                    g.putFeature(HEIGHT, depth);
+                
+                g.putFeature(LIFESPAN, g.getFeature(HEIGHT) - g.getFeature(DEPTH));                
                 
                 if (g.hasFeature(FREQUENCY))
                     g.putFeature(FREQUENCY,g.getFeature(FREQUENCY) + 1);
                 else 
                     g.putFeature(FREQUENCY, 1);
                 
-                g.putFeature(LIFESPAN, (((double)g.getFeature(FREQUENCY)) / size));
+                
             }            
         }        
     }    
