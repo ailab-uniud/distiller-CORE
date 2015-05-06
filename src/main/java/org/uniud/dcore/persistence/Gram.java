@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.*;
+import java.util.logging.Logger;
 
 /**
  * The Gram is the data structure in which all the data concerning a NGram
@@ -66,10 +67,14 @@ public class Gram {
         {
             identifier = identifier + words.get(0).getText();
             for (int i = 1; i < words.size(); i++)
-                identifier = identifier + " " + words.get(i).getStem();
+                identifier = identifier + " " + words.get(i).getStem().toLowerCase();
         }
         
         return this.identifier; 
+    }
+    
+    public List<Token> getTokens() {
+        return words;
     }
 
     // <editor-fold desc="Feature Management">
@@ -110,7 +115,7 @@ public class Gram {
     public List<DocumentComponent> getAppaerances() {
         return appareances;
     }
-    // </editor-fold>  
+    // </editor-fold>
 }
 
 /**

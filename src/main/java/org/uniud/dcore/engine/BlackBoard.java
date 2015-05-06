@@ -22,11 +22,14 @@
 
 package org.uniud.dcore.engine;
 
+import com.rits.cloning.Cloner;
 import java.util.HashMap;
 import java.util.Map;
+import org.uniud.dcore.persistence.Annotation;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.DocumentComposite;
 import org.uniud.dcore.persistence.Gram;
+import org.uniud.dcore.persistence.Token;
 
 /**
  * The BlackBoard that holds the document and all its annotations. In every part  
@@ -112,7 +115,8 @@ public class BlackBoard {
     
     /**
      * Adds a Gram in the Gram Container. If the gram is already present, 
-     * the method updates it adding the new occurrence.
+     * the method updates it adding the new occurrence; moreover, it will write
+     * the annotations of the new gram on the stored one.
      * 
      * @param unit the concept unit where the gram appears
      * @param newGram the gram to add
@@ -121,9 +125,21 @@ public class BlackBoard {
         
         Gram gram = gramContainer.get(newGram.getSignature());
         
+        // Deep clone the object instead of referencing the found one.
+        // this way, we're free to modify it by adding annotations without
+        // modifying the old object.
         if (gram == null) {
-            gramContainer.put(newGram.getSignature(), newGram);
-            gram = newGram;
+            Gram cloned = (new Cloner()).deepClone(gram);
+            gramContainer.put(cloned.getSignature(), cloned);
+            gram = cloned;
+        } else {
+            // copy the annotations in the stored gram
+            for (int i = 0; i < newGram.getTokens().size(); i++) {
+                Token newToken = newGram.getTokens().get(i);
+                for (Annotation a : newToken.getAnnotations()) {
+                    gram.getTokens().get(i).addAnnotation(a);
+                }
+            }
         }
         
         gram.addAppaerance(unit);

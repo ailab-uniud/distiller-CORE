@@ -28,7 +28,7 @@ import java.util.List;
  *
  *
  */
-public class Token {
+public class Token implements Cloneable {
 
     private String text;
     private String stem;
@@ -66,12 +66,18 @@ public class Token {
     // <editor-fold desc="Annotations">
     
     /**
-     * Adds an annotation to the token.
+     * Adds an annotation to the token. Avoid duplicates by checking if 
+     * an annotation has already been added before. Note that two annotations are
+     * equal only if an annotator annotates the same text with the same annotation.
+     * 
+     * See {@link org.uniud.dcore.persistence.Annotation} implementation of
+     * the equals() method if it's not clear.
      * 
      * @param annotation the annotation to add.
      */
     public void addAnnotation(Annotation annotation) {
-        annotations.add(annotation);
+        if (!annotations.contains(annotation))
+                annotations.add(annotation);
     }
     
     /**
@@ -92,6 +98,5 @@ public class Token {
             ret = ret + ", (" + a.getAnnotator() + ":" + a.getAnnotation() + ")" ;
         }
         return ret + "}";
-    }
-            
+    }            
 }

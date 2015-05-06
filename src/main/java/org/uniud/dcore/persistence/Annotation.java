@@ -30,25 +30,25 @@ public class Annotation {
     /**
      * The identifier of the annotator that generated the current annotation instance. 
      */
-    private String annotator;
+    private final String annotator;
     /**
      * The annotated string. For example, "software engineering".
      */
-    private String text;
+    private final String annotatedText;
     /**
      * The annotation. For example, address of the Wikipedia page 
      * "Software_Engineering".
      */
-    private String annotation ;
+    private final String annotation ;
     
-    public Annotation(String annotator, String text, String annotation) {
+    public Annotation(String annotator, String annotatedText, String annotation) {
         this.annotator = annotator;
-        this.text = text;
+        this.annotatedText = annotatedText;
         this.annotation = annotation;
     }
     
     public String getText() {
-        return text;
+        return annotatedText;
     }
     
     public String getAnnotator() {
@@ -70,7 +70,7 @@ public class Annotation {
      * annotations that point to the respective pages in Wikipedia.
      * 
      * @param obj
-     * @return 
+     * @return true if the annotations are the same, false otherwise.
      */
     @Override
     public boolean equals(Object obj) {
@@ -82,7 +82,7 @@ public class Annotation {
         }
         Annotation other = (Annotation) obj;
         
-        return (this.text.equals(other.getText())) &&
+        return (this.annotatedText.equals(other.getText())) &&
                 (this.annotator.equals(other.getAnnotator())) &&
                 (this.annotation.equals(other.getAnnotation()));
     }
