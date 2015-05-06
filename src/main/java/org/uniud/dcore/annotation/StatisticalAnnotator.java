@@ -33,9 +33,15 @@ import org.uniud.dcore.utils.DocumentUtils;
  * their width and their depth in the {@link org.uniud.dcore.persistence.DocumentComponent}
  * passed as input.
  * 
- * Document depth is defined as : ( index of sentence of first occurrence / total of sentences )
- * Document height is defined as : 1 - phrase depth.
- * Frequency is defined as : total # of occurrences / total # of sentences
+ * Document depth is defined as : ( index of sentence of last occurrence
+ *                                  / total # of sentences )
+ * Document height is defined as : ( index of sentence of first occurrence
+ *                                  / total # of sentences )
+ * Frequency is defined as : total # of occurrences / 
+ *                           total # of sentences
+ * Life span is defined as : ( index of sentence of last occurrence -
+ *                              index of sentence of first occurrence) 
+ *                              / total # of sentences.
  * 
  *
  * @author Marco Basaldella
@@ -47,12 +53,12 @@ public class StatisticalAnnotator implements Annotator {
     // so that the code is much more readable.
     
     /**
-     * Document depth, defined as ( index of sentence of first occurrence / total of sentences ).
+     * Document depth, defined as ( index of sentence of last occurrence / total of sentences ).
      */
     public static final String DEPTH = "Depth";
     
     /**
-     * Document height, defined as : 1 - document depth.
+     * Document depth, defined as ( index of sentence of first occurrence / total of sentences ).
      */
     public static final String HEIGHT = "Height";
     
@@ -63,7 +69,12 @@ public class StatisticalAnnotator implements Annotator {
     public static final String FREQUENCY = "Freq";
     
     /**
-     * Life span, defined as frequency / total count of sentences.
+     * Life span, defined as ( index of sentence of last occurrence -
+     *                         index of sentence of first occurrence) 
+     *                         / total # of sentences.
+     * 
+     * This can be expressed as (depth - (1 - height)) or equally as
+     *                          depth + height - 1.
      */
     public static final String LIFESPAN = "LifeSpan";
     
@@ -94,11 +105,11 @@ public class StatisticalAnnotator implements Annotator {
                 g.putFeature(DEPTH, depth);
                 
                 // check if it's the first appaerance
-                // if not, set the height as the depth
+                // if not, set the height 1 - depth
                 if (!g.hasFeature(HEIGHT))
-                    g.putFeature(HEIGHT, depth);
+                    g.putFeature(HEIGHT, 1 - depth);
                 
-                g.putFeature(LIFESPAN, g.getFeature(HEIGHT) - g.getFeature(DEPTH));                
+                g.putFeature(LIFESPAN, g.getFeature(DEPTH) + g.getFeature(HEIGHT) - 1);                
                 
                 if (g.hasFeature(FREQUENCY))
                     g.putFeature(FREQUENCY,g.getFeature(FREQUENCY) + 1);
