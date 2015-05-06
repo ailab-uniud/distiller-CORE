@@ -56,7 +56,7 @@
     
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
-          class="org.uniud.dcore.grams.SimpleNGramGenerator" >
+          class="org.uniud.dcore.generation.SimpleNGramGenerator" >
         <property name="gramLanguages">
             <list>
                 <bean class="java.util.Locale">
@@ -68,7 +68,7 @@
     
     <!-- Evaluators -->
     <bean id="linearEvaluator"
-          class="org.uniud.dcore.grams.LinearEvaluator">
+          class="org.uniud.dcore.evaluation.LinearEvaluator">
         <property name="annotators">
             <list>
                 <ref bean="statistical" />
@@ -103,7 +103,7 @@
                 <entry value="0.3">
                     <key>
                         <util:constant 
-                            static-field="org.uniud.dcore.grams.SimpleNGramGenerator.NOUNVALUE"/>
+                            static-field="org.uniud.dcore.generation.SimpleNGramGenerator.NOUNVALUE"/>
                     </key>
                 </entry>
                 <entry value="0.1" >
@@ -124,11 +124,13 @@
                 <ref bean="engPreprocessor"/>
             </list>
         </property>
+        
         <property name="gramGenerators">
             <list>
                 <ref bean="nGramGenerator"/>
             </list>
         </property>
+        
         <property name="evaluator" 
                   ref="linearEvaluator"/>
     </bean>

@@ -30,17 +30,6 @@ import java.util.Locale;
  */
 public class Sentence extends DocumentComponent {
     
-       
-    public Sentence(String text,Locale language) {
-        super(text,language);
-        tokenizedSentence = new ArrayList<>();
-        grams = new ArrayList<>();        
-    }
-    
-    public Sentence(String text) {
-        this(text,null);
-    }
-    
     // <editor-fold desc="Private fields">
 
     /**
@@ -65,6 +54,18 @@ public class Sentence extends DocumentComponent {
     private List<Gram> grams;  
     
     // </editor-fold>
+    
+    public Sentence(String text,Locale language) {
+        super(text,language);
+        tokenizedSentence = new ArrayList<>();
+        grams = new ArrayList<>();        
+    }
+    
+    public Sentence(String text) {
+        this(text,null);
+    }
+    
+
     
     // <editor-fold desc="Getters and setters">
     public void setSentence(String sentence) throws IllegalStateException {

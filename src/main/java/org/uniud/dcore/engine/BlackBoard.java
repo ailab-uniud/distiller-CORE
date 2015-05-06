@@ -26,10 +26,16 @@ import java.util.HashMap;
 import java.util.Map;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.DocumentComposite;
-import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;
 
 /**
+ * The BlackBoard that holds the document and all its annotations. In every part  
+ * of the extraction pipeline, every annotator will receive a piece of the document
+ * contained in the blackboard and will write new information on it.
+ * 
+ * The Blackboard has two main parts: one is the document root, which allows to
+ * navigate the entire document; the other is the gram container, which contains
+ * all the grams found in the document and their locations.
  *
  * @author Marco Basaldella
  * @author Dario De Nart
@@ -67,17 +73,18 @@ public class BlackBoard {
      * The root block of the document. 
      */
     private DocumentComponent document;
-    
-    /**
-     * Container for the annotations of the document.
-     */
-    private Map<String,Feature> AnnotationContainer;
+
     /**
      * Container for the n-grams of the document.
      */
     private Map<String,Gram> gramContainer;
         
-    
+    /**
+     * Initializes the blackboard with a new document. This will destroy any
+     * information previously held by the blackboard.
+     * 
+     * @param rawText the text of the new document.
+     */    
     public void createDocument(String rawText)
     {
         this.rawText = rawText;
@@ -85,9 +92,20 @@ public class BlackBoard {
         this.gramContainer = new HashMap<>();
     }
 
+    /**
+     * Gets the root of the document.
+     * 
+     * @return the {@link org.uniud.dcore.persistence.DocumentComponent} root
+     * object.
+     */
     public DocumentComponent getStructure() {
         return document;
     }    
+    
+    /**
+     * Gets the raw text (i.e. unprocessed) of the document.
+     * @return the original document string.
+     */
     public String getText() {
         return rawText;
     }

@@ -66,8 +66,6 @@ public class StanfordBootstrapper implements Annotator {
      */
     @Override
     public void annotate(DocumentComponent component) {
-
-        
         
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 

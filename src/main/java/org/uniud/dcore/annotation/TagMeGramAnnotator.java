@@ -21,16 +21,24 @@
  */
 package org.uniud.dcore.annotation;
 
+import org.uniud.dcore.engine.Annotator;
+import org.uniud.dcore.persistence.DocumentComponent;
+
 /**
  *
  * @author Marco Basaldella
  */
-public class TagMeGramAnnotator {
+public class TagMeGramAnnotator implements Annotator {
     
     /**
      * This field will be set to 1 if the specified gram coincides with a 
      * Wikipedia entry.
      */
     public static final String WIKIFLAG = "Wikiflag";
+
+    @Override
+    public void annotate(DocumentComponent component) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

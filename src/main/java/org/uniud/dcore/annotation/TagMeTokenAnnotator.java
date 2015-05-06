@@ -134,7 +134,6 @@ public class TagMeTokenAnnotator implements Annotator {
             for (String surface : taggedSentence.keySet()) {
                 if (surface.contains(part)) {
                     Annotation ann = new Annotation("TagMe", part, taggedSentence.get(surface));
-                    //t.setAnnotation(ann);
                     t.addAnnotation(ann);
                 }
             }
