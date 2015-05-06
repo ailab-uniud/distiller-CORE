@@ -23,8 +23,6 @@ package org.uniud.dcore.grams;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Required;
 import org.uniud.dcore.engine.BlackBoard;
 import org.uniud.dcore.engine.Evaluator;
@@ -37,7 +35,7 @@ import org.uniud.dcore.persistence.Gram;
  * @author Marco Basaldella
  */
 public class LinearEvaluator extends Evaluator {
-    
+        
     private Map<String,Double> weights;
     
     @Required

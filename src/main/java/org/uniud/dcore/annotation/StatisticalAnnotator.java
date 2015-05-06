@@ -57,11 +57,16 @@ public class StatisticalAnnotator implements Annotator {
     public static final String HEIGHT = "Height";
     
     /**
-     * Document frequency, defined as (total count of occurrences / 
-     * total count of sentences in text).
+     * Document frequency, defined as the total count of occurrences of the
+     * gram in text.
      */
     public static final String FREQUENCY = "Freq";
-
+    
+    /**
+     * Life span, defined as frequency / total count of sentences.
+     */
+    public static final String LIFESPAN = "LifeSpan";
+    
     /**
      * Annotates grams with statistical information such as their frequency,
      * their width and their depth in the
@@ -77,6 +82,10 @@ public class StatisticalAnnotator implements Annotator {
         int size = sentences.size();
         double count = 0;
 
+        // Annotate grams with their statistical features.
+        // The implementation is quite straightforward:
+        // for the definitions of depth, height and frequency, just
+        // see the variable declarations above.
         for (Sentence s : sentences) {
             count++;
             for (Gram g : s.getGrams()) {
@@ -92,7 +101,9 @@ public class StatisticalAnnotator implements Annotator {
                 if (g.hasFeature(FREQUENCY))
                     g.putFeature(FREQUENCY,g.getFeature(FREQUENCY) + 1);
                 else 
-                    g.putFeature(FREQUENCY, 1);                
+                    g.putFeature(FREQUENCY, 1);
+                
+                g.putFeature(LIFESPAN, (((double)g.getFeature(FREQUENCY)) / size));
             }            
         }        
     }    

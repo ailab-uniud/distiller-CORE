@@ -24,7 +24,9 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation ="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation ="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
        
     <!-- Language detectors -->  
@@ -36,7 +38,7 @@
     <bean id="stanford" 
           class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="tagme" 
-          class="org.uniud.dcore.annotation.TagMeAnnotator" />
+          class="org.uniud.dcore.annotation.TagMeTokenAnnotator" />
     <bean id="statistical" 
           class="org.uniud.dcore.annotation.StatisticalAnnotator">
     </bean>
@@ -64,26 +66,57 @@
         </property>    
     </bean>
     
+    <!-- Evaluators -->
     <bean id="linearEvaluator"
           class="org.uniud.dcore.grams.LinearEvaluator">
-        <property name="weights">
-            <map key-type="java.lang.String" value-type="java.lang.Double">
-                <entry key="Depth" value="0.15"/>
-                <entry key="Height" value="0.25" />
-                <entry key="LifeSpan" value="0.1"/> 
-                <entry key="Freq" value="0.1" />
-                <entry key="NounValue" value="0.3" />
-                <entry key="Sense" value="0.1" />
-            </map>              
-        </property>
         <property name="annotators">
             <list>
                 <ref bean="statistical" />
             </list>
         </property>
+        <property name="weights">
+            <map key-type="java.lang.String" value-type="java.lang.Double">
+                <entry value="0.15">
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.annotation.StatisticalAnnotator.DEPTH"/>
+                    </key>
+                </entry>
+                <entry value="0.25">
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.annotation.StatisticalAnnotator.HEIGHT"/>
+                    </key>                     
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.annotation.StatisticalAnnotator.LIFESPAN"/>
+                    </key> 
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.annotation.StatisticalAnnotator.FREQUENCY"/>
+                    </key>
+                </entry>
+                <entry value="0.3">
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.grams.SimpleNGramGenerator.NOUNVALUE"/>
+                    </key>
+                </entry>
+                <entry value="0.1" >
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.annotation.TagMeGramAnnotator.WIKIFLAG"/>
+                    </key>
+                </entry>
+            </map>              
+        </property>
     </bean>
     
-    <!-- The main object, the distiller, that receives the beans defined above -->
+    <!-- The main object, the Distiller, that receives the beans defined above -->
     <bean id="distiller" class="org.uniud.dcore.engine.Distiller">
         <property name="languageDetector" ref="cybozu"/>
         <property name="preProcessors">
@@ -96,7 +129,8 @@
                 <ref bean="nGramGenerator"/>
             </list>
         </property>
-        <property name="evaluator" ref="linearEvaluator"/>
+        <property name="evaluator" 
+                  ref="linearEvaluator"/>
     </bean>
    
 </beans>

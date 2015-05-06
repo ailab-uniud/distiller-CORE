@@ -53,7 +53,7 @@ import org.uniud.dcore.persistence.Token;
  *
  * @author Dado
  */
-public class TagMeAnnotator implements Annotator {
+public class TagMeTokenAnnotator implements Annotator {
 
     private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
     private final String apiKey = "Dario.de.NART.2014";
@@ -61,7 +61,7 @@ public class TagMeAnnotator implements Annotator {
     // JSON parser
     private final JSONParser parser;
 
-    public TagMeAnnotator() {
+    public TagMeTokenAnnotator() {
         parser = new JSONParser();
     }
 
@@ -116,7 +116,7 @@ public class TagMeAnnotator implements Annotator {
             e.printStackTrace();
         } catch (ParseException ex) {
             System.out.println("Badass JSON parsing fail in TAGME Gate");
-            Logger.getLogger(TagMeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TagMeTokenAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
         return output;
     }
