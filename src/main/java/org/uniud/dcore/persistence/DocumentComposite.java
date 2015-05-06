@@ -54,7 +54,7 @@ public class DocumentComposite extends DocumentComponent {
 
     @Override
     public List<Annotation> getAnnotations() {
-        List<Annotation> ret = new ArrayList<Annotation>();
+        List<Annotation> ret = new ArrayList<>();
         for (DocumentComponent c : getComponents())
         {
             ret.addAll(c.getAnnotations());
@@ -71,5 +71,21 @@ public class DocumentComposite extends DocumentComponent {
         this.components = components;
     }
     //</editor-fold>
+
+    @Override
+    public void addGram(Gram g) {
+        throw new UnsupportedOperationException("You can't add Grams on a Composite object."); 
+    }
+
+    @Override
+    public List<Gram> getGrams() {
+        List<Gram> ret = new ArrayList<>();
+        for (DocumentComponent c : getComponents())
+        {
+            ret.addAll(c.getGrams());
+        }
+        
+        return ret;
+    }
 
 }

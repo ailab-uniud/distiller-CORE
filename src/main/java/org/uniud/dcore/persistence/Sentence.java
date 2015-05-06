@@ -34,6 +34,7 @@ public class Sentence extends DocumentComponent {
     public Sentence(String text,Locale language) {
         super(text,language);
         tokenizedSentence = new ArrayList<>();
+        grams = new ArrayList<>();        
     }
     
     public Sentence(String text) {
@@ -57,6 +58,12 @@ public class Sentence extends DocumentComponent {
      */
     private List<Token> tokenizedSentence;
 
+    /**
+     * The {@link org.uniud.dcore.persistence.Gram}s that have been detected 
+     * in the sentence.
+     */
+    private List<Gram> grams;  
+    
     // </editor-fold>
     
     // <editor-fold desc="Getters and setters">
@@ -144,6 +151,16 @@ public class Sentence extends DocumentComponent {
         }
         
         return ret;
+    }
+    
+    @Override
+    public void addGram(Gram g) {
+        grams.add(g);
+    }
+    
+    @Override
+    public List<Gram> getGrams() {
+        return grams;
     }
 
 }
