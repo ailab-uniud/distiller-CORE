@@ -129,7 +129,7 @@ public class BlackBoard {
         // this way, we're free to modify it by adding annotations without
         // modifying the old object.
         if (gram == null) {
-            Gram cloned = (new Cloner()).deepClone(gram);
+            Gram cloned = (new Cloner()).deepClone(newGram);
             gramContainer.put(cloned.getSignature(), cloned);
             gram = cloned;
         } else {

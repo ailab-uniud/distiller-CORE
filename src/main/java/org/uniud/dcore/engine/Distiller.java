@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;
 
 /**
@@ -187,7 +188,13 @@ public class Distiller {
                         Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);        
         
         for (Map.Entry<Gram,Double> e : ordered.collect(Collectors.toList())) {
-            System.out.println(e.getKey().getSignature() + " : " + e.getValue());
+            System.out.print(String.format("%-24s",e.getKey().getSignature()));
+            System.out.print("\t\t");
+            for (Feature f : e.getKey().getFeatures()) {
+                System.out.print(String.format("%-12s:%8.3f ; ", f.getType(),f.getValue()));
+            }
+            
+            System.out.println();
         }
 
 

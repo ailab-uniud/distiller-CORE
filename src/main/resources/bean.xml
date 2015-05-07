@@ -39,6 +39,8 @@
           class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="tagme" 
           class="org.uniud.dcore.annotation.TagMeTokenAnnotator" />
+    <bean id="tagmegram" 
+          class="org.uniud.dcore.annotation.TagMeGramAnnotator" />
     <bean id="statistical" 
           class="org.uniud.dcore.annotation.StatisticalAnnotator">
     </bean>
@@ -49,7 +51,7 @@
         <property name="annotators">
             <list>
                 <ref bean="stanford" />
-                <!--<ref bean="tagme" />-->
+                <ref bean="tagme" />
             </list>
         </property>
     </bean>
@@ -72,6 +74,7 @@
         <property name="annotators">
             <list>
                 <ref bean="statistical" />
+                <ref bean="tagmegram" />
             </list>
         </property>
         <property name="weights">

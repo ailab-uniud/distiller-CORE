@@ -47,7 +47,7 @@ public class Annotation {
         this.annotation = annotation;
     }
     
-    public String getText() {
+    public String getAnnotatedText() {
         return annotatedText;
     }
     
@@ -82,7 +82,7 @@ public class Annotation {
         }
         Annotation other = (Annotation) obj;
         
-        return (this.annotatedText.equals(other.getText())) &&
+        return (this.annotatedText.equals(other.getAnnotatedText())) &&
                 (this.annotator.equals(other.getAnnotator())) &&
                 (this.annotation.equals(other.getAnnotation()));
     }

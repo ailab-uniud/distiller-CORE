@@ -21,8 +21,13 @@
  */
 package org.uniud.dcore.annotation;
 
+import java.util.List;
 import org.uniud.dcore.engine.Annotator;
+import org.uniud.dcore.engine.BlackBoard;
+import org.uniud.dcore.persistence.Annotation;
 import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.Gram;
+import org.uniud.dcore.persistence.Token;
 
 /**
  *
@@ -38,7 +43,26 @@ public class TagMeGramAnnotator implements Annotator {
 
     @Override
     public void annotate(DocumentComponent component) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        for (Gram g: BlackBoard.Instance().getGrams().values()) {
+            // check if the gram coincides with a TagMe annotation
+            List<Token> tokens = g.getTokens();
+            
+            int counter = 0;
+            
+            Annotation a = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.TAGMEANNOTATION);
+            
+            boolean isTagged = a != null;
+            
+            while (isTagged && ++counter < tokens.size()) {
+                Annotation b = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.TAGMEANNOTATION);
+                isTagged = (b != null) ? b.equals(a) : false;
+            }
+            
+            if (isTagged) {
+                g.putFeature(WIKIFLAG, 1);
+            }
+        }
     }
     
 }

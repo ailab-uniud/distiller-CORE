@@ -99,4 +99,16 @@ public class Token implements Cloneable {
         }
         return ret + "}";
     }            
+
+    public Annotation getAnnotation(String annotation) {
+        Annotation a = null;
+        for (Annotation b : this.getAnnotations())
+        {
+            if (b.getAnnotator().equals(annotation))  {
+                a = b;
+                break;
+            }
+        }
+        return a;
+    }
 }

@@ -57,6 +57,8 @@ public class TagMeTokenAnnotator implements Annotator {
 
     private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
     private final String apiKey = "Dario.de.NART.2014";
+    
+    public static final String TAGMEANNOTATION = "Tagme";
 
     // JSON parser
     private final JSONParser parser;
@@ -133,7 +135,7 @@ public class TagMeTokenAnnotator implements Annotator {
             String part = t.getText();
             for (String surface : taggedSentence.keySet()) {
                 if (surface.contains(part)) {
-                    Annotation ann = new Annotation("TagMe", part, taggedSentence.get(surface));
+                    Annotation ann = new Annotation(TAGMEANNOTATION, surface, taggedSentence.get(surface));
                     t.addAnnotation(ann);
                 }
             }
