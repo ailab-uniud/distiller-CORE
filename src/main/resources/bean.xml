@@ -42,8 +42,9 @@
     <bean id="tagmegram" 
           class="org.uniud.dcore.annotation.TagMeGramAnnotator" />
     <bean id="statistical" 
-          class="org.uniud.dcore.annotation.StatisticalAnnotator">
-    </bean>
+          class="org.uniud.dcore.annotation.StatisticalAnnotator"/>
+    <bean id="syuzhet" 
+          class="org.uniud.dcore.annotation.grams.SyuzhetAnnotator"/>
 
     <!-- Preprocessors -->
     <bean id="engPreprocessor" class="org.uniud.dcore.engine.PreProcessor">
@@ -75,6 +76,7 @@
             <list>
                 <ref bean="statistical" />
                 <ref bean="tagmegram" />
+                <ref bean="syuzhet" />
             </list>
         </property>
         <property name="weights">
@@ -89,6 +91,12 @@
                     <key>
                         <util:constant 
                             static-field="org.uniud.dcore.annotation.StatisticalAnnotator.HEIGHT"/>
+                    </key>                     
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="org.uniud.dcore.annotation.grams.SyuzhetAnnotator.INTENSITY"/>
                     </key>                     
                 </entry>
                 <entry value="0.1">

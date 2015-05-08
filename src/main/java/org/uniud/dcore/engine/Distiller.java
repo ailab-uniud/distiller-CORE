@@ -21,7 +21,9 @@
  */
 package org.uniud.dcore.engine;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,9 +31,11 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.uniud.dcore.persistence.Annotation;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;
+import org.uniud.dcore.persistence.Token;
 
 /**
  * The keyphrase extractor object.
@@ -193,6 +197,19 @@ public class Distiller {
             for (Feature f : e.getKey().getFeatures()) {
                 System.out.print(String.format("%-12s:%8.3f ; ", f.getType(),f.getValue()));
             }
+            
+//            List<Annotation> ann = new ArrayList<Annotation>();
+//            for (Token t : e.getKey().getTokens()) {
+//                ann.addAll(t.getAnnotations());
+//            }
+//            
+//            System.out.println();
+//            System.out.print(String.format("%-24s"," "));
+//            
+//            for (Annotation a : ann) {
+//                System.out.print(String.format("%-12s:\"%-12s\":%-12s ; ", 
+//                        a.getAnnotator(), a.getAnnotatedText(), a.getAnnotation()));
+//            }
             
             System.out.println();
         }

@@ -67,10 +67,10 @@ public class Gram {
         {
             identifier = identifier + words.get(0).getText();
             for (int i = 1; i < words.size(); i++)
-                identifier = identifier + " " + words.get(i).getStem().toLowerCase();
+                identifier = identifier + " " + words.get(i).getStem();
         }
         
-        return this.identifier; 
+        return this.identifier.toLowerCase(); 
     }
     
     public List<Token> getTokens() {
