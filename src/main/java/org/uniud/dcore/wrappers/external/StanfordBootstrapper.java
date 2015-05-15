@@ -70,9 +70,10 @@ public class StanfordBootstrapper implements Annotator {
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
             Properties props = new Properties();
-            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
+            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner)");
+            // Add "parse, dcoref" to annotators for coreference resolution
             pipeline = new StanfordCoreNLP(props);
-        }
+        };
 
         // read some text in the text variable
         String text = component.getText();
@@ -112,6 +113,17 @@ public class StanfordBootstrapper implements Annotator {
                 String ne = token.get(NamedEntityTagAnnotation.class);
                 t.addAnnotation(
                     new org.uniud.dcore.persistence.Annotation("StanfordNER",word,ne));
+
+                // coreference resolution guideline
+//                Map corefChain = document.get(CorefChainAnnotation.class); 
+//                
+//                for (Iterator it = corefChain.values().iterator(); it.hasNext();) {
+//                    CorefChain e = (CorefChain)it.next();
+                      // TODO: implement coreference resolution annotation here
+//                }
+
+                t.addAnnotation(
+                        new org.uniud.dcore.persistence.Annotation("StanfordCoref", text, ne) );
                 
                 distilledSentence.addToken(t);
             }

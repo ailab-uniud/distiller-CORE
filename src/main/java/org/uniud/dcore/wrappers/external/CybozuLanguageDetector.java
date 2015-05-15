@@ -26,7 +26,6 @@ import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 import java.util.Locale;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.AnnotatorException;
 import org.uniud.dcore.persistence.DocumentComponent;
