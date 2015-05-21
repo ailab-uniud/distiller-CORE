@@ -24,16 +24,19 @@ package org.uniud.dcore.wrappers.external;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import java.util.List;
 import java.util.Locale;
+import org.tartarus.snowball.ext.italianStemmer;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.DocumentComponent;
+import org.uniud.dcore.persistence.DocumentComposite;
 import org.uniud.dcore.persistence.Sentence;
+import org.uniud.dcore.persistence.Token;
 import org.uniud.dcore.utils.CueUtils;
 
 /**
  *
  * @author Marco Basaldella
  */
-public class MaxentWrapper implements Annotator {
+public class ItalianBootstapper implements Annotator {
 
     @Override
     public void annotate(DocumentComponent component) {
@@ -45,6 +48,8 @@ public class MaxentWrapper implements Annotator {
         List<String> rawSentences = CueUtils.splitSentence(
                 component.getText(), component.getLanguage());
         
+        italianStemmer stemmer = new italianStemmer();
+        
         // create the sub-components, then tokenize and annotate them
         for (String rawSentence : rawSentences) {
             Sentence sentence = new Sentence(rawSentence,component.getLanguage());
@@ -52,6 +57,25 @@ public class MaxentWrapper implements Annotator {
             // tokenize the sentence and then re-wrap it to feed Maxent tagger
             // correctly (see Javadoc of tagTokenizedString for more information)
             String taggedString = tagger.tagTokenizedString(String.join(" ", CueUtils.tokenizeSentence(rawSentence, component.getLanguage())));
+            for (String taggedToken : taggedString.split(" ")) {
+                String[] splittedToken = taggedToken.split("/");
+                Token t = new Token(splittedToken[0]);
+                t.setPoS(splittedToken[1]);
+                
+                stemmer.setCurrent(splittedToken[0]);
+                if (stemmer.stem()) {
+                    t.setStem(stemmer.getCurrent());
+                } else {
+                    System.err.println("Error while stemming word "+splittedToken[0]);
+                    t.setStem(splittedToken[0]);
+                }
+                
+                sentence.addToken(t);
+            }
+            
+            ((DocumentComposite)component).addComponent(sentence);
+            
+            
         }
         
         

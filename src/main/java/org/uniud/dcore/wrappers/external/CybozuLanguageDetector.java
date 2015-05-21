@@ -25,7 +25,6 @@ import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 import java.util.Locale;
-import java.util.logging.Level;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.AnnotatorException;
 import org.uniud.dcore.persistence.DocumentComponent;
@@ -59,9 +58,9 @@ public class CybozuLanguageDetector implements Annotator {
         if (detector == null) {
             // retrieve the language database embedded in the jar
             DetectorFactory.loadProfile(
-                    getClass().getClassLoader().getResource("cybozu").getFile());
-            detector = DetectorFactory.create();
+                    getClass().getClassLoader().getResource("cybozu").getFile());            
         }
+        detector = DetectorFactory.create();
         detector.append(text);
         return detector.detect();
     }
@@ -80,7 +79,8 @@ public class CybozuLanguageDetector implements Annotator {
         
         String lang = "";
         try {
-            lang = detect(component.getText());
+            String text = component.getText();
+            lang = detect(text);
         } catch (LangDetectException ex) {
             throw new AnnotatorException("CybozuLanguageDetector - error during language detection",ex);
         }

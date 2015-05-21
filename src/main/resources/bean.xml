@@ -33,10 +33,12 @@
     <bean id="cybozu" class="org.uniud.dcore.wrappers.external.CybozuLanguageDetector"/>
     
     <!-- Annotators -->  
-    <bean id="dantesplitter" 
-          class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>
+    <!--<bean id="dantesplitter" 
+          class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>-->
     <bean id="stanford" 
           class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
+    <bean id="maxent" 
+          class="org.uniud.dcore.wrappers.external.ItalianBootstapper"/>
     <bean id="tagme" 
           class="org.uniud.dcore.annotation.TagMeTokenAnnotator" />
     <bean id="tagmegram" 
@@ -52,6 +54,16 @@
         <property name="annotators">
             <list>
                 <ref bean="stanford" />
+                <ref bean="tagme" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="itPreprocessor" class="org.uniud.dcore.engine.PreProcessor">
+        <property name="languageTag" value="it" />
+        <property name="annotators">
+            <list>
+                <ref bean="maxent" />
                 <ref bean="tagme" />
             </list>
         </property>

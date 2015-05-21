@@ -51,6 +51,12 @@ public class Starter {
 "OK, it may not be such a classical, timeless Ferrari as that 250 GT SWB California we showed you last week, but the 512M is every bit as much a period piece - not to mention a whole lot cheaper. And yellower. " +
 "A snip at £330,000, or would you save your (completely non-hypothetical cash) for a modern 458 Special, with enough change left over for, ooh, a Porsche Cayman GT4?";
     
+    private static String annaSavoia = "Anna Paleologina, nata Giovanna di Savoia (1306  Costantinopoli, 1359), fu imperatrice bizantina. " +
+"Era figlia di Amedeo V di Savoia e della seconda moglie Maria di Brabante, essendo così per parte di madre nipote di Giovanni I di Brabante, duca di Brabante, e di Margherita di Fiandra. " +
+"Divenne la seconda moglie di Andronico III Paleologo, che era vedovo di Adelaide di Braunschweig da cui aveva avuto un figlio morto infante. Stando a Giovanni VI Cantacuzeno, il matrimonio si tenne nell'ottobre del 1326. Anna, di fede cattolica, dovette per l'occasione convertirsi alla fede ortodossa cambiando il suo nome da Giovanna ad Anna. " +
+            "Diede al marito un figlio: Giovanni (18 giugno 1332-16 febbraio 1391), imperatore bizantino dal 1341 al 1376 e dal 1379 al 1391. " +
+            "Divenne imperatrice nel 1328. " +
+            "Alla morte di Andronico III, avvenuta il 15 giugno 1341, Anna venne nominata reggente per il figlio Giovanni V Paleologo, ruolo che ricoprì dal 1341 al 1347[1]. Dovette tuttavia dividere il potere con il ministro del marito Giovanni Cantacuzeno col quale si scontrò in quanto ella voleva portare avanti una politica filopapista. Cantacuzeno riuscì a divenire imperatore col nome di Giovanni VI e di fatto divise il potere con Giovanni V finché si ritirò in convento lasciandolo unico imperatore. ";
 
     public static void main(String[] args) {
         // Extract information from the incipit of "The Idiot", by Fyodor Dostoyevsky.        
@@ -72,6 +78,8 @@ public class Starter {
         d.extract(sortedMap);
         
         DateTime three = DateTime.now();
+        
+        d.extract(annaSavoia);
         
         long firstExtraction = one.getMillis() - zero.getMillis();
         long secondExtraction = two.getMillis() - one.getMillis();

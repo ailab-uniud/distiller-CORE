@@ -70,7 +70,7 @@ public class StanfordBootstrapper implements Annotator {
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
             Properties props = new Properties();
-            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner)");
+            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
             // Add "parse, dcoref" to annotators for coreference resolution
             pipeline = new StanfordCoreNLP(props);
         };
