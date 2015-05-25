@@ -79,8 +79,7 @@ public class CybozuLanguageDetector implements Annotator {
         
         String lang = "";
         try {
-            String text = component.getText();
-            lang = detect(text);
+            lang = detect(component.getText());
         } catch (LangDetectException ex) {
             throw new AnnotatorException("CybozuLanguageDetector - error during language detection",ex);
         }

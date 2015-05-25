@@ -39,6 +39,8 @@
           class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="maxent" 
           class="org.uniud.dcore.wrappers.external.ItalianBootstapper"/>
+    <bean id="openNLP" 
+          class="org.uniud.dcore.wrappers.external.OpenNlpBootstrapper"/>
     <bean id="tagme" 
           class="org.uniud.dcore.annotation.TagMeTokenAnnotator" />
     <bean id="tagmegram" 
@@ -63,7 +65,7 @@
         <property name="languageTag" value="it" />
         <property name="annotators">
             <list>
-                <ref bean="maxent" />
+                <ref bean="openNLP" />
                 <ref bean="tagme" />
             </list>
         </property>
@@ -145,6 +147,7 @@
         <property name="preProcessors">
             <list>
                 <ref bean="engPreprocessor"/>
+                <ref bean="itPreprocessor" />
             </list>
         </property>
         

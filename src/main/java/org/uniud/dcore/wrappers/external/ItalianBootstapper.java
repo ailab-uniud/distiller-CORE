@@ -23,7 +23,6 @@ package org.uniud.dcore.wrappers.external;
 
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import java.util.List;
-import java.util.Locale;
 import org.tartarus.snowball.ext.italianStemmer;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.DocumentComponent;
