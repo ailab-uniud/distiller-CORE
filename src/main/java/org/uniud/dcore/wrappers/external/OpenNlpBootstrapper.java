@@ -73,7 +73,6 @@ public class OpenNlpBootstrapper implements Annotator {
      */
     @Override
     public void annotate(DocumentComponent component) {
-
         
         // Split the text into sentences
         
@@ -99,9 +98,13 @@ public class OpenNlpBootstrapper implements Annotator {
 
         for (String sentenceString : sentences) {
 
-            // Tokenize the sentence
+            // the distilled sentence object
             
             Sentence sentence = new Sentence(sentenceString);
+            sentence.setLanguage(component.getLanguage());
+            
+            // Tokenize the sentence
+            
             InputStream tokenModelIn = null;
             TokenizerModel tokenModel = null;
             
@@ -144,7 +147,6 @@ public class OpenNlpBootstrapper implements Annotator {
             String tags[] = tagger.tag(tokens);
             
             // Get the appropriate stemmer
-            
             SnowballStemmer stemmer = SnowballStemmerSelector.
                     getStemmerForLanguage(component.getLanguage());
             
@@ -152,6 +154,9 @@ public class OpenNlpBootstrapper implements Annotator {
                 throw new RuntimeException(
                         "Stemmer not available for the language " + 
                                 component.getLanguage().getLanguage());
+            
+            // put the features detected by OpenNLP in the distiller's
+            // sentence
             
             for (int i = 0; i < tokens.length; i++) {
                 Token t = new Token(tokens[i]);                

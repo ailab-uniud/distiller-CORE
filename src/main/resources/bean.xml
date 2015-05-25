@@ -79,6 +79,9 @@
                 <bean class="java.util.Locale">
                     <constructor-arg value="en" type="java.lang.String"/>
                 </bean>
+                <bean class="java.util.Locale">
+                    <constructor-arg value="it" type="java.lang.String"/>
+                </bean>
             </list>
         </property>    
     </bean>
