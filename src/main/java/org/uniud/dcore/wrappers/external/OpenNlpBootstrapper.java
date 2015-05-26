@@ -69,9 +69,6 @@ public class OpenNlpBootstrapper implements Annotator {
     private final Map<String, String> databasePaths
             = new HashMap<>();
 
-    private final String italianPosPath
-            = "/home/red/tools/opennlp-italian-models/models/it/";
-
     /**
      * Annotates the document using the Apache OpenNLP tools.
      *
@@ -98,12 +95,16 @@ public class OpenNlpBootstrapper implements Annotator {
         }
 
         PrepareModels();
+        
+        // language tag used to retrieve the datasets
+        String langTag = component.getLanguage().getLanguage();
 
         // Split the text into sentences
         InputStream sentModelIn = null;
         SentenceModel sentModel = null;
+        
         try {
-            String sentPath = databasePaths.get("it-sent");
+            String sentPath = databasePaths.get(langTag+"-sent");
             LOG.log(Level.INFO, "Splitting text using model {0}...", sentPath);
             sentModelIn = new FileInputStream(sentPath);
             sentModel = new SentenceModel(sentModelIn);
@@ -130,7 +131,7 @@ public class OpenNlpBootstrapper implements Annotator {
 
         // Tokenizer model
         try {
-            String tokensPath = databasePaths.get("it-token");
+            String tokensPath = databasePaths.get(langTag+"-token");
             LOG.log(Level.INFO, "Tokenizing text using model {0}...", tokensPath);
             tokenModelIn = new FileInputStream(tokensPath);
             tokenModel = new TokenizerModel(tokenModelIn);
@@ -147,7 +148,7 @@ public class OpenNlpBootstrapper implements Annotator {
         
         // Splitter model
         try {
-            String posPath = databasePaths.get("it-pos-maxent");
+            String posPath = databasePaths.get(langTag+"-pos-maxent");
             LOG.log(Level.INFO, "POStagging text using model {0}...", posPath);
             POSModelIn = new FileInputStream(posPath);
             POSModel = new POSModel(POSModelIn);
@@ -216,6 +217,9 @@ public class OpenNlpBootstrapper implements Annotator {
         databasePaths.put("en-sent", "http://opennlp.sourceforge.net/models-1.5/en-sent.bin");
         databasePaths.put("en-token", "http://opennlp.sourceforge.net/models-1.5/en-token.bin");
         databasePaths.put("en-pos-maxent", "http://opennlp.sourceforge.net/models-1.5/en-pos-maxent.bin");
+        databasePaths.put("pt-sent", "http://opennlp.sourceforge.net/models-1.5/pt-sent.bin");
+        databasePaths.put("pt-token", "http://opennlp.sourceforge.net/models-1.5/pt-token.bin");
+        databasePaths.put("pt-pos-maxent", "http://opennlp.sourceforge.net/models-1.5/pt-pos-maxent.bin");
         databasePaths.put("it-sent", "https://github.com/aciapetti/opennlp-italian-models/blob/master/models/it/it-sent.bin?raw=true");
         databasePaths.put("it-token", "https://github.com/aciapetti/opennlp-italian-models/blob/master/models/it/it-token.bin?raw=true");
         databasePaths.put("it-pos-maxent", "https://github.com/aciapetti/opennlp-italian-models/blob/master/models/it/it-pos-maxent.bin?raw=true");

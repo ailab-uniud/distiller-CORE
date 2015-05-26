@@ -33,8 +33,6 @@
     <bean id="cybozu" class="org.uniud.dcore.wrappers.external.CybozuLanguageDetector"/>
     
     <!-- Annotators -->  
-    <!--<bean id="dantesplitter" 
-          class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>-->
     <bean id="stanford" 
           class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="openNLP" 
@@ -64,7 +62,8 @@
         <property name="languageTag" value="en"/>
         <property name="annotators">
             <list>
-                <ref bean="stanford" />
+                <ref bean="openNLP"/>
+                <!--<ref bean="stanford" />-->
                 <ref bean="tagme" />
             </list>
         </property>
@@ -79,6 +78,16 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="ptPreprocessor" class="org.uniud.dcore.engine.PreProcessor">
+        <property name="languageTag" value="pt" />
+        <property name="annotators">
+            <list>
+                <ref bean="openNLP" />
+            </list>
+        </property>
+    </bean>
+    
     
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
@@ -160,6 +169,7 @@
             <list>
                 <ref bean="engPreprocessor"/>
                 <ref bean="itPreprocessor" />
+                <ref bean="ptPreprocessor" />
             </list>
         </property>
         
