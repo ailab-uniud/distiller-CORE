@@ -130,6 +130,7 @@ public class Distiller {
             for (DocumentComponent c : BlackBoard.Instance().
                     getStructure().getComponents()) {
                 for (PreProcessor p : preProcessors) {
+                    
                     if (p.getLanguage().equals(c.getLanguage())) {
                         p.generateAnnotations(c);
                         break;

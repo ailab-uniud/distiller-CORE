@@ -40,7 +40,18 @@
     <bean id="maxent" 
           class="org.uniud.dcore.wrappers.external.ItalianBootstapper"/>
     <bean id="openNLP" 
-          class="org.uniud.dcore.wrappers.external.OpenNlpBootstrapper"/>
+          class="org.uniud.dcore.wrappers.external.OpenNlpBootstrapper">
+        <!-- Example of local models path -->
+        <!--
+        <property name="modelPaths">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="it-sent" value="/home/red/tools/opennlp-italian-models/models/it/it-sent.bin"/>
+                <entry key="it-token" value="/home/red/tools/opennlp-italian-models/models/it/it-token.bin"/>
+                <entry key="it-pos-maxent" value="/home/red/tools/opennlp-italian-models/models/it/it-pos-maxent.bin"/>
+            </map>
+        </property>
+        -->
+    </bean>
     <bean id="tagme" 
           class="org.uniud.dcore.annotation.TagMeTokenAnnotator" />
     <bean id="tagmegram" 
