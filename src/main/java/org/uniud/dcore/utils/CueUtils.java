@@ -21,9 +21,6 @@
  */
 package org.uniud.dcore.utils;
 
-import cue.lang.SentenceIterator;
-import cue.lang.WordIterator;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -48,9 +45,9 @@ public class CueUtils {
     public static List<String> splitSentence(String text, Locale lang) {
         List<String> sentences = new LinkedList<>();
 
-        for (final String s : new SentenceIterator(text, lang)) {
-            sentences.add(s);
-        }
+//        for (final String s : new SentenceIterator(text, lang)) {
+//            sentences.add(s);
+//        }
 
         return sentences;
     }
@@ -67,22 +64,22 @@ public class CueUtils {
     public static List<String> tokenizeSentence(String text, Locale lang) {
         List<String> tokens = new LinkedList<>();
 
-        for (final String word : new WordIterator(text)) {
-            tokens.add(word);
-        }
-
-        // a fix for Italian, since the tokenization with CUE doesnt' work
-        // well on apostrophes.
-        if (lang.getLanguage().equals("it")) {
-            List<String> fixedTokens = new LinkedList<>();
-
-            for (String word : tokens) {
-                String[] all = word.split("'|’");
-                fixedTokens.addAll(Arrays.asList(all));
-            }
-            
-            tokens = fixedTokens;
-        }
+//        for (final String word : new WordIterator(text)) {
+//            tokens.add(word);
+//        }
+//
+//        // a fix for Italian, since the tokenization with CUE doesnt' work
+//        // well on apostrophes.
+//        if (lang.getLanguage().equals("it")) {
+//            List<String> fixedTokens = new LinkedList<>();
+//
+//            for (String word : tokens) {
+//                String[] all = word.split("'|’");
+//                fixedTokens.addAll(Arrays.asList(all));
+//            }
+//            
+//            tokens = fixedTokens;
+//        }
 
         return tokens;
     }

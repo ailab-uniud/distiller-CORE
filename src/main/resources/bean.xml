@@ -37,8 +37,6 @@
           class="org.uniud.dcore.wrappers.linguisticutils.DanteSplitter"/>-->
     <bean id="stanford" 
           class="org.uniud.dcore.wrappers.external.StanfordBootstrapper" />
-    <bean id="maxent" 
-          class="org.uniud.dcore.wrappers.external.ItalianBootstapper"/>
     <bean id="openNLP" 
           class="org.uniud.dcore.wrappers.external.OpenNlpBootstrapper">
         <!-- Example of local models path -->
