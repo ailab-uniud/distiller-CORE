@@ -21,9 +21,7 @@
  */
 package org.uniud.dcore.engine;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,11 +29,9 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.uniud.dcore.persistence.Annotation;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.Feature;
 import org.uniud.dcore.persistence.Gram;
-import org.uniud.dcore.persistence.Token;
 
 /**
  * The keyphrase extractor object.

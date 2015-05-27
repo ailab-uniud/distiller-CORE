@@ -46,7 +46,7 @@
                 <entry key="it-pos-maxent" value="/home/red/tools/opennlp-italian-models/models/it/it-pos-maxent.bin"/>
             </map>
         </property>
-        -->
+        -->        
     </bean>
     <bean id="tagme" 
           class="org.uniud.dcore.annotation.TagMeTokenAnnotator" />

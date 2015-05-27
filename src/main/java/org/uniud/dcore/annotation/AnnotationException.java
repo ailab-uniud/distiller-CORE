@@ -19,28 +19,37 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package org.uniud.dcore.persistence;
+package org.uniud.dcore.annotation;
+
+import org.uniud.dcore.engine.Annotator;
 
 /**
+ * Exception thrown when an annotation error occurs.
  *
  * @author Marco Basaldella
  */
-public class AnnotatorException extends RuntimeException{
+public class AnnotationException extends RuntimeException {
     
-    public AnnotatorException() {
-        super("Exception during annotation.");
+    public AnnotationException(Annotator sender, String message) {
+        super("Error while annotating\n\t" + 
+                "Annotator " + sender.getClass().getName() + 
+                " caused an exception with message:\n\t" + message);
     }
-
-    public AnnotatorException(String message) {
-        super("Exception during annotation: " + message);
+    
+    public AnnotationException(Annotator sender,
+            Throwable cause) {
+        super("Error while annotating\n\t" + 
+                "Annotator " + sender.getClass().getName() + 
+                " caused an exception. ",cause);
     }
-
-    public AnnotatorException(Throwable cause) {
-        super(cause);
+    
+    public AnnotationException(Annotator sender, String message,
+            Throwable cause) {
+        super("Error while annotating\n\t" + 
+                "Annotator " + sender.getClass().getName() + 
+                " caused an exception with message:\n\t" + message,cause);
     }
-
-    public AnnotatorException(String message, Throwable cause) {
-        super("Exception during annotation: " + message, cause);
-    }
+    
+    
     
 }

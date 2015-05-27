@@ -40,6 +40,7 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import org.apache.commons.io.FileUtils;
 import org.tartarus.snowball.SnowballStemmer;
+import org.uniud.dcore.annotation.AnnotationException;
 import org.uniud.dcore.engine.Annotator;
 import org.uniud.dcore.persistence.DocumentComponent;
 import org.uniud.dcore.persistence.DocumentComposite;
@@ -69,6 +70,17 @@ public class OpenNlpBootstrapper implements Annotator {
     private final Map<String, String> databasePaths
             = new HashMap<>();
 
+    // Caches for the models used, so subsequent calls of the annotator
+    // don't have to reload the models
+    private static Map<String, SentenceModel> sentenceModelsCache
+            = new HashMap<>();
+
+    private static Map<String, TokenizerModel> tokenizerModelsCache
+            = new HashMap<>();
+
+    private static Map<String, POSModel> posModelsCache
+            = new HashMap<>();
+
     /**
      * Annotates the document using the Apache OpenNLP tools.
      *
@@ -94,75 +106,24 @@ public class OpenNlpBootstrapper implements Annotator {
             SetDefaultModels();
         }
 
+        // Download the models (if necessary)
         PrepareModels();
-        
-        // language tag used to retrieve the datasets
+
+        // Language tag used to retrieve the datasets
         String langTag = component.getLanguage().getLanguage();
 
         // Split the text into sentences
-        InputStream sentModelIn = null;
-        SentenceModel sentModel = null;
-        
-        try {
-            String sentPath = databasePaths.get(langTag+"-sent");
-            LOG.log(Level.INFO, "Splitting text using model {0}...", sentPath);
-            sentModelIn = new FileInputStream(sentPath);
-            sentModel = new SentenceModel(sentModelIn);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Model file loading error", e);
-            throw new RuntimeException("Error while loading the sentence splitting models.");
-        } finally {
-            if (sentModelIn != null) {
-                try {
-                    sentModelIn.close();
-                } catch (IOException e) {
-                }
-            }
-        }
+        SentenceModel sentModel = getSentenceModel(langTag + "-sent");
 
         SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentModel);
         String sentences[] = sentenceDetector.sentDetect(component.getText());
 
-        // Prepare the models
-        InputStream tokenModelIn = null;
-        TokenizerModel tokenModel = null;
-        InputStream POSModelIn = null;
-        POSModel POSModel = null;
+        // Get the right models
+        TokenizerModel tokenModel = getTokenizerModel(langTag + "-token");
+        POSModel POSModel = getPOSTaggerModel(langTag + "-pos-maxent");
 
-        // Tokenizer model
-        try {
-            String tokensPath = databasePaths.get(langTag+"-token");
-            LOG.log(Level.INFO, "Tokenizing text using model {0}...", tokensPath);
-            tokenModelIn = new FileInputStream(tokensPath);
-            tokenModel = new TokenizerModel(tokenModelIn);
-        } catch (IOException e) {
-            throw new RuntimeException("Error while loading the tokenizer models.");
-        } finally {
-            if (tokenModelIn != null) {
-                try {
-                    tokenModelIn.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        
-        // Splitter model
-        try {
-            String posPath = databasePaths.get(langTag+"-pos-maxent");
-            LOG.log(Level.INFO, "POStagging text using model {0}...", posPath);
-            POSModelIn = new FileInputStream(posPath);
-            POSModel = new POSModel(POSModelIn);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Failed loading model.");
-        } finally {
-            if (POSModelIn != null) {
-                try {
-                    POSModelIn.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-
+        // Iterate through sentences and produce the distilled objects, 
+        // i.e. a sentence object with pos-tagged and stemmed tokens.
         for (String sentenceString : sentences) {
 
             // the distilled sentence object
@@ -182,7 +143,7 @@ public class OpenNlpBootstrapper implements Annotator {
                     getStemmerForLanguage(component.getLanguage());
 
             if (stemmer == null) {
-                throw new RuntimeException(
+                throw new AnnotationException(this,
                         "Stemmer not available for the language "
                         + component.getLanguage().getLanguage());
             }
@@ -208,11 +169,21 @@ public class OpenNlpBootstrapper implements Annotator {
         } // for (String sentenceString : sentences)
     } // annotate
 
+    // <editor-fold desc="model loading">
+    /**
+     * Public property to override the default models; the keys should be in the
+     * format ($lang)-($tool), as for example "en-token".
+     *
+     * @param paths the paths of the OpenNLP models to be used.
+     */
     public void setModelPaths(Map<String, String> paths) {
         databasePaths.clear();
         databasePaths.putAll(paths);
     }
 
+    /**
+     * Sets the default URLs for some known OpenNLP models.
+     */
     private void SetDefaultModels() {
         databasePaths.put("en-sent", "http://opennlp.sourceforge.net/models-1.5/en-sent.bin");
         databasePaths.put("en-token", "http://opennlp.sourceforge.net/models-1.5/en-token.bin");
@@ -245,7 +216,7 @@ public class OpenNlpBootstrapper implements Annotator {
                 // if we're dealing with a local file, then
                 // we don't care and continue.
                 if (isLocalFile(url)) {
-                    LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
+                    //LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
                     continue;
                 }
 
@@ -260,22 +231,22 @@ public class OpenNlpBootstrapper implements Annotator {
                 // don't download anything
                 File f = new File(newFileName);
                 if (f.exists()) {
-                    LOG.log(Level.INFO, "Using {0} as local cache...", newFileName);
+                    //LOG.log(Level.INFO, "Using {0} as local cache...", newFileName);
                     correctPaths.put(entryKey, f.getCanonicalPath());
                     continue;
                 }
 
-                LOG.log(Level.INFO, "Starting to download {0}", url.toString());
+                //LOG.log(Level.INFO, "Starting to download {0}", url.toString());
                 FileUtils.copyURLToFile(url, f);
-                LOG.log(Level.INFO, "OpenNLP database saved in {0}", f.getCanonicalPath());
+                //LOG.log(Level.INFO, "OpenNLP database saved in {0}", f.getCanonicalPath());
 
                 correctPaths.put(entryKey, f.getAbsolutePath());
 
             } catch (MalformedURLException ex) {
-                LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
+                //LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Savefile error", ex);
-                throw new RuntimeException("Failed to download " + e.getValue());
+                //LOG.log(Level.SEVERE, "Savefile error", ex);
+                throw new AnnotationException(this,"Failed to download " + e.getValue(),ex);
             } finally {
 
                 // if something went wrong, put the default value.
@@ -291,10 +262,162 @@ public class OpenNlpBootstrapper implements Annotator {
 
     }
 
+    // </editor-fold>
+    // <editor-fold desc="model caching">
+    /**
+     * Loads a sentence model or retrieves it from cache if has been already
+     * loaded before.
+     *
+     * @param modelId the model to retrieve
+     * @return the loaded model
+     */
+    public SentenceModel getSentenceModel(String modelId) {
+
+        // if the model has not already been loaded, cache it
+        if (!sentenceModelsCache.containsKey(modelId)) {
+
+            // Split the text into sentences
+            InputStream sentModelIn = null;
+            SentenceModel sentModel = null;
+            String sentPath = "";
+
+            try {
+                sentPath = databasePaths.get(modelId);
+                sentModelIn = new FileInputStream(sentPath);
+                sentModel = new SentenceModel(sentModelIn);
+            } catch (IOException e) {
+                throw new AnnotationException(this,
+                        "Error while loading the model file \""
+                        + sentPath + "\".",
+                        e);
+            } catch (NullPointerException e) {
+                throw new AnnotationException(this,
+                        "Error while looking for the model \""
+                        + modelId + "\".",
+                        e);
+            } finally {
+                if (sentModelIn != null) {
+                    try {
+                        sentModelIn.close();
+                    } catch (IOException e) {
+                        throw new AnnotationException(this,
+                                "Error while loading the model file '\""
+                                + modelId + "\".",
+                                e);
+                    }
+                }
+            }
+            sentenceModelsCache.put(modelId, sentModel);
+            return sentModel;
+        }
+        return sentenceModelsCache.get(modelId);
+    }
+    
+    /**
+     * Loads a tokenizer model or retrieves it from cache if has been already
+     * loaded before.
+     *
+     * @param modelId the model to retrieve
+     * @return the loaded model
+     */
+    public TokenizerModel getTokenizerModel(String modelId) {
+
+        // if the model has not already been loaded, cache it
+        if (!tokenizerModelsCache.containsKey(modelId)) {
+
+            // Split the text into sentences
+            InputStream tokenModelIn = null;
+            TokenizerModel tokenizerModel = null;
+            String sentPath = "";
+
+            try {
+                sentPath = databasePaths.get(modelId);
+                tokenModelIn = new FileInputStream(sentPath);
+                tokenizerModel = new TokenizerModel(tokenModelIn);
+            } catch (IOException e) {
+                throw new AnnotationException(this,
+                        "Error while loading the model file \""
+                        + sentPath + "\".",
+                        e);
+            } catch (NullPointerException e) {
+                throw new AnnotationException(this,
+                        "Error while looking for the model \""
+                        + modelId + "\".",
+                        e);
+            } finally {
+                if (tokenModelIn != null) {
+                    try {
+                        tokenModelIn.close();
+                    } catch (IOException e) {
+                        throw new AnnotationException(this,
+                                "Error while loading the model file '\""
+                                + modelId + "\".",
+                                e);
+                    }
+                }
+            }
+            tokenizerModelsCache.put(modelId, tokenizerModel);
+            return tokenizerModel;
+        }
+        return tokenizerModelsCache.get(modelId);
+    }
+    
+    /**
+     * Loads a POStagger model or retrieves it from cache if has been already
+     * loaded before.
+     *
+     * @param modelId the model to retrieve
+     * @return the loaded model
+     */
+    public POSModel getPOSTaggerModel(String modelId) {
+
+        // if the model has not already been loaded, cache it
+        if (!posModelsCache.containsKey(modelId)) {
+
+            // Split the text into sentences
+            InputStream POSModelIn = null;
+            POSModel POSModel = null;
+            String sentPath = "";
+
+            try {
+                sentPath = databasePaths.get(modelId);
+                POSModelIn = new FileInputStream(sentPath);
+                POSModel = new POSModel(POSModelIn);
+            } catch (IOException e) {
+                throw new AnnotationException(this,
+                        "Error while loading the model file \""
+                        + sentPath + "\".",
+                        e);
+            } catch (NullPointerException e) {
+                throw new AnnotationException(this,
+                        "Error while looking for the model \""
+                        + modelId + "\".",
+                        e);
+            } finally {
+                if (POSModelIn != null) {
+                    try {
+                        POSModelIn.close();
+                    } catch (IOException e) {
+                        throw new AnnotationException(this,
+                                "Error while loading the model file '\""
+                                + modelId + "\".",
+                                e);
+                    }
+                }
+            }
+            posModelsCache.put(modelId, POSModel);
+            return POSModel;
+        }
+        return posModelsCache.get(modelId);
+    }
+
+    //</editor-fold>
+    // <editor-fold desc="utilities">
     private static boolean isLocalFile(URL url) {
         String scheme = url.getProtocol();
         String host = url.getHost();
         return "file".equalsIgnoreCase(scheme)
                 && (host == null || "".equals(host));
     }
+    // </editor-fold>
 }

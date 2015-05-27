@@ -25,8 +25,8 @@ import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 import java.util.Locale;
+import org.uniud.dcore.annotation.AnnotationException;
 import org.uniud.dcore.engine.Annotator;
-import org.uniud.dcore.persistence.AnnotatorException;
 import org.uniud.dcore.persistence.DocumentComponent;
 
 /**
@@ -75,16 +75,16 @@ public class CybozuLanguageDetector implements Annotator {
      * @throws AnnotatorException 
      */
     @Override
-    public void annotate(DocumentComponent component) throws AnnotatorException {
+    public void annotate(DocumentComponent component) {
         
         String lang = "";
         try {
             lang = detect(component.getText());
         } catch (LangDetectException ex) {
-            throw new AnnotatorException("CybozuLanguageDetector - error during language detection",ex);
+            throw new AnnotationException(this,"CybozuLanguageDetector - error during language detection",ex);
         }
         if (lang.isEmpty()) {
-            throw new AnnotatorException("CybozuLanguageDetector could not detect a language");
+            throw new AnnotationException(this,"CybozuLanguageDetector could not detect a language");
         }        
         Locale loc = Locale.forLanguageTag(lang);
         component.setLanguage(loc);
