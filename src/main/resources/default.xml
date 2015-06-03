@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2015 Artificial Intelligence
+	Laboratory @ University of Udine.
+
+	This file is part of the Distiller-CORE library.
+
+	Distiller-CORE is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+
+	Distiller-CORE is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public
+        License along with this library; if not, write to the Free Software
+        Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+        MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
+-->
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation ="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+       
+    <!-- Language detectors -->  
+    <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetector"/>
+    
+    <!-- Annotators -->  
+    <bean id="stanford" 
+          class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapper" />
+    <bean id="openNLP" 
+          class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapper">
+        <!-- Example of local models path -->
+        <!--
+        <property name="modelPaths">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="it-sent" value="/home/red/tools/opennlp-italian-models/models/it/it-sent.bin"/>
+                <entry key="it-token" value="/home/red/tools/opennlp-italian-models/models/it/it-token.bin"/>
+                <entry key="it-pos-maxent" value="/home/red/tools/opennlp-italian-models/models/it/it-pos-maxent.bin"/>
+            </map>
+        </property>
+        -->        
+    </bean>
+    <bean id="tagme" 
+          class="it.uniud.ailab.dcore.annotation.TagMeTokenAnnotator" />
+    <bean id="tagmegram" 
+          class="it.uniud.ailab.dcore.annotation.TagMeGramAnnotator" />
+    <bean id="statistical" 
+          class="it.uniud.ailab.dcore.annotation.StatisticalAnnotator"/>
+    <bean id="syuzhet" 
+          class="it.uniud.ailab.dcore.annotation.grams.SyuzhetAnnotator"/>
+
+    <!-- Preprocessors -->
+    <bean id="engPreprocessor" class="it.uniud.ailab.dcore.engine.PreProcessor">
+        <property name="languageTag" value="en"/>
+        <property name="annotators">
+            <list>
+                <ref bean="openNLP"/>
+                <!--<ref bean="stanford" />-->
+                <ref bean="tagme" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="itPreprocessor" class="it.uniud.ailab.dcore.engine.PreProcessor">
+        <property name="languageTag" value="it" />
+        <property name="annotators">
+            <list>
+                <ref bean="openNLP" />
+                <ref bean="tagme" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="ptPreprocessor" class="it.uniud.ailab.dcore.engine.PreProcessor">
+        <property name="languageTag" value="pt" />
+        <property name="annotators">
+            <list>
+                <ref bean="openNLP" />
+            </list>
+        </property>
+    </bean>
+    
+    
+    <!-- N-gram generators -->
+    <bean id="nGramGenerator"
+          class="it.uniud.ailab.dcore.generation.SimpleNGramGenerator" >
+        <property name="gramLanguages">
+            <list>
+                <bean class="java.util.Locale">
+                    <constructor-arg value="en" type="java.lang.String"/>
+                </bean>
+                <bean class="java.util.Locale">
+                    <constructor-arg value="it" type="java.lang.String"/>
+                </bean>
+            </list>
+        </property>    
+    </bean>
+    
+    <!-- Evaluators -->
+    <bean id="linearEvaluator"
+          class="it.uniud.ailab.dcore.evaluation.LinearEvaluator">
+        <property name="annotators">
+            <list>
+                <ref bean="statistical" />
+                <ref bean="tagmegram" />
+                <ref bean="syuzhet" />
+            </list>
+        </property>
+        <property name="weights">
+            <map key-type="java.lang.String" value-type="java.lang.Double">
+                <entry value="0.15">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.DEPTH"/>
+                    </key>
+                </entry>
+                <entry value="0.25">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.HEIGHT"/>
+                    </key>                     
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.grams.SyuzhetAnnotator.INTENSITY"/>
+                    </key>                     
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.LIFESPAN"/>
+                    </key> 
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.FREQUENCY"/>
+                    </key>
+                </entry>
+                <entry value="0.3">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.generation.SimpleNGramGenerator.NOUNVALUE"/>
+                    </key>
+                </entry>
+                <entry value="0.1" >
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.TagMeGramAnnotator.WIKIFLAG"/>
+                    </key>
+                </entry>
+            </map>              
+        </property>
+    </bean>
+    
+    <!-- The main object, the Distiller, that receives the beans defined above -->
+    <bean id="distiller" class="it.uniud.ailab.dcore.Distiller">
+        <property name="languageDetector" ref="cybozu"/>
+        <property name="preProcessors">
+            <list>
+                <ref bean="engPreprocessor"/>
+                <ref bean="itPreprocessor" />
+                <ref bean="ptPreprocessor" />
+            </list>
+        </property>
+        
+        <property name="gramGenerators">
+            <list>
+                <ref bean="nGramGenerator"/>
+            </list>
+        </property>
+        
+        <property name="evaluator" 
+                  ref="linearEvaluator"/>
+    </bean>
+   
+</beans>
