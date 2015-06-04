@@ -25,8 +25,8 @@ import java.util.Locale;
  * and is the most basic concept unit of a document. In the Composite pattern, 
  * this is the leaf of the structure.
  *
- * @author Dario De Nart
  * @author Marco Basaldella
+ * @author Dario De Nart
  */
 public class Sentence extends DocumentComponent {
     
@@ -126,7 +126,12 @@ public class Sentence extends DocumentComponent {
     }
 
     // </editor-fold>
-    // writing the sentence with all annotations
+    
+    /**
+     * Get the text of the sentence.
+     * 
+     * @return the text of the sentence.
+     */
     @Override
     public String toString() {
         return getText();
@@ -143,6 +148,12 @@ public class Sentence extends DocumentComponent {
         return null;
     }
 
+    /**
+     * Get all the annotations associated with the single tokens that compose
+     * the sentence.
+     * 
+     * @return all the annotations of all the tokens.
+     */
     @Override
     public List<Annotation> getAnnotations() {
         List<Annotation> ret = new ArrayList<Annotation>();
@@ -154,11 +165,21 @@ public class Sentence extends DocumentComponent {
         return ret;
     }
     
+    /**
+     * Add a n-gram to the sentence.
+     * 
+     * @param g the gram to add. 
+     */
     @Override
     public void addGram(Gram g) {
         grams.add(g);
     }
     
+    /**
+     * Get all the grams of a sentence.
+     * 
+     * @return the grams that have been found in the sentence.
+     */
     @Override
     public List<Gram> getGrams() {
         return grams;

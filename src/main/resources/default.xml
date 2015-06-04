@@ -49,13 +49,13 @@
         -->        
     </bean>
     <bean id="tagme" 
-          class="it.uniud.ailab.dcore.annotation.TagMeTokenAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator" />
     <bean id="tagmegram" 
-          class="it.uniud.ailab.dcore.annotation.TagMeGramAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.gram.TagMeGramAnnotator" />
     <bean id="statistical" 
-          class="it.uniud.ailab.dcore.annotation.StatisticalAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator"/>
     <bean id="syuzhet" 
-          class="it.uniud.ailab.dcore.annotation.grams.SyuzhetAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.gram.SyuzhetAnnotator"/>
 
     <!-- Preprocessors -->
     <bean id="engPreprocessor" class="it.uniud.ailab.dcore.engine.PreProcessor">
@@ -119,31 +119,31 @@
                 <entry value="0.15">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.DEPTH"/>
+                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.DEPTH"/>
                     </key>
                 </entry>
                 <entry value="0.25">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.HEIGHT"/>
+                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.HEIGHT"/>
                     </key>                     
                 </entry>
                 <entry value="0.1">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.grams.SyuzhetAnnotator.INTENSITY"/>
+                            static-field="it.uniud.ailab.dcore.annotation.gram.SyuzhetAnnotator.INTENSITY"/>
                     </key>                     
                 </entry>
                 <entry value="0.1">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.LIFESPAN"/>
+                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.LIFESPAN"/>
                     </key> 
                 </entry>
                 <entry value="0.1">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.StatisticalAnnotator.FREQUENCY"/>
+                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.FREQUENCY"/>
                     </key>
                 </entry>
                 <entry value="0.3">
@@ -155,7 +155,7 @@
                 <entry value="0.1" >
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.TagMeGramAnnotator.WIKIFLAG"/>
+                            static-field="it.uniud.ailab.dcore.annotation.WikipediaAnnotator.WIKIFLAG"/>
                     </key>
                 </entry>
             </map>              

@@ -30,6 +30,8 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The BlackBoard that holds the document and all its annotations. In every part  
@@ -81,6 +83,13 @@ public class BlackBoard {
      * Container for the n-grams of the document.
      */
     private Map<String,Gram> gramContainer;
+    
+//    /**
+//     * Document-wide features. This space can be used to add features that
+//     * belong to the whole document, as for example extracted concepts, 
+//     * or the tagset used by a POS-tagger.
+//     */
+//    private List<Feature> features;
         
     /**
      * Initializes the blackboard with a new document. This will destroy any
@@ -149,10 +158,10 @@ public class BlackBoard {
     /**
      * Retrieves the grams found in the document.
      * 
-     * @return an array of {@link it.uniud.ailab.dcore.persistence.Gram}s.
+     * @return a collection of {@link it.uniud.ailab.dcore.persistence.Gram}s.
      */
-    public Map<String,Gram> getGrams() {
-        return gramContainer;
+    public Collection<Gram> getGrams() {
+        return gramContainer.values();
     }
 
 }

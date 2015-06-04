@@ -19,8 +19,9 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package it.uniud.ailab.dcore.annotation;
+package it.uniud.ailab.dcore.annotation.token;
 
+import it.uniud.ailab.dcore.annotation.*;
 import it.uniud.ailab.dcore.engine.Annotator;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -53,14 +54,12 @@ import it.uniud.ailab.dcore.persistence.Token;
  *
  * @author Dado
  */
-public class TagMeTokenAnnotator implements Annotator {
+public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
 
     private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
     private final String apiKey = "Dario.de.NART.2014";
     
-    public static final String TAGMEANNOTATION = "Tagme";
-
-    // JSON parser
+// JSON parser
     private final JSONParser parser;
 
     public TagMeTokenAnnotator() {
@@ -135,7 +134,7 @@ public class TagMeTokenAnnotator implements Annotator {
             String part = t.getText();
             for (String surface : taggedSentence.keySet()) {
                 if (surface.contains(part)) {
-                    Annotation ann = new Annotation(TAGMEANNOTATION, surface, taggedSentence.get(surface));
+                    Annotation ann = new Annotation(WIKIFLAG, surface, taggedSentence.get(surface));
                     t.addAnnotation(ann);
                 }
             }

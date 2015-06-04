@@ -87,6 +87,7 @@ public class Distiller {
         
         if (!locale.equals(""))
         {
+            // Check if the language tag is valid by generating a dummy locale
             try {
                 Locale detectedLocale = Locale.forLanguageTag(locale);
             } catch (Exception e) {
@@ -193,15 +194,15 @@ public class Distiller {
                 scores.entrySet().stream().sorted(
                         Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);        
         
-        for (Map.Entry<Gram,Double> e : ordered.collect(Collectors.toList())) {
-            System.out.print(String.format("%-24s",e.getKey().getSignature()));
+        for (Map.Entry<Gram,Double> scoredGram : ordered.collect(Collectors.toList())) {
+            System.out.print(String.format("%-24s",scoredGram.getKey().getSignature()));
             System.out.print("\t\t");
-            for (Feature f : e.getKey().getFeatures()) {
+            for (Feature f : scoredGram.getKey().getFeatures()) {
                 System.out.print(String.format("%-12s:%8.3f ; ", f.getType(),f.getValue()));
             }
             
 //            List<Annotation> ann = new ArrayList<Annotation>();
-//            for (Token t : e.getKey().getTokens()) {
+//            for (Token t : scoredGram.getKey().getTokens()) {
 //                ann.addAll(t.getAnnotations());
 //            }
 //            
@@ -212,6 +213,7 @@ public class Distiller {
 //                System.out.print(String.format("%-12s:\"%-12s\":%-12s ; ", 
 //                        a.getAnnotator(), a.getAnnotatedText(), a.getAnnotation()));
 //            }
+//            
             
             System.out.println();
         }

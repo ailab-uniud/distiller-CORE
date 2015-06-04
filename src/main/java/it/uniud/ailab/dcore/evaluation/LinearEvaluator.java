@@ -49,7 +49,7 @@ public class LinearEvaluator extends Evaluator {
         
         HashMap<Gram,Double> scoredGrams = new HashMap<>();
         
-        for(Gram g : BlackBoard.Instance().getGrams().values())
+        for(Gram g : BlackBoard.Instance().getGrams())
         {
             double score = 0;
             for (Feature f : g.getFeatures()) {

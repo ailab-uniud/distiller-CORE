@@ -21,14 +21,13 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * An abstract conceptual unit of the document. This can be a sentence, a chapter, 
  * a paragraph, and so on. In the Composite pattern, this is the root of 
- * the structure-
+ * the structure.
  * 
  *
  * @author Marco Basaldella

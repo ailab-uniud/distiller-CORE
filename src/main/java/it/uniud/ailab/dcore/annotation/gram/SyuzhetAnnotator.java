@@ -19,7 +19,7 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package it.uniud.ailab.dcore.annotation.grams;
+package it.uniud.ailab.dcore.annotation.gram;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

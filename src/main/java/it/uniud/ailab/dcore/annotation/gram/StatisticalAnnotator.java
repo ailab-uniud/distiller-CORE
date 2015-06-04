@@ -19,7 +19,7 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package it.uniud.ailab.dcore.annotation;
+package it.uniud.ailab.dcore.annotation.gram;
 
 import java.util.List;
 import it.uniud.ailab.dcore.engine.Annotator;

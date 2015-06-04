@@ -19,8 +19,10 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package it.uniud.ailab.dcore.annotation;
+package it.uniud.ailab.dcore.annotation.gram;
 
+import it.uniud.ailab.dcore.annotation.WikipediaAnnotator;
+import it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator;
 import java.util.List;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.BlackBoard;
@@ -30,32 +32,47 @@ import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 
 /**
- *
+ * Adds the Wikiflag as defined in {@link it.uniud.ailab.dcore.annotation.WikipediaAnnotator}
+ * to grams which text coincides with a Wikipedia page. Note: it requires a previous 
+ * annotations of the tokens by {@link it.uniud.ailab.dcore.annotation.tokens.TagMeTokenAnnotator}
+ * 
  * @author Marco Basaldella
  */
-public class TagMeGramAnnotator implements Annotator {
+public class TagMeGramAnnotator implements Annotator, WikipediaAnnotator {
     
     /**
-     * This field will be set to 1 if the specified gram coincides with a 
-     * Wikipedia entry.
+     * Annotates the component.
+     * 
+     * @param component 
      */
-    public static final String WIKIFLAG = "Wikiflag";
-
     @Override
     public void annotate(DocumentComponent component) {
         
-        for (Gram g: BlackBoard.Instance().getGrams().values()) {
+        for (Gram g: BlackBoard.Instance().getGrams()) {
             // check if the gram coincides with a TagMe annotation
             List<Token> tokens = g.getTokens();
             
             int counter = 0;
             
-            Annotation a = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.TAGMEANNOTATION);
+            Annotation a = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
             
             boolean isTagged = a != null;
             
+            // a gram is tagged with a wikiflag if ALL the tokens contain
+            // a "tagme annotation", i.e. if it's the same as a page title
+            
+            // Special case: the gram may be a substring of a wikipedia page title,
+            // but it not worth to check it since it's a very rare occurrrence and
+            // it will just increase complexity. Plus, the possibility of this
+            // rare occurrences depends mainly from the n-gram generator: a good
+            // n-gram generator should never "cut" wikipedia titles in candidate
+            // keyphrases. For example, if "software engineering" appears in 
+            // the text, a good ngram generator should always choose 
+            // the whole phrase as a candidate KP, and never the single words
+            // "software" or "engineering"
+            
             while (isTagged && ++counter < tokens.size()) {
-                Annotation b = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.TAGMEANNOTATION);
+                Annotation b = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
                 isTagged = (b != null) ? b.equals(a) : false;
             }
             
