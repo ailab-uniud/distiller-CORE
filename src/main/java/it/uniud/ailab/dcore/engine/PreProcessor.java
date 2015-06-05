@@ -61,9 +61,9 @@ public class PreProcessor {
            
     // </editor-fold>
     
-    public void generateAnnotations(DocumentComponent c) {
+    public void generateAnnotations(Blackboard b,DocumentComponent c) {
         for (Annotator a : annotators) {
-            a.annotate(c);
+            a.annotate(b,c);
         }
     }
 }

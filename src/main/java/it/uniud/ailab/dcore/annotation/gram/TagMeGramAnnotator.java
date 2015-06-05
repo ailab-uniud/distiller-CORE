@@ -25,7 +25,7 @@ import it.uniud.ailab.dcore.annotation.WikipediaAnnotator;
 import it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator;
 import java.util.List;
 import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.BlackBoard;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.Annotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
@@ -46,9 +46,9 @@ public class TagMeGramAnnotator implements Annotator, WikipediaAnnotator {
      * @param component 
      */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
         
-        for (Gram g: BlackBoard.Instance().getGrams()) {
+        for (Gram g: blackboard.getGrams()) {
             // check if the gram coincides with a TagMe annotation
             List<Token> tokens = g.getTokens();
             

@@ -23,6 +23,7 @@ package it.uniud.ailab.dcore.annotation.gram;
 
 import java.util.List;
 import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -86,7 +87,7 @@ public class StatisticalAnnotator implements Annotator {
      * @param component the component to analyze.
      */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
 
         List<Sentence> sentences = DocumentUtils.getSentences(component);
 

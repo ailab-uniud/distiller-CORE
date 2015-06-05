@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -65,7 +66,7 @@ public class StanfordBootstrapper implements Annotator {
      * @param component the component to annotate.
      */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
         
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 

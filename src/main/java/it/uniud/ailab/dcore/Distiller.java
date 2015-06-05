@@ -22,7 +22,7 @@
 package it.uniud.ailab.dcore;
 
 import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.BlackBoard;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.engine.Evaluator;
 import it.uniud.ailab.dcore.engine.NGramGenerator;
 import it.uniud.ailab.dcore.engine.PreProcessor;
@@ -53,6 +53,9 @@ public class Distiller {
     private NGramGenerator[] gramGenerators;
     private Evaluator evaluator;
     private String locale;
+    
+    // the blackboard that will contain the text and will be returned at last
+    private Blackboard blackboard;
 
     @Required
     public void setEvaluator(Evaluator evaluator) {
@@ -104,14 +107,16 @@ public class Distiller {
      * @param text the text to distill.
      */
     public void extract(String text){
+        
+        blackboard = new Blackboard();
                 
-        BlackBoard.Instance().createDocument(text);
+        blackboard.createDocument(text);
         boolean singleLanguage = true;
         
         // *** STEP 1 *** //
         // Language recognition. 
         
-        languageDetector.annotate(BlackBoard.Instance().getStructure());
+        languageDetector.annotate(blackboard,blackboard.getStructure());
         
         // *** STEP 2 *** //
         // Splitting and annotation.        
@@ -121,7 +126,7 @@ public class Distiller {
         // or more subsections.
         
         singleLanguage = 
-                BlackBoard.Instance().getStructure().getComponents().isEmpty();
+                blackboard.getStructure().getComponents().isEmpty();
         
         if (!singleLanguage) {
             // complex case: the text has been splitted
@@ -129,12 +134,12 @@ public class Distiller {
             // iterate between the different preprocessors and apply the
             // one with the matching language
             
-            for (DocumentComponent c : BlackBoard.Instance().
-                    getStructure().getComponents()) {
+            for (DocumentComponent c :
+                    blackboard.getStructure().getComponents()) {
                 for (PreProcessor p : preProcessors) {
                     
                     if (p.getLanguage().equals(c.getLanguage())) {
-                        p.generateAnnotations(c);
+                        p.generateAnnotations(blackboard,c);
                         break;
                     }
                 }
@@ -143,9 +148,8 @@ public class Distiller {
         } else { // simple case: text has not been splitted
             // apply the preprocessor over the root element.
             for (PreProcessor p : preProcessors) {
-                if (p.getLanguage().equals(
-                        BlackBoard.Instance().getStructure().getLanguage())) {
-                    p.generateAnnotations(BlackBoard.Instance().getStructure());
+                if (p.getLanguage().equals(blackboard.getStructure().getLanguage())) {
+                    p.generateAnnotations(blackboard,blackboard.getStructure());
                     break;
                 }
             }
@@ -164,11 +168,11 @@ public class Distiller {
             // warning: it will be used the FIRST n-gram generator that
             // matches the desired language
             
-            for (DocumentComponent c : BlackBoard.Instance().
-                    getStructure().getComponents()) {
+            for (DocumentComponent c : 
+                    blackboard.getStructure().getComponents()) {
                 for (NGramGenerator g:  gramGenerators) {
                     if (g.getGramLanguages().contains(c.getLanguage())) {
-                        g.generateNGrams(c);
+                        g.generateNGrams(blackboard,c);
                         break;
                     }
                 }
@@ -176,8 +180,10 @@ public class Distiller {
             }
         } else {
             for (NGramGenerator g : gramGenerators) {
-                if (g.getGramLanguages().contains(BlackBoard.Instance().getStructure().getLanguage())) {
-                    g.generateNGrams(BlackBoard.Instance().getStructure());
+                if (g.getGramLanguages().contains(
+                        blackboard.getStructure().getLanguage())) {
+                    g.generateNGrams(
+                            blackboard,blackboard.getStructure());
                     break;
                 }
             }
@@ -186,7 +192,7 @@ public class Distiller {
         // *** STEP 4 *** //
         // Evaluation and scoring.
         
-        Map<Gram,Double> scores = evaluator.Score(BlackBoard.Instance().getStructure());
+        Map<Gram,Double> scores = evaluator.Score(blackboard,blackboard.getStructure());
 
         System.out.println("** SCORES **");
         

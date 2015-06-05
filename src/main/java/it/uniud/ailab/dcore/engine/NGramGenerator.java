@@ -47,9 +47,11 @@ public interface NGramGenerator {
      * A NGram generator should offer support for a set of languages, so the 
      * Engine can decide what generator should use if there are more than one.
      * 
-     * @param component the component to analyze.
+     * @param blackboard the blackboard to analyze
+     * @param component the component of the blackboard to analyze
      */
-    public abstract void generateNGrams(DocumentComponent component);
+    public abstract void generateNGrams(
+            Blackboard blackboard,DocumentComponent component);
     
     /**
      * Sets the languages that the n-gram generator should process in a determined

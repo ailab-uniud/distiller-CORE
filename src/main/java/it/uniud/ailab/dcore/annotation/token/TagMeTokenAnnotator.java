@@ -23,6 +23,7 @@ package it.uniud.ailab.dcore.annotation.token;
 
 import it.uniud.ailab.dcore.annotation.*;
 import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -52,23 +53,33 @@ import it.uniud.ailab.dcore.persistence.Token;
 
 /**
  *
- * @author Dado
+ * 
+ * @author Dario De Nart
+ * @author Marco Basaldella
  */
 public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
 
     private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
     private final String apiKey = "Dario.de.NART.2014";
     
-// JSON parser
+    // JSON parser
     private final JSONParser parser;
 
     public TagMeTokenAnnotator() {
         parser = new JSONParser();
     }
 
-    //fat-ass provate mathod that does everything
-    // returns a nice HashMap containing spot/lemma pairs
-    private HashMap<String, String> tagDocument(String text, String lang) {
+    /**
+     * The method that actually does the job: it tags a text string with
+     * Wikipedia page titles when needed, and puts the result in a convenient
+     * HashMap.
+     * 
+     * @param text the text to tag
+     * @param lang the language of the text
+     * @return an hashmap with the substrings of the input text and their matching
+     * Wikipedia page
+     */
+    private HashMap<String, String> tagSentence(String text, String lang) {
         HashMap<String, String> output = new HashMap();
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(tagmeEndpoint);
@@ -80,12 +91,11 @@ public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            // writing error to Log
-            e.printStackTrace();
+            throw new AnnotationException(
+                    this,"Encoding error while building TAGME request URL",e);
         }
-        /*
-         * Execute the HTTP Request
-         */
+
+        
         try {
             HttpResponse response = httpClient.execute(httpPost);
             HttpEntity respEntity = response.getEntity();
@@ -110,24 +120,26 @@ public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
 
             }
         } catch (ClientProtocolException e) {
-            // writing exception to log
-            e.printStackTrace();
+            throw new AnnotationException(this,"Fail while querying TAGME",e);
         } catch (IOException e) {
-            // writing exception to log
-            e.printStackTrace();
-        } catch (ParseException ex) {
-            System.out.println("Badass JSON parsing fail in TAGME Gate");
-            Logger.getLogger(TagMeTokenAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AnnotationException(this,"Fail querying TAGME",e);
+        } catch (ParseException e) {
+            throw new AnnotationException(this,"Fail while parsing TAGME json",e);
         }
         return output;
     }
 
-    public void annotateSentence(Sentence sentence) {
-        
+    /**
+     * Annotates a single sentence with the Wikipedia flag. Used as base case 
+     * for recursion.
+     * 
+     * @param sentence the sentence to annotate.
+     */
+    private void annotateSentence(Sentence sentence) {        
         
         String text = sentence.getText();
         // Retrieve the tagMe annotations using the internal TagMe wrapper
-        HashMap<String, String> taggedSentence = tagDocument(text, sentence.getLanguage().getLanguage());
+        HashMap<String, String> taggedSentence = tagSentence(text, sentence.getLanguage().getLanguage());
         
         // Put the annotations in the appropriate token
         for (Token t : sentence.getTokens()) {
@@ -141,14 +153,23 @@ public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
         }
     }
 
+    /**
+     * Annotates the document putting a flag over subsequent tokens which
+     * match a Wikipedia page title. For example, the tokens "software" and 
+     * "engineering", when put one next the other, match the page
+     * "software engineering".
+     * 
+     * @param blackboard
+     * @param component 
+     */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
         
         if (!component.hasComponents()) {
             annotateSentence((Sentence)component);
         } else {
             for (DocumentComponent c : component.getComponents()) {
-                annotate(c);
+                annotate(blackboard,c);
             }
         }
     }

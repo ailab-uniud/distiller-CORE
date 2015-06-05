@@ -37,7 +37,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import it.uniud.ailab.dcore.engine.NGramGenerator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.engine.BlackBoard;
+import it.uniud.ailab.dcore.engine.Blackboard;
+import it.uniud.ailab.dcore.persistence.Annotation;
 import it.uniud.ailab.dcore.persistence.Feature;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -110,11 +111,11 @@ public class SimpleNGramGenerator implements NGramGenerator {
      * Initializes the nGram generator with the default POS patterns. 
      */
     public SimpleNGramGenerator() {
-        // a neat trick to load the database: instead of doing this.getClass(), 
+        // a neat trick to get the database path: instead of doing this.getClass(), 
         // since you can't use 'this' in a constructor call (like this(this.. )), 
-        // we call getClass on the BlackBoard instance.
-        this((BlackBoard.Instance().getClass().getClassLoader().
-                getResource("ailab/posPatterns.json").getFile()));
+        // we call getClass on a simple Annotation instance.
+        this((new Annotation("","","")).getClass().getClassLoader().
+                getResource("ailab/posPatterns.json").getFile());
     }
     // </editor-fold>
     
@@ -153,7 +154,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
      * @param component the component to analyze.
      */
     @Override
-    public void generateNGrams(DocumentComponent component) {
+    public void generateNGrams(Blackboard blackboard,DocumentComponent component) {
 
         // load the database, then
         // TODO: handle exceptions better
@@ -164,7 +165,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
         }
 
         // do the actual nGram generation.
-        spotNGrams(component);
+        spotNGrams(blackboard,component);
 
     }
     
@@ -174,7 +175,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
      * 
      * @param component the DocumentComponent to analyze.
      */
-    private void spotNGrams(DocumentComponent component) {
+    private void spotNGrams(Blackboard blackboard,DocumentComponent component) {
 
         // are we a sentence? if yes, spot the nGrams
         if (component.hasComponents()) {
@@ -182,7 +183,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
 
             // if not and we're a section, traverse the document tree recursively
             for (DocumentComponent child : children) {
-                spotNGrams(child);
+                spotNGrams(blackboard,child);
             }
 
         } else {
@@ -219,7 +220,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
                             Gram g = new Gram(lastReadBuffers[size]);
                             g.putFeature(
                                 new Feature(NOUNVALUE,nounValue ));
-                            BlackBoard.Instance().addGram(component, g);
+                            blackboard.addGram(component, g);
                         }
                     }
                 } // for

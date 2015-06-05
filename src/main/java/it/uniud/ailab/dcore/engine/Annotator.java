@@ -40,7 +40,7 @@ public interface Annotator {
      * 
      * @param component component to annotate.
      */
-    public void annotate(DocumentComponent component);
+    public void annotate(Blackboard blackboard, DocumentComponent component);
     
     
 }

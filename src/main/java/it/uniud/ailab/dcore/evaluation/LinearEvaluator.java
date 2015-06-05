@@ -24,7 +24,7 @@ package it.uniud.ailab.dcore.evaluation;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Required;
-import it.uniud.ailab.dcore.engine.BlackBoard;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.engine.Evaluator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Feature;
@@ -44,12 +44,12 @@ public class LinearEvaluator extends Evaluator {
     }
 
     @Override
-    public Map<Gram, Double> Score(DocumentComponent c) {
-        generateAnnotations(c);
+    public Map<Gram, Double> Score(Blackboard b,DocumentComponent c) {
+        generateAnnotations(b,c);
         
         HashMap<Gram,Double> scoredGrams = new HashMap<>();
         
-        for(Gram g : BlackBoard.Instance().getGrams())
+        for(Gram g : b.getGrams())
         {
             double score = 0;
             for (Feature f : g.getFeatures()) {

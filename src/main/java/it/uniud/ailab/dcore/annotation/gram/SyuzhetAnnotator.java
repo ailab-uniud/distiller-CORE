@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -101,7 +102,7 @@ public class SyuzhetAnnotator implements Annotator {
      * @param component 
      */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
         
         loadDefinitions();
         

@@ -66,12 +66,12 @@ public abstract class Evaluator {
            
     // </editor-fold>
     
-    public void generateAnnotations(DocumentComponent c) {
+    public void generateAnnotations(Blackboard b,DocumentComponent c) {
         for (Annotator a : annotators) {
-            a.annotate(c);
+            a.annotate(b,c);
         }
     }
     
-    public abstract Map<Gram,Double> Score(DocumentComponent c);
+    public abstract Map<Gram,Double> Score(Blackboard b,DocumentComponent c);
     
 }

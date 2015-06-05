@@ -27,7 +27,7 @@ import static it.uniud.ailab.dcore.engine.Evaluator.SCORE;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.WikipediaAnnotator;
 import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.BlackBoard;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import java.io.BufferedReader;
@@ -129,13 +129,13 @@ public class WikipediaInferenceAnnotator implements Annotator {
             = new HashMap<>();
     
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
 
         // Retrieve the grams with a "wikiflag", i.e. the one which
         // text is the same as a Wikipedia page title 
         // for example, "Software Engineering". 
         List<Gram> wikiGrams = new LinkedList<>();
-        for (Gram g : BlackBoard.Instance().getGrams()) {
+        for (Gram g : blackboard.getGrams()) {
             if (g.hasFeature(WikipediaAnnotator.WIKIFLAG)) {
                 wikiGrams.add(g);
             }

@@ -27,6 +27,7 @@ import com.cybozu.labs.langdetect.LangDetectException;
 import java.util.Locale;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 
 /**
@@ -71,11 +72,11 @@ public class CybozuLanguageDetector implements Annotator {
      * Note: the component supports only components written in a single language
      * and with no children.
      * 
-     * @param component
-     * @throws AnnotatorException 
+     * @param blackboard
+     * @param component 
      */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
         
         String lang = "";
         try {

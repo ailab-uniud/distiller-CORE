@@ -42,6 +42,7 @@ import org.apache.commons.io.FileUtils;
 import org.tartarus.snowball.SnowballStemmer;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -100,7 +101,7 @@ public class OpenNlpBootstrapper implements Annotator {
      * @param component the component to annotate.
      */
     @Override
-    public void annotate(DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
 
         if (databasePaths.entrySet().isEmpty()) {
             SetDefaultModels();
