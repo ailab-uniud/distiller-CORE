@@ -53,8 +53,8 @@ public class LinearEvaluator extends Evaluator {
         {
             double score = 0;
             for (Feature f : g.getFeatures()) {
-                if (weights.containsKey(f.getType())) {
-                    score += f.getValue() * weights.get(f.getType());
+                if (weights.containsKey(f.getAnnotator())) {
+                    score += f.getValue() * weights.get(f.getAnnotator());
                 }
             }            
             g.putFeature(SCORE, score);

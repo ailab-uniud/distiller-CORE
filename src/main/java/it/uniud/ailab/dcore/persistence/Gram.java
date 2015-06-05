@@ -133,7 +133,7 @@ class FeatureContainer {
     }
     
     public void put(Feature f) {
-        this.put(f.getType(), f.getValue());
+        this.put(f.getAnnotator(), f.getValue());
     }
     
     public void put(String name,double value) {

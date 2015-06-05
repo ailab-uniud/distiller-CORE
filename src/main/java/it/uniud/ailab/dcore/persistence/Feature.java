@@ -25,24 +25,19 @@ package it.uniud.ailab.dcore.persistence;
  *
  * @author Marco Basaldella
  */
-public class Feature {
+public class Feature extends GenericAnnotation {
     
-    private final String type;
     private final double value;
     
     /**
      * A feature.
      * 
-     * @param type the type of the annotation.
+     * @param annotator the type of the annotation.
      * @param value the annotated text.
      */
-    public Feature(String type,double value) {
-        this.type = type;
+    public Feature(String annotator,double value) {
+        super(annotator);
         this.value = value;
-    }
-    
-    public String getType() {
-        return type;
     }
     
     public double getValue() {

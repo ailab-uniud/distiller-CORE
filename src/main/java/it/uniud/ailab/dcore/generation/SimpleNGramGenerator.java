@@ -218,8 +218,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
                         int nounValue = checkGramNounValue(lastReadBuffers[size]);
                         if (nounValue > 0) {
                             Gram g = new Gram(lastReadBuffers[size]);
-                            g.putFeature(
-                                new Feature(NOUNVALUE,nounValue ));
+                            g.putFeature(new Feature(NOUNVALUE,nounValue ));
                             blackboard.addGram(component, g);
                         }
                     }

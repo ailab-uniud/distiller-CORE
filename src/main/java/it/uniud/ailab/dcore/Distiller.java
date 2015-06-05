@@ -204,7 +204,7 @@ public class Distiller {
             System.out.print(String.format("%-24s",scoredGram.getKey().getSignature()));
             System.out.print("\t\t");
             for (Feature f : scoredGram.getKey().getFeatures()) {
-                System.out.print(String.format("%-12s:%8.3f ; ", f.getType(),f.getValue()));
+                System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(),f.getValue()));
             }
             
 //            List<Annotation> ann = new ArrayList<Annotation>();

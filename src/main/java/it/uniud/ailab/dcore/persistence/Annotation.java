@@ -25,12 +25,8 @@ package it.uniud.ailab.dcore.persistence;
  *
  * @author Marco Basaldella
  */
-public class Annotation {
+public class Annotation extends GenericAnnotation {
     
-    /**
-     * The identifier of the annotator that generated the current annotation instance. 
-     */
-    private final String annotator;
     /**
      * The annotated string. For example, "software engineering".
      */
@@ -42,17 +38,13 @@ public class Annotation {
     private final String annotation ;
     
     public Annotation(String annotator, String annotatedText, String annotation) {
-        this.annotator = annotator;
+        super(annotator);
         this.annotatedText = annotatedText;
         this.annotation = annotation;
     }
     
     public String getAnnotatedText() {
         return annotatedText;
-    }
-    
-    public String getAnnotator() {
-        return annotator;
     }
     
     public String getAnnotation() {
