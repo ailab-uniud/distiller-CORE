@@ -25,6 +25,7 @@ package it.uniud.ailab.dcore.annotation.component;
 import static it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG;
 import static it.uniud.ailab.dcore.engine.Evaluator.SCORE;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
+import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
@@ -105,9 +106,9 @@ public class WikipediaInferenceAnnotator implements Annotator {
     /**
      * The query that will be performed using the Wikipedia OpenSearch APIs.
      */
-    private final String wikipediaQuery = "?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
+    private final String wikipediaQuery = "http://en.wikipedia.org/w/api.php?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
     // Unwanted otugoing links (trivial/nonsense/plain useless)
-    private ArrayList<String> linkBlacklist;
+    private ArrayList<String> linkBlacklist = new ArrayList<>();
     // horrible hardcoded solution
     private static String[] blackTerms = {"null", "International Standard Book Number",
         "Digital object identifier",
@@ -135,16 +136,27 @@ public class WikipediaInferenceAnnotator implements Annotator {
         // text is the same as a Wikipedia page title 
         // for example, "Software Engineering". 
         List<Gram> wikiGrams = new LinkedList<>();
-        for (Gram g : blackboard.getGrams()) {
-            if (g.hasFeature(WikipediaAnnotator.WIKIFLAG)) {
-                wikiGrams.add(g);
-            }
-        }
+        blackboard.getGrams().stream().filter((g) -> 
+                (g.hasFeature(WikipediaAnnotator.WIKIFLAG))).forEach((g) -> {
+            wikiGrams.add(g);
+        });
 
         // Build the related and hypernyms lists, by getting the related links
         // and categories respectively of every Wikipedia page found in the 
         // above loop.
         findHyperymsAndRelated(wikiGrams);
+        
+        hypernyms.entrySet().stream().forEach((hypernym) -> {
+            blackboard.addAnnotation(
+                    new InferenceAnnotation(
+                            HYPERNYMS,hypernym.getKey(),hypernym.getValue()));
+        });
+        
+        related.entrySet().stream().forEach((related) -> {
+            blackboard.addAnnotation(
+                    new InferenceAnnotation(
+                            RELATED,related.getKey(),related.getValue()));
+        });
     }
 
     /**
@@ -171,13 +183,15 @@ public class WikipediaInferenceAnnotator implements Annotator {
             // get the Wikipedia page title.
             String page = currentGram.getTokens().get(0).
                     getAnnotation(WIKIFLAG).getAnnotation();
-            
-            try {
-                page = page.replaceAll(" ", "_");
 
-                // do the query and save the retrieved json in an object.
-                String define = wikipediaQuery + page;
-                con = (HttpURLConnection) (new URL(define)).openConnection();
+            page = page.replaceAll(" ", "_");
+
+            // do the query and save the retrieved json in an object.
+            String queryAddress = wikipediaQuery + page;
+
+            try {
+
+                con = (HttpURLConnection) (new URL(queryAddress)).openConnection();
                 con.setRequestProperty("User-Agent", userAgent);
                 con.setRequestMethod("GET");
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -290,16 +304,16 @@ public class WikipediaInferenceAnnotator implements Annotator {
 
             } catch (ParseException ex) {
                 throw new AnnotationException(this,
-                        "Error while parsing JSON by Wikipedia: " + page,ex);
+                        "Error while parsing JSON by Wikipedia for page: " + page,ex);
             } catch (MalformedURLException ex) {
                 throw new AnnotationException(this,
-                        "Malformed Wikipedia URL: " + page,ex);
+                        "Malformed Wikipedia URL: " + queryAddress,ex);
             } catch (IOException ex) {
                 throw new AnnotationException(this,
                         "Error while reading Wikipedia",ex);
             } finally {
                 try {
-                    reader.close();
+                    if (reader != null) reader.close();
                 } catch (IOException ex) {
                     throw new AnnotationException(this,
                             "Error while reading Wikipedia",ex);

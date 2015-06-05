@@ -31,8 +31,10 @@ import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The BlackBoard that holds the document and all its annotations. In every part  
@@ -58,7 +60,7 @@ public class Blackboard {
      * Instantiates an empty blackboard.
      */
     public Blackboard() { 
-        gramContainer = new HashMap<>();
+        createDocument("");
     }
         
 //    /**
@@ -90,7 +92,7 @@ public class Blackboard {
      * belong to the whole document, as for example extracted concepts, 
      * or tagset used by a POS-tagger, or the overall sentiment.
      */
-    private List<Annotation> annotation;
+    private List<Annotation> annotations;
         
     /**
      * Initializes the blackboard with a new document. This will destroy any
@@ -103,6 +105,7 @@ public class Blackboard {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText);
         this.gramContainer = new HashMap<>();
+        this.annotations = new ArrayList<>();
     }
 
     /**
@@ -163,6 +166,20 @@ public class Blackboard {
      */
     public Collection<Gram> getGrams() {
         return gramContainer.values();
+    }
+    
+    public void addAnnotation(Annotation a) {
+        annotations.add(a);
+    }
+    
+    public List<Annotation> getAnnotations() {
+        return annotations;
+    }
+    
+    public List<Annotation> getAnnotations(String annotator) {        
+        return annotations.stream().filter((a) -> 
+                (a.getAnnotator().equals(annotator))).
+                collect(Collectors.toList());
     }
 
 }

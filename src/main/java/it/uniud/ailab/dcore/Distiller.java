@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
+import it.uniud.ailab.dcore.annotation.component.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
@@ -106,7 +107,7 @@ public class Distiller {
      * 
      * @param text the text to distill.
      */
-    public void extract(String text){
+    public Blackboard extract(String text){
         
         blackboard = new Blackboard();
                 
@@ -192,39 +193,12 @@ public class Distiller {
         // *** STEP 4 *** //
         // Evaluation and scoring.
         
-        Map<Gram,Double> scores = evaluator.Score(blackboard,blackboard.getStructure());
-
-        System.out.println("** SCORES **");
+        evaluator.Score(blackboard,blackboard.getStructure());
         
-        Stream<Map.Entry<Gram,Double>> ordered = 
-                scores.entrySet().stream().sorted(
-                        Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);        
-        
-        for (Map.Entry<Gram,Double> scoredGram : ordered.collect(Collectors.toList())) {
-            System.out.print(String.format("%-24s",scoredGram.getKey().getSignature()));
-            System.out.print("\t\t");
-            for (FeatureAnnotation f : scoredGram.getKey().getFeatures()) {
-                System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(),f.getValue()));
-            }
-            
-//            List<Annotation> ann = new ArrayList<Annotation>();
-//            for (Token t : scoredGram.getKey().getTokens()) {
-//                ann.addAll(t.getAnnotations());
-//            }
-//            
-//            System.out.println();
-//            System.out.print(String.format("%-24s"," "));
-//            
-//            for (Annotation a : ann) {
-//                System.out.print(String.format("%-12s:\"%-12s\":%-12s ; ", 
-//                        a.getAnnotator(), a.getAnnotatedText(), a.getAnnotation()));
-//            }
-//            
-            
-            System.out.println();
-        }
+        (new WikipediaInferenceAnnotator()).annotate(
+                blackboard, blackboard.getStructure());
 
-
+        return blackboard;
     }
     
     // <editor-fold desc="Support methods">

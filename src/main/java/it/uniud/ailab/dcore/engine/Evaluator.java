@@ -72,6 +72,6 @@ public abstract class Evaluator {
         }
     }
     
-    public abstract Map<Gram,Double> Score(Blackboard b,DocumentComponent c);
+    public abstract void Score(Blackboard b,DocumentComponent c);
     
 }

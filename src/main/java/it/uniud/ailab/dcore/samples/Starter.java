@@ -22,6 +22,8 @@
 package it.uniud.ailab.dcore.samples;
 
 import it.uniud.ailab.dcore.Distiller;
+import it.uniud.ailab.dcore.engine.Blackboard;
+import it.uniud.ailab.dcore.utils.BlackboardUtils;
 import java.text.DecimalFormat;
 import org.joda.time.DateTime;
 
@@ -83,7 +85,9 @@ public class Starter {
         times[0] = DateTime.now();
         
         for (int i = 0; i < texts.length; i++) {
-            d.extract(texts[i]);
+            Blackboard b = d.extract(texts[i]);
+            BlackboardUtils.printScores(b);
+            BlackboardUtils.printInference(b);
             times[i+1] = DateTime.now();        
         }
         

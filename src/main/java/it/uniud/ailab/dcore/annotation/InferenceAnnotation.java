@@ -35,7 +35,7 @@ public class InferenceAnnotation extends Annotation {
     /**
      * The score associated to the concept.
      */
-    private final String score;
+    private final double score;
     
     /**
      * Instantiates the annotation.
@@ -44,7 +44,7 @@ public class InferenceAnnotation extends Annotation {
      * @param concept
      * @param score 
      */
-    public InferenceAnnotation(String annotator,String concept,String score) {
+    public InferenceAnnotation(String annotator,String concept,double score) {
         super(annotator);
         this.concept = concept;
         this.score = score;
@@ -64,7 +64,7 @@ public class InferenceAnnotation extends Annotation {
      * 
      * @return the score.
      */
-    public String getScore() {
+    public double getScore() {
         return score;
     }
 }

@@ -44,10 +44,8 @@ public class LinearEvaluator extends Evaluator {
     }
 
     @Override
-    public Map<Gram, Double> Score(Blackboard b,DocumentComponent c) {
+    public void Score(Blackboard b,DocumentComponent c) {
         generateAnnotations(b,c);
-        
-        HashMap<Gram,Double> scoredGrams = new HashMap<>();
         
         for(Gram g : b.getGrams())
         {
@@ -58,9 +56,7 @@ public class LinearEvaluator extends Evaluator {
                 }
             }            
             g.putFeature(SCORE, score);
-            scoredGrams.put(g, score);
         }
-        
-        return scoredGrams;       
+              
     }    
 }
