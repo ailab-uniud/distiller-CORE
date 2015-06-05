@@ -57,7 +57,8 @@ import it.uniud.ailab.dcore.persistence.Token;
  * patterns or to add support for new languages.
  * 
  * Contextual to the generation, the algorithm assigns the first feature to the
- * n-gram, which is the "Noun Value", i.e. the number of nouns in the gram. 
+ * n-gram, which is the "Noun Value", which is proportional to the number of
+ * nouns in the gram. 
  * 
  * @author Dario De Nart
  * @author Marco Basaldella
@@ -218,7 +219,8 @@ public class SimpleNGramGenerator implements NGramGenerator {
                         int nounValue = checkGramNounValue(lastReadBuffers[size]);
                         if (nounValue > 0) {
                             Gram g = new Gram(lastReadBuffers[size]);
-                            g.putFeature(new FeatureAnnotation(NOUNVALUE,nounValue ));
+                            g.putFeature(new FeatureAnnotation(
+                                    NOUNVALUE,((float)nounValue)/g.getTokens().size()));
                             blackboard.addGram(component, g);
                         }
                     }
