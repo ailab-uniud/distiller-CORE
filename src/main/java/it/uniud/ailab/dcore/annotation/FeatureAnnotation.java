@@ -29,7 +29,7 @@ package it.uniud.ailab.dcore.annotation;
  * 
  * @author Marco Basaldella
  */
-public class FeatureAnnotation extends GenericAnnotation {
+public class FeatureAnnotation extends Annotation {
     
     private final double value;
     

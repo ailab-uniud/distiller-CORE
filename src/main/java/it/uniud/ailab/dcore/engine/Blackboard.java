@@ -28,7 +28,7 @@ import java.util.Map;
 import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
-import it.uniud.ailab.dcore.annotation.GenericAnnotation;
+import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.util.Collection;
@@ -90,7 +90,7 @@ public class Blackboard {
      * belong to the whole document, as for example extracted concepts, 
      * or tagset used by a POS-tagger, or the overall sentiment.
      */
-    private List<GenericAnnotation> annotation;
+    private List<Annotation> annotation;
         
     /**
      * Initializes the blackboard with a new document. This will destroy any

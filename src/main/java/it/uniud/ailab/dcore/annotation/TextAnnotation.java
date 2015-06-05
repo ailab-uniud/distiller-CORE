@@ -25,7 +25,7 @@ package it.uniud.ailab.dcore.annotation;
  *
  * @author Marco Basaldella
  */
-public class TextAnnotation extends GenericAnnotation {
+public class TextAnnotation extends Annotation {
     
     /**
      * The annotated string. For example, "software engineering".

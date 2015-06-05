@@ -25,10 +25,10 @@ package it.uniud.ailab.dcore.annotation;
  *
  * @author Marco
  */
-public class GenericAnnotation {
+public class Annotation {
     protected final String annotator;
     
-    protected GenericAnnotation(String annotator) {
+    protected Annotation(String annotator) {
         this.annotator = annotator;
     }
     
