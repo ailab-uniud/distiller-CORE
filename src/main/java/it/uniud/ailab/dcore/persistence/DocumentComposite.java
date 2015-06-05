@@ -21,6 +21,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,8 +54,8 @@ public class DocumentComposite extends DocumentComponent {
     }
 
     @Override
-    public List<Annotation> getAnnotations() {
-        List<Annotation> ret = new ArrayList<>();
+    public List<TextAnnotation> getAnnotations() {
+        List<TextAnnotation> ret = new ArrayList<>();
         for (DocumentComponent c : getComponents())
         {
             ret.addAll(c.getAnnotations());

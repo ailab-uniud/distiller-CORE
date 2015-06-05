@@ -38,8 +38,8 @@ import org.json.simple.parser.ParseException;
 import it.uniud.ailab.dcore.engine.NGramGenerator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.persistence.Annotation;
-import it.uniud.ailab.dcore.persistence.Feature;
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
+import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -114,7 +114,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
         // a neat trick to get the database path: instead of doing this.getClass(), 
         // since you can't use 'this' in a constructor call (like this(this.. )), 
         // we call getClass on a simple Annotation instance.
-        this((new Annotation("","","")).getClass().getClassLoader().
+        this((new TextAnnotation("","","")).getClass().getClassLoader().
                 getResource("ailab/posPatterns.json").getFile());
     }
     // </editor-fold>
@@ -218,7 +218,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
                         int nounValue = checkGramNounValue(lastReadBuffers[size]);
                         if (nounValue > 0) {
                             Gram g = new Gram(lastReadBuffers[size]);
-                            g.putFeature(new Feature(NOUNVALUE,nounValue ));
+                            g.putFeature(new FeatureAnnotation(NOUNVALUE,nounValue ));
                             blackboard.addGram(component, g);
                         }
                     }

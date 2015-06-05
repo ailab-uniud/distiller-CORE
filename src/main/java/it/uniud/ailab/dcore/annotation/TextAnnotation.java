@@ -19,13 +19,13 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package it.uniud.ailab.dcore.persistence;
+package it.uniud.ailab.dcore.annotation;
 
 /**
  *
  * @author Marco Basaldella
  */
-public class Annotation extends GenericAnnotation {
+public class TextAnnotation extends GenericAnnotation {
     
     /**
      * The annotated string. For example, "software engineering".
@@ -37,7 +37,7 @@ public class Annotation extends GenericAnnotation {
      */
     private final String annotation ;
     
-    public Annotation(String annotator, String annotatedText, String annotation) {
+    public TextAnnotation(String annotator, String annotatedText, String annotation) {
         super(annotator);
         this.annotatedText = annotatedText;
         this.annotation = annotation;
@@ -72,7 +72,7 @@ public class Annotation extends GenericAnnotation {
         if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        Annotation other = (Annotation) obj;
+        TextAnnotation other = (TextAnnotation) obj;
         
         return (this.annotatedText.equals(other.getAnnotatedText())) &&
                 (this.annotator.equals(other.getAnnotator())) &&

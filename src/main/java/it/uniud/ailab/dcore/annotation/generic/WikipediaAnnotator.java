@@ -19,21 +19,25 @@
  * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
  */
-package it.uniud.ailab.dcore.persistence;
+package it.uniud.ailab.dcore.annotation.generic;
 
 /**
+ * This almost-empty interface is used to promote the interchangeability 
+ * between different annotators: every Wikipedia annotator should use the 
+ * Wikiflag here defined to annotate grams or tokens which are respectively 
+ * title and part of the title of a Wikipedia page.
+ * This way, subsequent steps of the Distiller do not have to be aware of 
+ * what annotator precedes them, but they just have to now that someone put a 
+ * "Wikiflag" over that n-gram (or token).
  *
- * @author Marco
+ * @author Marco Basaldella
  */
-public class GenericAnnotation {
-    protected final String annotator;
+public interface WikipediaAnnotator {
     
-    protected GenericAnnotation(String annotator) {
-        this.annotator = annotator;
-    }
-    
-    public String getAnnotator() {
-        return annotator;
-    }
+    /**
+     * This field will be set to 1 if the specified gram coincides with a 
+     * Wikipedia entry.
+     */
+    public static final String WIKIFLAG = "Wikiflag";
     
 }

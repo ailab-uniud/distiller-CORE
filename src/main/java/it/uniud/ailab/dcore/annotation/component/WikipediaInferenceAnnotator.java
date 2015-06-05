@@ -22,10 +22,10 @@
 package it.uniud.ailab.dcore.annotation.component;
 
 
-import static it.uniud.ailab.dcore.annotation.WikipediaAnnotator.WIKIFLAG;
+import static it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG;
 import static it.uniud.ailab.dcore.engine.Evaluator.SCORE;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
-import it.uniud.ailab.dcore.annotation.WikipediaAnnotator;
+import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;

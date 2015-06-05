@@ -155,7 +155,7 @@
                 <entry value="0.1" >
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.WikipediaAnnotator.WIKIFLAG"/>
+                            static-field="it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG"/>
                     </key>
                 </entry>
             </map>              

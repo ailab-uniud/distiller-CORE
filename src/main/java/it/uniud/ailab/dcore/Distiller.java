@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Feature;
+import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
@@ -203,7 +203,7 @@ public class Distiller {
         for (Map.Entry<Gram,Double> scoredGram : ordered.collect(Collectors.toList())) {
             System.out.print(String.format("%-24s",scoredGram.getKey().getSignature()));
             System.out.print("\t\t");
-            for (Feature f : scoredGram.getKey().getFeatures()) {
+            for (FeatureAnnotation f : scoredGram.getKey().getFeatures()) {
                 System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(),f.getValue()));
             }
             

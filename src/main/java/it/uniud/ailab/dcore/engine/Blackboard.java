@@ -25,9 +25,10 @@ package it.uniud.ailab.dcore.engine;
 import com.rits.cloning.Cloner;
 import java.util.HashMap;
 import java.util.Map;
-import it.uniud.ailab.dcore.persistence.Annotation;
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
+import it.uniud.ailab.dcore.annotation.GenericAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.util.Collection;
@@ -84,12 +85,12 @@ public class Blackboard {
      */
     private Map<String,Gram> gramContainer;
     
-//    /**
-//     * Document-wide features. This space can be used to add features that
-//     * belong to the whole document, as for example extracted concepts, 
-//     * or the tagset used by a POS-tagger.
-//     */
-//    private List<Feature> features;
+    /**
+     * Document-wide annotations. This space can be used to add annotations that
+     * belong to the whole document, as for example extracted concepts, 
+     * or tagset used by a POS-tagger, or the overall sentiment.
+     */
+    private List<GenericAnnotation> annotation;
         
     /**
      * Initializes the blackboard with a new document. This will destroy any
@@ -145,7 +146,7 @@ public class Blackboard {
             // copy the annotations in the stored gram
             for (int i = 0; i < newGram.getTokens().size(); i++) {
                 Token newToken = newGram.getTokens().get(i);
-                for (Annotation a : newToken.getAnnotations()) {
+                for (TextAnnotation a : newToken.getAnnotations()) {
                     gram.getTokens().get(i).addAnnotation(a);
                 }
             }

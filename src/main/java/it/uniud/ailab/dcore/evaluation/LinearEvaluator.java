@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Required;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.engine.Evaluator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Feature;
+import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
@@ -52,7 +52,7 @@ public class LinearEvaluator extends Evaluator {
         for(Gram g : b.getGrams())
         {
             double score = 0;
-            for (Feature f : g.getFeatures()) {
+            for (FeatureAnnotation f : g.getFeatures()) {
                 if (weights.containsKey(f.getAnnotator())) {
                     score += f.getValue() * weights.get(f.getAnnotator());
                 }

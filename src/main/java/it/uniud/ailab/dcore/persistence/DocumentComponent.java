@@ -21,6 +21,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,7 +94,7 @@ public abstract class DocumentComponent {
      * 
      * @return the list of annotations.
      */
-    public abstract List<Annotation> getAnnotations() ;
+    public abstract List<TextAnnotation> getAnnotations() ;
     
     public abstract void addGram(Gram g);
     

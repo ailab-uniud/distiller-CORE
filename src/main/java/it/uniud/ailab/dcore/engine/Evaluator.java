@@ -28,7 +28,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
- * This module reads the {@link it.uniud.ailab.dcore.persistence.Feature}s produced 
+ * This module reads the {@link it.uniud.ailab.dcore.annotation.Feature}s produced 
  * by the {@link org.uniud.dcore.engine.GramGenerator} and evaluates them to 
  * generate the output of the Distiller.
  * 

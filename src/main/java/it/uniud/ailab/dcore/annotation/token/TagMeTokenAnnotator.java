@@ -21,6 +21,7 @@
  */
 package it.uniud.ailab.dcore.annotation.token;
 
+import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
 import it.uniud.ailab.dcore.annotation.*;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
@@ -46,7 +47,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import it.uniud.ailab.dcore.persistence.Annotation;
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -146,7 +147,7 @@ public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
             String part = t.getText();
             for (String surface : taggedSentence.keySet()) {
                 if (surface.contains(part)) {
-                    Annotation ann = new Annotation(WIKIFLAG, surface, taggedSentence.get(surface));
+                    TextAnnotation ann = new TextAnnotation(WIKIFLAG, surface, taggedSentence.get(surface));
                     t.addAnnotation(ann);
                 }
             }

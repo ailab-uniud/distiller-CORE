@@ -16,6 +16,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -155,8 +156,8 @@ public class Sentence extends DocumentComponent {
      * @return all the annotations of all the tokens.
      */
     @Override
-    public List<Annotation> getAnnotations() {
-        List<Annotation> ret = new ArrayList<Annotation>();
+    public List<TextAnnotation> getAnnotations() {
+        List<TextAnnotation> ret = new ArrayList<TextAnnotation>();
         for (Token t : getTokens())
         {
             ret.addAll(t.getAnnotations());

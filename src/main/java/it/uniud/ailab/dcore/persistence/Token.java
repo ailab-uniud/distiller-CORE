@@ -21,6 +21,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class Token implements Cloneable {
     private String text;
     private String stem;
     private String PoS;
-    private List<Annotation> annotations;
+    private List<TextAnnotation> annotations;
 
     public Token(String text){
-        annotations = new ArrayList<Annotation>();
+        annotations = new ArrayList<TextAnnotation>();
         this.text = text;
     }
     
@@ -70,12 +71,12 @@ public class Token implements Cloneable {
      * an annotation has already been added before. Note that two annotations are
      * equal only if an annotator annotates the same text with the same annotation.
      * 
-     * See {@link it.uniud.ailab.dcore.persistence.Annotation} implementation of
+     * See {@link it.uniud.ailab.dcore.persistence.TextAnnotation} implementation of
      * the equals() method if it's not clear.
      * 
      * @param annotation the annotation to add.
      */
-    public void addAnnotation(Annotation annotation) {
+    public void addAnnotation(TextAnnotation annotation) {
         if (!annotations.contains(annotation))
                 annotations.add(annotation);
     }
@@ -85,7 +86,7 @@ public class Token implements Cloneable {
      * 
      * @return the annotations associated to the token.
      */
-    public List<Annotation> getAnnotations() {
+    public List<TextAnnotation> getAnnotations() {
         return annotations;
     } 
 
@@ -94,15 +95,15 @@ public class Token implements Cloneable {
     @Override
     public String toString() {
         String ret = text + " {(POS:" + getPoS() + ")" ;
-        for (Annotation a : getAnnotations()) {
+        for (TextAnnotation a : getAnnotations()) {
             ret = ret + ", (" + a.getAnnotator() + ":" + a.getAnnotation() + ")" ;
         }
         return ret + "}";
     }            
 
-    public Annotation getAnnotation(String annotation) {
-        Annotation a = null;
-        for (Annotation b : this.getAnnotations())
+    public TextAnnotation getAnnotation(String annotation) {
+        TextAnnotation a = null;
+        for (TextAnnotation b : this.getAnnotations())
         {
             if (b.getAnnotator().equals(annotation))  {
                 a = b;

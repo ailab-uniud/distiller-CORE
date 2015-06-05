@@ -21,18 +21,18 @@
  */
 package it.uniud.ailab.dcore.annotation.gram;
 
-import it.uniud.ailab.dcore.annotation.WikipediaAnnotator;
+import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
 import it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator;
 import java.util.List;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.persistence.Annotation;
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 
 /**
- * Adds the Wikiflag as defined in {@link it.uniud.ailab.dcore.annotation.WikipediaAnnotator}
+ * Adds the Wikiflag as defined in {@link it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator}
  * to grams which text coincides with a Wikipedia page. Note: it requires a previous 
  * annotations of the tokens by {@link it.uniud.ailab.dcore.annotation.tokens.TagMeTokenAnnotator}
  * 
@@ -54,7 +54,7 @@ public class TagMeGramAnnotator implements Annotator, WikipediaAnnotator {
             
             int counter = 0;
             
-            Annotation a = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
+            TextAnnotation a = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
             
             boolean isTagged = a != null;
             
@@ -72,7 +72,7 @@ public class TagMeGramAnnotator implements Annotator, WikipediaAnnotator {
             // "software" or "engineering"
             
             while (isTagged && ++counter < tokens.size()) {
-                Annotation b = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
+                TextAnnotation b = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
                 isTagged = (b != null) ? b.equals(a) : false;
             }
             

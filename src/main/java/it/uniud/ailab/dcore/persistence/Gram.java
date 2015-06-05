@@ -21,6 +21,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +83,7 @@ public class Gram {
         features.put(feature, value);
     }
     
-    public void putFeature(Feature f) {
+    public void putFeature(FeatureAnnotation f) {
         features.put(f);
     }
     
@@ -98,11 +99,11 @@ public class Gram {
         return features.get(featureName).getValue();
     }
 
-    public Feature[] getFeatures() {
+    public FeatureAnnotation[] getFeatures() {
         return features.getAll();
     }
 
-    public void setFeatures(Feature[] features) {
+    public void setFeatures(FeatureAnnotation[] features) {
         this.features.putAll(features);
     }
     // </editor-fold> 
@@ -132,7 +133,7 @@ class FeatureContainer {
         container = new HashMap<>();
     }
     
-    public void put(Feature f) {
+    public void put(FeatureAnnotation f) {
         this.put(f.getAnnotator(), f.getValue());
     }
     
@@ -140,24 +141,24 @@ class FeatureContainer {
         container.put(name,value);
     }
     
-    public Feature get(String key) {
+    public FeatureAnnotation get(String key) {
         Double d = container.get(key);
-        return d == null ? null : new Feature(key,d);
+        return d == null ? null : new FeatureAnnotation(key,d);
     }   
     
-    public void putAll(Feature[] features) {
-        for (Feature f : features) {
+    public void putAll(FeatureAnnotation[] features) {
+        for (FeatureAnnotation f : features) {
             this.put(f);
         }
     }
     
-    public Feature[] getAll() {
-        Feature[] features = new Feature[container.size()];
+    public FeatureAnnotation[] getAll() {
+        FeatureAnnotation[] features = new FeatureAnnotation[container.size()];
         int i = 0;
         
         for(Entry<String, Double> feature : container.entrySet())
         {
-            features[i++] = new Feature(feature.getKey(),feature.getValue());
+            features[i++] = new FeatureAnnotation(feature.getKey(),feature.getValue());
         }  
         
         return features;

@@ -22,22 +22,18 @@
 package it.uniud.ailab.dcore.annotation;
 
 /**
- * This almost-empty interface is used to promote the interchangeability 
- * between different annotators: every Wikipedia annotator should use the 
- * Wikiflag here defined to annotate grams or tokens which are respectively 
- * title and part of the title of a Wikipedia page.
- * This way, subsequent steps of the Distiller do not have to be aware of 
- * what annotator precedes them, but they just have to now that someone put a 
- * "Wikiflag" over that n-gram (or token).
  *
- * @author Marco Basaldella
+ * @author Marco
  */
-public interface WikipediaAnnotator {
+public class GenericAnnotation {
+    protected final String annotator;
     
-    /**
-     * This field will be set to 1 if the specified gram coincides with a 
-     * Wikipedia entry.
-     */
-    public static final String WIKIFLAG = "Wikiflag";
+    protected GenericAnnotation(String annotator) {
+        this.annotator = annotator;
+    }
+    
+    public String getAnnotator() {
+        return annotator;
+    }
     
 }
