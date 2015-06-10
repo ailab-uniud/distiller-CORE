@@ -24,6 +24,9 @@ package it.uniud.ailab.dcore.samples;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.utils.BlackboardUtils;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import org.joda.time.DateTime;
 
@@ -100,5 +103,28 @@ public class Starter {
                     i,
                     df.format((times[i+1].getMillis() - times[i].getMillis()) / 1000.0));
         }
+        
+        System.out.println("******************Arabic Test*****************");
+        d = Distiller.getDefault();
+        DateTime zero = DateTime.now();
+        try{
+        BufferedReader in = new BufferedReader( new InputStreamReader(new FileInputStream("D:\\ShortArabicText.txt"), "UTF-8"));
+        String sample = "";
+        String str;
+ 	while ((str = in.readLine()) != null) 
+	    sample += str;
+	 
+        in.close();
+        d.extract(sample);//"Towards the end of November, during a thaw, at nine o'clock one morning, a train on the Warsaw and Petersburg railway was approaching the latter city at full speed. The morning was so damp and misty that it was only with great difficulty that the day succeeded in breaking; and it was impossible to distinguish anything more than a few yards away from the carriage windows. Some of the passengers by this particular train were returning from abroad; but the third-class carriages were the best filled, chiefly with insignificant persons of various occupations and degrees, picked up at the different stations nearer town. All of them seemed weary, and most of them had sleepy eyes and a shivering expression, while their complexions generally appeared to have taken on the colour of the fog outside. When day dawned, two passengers in one of the third-class carriages found themselves opposite each other. Both were young fellows, both were rather poorly dressed, both had remarkable faces, and both were evidently anxious to start a conversation. If they had but known why, at this particular moment, they were both remarkable persons, they would undoubtedly have wondered at the strange chance which had set them down opposite to one another in a third-class carriage of the Warsaw Railway Company. ");
+        }
+        catch(Exception e){}
+        
+        DateTime one = DateTime.now();
+        
+        System.out.println("** Extraction performance **");
+        System.out.printf(
+                    "Iteration Time:\t %s seconds\n",            
+                    df.format((one.getMillis() - zero.getMillis()) / 1000.0));
+        
     }
 }
