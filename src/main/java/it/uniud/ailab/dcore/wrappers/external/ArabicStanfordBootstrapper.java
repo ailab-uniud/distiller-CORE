@@ -34,8 +34,8 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
-import gpl.pierrick.brihaye.aramorph.AraMorph;
-import gpl.pierrick.brihaye.aramorph.Solution;
+//import gpl.pierrick.brihaye.aramorph.AraMorph;
+//import gpl.pierrick.brihaye.aramorph.Solution;
 import it.uniud.ailab.dcore.engine.Blackboard;
 
 /**
@@ -54,7 +54,7 @@ public class ArabicStanfordBootstrapper implements Annotator {
      * definitions every time, even for different instances of the annotator.
      */
     private static MaxentTagger tagger = null;
-    private static AraMorph am;
+//    private static AraMorph am;
     /**
      * Annotate the document by splitting the document, performing PoS tagging  
      * and Named Entity Recognition using the Stanford Core NLP tools.
@@ -70,8 +70,8 @@ public class ArabicStanfordBootstrapper implements Annotator {
             props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
             pipeline = new StanfordCoreNLP(props);*/
         }
-        if(am == null)
-            am = new AraMorph();
+//        if(am == null)
+//            am = new AraMorph();
         // read some text in the text variable
         String text = component.getText();
 
@@ -106,9 +106,9 @@ public class ArabicStanfordBootstrapper implements Annotator {
                     // this is the POS tag of the token                
                     t.setPoS(token.tag());//(PartOfSpeechAnnotation.class));
                     //System.out.println(t.getText() + " : " + t.getPoS());
-                    if(am.analyzeToken(word))
-                        t.setStem(((Solution)am.getWordSolutions(word).iterator().next()).getLemma());
-                    else
+//                    if(am.analyzeToken(word))
+//                        t.setStem(((Solution)am.getWordSolutions(word).iterator().next()).getLemma());
+//                    else
                         t.setStem(word);
                     //System.out.println(t.getStem()); 
                     // this is the Stem

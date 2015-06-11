@@ -40,6 +40,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -109,15 +110,18 @@ public class WikipediaInferenceAnnotator implements Annotator {
      * The query that will be performed using the Wikipedia OpenSearch APIs.
      */
     private final String wikipediaQuery = "http://en.wikipedia.org/w/api.php?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
-    // Unwanted otugoing links (trivial/nonsense/plain useless)
-    private ArrayList<String> linkBlacklist = new ArrayList<>();
-    // horrible hardcoded solution
-    private static String[] blackTerms = {"null", "International Standard Book Number",
+
+    // Blacklist of unwanted terms
+    private static List<String> blackTerms = Arrays.asList(new String[]{"null", "International Standard Book Number",
         "Digital object identifier",
         "PubMed Identifier",
         "International Standard Serial Number",
         "Wikisource",
-        "Disambigua"};
+        "Disambigua",
+        "disambiguation",
+        "stub",
+        "Featured Articles"
+    });
 
     /**
      * Maps the categories associated with a page.
@@ -285,9 +289,11 @@ public class WikipediaInferenceAnnotator implements Annotator {
                             String catName = (String) category.get("title");
                             catName = catName.replaceFirst("Category:", "");
                             catName = catName.replaceFirst("Categoria:", "");
-                            if (!catName.toLowerCase().contains("stub") && !catName.contains("Featured Articles") && !catName.toLowerCase().contains("disambiguation")) {
+                            if (!catName.toLowerCase().contains("stub") &&
+                                    !catName.contains("Featured Articles") && 
+                                    !catName.toLowerCase().contains("disambiguation")) {
                                 //System.out.println(catName);
-                                if (!wikiCategories.contains(catName)) {
+                                if (!wikiCategories.contains(catName) && !blackTerms.contains(catName)) {
                                     wikiCategories.add(catName);
                                 }
                             }
@@ -320,7 +326,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
                             JSONObject link = (iterator.next());
                             String linkname = (String) link.get("title");
 
-                            if (!wikiLinks.contains(linkname) && !linkBlacklist.contains(linkname)) {
+                            if (!wikiLinks.contains(linkname) && !blackTerms.contains(linkname)) {
                                 wikiLinks.add(linkname);
                             }
 

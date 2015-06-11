@@ -27,12 +27,6 @@
             <version>4.12</version>
         </dependency>
         <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>3.4.4</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
@@ -67,11 +61,6 @@
             <version>1.1-20120112</version>
         </dependency>
         <dependency>
-            <groupId>uk.com.robust-it</groupId>
-            <artifactId>cloning</artifactId>
-            <version>1.9.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.rholder</groupId>
             <artifactId>snowball-stemmer</artifactId>
             <version>1.3.0.581.1</version>
@@ -89,15 +78,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>gpl.pierrick.brihaye.aramorph</groupId>
-            <artifactId>aramorph</artifactId>
-            <version>1.2.1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene.analysis</groupId>
-            <artifactId>apache-lucene</artifactId>
-            <version>1.2.1</version>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.1</version>
             <type>jar</type>
         </dependency>
     </dependencies>
