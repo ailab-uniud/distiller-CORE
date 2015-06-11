@@ -37,7 +37,7 @@
           class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="openNLP" 
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapper">
-        <!-- Example of local models path -->
+      <!-- Example of local models path -->
         <!--
         <property name="modelPaths">
             <map key-type="java.lang.String" value-type="java.lang.String">
@@ -48,6 +48,9 @@
         </property>
         -->        
     </bean>
+    <bean id="arStanford" 
+          class="it.uniud.ailab.dcore.wrappers.external.ArabicStanfordBootstrapper" />
+      
     <bean id="tagme" 
           class="it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator" />
     <bean id="tagmegram" 
@@ -87,7 +90,15 @@
             </list>
         </property>
     </bean>
-    
+    <bean id="arPreprocessor" class="it.uniud.ailab.dcore.engine.PreProcessor">
+        <property name="languageTag" value="ar"/>
+        <property name="annotators">
+            <list>
+                <ref bean="arStanford" />
+                <!--<ref bean="tagme" />-->
+            </list>
+        </property>
+    </bean>
     
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
@@ -99,6 +110,9 @@
                 </bean>
                 <bean class="java.util.Locale">
                     <constructor-arg value="it" type="java.lang.String"/>
+                </bean>
+                <bean class="java.util.Locale">
+                    <constructor-arg value="ar" type="java.lang.String"/>
                 </bean>
             </list>
         </property>    
@@ -170,6 +184,7 @@
                 <ref bean="engPreprocessor"/>
                 <ref bean="itPreprocessor" />
                 <ref bean="ptPreprocessor" />
+                <ref bean="arPreprocessor" />
             </list>
         </property>
         
