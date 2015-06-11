@@ -24,12 +24,13 @@ package it.uniud.ailab.dcore.persistence;
 import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
  *
  */
-public class Token implements Cloneable {
+public class Token {
 
     private String text;
     private String stem;
@@ -89,6 +90,17 @@ public class Token implements Cloneable {
     public List<TextAnnotation> getAnnotations() {
         return annotations;
     } 
+    
+    public List<TextAnnotation> getAnnotations(String annotator) {
+        List<TextAnnotation> ret = new ArrayList<>();
+        for (TextAnnotation ann : this.getAnnotations())
+        {
+            if (ann.getAnnotator().equals(annotator))  {
+                ret.add(ann);
+            }
+        }
+        return ret;
+    }
 
     // </editor-fold>
     
@@ -101,11 +113,33 @@ public class Token implements Cloneable {
         return ret + "}";
     }            
 
-    public TextAnnotation getAnnotation(String annotation) {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Token other = (Token) obj;
+        if (!text.equals(other.text)) {
+            return false;
+        }
+        if (!stem.equals(other.stem)) {
+            return false;
+        }
+        if (!PoS.equals(other.PoS)) {
+            return false;
+        }
+        return true;
+    }
+    
+
+    public TextAnnotation hasAnnotation(String annotator) {
         TextAnnotation a = null;
         for (TextAnnotation b : this.getAnnotations())
         {
-            if (b.getAnnotator().equals(annotation))  {
+            if (b.getAnnotator().equals(annotator))  {
                 a = b;
                 break;
             }

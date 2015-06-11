@@ -61,21 +61,21 @@ public class BlackboardUtils {
                         Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);
 
         for (Map.Entry<Gram, Double> scoredGram : ordered.collect(Collectors.toList())) {
-            System.out.print(String.format("%-24s", scoredGram.getKey().getSignature()));
-            System.out.print("\t\t");
+            System.out.print(String.format("%-24s", scoredGram.getKey().getSignature()));           
             for (FeatureAnnotation f : scoredGram.getKey().getFeatures()) {
                 System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(), f.getValue()));
             }
 
-            if (printAnnotations) {
+            List<TextAnnotation> ann = new ArrayList<TextAnnotation>();
 
-                List<TextAnnotation> ann = new ArrayList<TextAnnotation>();
-                for (Token t : scoredGram.getKey().getTokens()) {
-                    ann.addAll(t.getAnnotations());
-                }
+            for (Token t : scoredGram.getKey().getTokens()) {
+                ann.addAll(t.getAnnotations());
+            }
+
+            if (printAnnotations && !ann.isEmpty()) {
 
                 System.out.println();
-                System.out.print(String.format("%-24s", " "));
+                System.out.print(String.format("%-24s", "--Annotations:"));
 
                 for (TextAnnotation a : ann) {
                     System.out.print(String.format("%-12s:\"%-12s\":%-12s ; ",
@@ -94,16 +94,16 @@ public class BlackboardUtils {
     public static void printHypernyms(Blackboard b) {
         
         System.out.println("** HYPERNYMS **");
-        
+   
         List<InferenceAnnotation> inferences = new ArrayList<>();
-                b.getAnnotations(WikipediaInferenceAnnotator.HYPERNYMS)
+        b.getAnnotations(WikipediaInferenceAnnotator.HYPERNYMS)
                 .stream().forEach(a -> {
-                    inferences.add((InferenceAnnotation)a);
+                    inferences.add((InferenceAnnotation) a);
                 });
-        
-        Map<String,Double> inferenceMap = new HashMap<>();
+
+        Map<String, Double> inferenceMap = new HashMap<>();
         for (InferenceAnnotation a : inferences) {
-            inferenceMap.put(a.getConcept(),a.getScore());
+            inferenceMap.put(a.getConcept(), a.getScore());
         }
         
         // sort the entries

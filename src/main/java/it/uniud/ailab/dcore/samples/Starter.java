@@ -71,7 +71,7 @@ public class Starter {
     public static void main(String[] args) {
         
         String[] texts = new String[] {
-            dosto,
+            //dosto,
             topGear,
             sortedMap,
             annaSavoia,
@@ -86,7 +86,7 @@ public class Starter {
         
         for (int i = 0; i < texts.length; i++) {
             Blackboard b = d.extract(texts[i]);
-            BlackboardUtils.printScores(b);
+            BlackboardUtils.printScores(b,true);
             BlackboardUtils.printInference(b);
             times[i+1] = DateTime.now();        
         }

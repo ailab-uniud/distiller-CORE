@@ -32,54 +32,49 @@ import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 
 /**
- * Adds the Wikiflag as defined in {@link it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator}
- * to grams which text coincides with a Wikipedia page. Note: it requires a previous 
- * annotations of the tokens by {@link it.uniud.ailab.dcore.annotation.tokens.TagMeTokenAnnotator}
- * 
+ * Adds the Wikiflag as defined in
+ * {@link it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator} to grams
+ * which text coincides with a Wikipedia page. Note: it requires a previous
+ * annotations of the tokens by
+ * {@link it.uniud.ailab.dcore.annotation.tokens.TagMeTokenAnnotator}
+ *
  * @author Marco Basaldella
  */
 public class TagMeGramAnnotator implements Annotator, WikipediaAnnotator {
-    
+
     /**
      * Annotates the component.
-     * 
-     * @param component 
+     *
+     * @param component
      */
     @Override
-    public void annotate(Blackboard blackboard,DocumentComponent component) {
-        
-        for (Gram g: blackboard.getGrams()) {
+    public void annotate(Blackboard blackboard, DocumentComponent component) {
+
+        for (Gram g : blackboard.getGrams()) {
             // check if the gram coincides with a TagMe annotation
             List<Token> tokens = g.getTokens();
+
             
-            int counter = 0;
-            
-            TextAnnotation a = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
-            
-            boolean isTagged = a != null;
-            
-            // a gram is tagged with a wikiflag if ALL the tokens contain
-            // a "tagme annotation", i.e. if it's the same as a page title
-            
-            // Special case: the gram may be a substring of a wikipedia page title,
-            // but it not worth to check it since it's a very rare occurrrence and
-            // it will just increase complexity. Plus, the possibility of this
-            // rare occurrences depends mainly from the n-gram generator: a good
-            // n-gram generator should never "cut" wikipedia titles in candidate
-            // keyphrases. For example, if "software engineering" appears in 
-            // the text, a good ngram generator should always choose 
-            // the whole phrase as a candidate KP, and never the single words
-            // "software" or "engineering"
-            
-            while (isTagged && ++counter < tokens.size()) {
-                TextAnnotation b = tokens.get(counter).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
-                isTagged = (b != null) ? b.equals(a) : false;
-            }
-            
-            if (isTagged) {
-                g.putFeature(WIKIFLAG, 1);
-            }
-        }
+            // we should check if all the tokens of the gram have the 
+            // same annotation
+            for (TextAnnotation a : tokens.get(0).getAnnotations(TagMeTokenAnnotator.WIKIFLAG)) {
+
+                // the annotations have the same length, so we may have a legit
+                // wikipedia surface as the gram
+                if (a.getTokens().length == g.getTokens().size()) {
+                    
+                    boolean isTagged = true;
+                    
+                    for (int i = 0; i < a.getTokens().length && isTagged; i++) {
+                        isTagged = a.getTokens()[i].equals(
+                                    g.getTokens().get(i));
+                    }                    
+                    
+                    if (isTagged)
+                        g.putFeature(WIKIFLAG, 1);
+                }
+            } // for (TextAnnotation a :  ...
+        } // for (Gram g : ...
     }
-    
+
 }

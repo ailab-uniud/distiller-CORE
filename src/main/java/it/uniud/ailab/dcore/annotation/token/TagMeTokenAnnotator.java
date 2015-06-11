@@ -142,16 +142,47 @@ public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
         // Retrieve the tagMe annotations using the internal TagMe wrapper
         HashMap<String, String> taggedSentence = tagSentence(text, sentence.getLanguage().getLanguage());
         
+        
+        
         // Put the annotations in the appropriate token
-        for (Token t : sentence.getTokens()) {
-            String part = t.getText();
-            for (String surface : taggedSentence.keySet()) {
-                if (surface.contains(part)) {
-                    TextAnnotation ann = new TextAnnotation(WIKIFLAG, surface, taggedSentence.get(surface));
-                    t.addAnnotation(ann);
-                }
+        
+        for (String surface : taggedSentence.keySet()) {
+            String matchedSurface = surface;
+            List<Token> matchedTokens = new ArrayList<>();
+            for (Token t : sentence.getTokens()) {
+                String part = t.getText();
+                if (!matchedSurface.startsWith(part))
+                    continue;
+                
+                matchedTokens.add(t);
+                matchedSurface = matchedSurface.substring(part.length());
+                while (matchedSurface.startsWith(" "))
+                    matchedSurface = matchedSurface.substring(1);
+            }
+            
+            if (!matchedTokens.isEmpty()) {
+                TextAnnotation ann = new TextAnnotation(WIKIFLAG, 
+                        matchedTokens.toArray(new Token[matchedTokens.size()]),
+                        taggedSentence.get(surface));
+                
+                matchedTokens.stream().forEach(t -> {
+                    t.addAnnotation(ann);});
+                
             }
         }
+        /*
+        for (Token t : sentence.getTokens()) {
+            String part = t.getText();
+            boolean match = false;
+            List<Token> matchedTokens = new ArrayList<>();
+            for (String surface : taggedSentence.keySet()) {
+                if (surface.contains(part)) {
+;
+                }
+            }
+            TextAnnotation ann = new TextAnnotation(WIKIFLAG, matchedTokens, taggedSentence.get(surface));
+                    t.addAnnotation(ann);
+        }*/
     }
 
     /**

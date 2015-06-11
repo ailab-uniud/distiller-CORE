@@ -38,7 +38,6 @@ import java.util.logging.Logger;
 public class Gram {
     
     private String identifier; // in a nutshell the stemmed NGRAM
-    private String surface; // the NGRAM as it appears in the text and as it will be printed
     private ArrayList<Token> words; // the words forming the first occurrence of the NGRAM
     private List<DocumentComponent> appareances;  // the concept Units in which the NGRAM appears
     
@@ -120,8 +119,8 @@ public class Gram {
 }
 
 /**
- * A tryout to check if it's handier to pass Feature objects or a couple
- * <string,double> instead.
+ * For optimization sake, FeatureAnnotations are unboxed and put in a HashMap, 
+ * which is much more convenient in storing and retrieving pairs.
  * 
  * @author Marco Basaldella
  */

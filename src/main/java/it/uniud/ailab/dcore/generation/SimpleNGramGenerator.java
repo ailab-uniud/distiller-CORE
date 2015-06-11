@@ -38,7 +38,6 @@ import org.json.simple.parser.ParseException;
 import it.uniud.ailab.dcore.engine.NGramGenerator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -115,7 +114,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
         // a neat trick to get the database path: instead of doing this.getClass(), 
         // since you can't use 'this' in a constructor call (like this(this.. )), 
         // we call getClass on a simple Annotation instance.
-        this((new TextAnnotation("","","")).getClass().getClassLoader().
+        this((new Token("")).getClass().getClassLoader().
                 getResource("ailab/posPatterns.json").getFile());
     }
     // </editor-fold>

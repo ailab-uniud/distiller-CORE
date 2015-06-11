@@ -26,7 +26,9 @@ import static it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLA
 import static it.uniud.ailab.dcore.engine.Evaluator.SCORE;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
+import it.uniud.ailab.dcore.annotation.TextAnnotation;
 import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
+import it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
@@ -171,19 +173,43 @@ public class WikipediaInferenceAnnotator implements Annotator {
         HttpURLConnection con = null;
         BufferedReader reader = null;
 
-        // this will contain the categories (i.e. our hypernyms)s
-        ArrayList<String> wikiCategories = new ArrayList<>();
-        
-        // this will contain the related links
-        ArrayList<String> wikiLinks = new ArrayList<>();
-
         // We may pipe several article titles in one query, but for some awkward reason,
         // the API won't give us the full category list of the requested terms, nor the full definition
         for (Gram currentGram : grams) {
-            // get the Wikipedia page title.
-            String page = currentGram.getTokens().get(0).
-                    getAnnotation(WIKIFLAG).getAnnotation();
 
+            // this will contain the categories (i.e. our hypernyms)s
+            ArrayList<String> wikiCategories = new ArrayList<>();
+
+            // this will contain the related links
+            ArrayList<String> wikiLinks = new ArrayList<>();
+
+            String page = null;
+
+            // get the correct annotation that generated the wikiflag
+            for (TextAnnotation a : currentGram.getTokens().get(0).
+                    getAnnotations(TagMeTokenAnnotator.WIKIFLAG)) {
+                // the annotations have the same length, so we may have a legit
+                // wikipedia surface as the gram
+                if (a.getTokens().length == currentGram.getTokens().size()) {
+                    
+                    boolean isTagged = true;
+                    
+                    for (int i = 0; i < a.getTokens().length && isTagged; i++) {
+                        isTagged = a.getTokens()[i].equals(
+                                    currentGram.getTokens().get(i));
+                    }
+                    
+                    if (isTagged)
+                        page = a.getAnnotation();
+                    
+                }                    
+                    
+            }
+                
+            if (page == null)
+                throw new AnnotationException(this,
+                        "I couldn't find the correct annotation.");
+                        
             page = page.replaceAll(" ", "_");
 
             // do the query and save the retrieved json in an object.
@@ -331,6 +357,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
             // going to be 1.
             
             for (String cat : wikiCategories) {
+                                
                 if (hypernyms.containsKey(cat)) {
                     hypernyms.replace(cat, 
                             hypernyms.get(cat) + currentGram.getFeature(SCORE));

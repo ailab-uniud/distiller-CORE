@@ -21,6 +21,11 @@
  */
 package it.uniud.ailab.dcore.annotation;
 
+import it.uniud.ailab.dcore.persistence.Token;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author Marco Basaldella
@@ -28,27 +33,42 @@ package it.uniud.ailab.dcore.annotation;
 public class TextAnnotation extends Annotation {
     
     /**
-     * The annotated string. For example, "software engineering".
+     * The annotated string. For example, "software engineering" is formed by
+     * the tokens "software" and "engineering".
      */
-    private final String annotatedText;
+    private final Token[] annotatedTokens;
+    
     /**
      * The annotation. For example, address of the Wikipedia page 
      * "Software_Engineering".
      */
     private final String annotation ;
     
-    public TextAnnotation(String annotator, String annotatedText, String annotation) {
+    
+    public TextAnnotation(String annotator, Token[] annotatedTokens, String annotation) {
         super(annotator);
-        this.annotatedText = annotatedText;
+        this.annotatedTokens = annotatedTokens;
         this.annotation = annotation;
     }
     
     public String getAnnotatedText() {
-        return annotatedText;
+        
+        List<String> tokenText = new ArrayList<>();
+        
+        Arrays.asList(annotatedTokens).
+                stream().forEach(t -> {
+                  tokenText.add(t.getText());
+                });
+        
+        return String.join(" ", tokenText);
     }
     
     public String getAnnotation() {
         return annotation;
+    }
+    
+    public Token[] getTokens() {
+        return annotatedTokens;
     }
     
     /**
@@ -74,7 +94,7 @@ public class TextAnnotation extends Annotation {
         }
         TextAnnotation other = (TextAnnotation) obj;
         
-        return (this.annotatedText.equals(other.getAnnotatedText())) &&
+        return (this.getAnnotatedText().equals(other.getAnnotatedText())) &&
                 (this.annotator.equals(other.getAnnotator())) &&
                 (this.annotation.equals(other.getAnnotation()));
     }
