@@ -48,9 +48,8 @@
         </property>
         -->        
     </bean>
-    <!--
     <bean id="arStanford" 
-          class="it.uniud.ailab.dcore.wrappers.external.ArabicStanfordBootstrapper" />-->
+          class="it.uniud.ailab.dcore.wrappers.external.ArabicStanfordBootstrapper" />
       
     <bean id="tagme" 
           class="it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator" />
@@ -91,7 +90,7 @@
             </list>
         </property>
     </bean>
-    <!--
+    
     <bean id="arPreprocessor" class="it.uniud.ailab.dcore.engine.PreProcessor">
         <property name="languageTag" value="ar"/>
         <property name="annotators">
@@ -99,7 +98,7 @@
                 <ref bean="arStanford" />
             </list>
         </property>
-    </bean>-->
+    </bean>
     
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
@@ -185,7 +184,7 @@
                 <ref bean="engPreprocessor"/>
                 <ref bean="itPreprocessor" />
                 <ref bean="ptPreprocessor" />
-                <!--<ref bean="arPreprocessor" />-->
+                <ref bean="arPreprocessor" />
             </list>
         </property>
         
