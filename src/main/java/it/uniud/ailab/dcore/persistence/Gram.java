@@ -21,6 +21,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class Gram {
     private String identifier; // in a nutshell the stemmed NGRAM
     private ArrayList<Token> words; // the words forming the first occurrence of the NGRAM
     private List<DocumentComponent> appareances;  // the concept Units in which the NGRAM appears
+    private List<Annotation> annotations;
     
     //private HashMap<String, Double> features; // all the n-gram's numeric features will be stored here
     private FeatureContainer features;
@@ -54,6 +56,7 @@ public class Gram {
      */
     public Gram(List<Token> sequence) {
         words= new ArrayList<>();
+        annotations = new ArrayList<>();
         words.addAll(sequence);
         identifier = "";
         //features = new HashMap<String, Double>();
@@ -77,7 +80,21 @@ public class Gram {
         return words;
     }
 
-    // <editor-fold desc="Feature Management">
+    // <editor-fold desc="Feature and annotation Management">
+
+    public Annotation getAnnotation(String annotator) {
+        for (Annotation a : annotations) {
+            if (a.getAnnotator().equals(annotator))
+                return a;
+        }
+        return null;
+    }
+
+    public void addAnnotation(Annotation annotation) {
+        annotations.add(annotation);
+    }
+    
+    
     public void putFeature(String feature, double value) {
         features.put(feature, value);
     }

@@ -27,8 +27,7 @@ import static it.uniud.ailab.dcore.engine.Evaluator.SCORE;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.TextAnnotation;
-import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
-import it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator;
+import it.uniud.ailab.dcore.annotation.UriAnnotation;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
@@ -36,9 +35,13 @@ import it.uniud.ailab.dcore.persistence.Gram;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -109,7 +112,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
     /**
      * The query that will be performed using the Wikipedia OpenSearch APIs.
      */
-    private final String wikipediaQuery = "http://en.wikipedia.org/w/api.php?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
+    private final String wikipediaQuery = "https://en.wikipedia.org/w/api.php?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
 
     // Blacklist of unwanted terms
     private static List<String> blackTerms = Arrays.asList(new String[]{"null", "International Standard Book Number",
@@ -143,7 +146,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
         // for example, "Software Engineering". 
         List<Gram> wikiGrams = new LinkedList<>();
         blackboard.getGrams().stream().filter((g) -> 
-                (g.hasFeature(WikipediaAnnotator.WIKIFLAG))).forEach((g) -> {
+                (g.hasFeature(WIKIFLAG))).forEach((g) -> {
             wikiGrams.add(g);
         });
 
@@ -188,10 +191,11 @@ public class WikipediaInferenceAnnotator implements Annotator {
             ArrayList<String> wikiLinks = new ArrayList<>();
 
             String page = null;
+            String surface = null;
 
             // get the correct annotation that generated the wikiflag
             for (TextAnnotation a : currentGram.getTokens().get(0).
-                    getAnnotations(TagMeTokenAnnotator.WIKIFLAG)) {
+                    getAnnotations(WIKIFLAG)) {
                 // the annotations have the same length, so we may have a legit
                 // wikipedia surface as the gram
                 if (a.getTokens().length == currentGram.getTokens().size()) {
@@ -203,8 +207,10 @@ public class WikipediaInferenceAnnotator implements Annotator {
                                     currentGram.getTokens().get(i));
                     }
                     
-                    if (isTagged)
+                    if (isTagged) {
                         page = a.getAnnotation();
+                        surface = a.getAnnotatedText();
+                    }
                     
                 }                    
                     
@@ -228,8 +234,8 @@ public class WikipediaInferenceAnnotator implements Annotator {
                 Object json = (new JSONParser()).parse(reader);
                 // closing connection
                 con.disconnect();
-                // allright, then we've got a nice JSON file...
-                // it's something like this:
+                // The retrieved JSON is something like:
+                //
                 // "query": {
                 //        "pages": {
                 //            "<PAGE ID NUMBER>": {
@@ -363,15 +369,27 @@ public class WikipediaInferenceAnnotator implements Annotator {
             // going to be 1.
             
             for (String cat : wikiCategories) {
-                                
+                             
                 if (hypernyms.containsKey(cat)) {
-                    hypernyms.replace(cat, 
+                    hypernyms.replace(cat,
                             hypernyms.get(cat) + currentGram.getFeature(SCORE));
-                } else
+                } else {
                     hypernyms.put(cat, currentGram.getFeature(SCORE));
+                }
+
+                URI uri = null;
+                try {
+                    String urlencoded = URLEncoder.encode(cat, "utf-8").replace("+", "%20");
+                    uri = new URI("http://en.wikipedia.org/wiki/" + urlencoded);
+
+                    currentGram.addAnnotation(
+                            new UriAnnotation(HYPERNYMS, surface, cat, uri));
+                } catch (Exception e) {
+                    System.err.println("Error while encoding Wikipedia URL " + uri.toASCIIString());
+                }
 
             }
-            
+
             for (String rel : wikiLinks) {
                 if (related.containsKey(rel)) {
                     related.replace(rel, 
@@ -380,7 +398,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
                     related.put(rel, currentGram.getFeature(SCORE));
             }
 
-        } // for (Gram g : grams)
+        } // for (Gram currentGram : grams)
     } // void findHypernymsAndRelated
 
 } // class

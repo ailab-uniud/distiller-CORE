@@ -106,8 +106,9 @@ public class Distiller {
      * Perform the extraction of keyphrases of a specified string.
      * 
      * @param text the text to distill.
+     * @return the blackboard filled with the processed text
      */
-    public Blackboard extract(String text){
+    public Blackboard fillBlackboard(String text){
         
         blackboard = new Blackboard();
                 
