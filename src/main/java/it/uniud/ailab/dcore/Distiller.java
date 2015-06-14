@@ -21,22 +21,21 @@
  */
 package it.uniud.ailab.dcore;
 
+import it.uniud.ailab.dcore.DistilledOutput.*;
+import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
+import it.uniud.ailab.dcore.annotation.UriAnnotation;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.engine.Evaluator;
 import it.uniud.ailab.dcore.engine.NGramGenerator;
 import it.uniud.ailab.dcore.engine.PreProcessor;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.component.WikipediaInferenceAnnotator;
+import static it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
@@ -103,12 +102,13 @@ public class Distiller {
     }
     
     /**
-     * Perform the extraction of keyphrases of a specified string.
+     * Perform the extraction of keyphrases of a specified string, and returns
+     * the blackboard filled with document and annotations.
      * 
      * @param text the text to distill.
      * @return the blackboard filled with the processed text
      */
-    public Blackboard fillBlackboard(String text){
+    public Blackboard distillToBlackboard(String text){
         
         blackboard = new Blackboard();
                 
@@ -202,6 +202,68 @@ public class Distiller {
         return blackboard;
     }
     
+    /**
+     * Perform the extraction of keyphrases of a specified string, and returns
+     * a developer-friendly object that allows quick access to the extracted 
+     * information.
+     * 
+     * @param text the text to extract
+     * @return the distilled output
+     */
+    public DistilledOutput distill(String text) {
+        DistilledOutput output = new DistilledOutput();
+        
+        output.setOriginalText(text);
+        
+        distillToBlackboard(text);
+        
+        output.setDetectedLanguage(blackboard.getStructure().
+                getLanguage().getLanguage());
+        
+        // Copy the grams
+        
+        output.initializeGrams(blackboard.getGrams().size());
+        
+        for (int i = 0; i < output.getGrams().length; i++) { 
+            DetectedGram gram = output.getGrams()[i];
+            Gram originalGram = blackboard.getGrams().get(i);
+            gram.setSurface(originalGram.getSignature());
+            UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIFLAG);
+            gram.setConceptName(wikiAnn.getSurface());
+            gram.setConceptPath(wikiAnn.getUri().toASCIIString());
+        }
+        
+        output.initializeRelatedConcepts(blackboard.getAnnotations(
+                WikipediaInferenceAnnotator.RELATED).size());
+               
+        for (int i = 0; i < output.getRelatedConcepts().length; i++) {
+            InferredConcept related = output.getRelatedConcepts()[i];
+            InferenceAnnotation originalRelatedConcept = (InferenceAnnotation)
+                    blackboard.getAnnotations(
+                            WikipediaInferenceAnnotator.RELATED).get(i);
+            
+            related.setConcept(originalRelatedConcept.getConcept());
+            related.setConceptPath(originalRelatedConcept.getConcept());
+            related.setScore(originalRelatedConcept.getScore());
+        }
+        
+        output.initializeHypernyms(blackboard.getAnnotations(
+                WikipediaInferenceAnnotator.HYPERNYMS).size());
+               
+        for (int i = 0; i < output.getHypernyms().length; i++) {
+            InferredConcept hypernym = output.getHypernyms()[i];
+            InferenceAnnotation originalHypernym = (InferenceAnnotation)
+                    blackboard.getAnnotations(
+                            WikipediaInferenceAnnotator.HYPERNYMS).get(i);
+            
+            hypernym.setConcept(originalHypernym.getConcept());
+            hypernym.setConceptPath(originalHypernym.getConcept());
+            hypernym.setScore(originalHypernym.getScore());
+        }
+        
+        return output;
+    }
+    
     // <editor-fold desc="Support methods">
     /**
      * Instantiates a Distiller object using the default configuration and 
@@ -214,5 +276,9 @@ public class Distiller {
         return (Distiller) context.getBean("distiller");
     }    
     // </editor-fold>
+
+    public Blackboard getBlackboard() {
+        return blackboard;
+    }
 
 }

@@ -21,14 +21,13 @@
  */
 package it.uniud.ailab.dcore.samples;
 
+import it.uniud.ailab.dcore.DistilledOutput;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.utils.BlackboardUtils;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import org.joda.time.DateTime;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  *
@@ -83,15 +82,15 @@ public class Starter {
              
         Distiller d = Distiller.getDefault();
         
-        DateTime[] times = new DateTime[texts.length + 1];
+        Instant[] times = new Instant[texts.length + 1];
         
-        times[0] = DateTime.now();
+        times[0] = Instant.now();
         
         for (int i = 0; i < texts.length; i++) {
-            Blackboard b = d.fillBlackboard(texts[i]);
+            Blackboard b = d.distillToBlackboard(texts[i]);
             BlackboardUtils.printScores(b,true);
             BlackboardUtils.printInference(b);
-            times[i+1] = DateTime.now();        
+            times[i+1] = Instant.now();        
         }
         
         System.out.println("** Extraction performance **");
@@ -101,7 +100,9 @@ public class Starter {
             System.out.printf(
                     "Iteration %d:\t %s seconds\n",
                     i,
-                    df.format((times[i+1].getMillis() - times[i].getMillis()) / 1000.0));
+                    df.format(
+                            (Duration.between(times[i],times[i+1]).toMillis())
+                                    / 1000.0));
         }        
     }
 }

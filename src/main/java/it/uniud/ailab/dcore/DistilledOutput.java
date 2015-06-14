@@ -56,6 +56,12 @@ public class DistilledOutput {
     public DetectedGram[] getGrams() {
         return grams;
     }
+    
+    public void initializeGrams(int size) {
+        this.grams = new DetectedGram[size];
+        for (int i = 0; i < grams.length; i++)
+            grams[i] = new DetectedGram();
+    }
 
     public void setGrams(DetectedGram[] grams) {
         this.grams = grams;
@@ -64,9 +70,22 @@ public class DistilledOutput {
     public InferredConcept[] getRelatedConcepts() {
         return relatedConcepts;
     }
+    
+    public void initializeRelatedConcepts(int size) {
+        this.relatedConcepts = new InferredConcept[size];
+        for (int i = 0; i < relatedConcepts.length; i++)
+            relatedConcepts[i] = new InferredConcept();
+    }
 
     public void setRelatedConcepts(InferredConcept[] relatedConcepts) {
         this.relatedConcepts = relatedConcepts;
+    }
+    
+    
+    public void initializeHypernyms(int size) {
+        this.hypernyms = new InferredConcept[size];
+        for (int i = 0; i < hypernyms.length; i++)
+            hypernyms[i] = new InferredConcept();
     }
 
     public InferredConcept[] getHypernyms() {

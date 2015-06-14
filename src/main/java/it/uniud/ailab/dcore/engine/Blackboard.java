@@ -164,8 +164,8 @@ public class Blackboard {
      * 
      * @return a collection of {@link it.uniud.ailab.dcore.persistence.Gram}s.
      */
-    public Collection<Gram> getGrams() {
-        return gramContainer.values();
+    public List<Gram> getGrams() {
+        return new ArrayList(gramContainer.values());
     }
     
     public void addAnnotation(Annotation a) {

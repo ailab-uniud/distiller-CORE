@@ -32,22 +32,21 @@ import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.utils.WikipediaUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -138,9 +137,16 @@ public class WikipediaInferenceAnnotator implements Annotator {
     private Map<String, Double> related
             = new HashMap<>();
     
+    /**
+     * The language of the currently analyzed component.
+     */
+    Locale componentLocale;
+    
     @Override
     public void annotate(Blackboard blackboard,DocumentComponent component) {
 
+                componentLocale = component.getLanguage();               
+                
         // Retrieve the grams with a "wikiflag", i.e. the one which
         // text is the same as a Wikipedia page title 
         // for example, "Software Engineering". 
@@ -158,18 +164,22 @@ public class WikipediaInferenceAnnotator implements Annotator {
         hypernyms.entrySet().stream().forEach((hypernym) -> {
             blackboard.addAnnotation(
                     new InferenceAnnotation(
-                            HYPERNYMS,hypernym.getKey(),hypernym.getValue()));
+                            HYPERNYMS,hypernym.getKey(),hypernym.getValue(),
+                            WikipediaUtils.generateWikiUri(hypernym.getKey(), 
+                                    componentLocale)));
         });
         
         related.entrySet().stream().forEach((related) -> {
             blackboard.addAnnotation(
                     new InferenceAnnotation(
-                            RELATED,related.getKey(),related.getValue()));
+                            RELATED,related.getKey(),related.getValue(),
+                            WikipediaUtils.generateWikiUri(related.getKey(),
+                                    componentLocale)));
         });
     }
 
     /**
-     * Fill the hypernims and related link maps by quertying Wikipedia. The hypernyms
+     * Fill the hypernyms and related link maps by querying Wikipedia. The hypernyms
      * map contains the categories found for every page, while the related map
      * contains the related links.
      * 
@@ -191,7 +201,6 @@ public class WikipediaInferenceAnnotator implements Annotator {
             ArrayList<String> wikiLinks = new ArrayList<>();
 
             String page = null;
-            String surface = null;
 
             // get the correct annotation that generated the wikiflag
             for (TextAnnotation a : currentGram.getTokens().get(0).
@@ -209,7 +218,6 @@ public class WikipediaInferenceAnnotator implements Annotator {
                     
                     if (isTagged) {
                         page = a.getAnnotation();
-                        surface = a.getAnnotatedText();
                     }
                     
                 }                    
@@ -377,18 +385,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
                     hypernyms.put(cat, currentGram.getFeature(SCORE));
                 }
 
-                URI uri = null;
-                try {
-                    String urlencoded = URLEncoder.encode(cat, "utf-8").replace("+", "%20");
-                    uri = new URI("http://en.wikipedia.org/wiki/" + urlencoded);
-
-                    currentGram.addAnnotation(
-                            new UriAnnotation(HYPERNYMS, surface, cat, uri));
-                } catch (Exception e) {
-                    System.err.println("Error while encoding Wikipedia URL " + uri.toASCIIString());
-                }
-
-            }
+             }
 
             for (String rel : wikiLinks) {
                 if (related.containsKey(rel)) {

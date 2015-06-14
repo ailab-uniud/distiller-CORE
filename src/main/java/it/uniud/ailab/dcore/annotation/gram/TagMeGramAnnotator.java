@@ -27,9 +27,14 @@ import java.util.List;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.annotation.TextAnnotation;
+import it.uniud.ailab.dcore.annotation.UriAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
+import it.uniud.ailab.dcore.utils.WikipediaUtils;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Locale;
 
 /**
  * Adds the Wikiflag as defined in
@@ -70,8 +75,16 @@ public class TagMeGramAnnotator implements Annotator, WikipediaAnnotator {
                                     g.getTokens().get(i));
                     }                    
                     
-                    if (isTagged)
+                    if (isTagged) {
                         g.putFeature(WIKIFLAG, 1);
+                        
+                        g.addAnnotation(new UriAnnotation(
+                                WIKIFLAG,
+                                a.getAnnotatedText(),
+                                a.getAnnotation(),
+                                WikipediaUtils.generateWikiUri(a.getAnnotation(),
+                                        component.getLanguage())));
+                    }
                 }
             } // for (TextAnnotation a :  ...
         } // for (Gram g : ...
