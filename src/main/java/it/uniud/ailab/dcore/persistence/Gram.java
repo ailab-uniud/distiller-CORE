@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 public class Gram {
     
     private String identifier; // in a nutshell the stemmed NGRAM
+    private String surface;
     private ArrayList<Token> words; // the words forming the first occurrence of the NGRAM
     private List<DocumentComponent> appareances;  // the concept Units in which the NGRAM appears
     private List<Annotation> annotations;
@@ -54,14 +55,19 @@ public class Gram {
      * 
      * @param sequence 
      */
-    public Gram(List<Token> sequence) {
+    public Gram(List<Token> sequence,String surface) {
         words= new ArrayList<>();
         annotations = new ArrayList<>();
         words.addAll(sequence);
+        this.surface = surface;
         identifier = "";
         //features = new HashMap<String, Double>();
         features = new FeatureContainer();
         appareances = new ArrayList<>();
+    }
+    
+    public String getSurface() {
+        return this.surface;
     }
      
     public String getSignature() {

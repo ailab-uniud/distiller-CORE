@@ -75,9 +75,9 @@ public class Starter {
         String[] texts = new String[] {
             //dosto,
             topGear,
-            sortedMap,
-            annaSavoia,
-            softEngPT
+//            sortedMap,
+//            annaSavoia,
+//            softEngPT
         };
              
         Distiller d = Distiller.getDefault();
@@ -87,7 +87,8 @@ public class Starter {
         times[0] = Instant.now();
         
         for (int i = 0; i < texts.length; i++) {
-            Blackboard b = d.distillToBlackboard(texts[i]);
+            DistilledOutput output = d.distill(texts[i]);
+            Blackboard b = d.getBlackboard();
             BlackboardUtils.printScores(b,true);
             BlackboardUtils.printInference(b);
             times[i+1] = Instant.now();        

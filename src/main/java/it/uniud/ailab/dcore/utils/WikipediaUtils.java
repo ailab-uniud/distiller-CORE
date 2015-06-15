@@ -17,8 +17,11 @@
 package it.uniud.ailab.dcore.utils;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utilities for querying Wikipedia.
@@ -29,16 +32,22 @@ public class WikipediaUtils {
     
     public static URI generateWikiUri(String target, Locale locale) {
         URI uri = null;
+        
         try {
-            String urlencoded = URLEncoder.encode(target, "utf-8").replace("+", "%20");
-            uri = new URI("https://en.wikipedia.org/wiki/" + urlencoded);
-            
-            
-        } catch (Exception e) {
-            System.err.println("Error while encoding Wikipedia URL " + uri.toASCIIString());
+            uri = new URI("https://" + locale.getLanguage() + ".wikipedia.org/");
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException("Absurd failure: cannot create default Wikipedia URI.");
         }
         
-        return null;
+        try {
+            String urlencoded = URLEncoder.encode(target, "utf-8").replace("+", "%20");
+            uri = new URI("https://" + locale.getLanguage() + ".wikipedia.org/wiki/" + urlencoded);
+        } catch (Exception e) {
+            System.err.println("Error while encoding Wikipedia URL " + uri.toASCIIString());
+            
+        }
+        
+        return uri;
     }
     
 }

@@ -188,9 +188,26 @@ public class SimpleNGramGenerator implements NGramGenerator {
 
         } else {
             
+            String sentenceText = component.getText();
             Sentence sent = (Sentence) component;
             List<Token> allWords = sent.getTokens();
 
+            // build the token start and end substring indexes in the input string
+            int startIndexes[] = new int[allWords.size()];
+            int endIndexes[] = new int[allWords.size()];
+            
+            // track how much text we've already scanned
+            int searchWordFrom = 0;
+            
+            for (int i = 0; i < allWords.size(); i++) {
+                startIndexes[i] = sentenceText.indexOf(
+                        allWords.get(i).getText(),searchWordFrom);
+                endIndexes[i] = startIndexes[i] + allWords.get(i).getText().length();
+                
+                searchWordFrom = endIndexes[i];
+            }
+            
+            
             // we keep n buffers of the last n words scanned 
             // (where n = maxngramsize ). The first buffer is of size 1, 
             // the second of size 2, ... and so on.
@@ -201,6 +218,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
             for (int size = 0; size < maxNgramSize; size++) {
                 lastReadBuffers[size] = new ArrayList<>();
             }
+            
             for (int i = 0; i < allWords.size(); i++) {
                 Token word = allWords.get(i);
                 for (int size = 0; size < maxNgramSize; size++) {
@@ -217,7 +235,12 @@ public class SimpleNGramGenerator implements NGramGenerator {
                         // it's a nGram that could be a keyphrase.  
                         int nounValue = checkGramNounValue(lastReadBuffers[size]);
                         if (nounValue > 0) {
-                            Gram g = new Gram(lastReadBuffers[size]);
+                            Gram g = new Gram(lastReadBuffers[size],
+                                    sentenceText.substring(
+                                            startIndexes[i- (lastReadBuffers[size].size()-1)],  
+                                            endIndexes[
+                                                    i]));
+                            
                             g.putFeature(new FeatureAnnotation(
                                     NOUNVALUE,((float)nounValue)/g.getTokens().size()));
                             blackboard.addGram(component, g);

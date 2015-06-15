@@ -114,10 +114,11 @@ public class DistilledOutput {
     
     
     public class DetectedGram {
-        public String surface;
-        public String conceptName;
-        public String conceptPath;
-
+        private String surface;
+        private String conceptName;
+        private String conceptPath;
+        private double keyphraseness;
+        
         public String getSurface() {
             return surface;
         }
@@ -140,6 +141,14 @@ public class DistilledOutput {
 
         public void setConceptPath(String conceptPath) {
             this.conceptPath = conceptPath;
+        }
+
+        public double getKeyphraseness() {
+            return keyphraseness;
+        }
+
+        public void setKeyphraseness(double keyphraseness) {
+            this.keyphraseness = keyphraseness;
         }
     }
     

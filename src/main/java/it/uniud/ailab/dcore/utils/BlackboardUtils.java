@@ -21,7 +21,6 @@
  */
 package it.uniud.ailab.dcore.utils;
 
-import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.TextAnnotation;

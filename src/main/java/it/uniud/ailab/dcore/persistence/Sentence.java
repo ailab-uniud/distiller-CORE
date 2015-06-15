@@ -34,11 +34,6 @@ public class Sentence extends DocumentComponent {
     // <editor-fold desc="Private fields">
 
     /**
-     * The raw string that represents the sentence.
-     */
-    private String rawString;
-
-    /**
      * The language of the sentence.
      */
     private Locale language;
@@ -64,17 +59,6 @@ public class Sentence extends DocumentComponent {
     
     public Sentence(String text) {
         this(text,null);
-    }
-    
-
-    
-    // <editor-fold desc="Getters and setters">
-    public void setSentence(String sentence) throws IllegalStateException {
-        if (this.rawString.isEmpty() || this.rawString == null) {
-            this.rawString = sentence;
-        } else {
-            throw new IllegalStateException("Trying to set the content of the sentence twice.");
-        }
     }
     
     public List<Token> getTokens() {
