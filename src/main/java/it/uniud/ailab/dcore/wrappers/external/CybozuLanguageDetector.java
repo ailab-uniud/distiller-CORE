@@ -29,6 +29,12 @@ import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Wrapper for the Cybozu Language Detector Library.
@@ -43,7 +49,13 @@ public class CybozuLanguageDetector implements Annotator {
      * for re-use, so that subsequent calls of annotate() don't have to reload
      * definitions every time, even for different instances of the annotator..
      */
-    Detector detector = null;
+    private Detector detector = null;
+    
+    private final String profiles[] = new String[] { "af","ar","bg","bn","cs","da","de","el",
+        "en","es","et","fa","fi","fr","gu","he","hi","hr","hu","id","it","ja",
+        "kn","ko","lt","lv","mk","ml","mr","ne","nl","no","pa","pl","pt","ro",
+        "ru","sk","sl","so","sq","sv","sw","ta","te","th","tl","tr","uk","ur",
+        "vi","zh-cn","zh-tw"};
     
 
     /**
@@ -55,11 +67,26 @@ public class CybozuLanguageDetector implements Annotator {
      * @throws LangDetectException
      */
     public String detect(String text) throws LangDetectException {
+        
+        // load the models inside an array
+        
+        String[] models = new String[profiles.length];
+        for (int i = 0; i< profiles.length; i++) {
+            InputStream s = getClass().getClassLoader().getResourceAsStream("cybozu/" 
+                    + profiles[i]);
+            try {
+                models[i] = IOUtils.toString(s, "UTF-8");
+            } catch (IOException ex) {
+                Logger.getLogger(CybozuLanguageDetector.class.getName()).log(
+                        Level.SEVERE,"Cannot load cybozu model "+profiles[i] , ex);
+            }
+        }
 
         if (detector == null) {
             // retrieve the language database embedded in the jar
-            DetectorFactory.loadProfile(
-                    getClass().getClassLoader().getResource("cybozu").getFile());            
+//            DetectorFactory.loadProfile(
+//                    getClass().getClassLoader().getResource("cybozu").getFile());            
+            DetectorFactory.loadProfile(Arrays.asList(models));
         }
         detector = DetectorFactory.create();
         detector.append(text);

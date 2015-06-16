@@ -256,6 +256,8 @@ public class Distiller {
             hypernym.setScore(originalHypernym.getScore());
         }
 
+        output.setExtractionCompleted(true);
+        
         return output;
     }
 
