@@ -38,13 +38,13 @@
     
     
     <!-- Language detectors -->  
-    <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetector"/>
+    <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
     
     <!-- Annotators -->  
     <bean id="stanford" 
           class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="openNLP" 
-          class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapper">
+          class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
       <!-- Example of local models path -->
       <!--
       <property name="modelPaths">
@@ -71,7 +71,7 @@
     <!-- filter that keeps only the most important  grams (i.e. with the highest
          calculated keyphraseness  -->
     <bean id="skylineGramFilter" 
-          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilter"/>    
+          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>    
     <!-- annotator that infers concept that can't be found in the document -->
     <bean id="wikipediaInference" 
           class="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator" />

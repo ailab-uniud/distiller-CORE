@@ -18,18 +18,21 @@
  */
 package it.uniud.ailab.dcore;
 
+import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIFLAG;
+import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.DistilledOutput.*;
 import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.Pipeline;
 import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
+import static it.uniud.ailab.dcore.utils.AnnotatorUtils.getAnnotatorSimpleName;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
-import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIFLAG;
-import it.uniud.ailab.dcore.persistence.Gram;
+
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +65,12 @@ public class Distiller {
      * The Object that will contain the text all its annotations.
      */
     private Blackboard blackboard;
+    
+    /**
+     * The verbose mode flag. If the flag is set to true, Distiller will
+     * print information on the work he's doing on stdout. Default is false.
+     */
+    private boolean verbose = false;
 
     /**
      * Sets the language detector.
@@ -116,6 +125,18 @@ public class Distiller {
     }
 
     /**
+     * Sets the verbose mode of the Distiller.
+     * 
+     * @param verbose true to display information of the distillation process;
+     * false for silent distillation.
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
+    
+    
+    /**
      * Perform the extraction of keyphrases of a specified string, and returns
      * the blackboard filled with document and annotations.
      *
@@ -150,7 +171,18 @@ public class Distiller {
         }
 
         for (Annotator annotator : pipeline.getAnnotators()) {
+            
+            if (verbose) {
+                System.out.println(String.format("Running %s...",
+                        getAnnotatorSimpleName(annotator)));
+            }
+            
             annotator.annotate(blackboard, blackboard.getStructure());
+        }
+        
+        if (verbose) {
+            System.out.println("Extraction complete!");
+            System.out.println();
         }
 
         return blackboard;

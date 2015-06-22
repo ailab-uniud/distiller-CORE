@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * 
  * @author Marco Basaldella
  */
-public class SkylineGramFilter implements Annotator {
+public class SkylineGramFilterAnnotator implements Annotator {
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {

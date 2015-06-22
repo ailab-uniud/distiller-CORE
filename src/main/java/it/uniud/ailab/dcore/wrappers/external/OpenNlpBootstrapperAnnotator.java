@@ -52,7 +52,7 @@ import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
  *
  * @author Marco Basaldella
  */
-public class OpenNlpBootstrapper implements Annotator {
+public class OpenNlpBootstrapperAnnotator implements Annotator {
 
     private static final Logger LOG = Logger.getLogger(Annotator.class.getName());
 

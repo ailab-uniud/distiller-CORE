@@ -17,6 +17,7 @@
 package it.uniud.ailab.dcore.samples;
 
 import it.uniud.ailab.dcore.DistilledOutput;
+import it.uniud.ailab.dcore.DistillerException;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.utils.BlackboardUtils;
@@ -76,6 +77,7 @@ public class Starter {
         };
              
         Distiller d = Distiller.getDefault();
+        d.setVerbose(true);
 
         Instant[] times = new Instant[texts.length + 1];
         

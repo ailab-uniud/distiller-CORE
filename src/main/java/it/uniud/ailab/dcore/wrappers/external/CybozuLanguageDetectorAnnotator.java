@@ -37,7 +37,7 @@ import org.apache.commons.io.IOUtils;
  * @author Marco Basaldella
  * @see <a href="https://code.google.com/p/language-detection/">language-detection</a>
  */
-public class CybozuLanguageDetector implements Annotator {
+public class CybozuLanguageDetectorAnnotator implements Annotator {
 
     /**
      * The Cybozu detector object. The field is marked static to be optimized
@@ -76,7 +76,7 @@ public class CybozuLanguageDetector implements Annotator {
                 try {
                     models[i] = IOUtils.toString(s, "UTF-8");
                 } catch (IOException ex) {
-                    Logger.getLogger(CybozuLanguageDetector.class.getName()).log(
+                    Logger.getLogger(CybozuLanguageDetectorAnnotator.class.getName()).log(
                             Level.SEVERE, "Cannot load cybozu model " + profiles[i], ex);
                 }
             }
