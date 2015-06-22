@@ -36,23 +36,24 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.util.Map;
 
 /**
  * The default n-gram generator algorithm. This class generates relevant n-grams
- * checking, for every group of words, if their POS pattern can be found in a 
+ * checking, for every group of words, if their POS pattern can be found in a
  * database of pre-made sequences. For example, "Software Engineering" should be
  * tagged with "Noun Noun", so if the POS pattern "Noun Noun" is in the database
  * the n-gram "Software Engineering" will be selected.
- * 
- * The database is a simple JSON file which is embedded with the project but,
- * if the user wants, is possible to let the algorithm use a custom database
- * by specifying it in the constructor. This may be useful to test other POS
+ *
+ * The database is a simple JSON file which is embedded with the project but, if
+ * the user wants, is possible to let the algorithm use a custom database by
+ * specifying it in the constructor. This may be useful to test other POS
  * patterns or to add support for new languages.
- * 
+ *
  * Contextual to the generation, the algorithm assigns the first feature to the
  * n-gram, which is the "Noun Value", which is proportional to the number of
- * nouns in the gram. 
- * 
+ * nouns in the gram.
+ *
  * @author Dario De Nart
  * @author Marco Basaldella
  */
@@ -60,65 +61,89 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
 
     // <editor-fold desc="private fields">
     /**
-     * Path to the local POS Pattern JSON file.
+     * The languages that the n-gram generator will process and their POS
+     * pattern database paths.
      */
-    private String posDatabasePath;
+    private Map<Locale, String> posDatabasePaths;
 
-    /**
-     * The languages that the n-gram generator will process.
-     */
-    private List<Locale> languages;
-    
     /**
      * The POS patterns found.
      */
-    private final HashMap<String, Integer> validPOSPatterns;
-    
+    private HashMap<String, Integer> validPOSPatterns;
+
     /**
      * The maximum size of n-grams to detect.
      */
     private int maxNgramSize;
+    
+    /**
+     * The default maximum size of n-grams.
+     */
+    private static final int DEFAULT_MAX_NGRAM_SIZE = 3;
+    
     // </editor-fold>
 
     // <editor-fold desc="constructor">
     /**
-     * Initializes the nGram generator. Please note that the database is not
-     * loaded until the actual extraction is performed.
-     * 
-     * @param posDatabasePath the path of the JSON file used as database
-     */
-    public SimpleNGramGeneratorAnnotator(String posDatabasePath) {
-
-        validPOSPatterns = new HashMap<>();
-        languages = new ArrayList<>();
-        maxNgramSize = 3;
-        this.posDatabasePath = posDatabasePath;
-    }
-    
-    /**
-     * Initializes the nGram generator with the default POS patterns. 
+     * Initializes the nGram generator.
      */
     public SimpleNGramGeneratorAnnotator() {
-        // a neat trick to get the database path: instead of doing this.getClass(), 
-        // since you can't use 'this' in a constructor call (like this(this.. )), 
-        // we call getClass on a simple Annotation instance.
-        this((new Token("")).getClass().getClassLoader().
-                getResource("ailab/posPatterns.json").getFile());
+
+        validPOSPatterns = new HashMap<>();
+        posDatabasePaths = new HashMap<>();
+        maxNgramSize = DEFAULT_MAX_NGRAM_SIZE;
+        
+        posDatabasePaths.put(Locale.ENGLISH, 
+                getClass().getClassLoader().
+                getResource("ailab/posPatterns/en-penn.json").getFile());
+        posDatabasePaths.put(Locale.ITALIAN, 
+                getClass().getClassLoader().
+                getResource("ailab/posPatterns/it-tanl.json").getFile());
     }
     // </editor-fold>
-   
-    // <editor-fold desc="worker methods">
-    
+
     /**
-     * Generates the n-grams of a {@link it.uniud.ailab.dcore.persistence.DocumentComponent}
-     * by using the POS patterns and other annotations produced by the Annotators.
-     * A NGram generator should offer support for a set of languages, so the 
-     * Engine can decide what generator should use if there are more than one.
-     * 
+     * Sets the database paths of the POS patterns.
+     *
+     * @param posDatabasePaths the database paths
+     */
+    public void setPosDatabasePaths(Map<Locale, String> posDatabasePaths) {
+        this.posDatabasePaths = posDatabasePaths;
+    }
+
+    /**
+     * Adds to the database paths of the POS patterns a file path for a
+     * specified language..
+     *
+     * @param locale the language of the new path
+     * @param path the path of the POS pattern file for the language
+     */
+    public void addPosDatabasePaths(Locale locale, String path) {
+        posDatabasePaths.put(locale, path);
+    }
+
+    /**
+     * Sets the maximum size of an n-gram. If the size is not specified, the
+     * maximum n-gram size is initialized to DEFAULT_MAX_NGRAM_SIZE.
+     *
+     * @param maxNgramSize the maximum size of an n-gram
+     */
+    public void setMaxNgramSize(int maxNgramSize) {
+        this.maxNgramSize = maxNgramSize;
+    }
+
+    // <editor-fold desc="worker methods">
+    /**
+     * Generates the n-grams of a
+     * {@link it.uniud.ailab.dcore.persistence.DocumentComponent} by using the
+     * POS patterns and other annotations produced by the Annotators. A NGram
+     * generator should offer support for a set of languages, so the Engine can
+     * decide what generator should use if there are more than one.
+     *
      * @param component the component to analyze.
      */
     @Override
-    public void annotate(Blackboard blackboard,DocumentComponent component) {
+    public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         // load the database, then
         // TODO: handle exceptions better
@@ -129,17 +154,17 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
         }
 
         // do the actual nGram generation.
-        spotNGrams(blackboard,component);
+        spotNGrams(blackboard, component);
 
     }
-    
+
     /**
      * Performs the actual work, by checking in a document if there are valid
      * nGram sequences that can be used as keyphrase.
-     * 
+     *
      * @param component the DocumentComponent to analyze.
      */
-    private void spotNGrams(Blackboard blackboard,DocumentComponent component) {
+    private void spotNGrams(Blackboard blackboard, DocumentComponent component) {
 
         // are we a sentence? if yes, spot the nGrams
         if (component.hasComponents()) {
@@ -147,11 +172,11 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
 
             // if not and we're a section, traverse the document tree recursively
             for (DocumentComponent child : children) {
-                spotNGrams(blackboard,child);
+                spotNGrams(blackboard, child);
             }
 
         } else {
-            
+
             String sentenceText = component.getText();
             Sentence sent = (Sentence) component;
             List<Token> allWords = sent.getTokens();
@@ -159,30 +184,28 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
             // build the token start and end substring indexes in the input string
             int startIndexes[] = new int[allWords.size()];
             int endIndexes[] = new int[allWords.size()];
-            
+
             // track how much text we've already scanned
             int searchWordFrom = 0;
-            
+
             for (int i = 0; i < allWords.size(); i++) {
                 startIndexes[i] = sentenceText.indexOf(
-                        allWords.get(i).getText(),searchWordFrom);
+                        allWords.get(i).getText(), searchWordFrom);
                 endIndexes[i] = startIndexes[i] + allWords.get(i).getText().length();
-                
+
                 searchWordFrom = endIndexes[i];
             }
-            
-            
+
             // we keep n buffers of the last n words scanned 
             // (where n = maxngramsize ). The first buffer is of size 1, 
             // the second of size 2, ... and so on.
             // then, we compare these buffers with the valid known PoS patterns
             // and save the ngram if it matches.
-            
             ArrayList<Token>[] lastReadBuffers = new ArrayList[maxNgramSize];
             for (int size = 0; size < maxNgramSize; size++) {
                 lastReadBuffers[size] = new ArrayList<>();
             }
-            
+
             for (int i = 0; i < allWords.size(); i++) {
                 Token word = allWords.get(i);
                 for (int size = 0; size < maxNgramSize; size++) {
@@ -201,12 +224,11 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                         if (nounValue > 0) {
                             Gram g = new Gram(lastReadBuffers[size],
                                     sentenceText.substring(
-                                            startIndexes[i- (lastReadBuffers[size].size()-1)],  
-                                            endIndexes[
-                                                    i]));
-                            
+                                            startIndexes[i - (lastReadBuffers[size].size() - 1)],
+                                            endIndexes[i]));
+
                             g.putFeature(new FeatureAnnotation(
-                                    NOUNVALUE,((float)nounValue)/g.getTokens().size()));
+                                    NOUNVALUE, ((float) nounValue) / g.getTokens().size()));
                             blackboard.addGram(component, g);
                         }
                     }
@@ -214,14 +236,13 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
             } // for
         } // if 
     }
-    
+
     // </editor-fold>
-    
     // <editor-fold desc="support methods">
     /**
-     * Checks if a list of POS-tagged tokens contains a n-gram that could be
-     * a valid keyphrase and returns their noun value.
-     * 
+     * Checks if a list of POS-tagged tokens contains a n-gram that could be a
+     * valid keyphrase and returns their noun value.
+     *
      * @param candidate the list of tokens candidate to be a keyphrase
      * @return the noun value of the n-gram if it's in the database, -1 else.
      */
@@ -242,22 +263,23 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
         } else {
             nounValue = -1;
         }
-              
+
         return nounValue;
     }
 
     /**
-     * Loads the nGram database according to the path and language specified in the
-     * constructor.
-     * 
+     * Loads the nGram database according to the path and language specified in
+     * the constructor.
+     *
      * @param lang the language to search in the database
      * @throws IOException if the database file is nonexistent or non accessible
      * @throws ParseException if the database file is malformed
-     * @throws NullPointerException if the language requested is not in the database
+     * @throws NullPointerException if the language requested is not in the
+     * database
      */
     private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
-        BufferedReader reader = new BufferedReader(new FileReader(posDatabasePath));
+        BufferedReader reader = new BufferedReader(new FileReader(posDatabasePaths.get(lang)));
 
         Object obj = (new JSONParser()).parse(reader);
         JSONObject fileblock = (JSONObject) obj;
@@ -276,12 +298,13 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
 
         // If the language is not supported by the database, stop the execution.
         if (languageBlock == null) {
-            throw new NullPointerException("Language " + lang.getLanguage() + " not found in file " + posDatabasePath);
+            throw new NullPointerException("Language " + lang.getLanguage()
+                    + " not found in file " + posDatabasePaths.get(lang));
         }
 
         JSONArray patternBlock = (JSONArray) languageBlock.get("patterns");
         Iterator<JSONObject> patternIterator = patternBlock.iterator();
-        
+
         // put the patterns in the hashmap
         while (patternIterator.hasNext()) {
             JSONObject pattern = (patternIterator.next());

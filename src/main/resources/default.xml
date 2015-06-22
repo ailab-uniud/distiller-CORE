@@ -46,15 +46,15 @@
     <bean id="openNLP" 
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapper">
       <!-- Example of local models path -->
-        <!--
-        <property name="modelPaths">
-            <map key-type="java.lang.String" value-type="java.lang.String">
-                <entry key="it-sent" value="/path/to/models/it/it-sent.bin"/>
-                <entry key="it-token" value="/path/to/models/it/it-token.bin"/>
-                <entry key="it-pos-maxent" value="/path/to/models/it/it-pos-maxent.bin"/>
+      <!--
+      <property name="modelPaths">
+          <map key-type="java.lang.String" value-type="java.lang.String">
+              <entry key="it-sent" value="/path/to/models/it/it-sent.bin"/>
+              <entry key="it-token" value="/path/to/models/it/it-token.bin"/>
+              <entry key="it-pos-maxent" value="/path/to/models/it/it-pos-maxent.bin"/>
             </map>
-        </property>
-        -->        
+      </property>
+      -->        
     </bean>
       
     <!-- italian and english wikipedia annotator by the University of Pisa -->
@@ -79,12 +79,15 @@
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
           class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
-        <!--<property name="gramLanguages">
-            <list>
-                <ref bean="english"/>
-                <ref bean="italian"/>
-            </list>
-        </property>-->    
+        <!-- Example of local POS pattern paths -->
+        <!--
+        <property name="posDatabasePaths">
+            <map key-type="java.util.Locale" value-type="java.lang.String">
+                <entry key-ref="english" value="/path/to/posPatterns/en-penn.json"/>
+                <entry key-ref="italian" value="/path/to/posPatterns/it-tanl.json"/>
+            </map>
+        </property>
+        -->
     </bean>
     
     <!-- Evaluators -->

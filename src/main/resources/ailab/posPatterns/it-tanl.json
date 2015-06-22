@@ -1,0 +1,84 @@
+{ 
+	"languages":[
+                        {
+				"language": "it",
+                                "tagset": "ciapetti's tagset from https://github.com/aciapetti/opennlp-italian-models/blob/master/lang/it/POS/tagsDictionaryIt.txt",
+				"patterns":[
+				 {
+					"pattern":"SP",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"S",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"S/A",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"A/N",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"S/S",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"SP/S",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"SP/SP",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"S/SP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"S/E/S",
+					"nounCount": 2
+				 },
+                                 			 {
+					"pattern":"S/EA/S",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"S/E/SP",
+					"nounCount": 2
+				 },
+                                  				 {
+					"pattern":"S/EA/SP",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"S/E/S/S",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/EA/S/S",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/EA/S/SP",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/E/S/SP",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/EA/SP/SP",
+					"nounCount": 3
+				 },
+                                  				 {
+					"pattern":"S/E/SP/SP",
+					"nounCount": 3
+				 }
+				 
+				]
+			}
+                ]
+}
+				 

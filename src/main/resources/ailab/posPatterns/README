@@ -1,0 +1,9 @@
+Evert POS pattern file is AS IS and, except for en-penn.json and 
+it-tanl.json, are not guaranteed to be correct. In fact, except for these two files,
+the other come from the previous iterations of the Distiller project (namely, 
+dpie and dKOpie), and have not been tested with the current version of the software.
+
+You may want to implement your own POS-tagger and use them in your own NGram 
+generator (or ours, if you like); however, we don't guarantee the correctness
+of the output if you use any POS-pattern database file other than the officially
+supported files mentioned above.

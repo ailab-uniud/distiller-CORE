@@ -134,7 +134,7 @@ public class Distiller {
             } else // but if there's no language and no language detector, 
             // throw an exception.
             {
-                throw new RuntimeException(
+                throw new DistillerException(
                         "I can't decide the language of the document: no language is specified and no language detector is set.");
             }
         } else // set the pre-determined language
@@ -145,7 +145,7 @@ public class Distiller {
         Pipeline pipeline = pipelines.get(blackboard.getStructure().getLanguage());
 
         if (pipeline == null) {
-            throw new RuntimeException("No pipeline for the language "
+            throw new DistillerException("No pipeline for the language "
                     + blackboard.getStructure().getLanguage().getLanguage());
         }
 

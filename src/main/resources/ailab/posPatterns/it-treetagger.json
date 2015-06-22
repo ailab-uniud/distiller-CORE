@@ -1,0 +1,55 @@
+{ 
+	"languages":[
+			{
+				"language": "it",
+				"patterns":[
+				 {
+					"pattern":"NPR",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOM",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOM/ADJ",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"ADJ/NOM",
+					"nounCount": 1
+				 },
+				 {
+					"pattern":"NOM/NOM",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NPR/NOM",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NPR/NPR",
+					"nounCount": 2
+				 },
+				 {
+					"pattern":"NOM/NPR",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOM/PRE/NOM",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOM/PRE/NPR",
+					"nounCount": 2
+				 },
+				 				 {
+					"pattern":"NOM/PRE/NOM/NOM",
+					"nounCount": 3
+				 }
+				 
+				]
+			}
+                ]
+}
+				 
