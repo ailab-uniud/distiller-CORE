@@ -106,15 +106,17 @@ public class WikipediaInferenceAnnotator implements Annotator {
      * The user agent that will be used for HTTP requests (since Wikipedia
      * requests it).
      */
-    private String userAgent = "Distiller (Artificial Intelligence Laboratory; carlo.tasso@uniud.it|dario.denart@uniud.it|basaldella.marco@spes.uniud.it) University Of Udine";
+    private final String userAgent = "Distiller (Artificial Intelligence Laboratory; carlo.tasso@uniud.it|dario.denart@uniud.it|basaldella.marco@spes.uniud.it) University Of Udine";
 
     /**
      * The query that will be performed using the Wikipedia OpenSearch APIs.
+     * Protocol, languages and the page queries need to be appended before and
+     * after this string.
      */
-    private final String wikipediaQuery = "https://en.wikipedia.org/w/api.php?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
+    private final String wikipediaQuery = "wikipedia.org/w/api.php?action=query&prop=categories|extracts|links&clshow=!hidden&format=json&pllimit=500&plnamespace=0&titles=";
 
     // Blacklist of unwanted terms
-    private static List<String> blackTerms = Arrays.asList(new String[]{"null", "International Standard Book Number",
+    private static final List<String> blackTerms = Arrays.asList(new String[]{"null", "International Standard Book Number",
         "Digital object identifier",
         "PubMed Identifier",
         "International Standard Serial Number",
@@ -144,8 +146,8 @@ public class WikipediaInferenceAnnotator implements Annotator {
     
     @Override
     public void annotate(Blackboard blackboard,DocumentComponent component) {
-
-                componentLocale = component.getLanguage();               
+        
+        componentLocale = component.getLanguage();               
                 
         // Retrieve the grams with a "wikiflag", i.e. the one which
         // text is the same as a Wikipedia page title 
@@ -231,7 +233,8 @@ public class WikipediaInferenceAnnotator implements Annotator {
             page = page.replaceAll(" ", "_");
 
             // do the query and save the retrieved json in an object.
-            String queryAddress = wikipediaQuery + page;
+            String queryAddress = String.format("https://%s.%s%s",
+                     componentLocale.getLanguage(), wikipediaQuery, page);
 
             try {
 

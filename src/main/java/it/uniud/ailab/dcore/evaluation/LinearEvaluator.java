@@ -25,16 +25,16 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Required;
 import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.engine.Evaluator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
+import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
  *
  * @author Marco Basaldella
  */
-public class LinearEvaluator extends Evaluator {
+public class LinearEvaluator implements Annotator {
         
     private Map<String,Double> weights;
     
@@ -44,10 +44,10 @@ public class LinearEvaluator extends Evaluator {
     }
 
     @Override
-    public void Score(Blackboard b,DocumentComponent c) {
-        generateAnnotations(b,c);
+    public void annotate(Blackboard b,DocumentComponent c) {
+        //generateAnnotations(b,c);
         
-        for(Gram g : b.getGrams())
+        for (Gram g : b.getGrams())
         {
             double score = 0;
             for (FeatureAnnotation f : g.getFeatures()) {
@@ -55,7 +55,7 @@ public class LinearEvaluator extends Evaluator {
                     score += f.getValue() * weights.get(f.getAnnotator());
                 }
             }            
-            g.putFeature(SCORE, score);
+            g.putFeature(it.uniud.ailab.dcore.engine.Evaluator.SCORE, score);
         }
               
     }    

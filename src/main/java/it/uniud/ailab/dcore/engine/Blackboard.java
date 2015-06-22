@@ -32,7 +32,6 @@ import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -166,6 +165,16 @@ public class Blackboard {
      */
     public List<Gram> getGrams() {
         return new ArrayList(gramContainer.values());
+    }
+    
+    /**
+     * Removes a gram from the document because it's no more relevant, 
+     * or useful, or for whatever reason an annotator thinks so.
+     * 
+     * @param g the gram to remove.
+     */
+    public void removeGram(Gram g) {
+        gramContainer.remove(g.getSignature());
     }
     
     public void addAnnotation(Annotation a) {

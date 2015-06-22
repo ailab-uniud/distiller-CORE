@@ -28,6 +28,7 @@ import it.uniud.ailab.dcore.utils.BlackboardUtils;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 
 /**
  *
@@ -73,15 +74,15 @@ public class Starter {
     public static void main(String[] args) {
         
         String[] texts = new String[] {
-            //dosto,
+            dosto,
             topGear,
-//            sortedMap,
-//            annaSavoia,
+            sortedMap,
+            annaSavoia,
 //            softEngPT
         };
              
         Distiller d = Distiller.getDefault();
-        
+
         Instant[] times = new Instant[texts.length + 1];
         
         times[0] = Instant.now();

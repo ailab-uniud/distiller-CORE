@@ -46,9 +46,16 @@ public class BlackboardUtils {
 
     public static void printScores(Blackboard b, boolean printAnnotations) {
 
+        Collection<Gram> grams = b.getGrams();
+        
+        System.out.println("");
+        System.out.println(String.format(
+                "Extraction completed with a grand total of %d grams distilled.",                
+                grams.size()));
+        System.out.println("");
+        
         System.out.println("** SCORES **");
 
-        Collection<Gram> grams = b.getGrams();
         Map<Gram, Double> scoredGrams = new HashMap<>();
 
         for (Gram g : grams) {

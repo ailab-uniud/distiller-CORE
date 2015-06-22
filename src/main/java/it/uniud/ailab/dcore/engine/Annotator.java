@@ -34,10 +34,10 @@ public interface Annotator {
     /**
      * The abstract annotation class. All classes that perform some kind of 
      * annotation (splitting, PoS tagging, entity linking...) must inherit from
-     * Annotator. They annotate the component that is passed as parameter and
-     * then return the annotated object to the caller, that writes it on the 
-     * {@link it.uniud.ailab.dcore.engine.BlackBoard}.
+     * Annotator. They annotate the blackboard given as first parameter or a 
+     * component of the blackboard, given as second parameter. 
      * 
+     * @param blackboard blackboard to annotate
      * @param component component to annotate.
      */
     public void annotate(Blackboard blackboard, DocumentComponent component);

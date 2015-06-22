@@ -39,7 +39,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public interface NGramGenerator {
+public interface NGramGenerator extends Annotator {
         
     /**
      * Generates the n-grams of a {@link it.uniud.ailab.dcore.persistence.DocumentComponent}
@@ -50,7 +50,7 @@ public interface NGramGenerator {
      * @param blackboard the blackboard to analyze
      * @param component the component of the blackboard to analyze
      */
-    public abstract void generateNGrams(
+    public abstract void annotate(
             Blackboard blackboard,DocumentComponent component);
     
     /**

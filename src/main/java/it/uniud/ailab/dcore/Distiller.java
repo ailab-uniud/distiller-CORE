@@ -23,6 +23,7 @@ package it.uniud.ailab.dcore;
 
 import it.uniud.ailab.dcore.DistilledOutput.*;
 import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
+import it.uniud.ailab.dcore.annotation.Pipeline;
 import it.uniud.ailab.dcore.annotation.UriAnnotation;
 import it.uniud.ailab.dcore.engine.Annotator;
 import it.uniud.ailab.dcore.engine.Blackboard;
@@ -37,6 +38,8 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.component.WikipediaInferenceAnnotator;
 import static it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG;
 import it.uniud.ailab.dcore.persistence.Gram;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The keyphrase extractor object.
@@ -48,15 +51,30 @@ import it.uniud.ailab.dcore.persistence.Gram;
 public class Distiller {
 
     // all these fields will be injected via setter method
+    
+    /**
+     * The first step of the actual pipeline: this annotator should
+     * decide in which language the document is written.
+     */
     private Annotator languageDetector;
+    
+    /**
+     * The annotation pipelines. There should be one for language.
+     */
+    private Map<Locale,Pipeline> pipelines = new HashMap<>();
+    
+    
+    
     private PreProcessor[] preProcessors;
     private NGramGenerator[] gramGenerators;
     private Evaluator evaluator;
-    private String locale;
+    private Locale documentLocale = null;
 
-    // the blackboard that will contain the text and will be returned at last
+    // the blackboard that will contain the text all its annotations.
     private Blackboard blackboard;
 
+    
+    
     @Required
     public void setEvaluator(Evaluator evaluator) {
         this.evaluator = evaluator;
@@ -77,27 +95,28 @@ public class Distiller {
         this.languageDetector = languageDetector;
     }
 
-    /**
-     * Sets the locale in which the text extraction will be performed, using
-     * "auto" for auto-detection of the locale of the IETF formatted language
-     * tag if manual locale setting is desired. For example, wiring "en-US" will
-     * set the locale to English.
-     *
-     * @param locale
-     */
     @Required
-    public void setLocale(String locale) throws IllegalArgumentException {
+    public void setPipelines(HashMap<Locale,Pipeline> pipelines) {
+        this.pipelines = pipelines;
+    }
+    
+    public void addPipeline(Locale locale,Pipeline pipeline) {
+        pipelines.put(locale, pipeline);
+    }
+    
+    
 
-        if (!locale.equals("")) {
-            // Check if the language tag is valid by generating a dummy locale
-            try {
-                Locale detectedLocale = Locale.forLanguageTag(locale);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Unsupported language tag: " + locale);
-            }
-        }
-
-        this.locale = locale;
+    /**
+     * Sets the locale in which the text extraction will be performed. The value 
+     * should be null for auto-detection of the locale of the IETF formatted 
+     * language tag if manual locale setting is desired. For example, passing 
+     * "en-US" will set the locale to English. An empty locale equals to the
+     * "auto" parameter.
+     *
+     * @param locale the locale to use while processing the text.
+     */
+    public void setLocale(Locale locale) throws IllegalArgumentException {
+        this.documentLocale = locale;
     }
 
     /**
@@ -110,86 +129,31 @@ public class Distiller {
     public Blackboard distillToBlackboard(String text) {
 
         blackboard = new Blackboard();
-
         blackboard.createDocument(text);
-        boolean singleLanguage = true;
+        
+        if (documentLocale == null)
+            // if no language has been set, automatically detect it.
+            if (languageDetector != null)
+                languageDetector.annotate(blackboard, blackboard.getStructure());
+            else
+                // but if there's no language and no language detector, 
+                // throw an exception.
+                throw new RuntimeException(
+                        "I can't decide the language of the document: no language is specified and no language detector is set.");
+        else 
+            // set the pre-determined language
+            blackboard.getStructure().setLanguage(documentLocale);
 
-        // *** STEP 1 *** //
-        // Language recognition. 
-        languageDetector.annotate(blackboard, blackboard.getStructure());
-
-        // *** STEP 2 *** //
-        // Splitting and annotation.        
-        // Now the language detector may have detected one or more languages in
-        // the document, so it may or may have not splitted the document in one
-        // or more subsections.
-        singleLanguage
-                = blackboard.getStructure().getComponents().isEmpty();
-
-        if (!singleLanguage) {
-            // complex case: the text has been splitted
-            // we have to iterate between the different components, 
-            // iterate between the different preprocessors and apply the
-            // one with the matching language
-
-            for (DocumentComponent c
-                    : blackboard.getStructure().getComponents()) {
-                for (PreProcessor p : preProcessors) {
-
-                    if (p.getLanguage().equals(c.getLanguage())) {
-                        p.generateAnnotations(blackboard, c);
-                        break;
-                    }
-                }
-
-            }
-        } else { // simple case: text has not been splitted
-            // apply the preprocessor over the root element.
-            for (PreProcessor p : preProcessors) {
-                if (p.getLanguage().equals(blackboard.getStructure().getLanguage())) {
-                    p.generateAnnotations(blackboard, blackboard.getStructure());
-                    break;
-                }
-            }
+        Pipeline pipeline = pipelines.get(blackboard.getStructure().getLanguage());
+        
+        if (pipeline == null) {
+            throw new RuntimeException("No pipeline for the language " + 
+                    blackboard.getStructure().getLanguage().getLanguage());
         }
-
-//        System.out.println("Detected sentences: " + BlackBoard.Instance().getStructure().getComponents().size());
-//
-//        System.out.println(getAnnotatedComponent(BlackBoard.Instance().getStructure()));
-        // *** STEP 3 *** //
-        // N-gram generation.
-        if (!singleLanguage) {
-            // same as step 2
-
-            // warning: it will be used the FIRST n-gram generator that
-            // matches the desired language
-            for (DocumentComponent c
-                    : blackboard.getStructure().getComponents()) {
-                for (NGramGenerator g : gramGenerators) {
-                    if (g.getGramLanguages().contains(c.getLanguage())) {
-                        g.generateNGrams(blackboard, c);
-                        break;
-                    }
-                }
-
-            }
-        } else {
-            for (NGramGenerator g : gramGenerators) {
-                if (g.getGramLanguages().contains(
-                        blackboard.getStructure().getLanguage())) {
-                    g.generateNGrams(
-                            blackboard, blackboard.getStructure());
-                    break;
-                }
-            }
+        
+        for (Annotator annotator : pipeline.getAnnotators()) {
+            annotator.annotate(blackboard,blackboard.getStructure());
         }
-
-        // *** STEP 4 *** //
-        // Evaluation and scoring.
-        evaluator.Score(blackboard, blackboard.getStructure());
-
-        (new WikipediaInferenceAnnotator()).annotate(
-                blackboard, blackboard.getStructure());
 
         return blackboard;
     }
@@ -203,6 +167,7 @@ public class Distiller {
      * @return the distilled output
      */
     public DistilledOutput distill(String text) {
+        
         DistilledOutput output = new DistilledOutput();
 
         output.setOriginalText(text);
@@ -220,7 +185,7 @@ public class Distiller {
             Gram originalGram = blackboard.getGrams().get(i);
             gram.setSurface(originalGram.getSurface());
             gram.setKeyphraseness(originalGram.getFeature(
-                    it.uniud.ailab.dcore.evaluation.LinearEvaluator.SCORE));
+                    it.uniud.ailab.dcore.engine.Evaluator.SCORE));
             
             UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIFLAG);
             if (wikiAnn != null) {

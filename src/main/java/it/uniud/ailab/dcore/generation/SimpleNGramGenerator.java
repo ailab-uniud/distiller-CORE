@@ -154,7 +154,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
      * @param component the component to analyze.
      */
     @Override
-    public void generateNGrams(Blackboard blackboard,DocumentComponent component) {
+    public void annotate(Blackboard blackboard,DocumentComponent component) {
 
         // load the database, then
         // TODO: handle exceptions better
