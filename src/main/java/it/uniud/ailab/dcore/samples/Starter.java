@@ -16,10 +16,7 @@
  */
 package it.uniud.ailab.dcore.samples;
 
-import it.uniud.ailab.dcore.DistilledOutput;
-import it.uniud.ailab.dcore.DistillerException;
-import it.uniud.ailab.dcore.Distiller;
-import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.*;
 import it.uniud.ailab.dcore.utils.BlackboardUtils;
 import java.text.DecimalFormat;
 import java.time.Duration;
@@ -76,7 +73,7 @@ public class Starter {
 //            softEngPT
         };
              
-        Distiller d = Distiller.getDefault();
+        Distiller d = DistillerFactory.getDefault();
         d.setVerbose(true);
 
         Instant[] times = new Instant[texts.length + 1];

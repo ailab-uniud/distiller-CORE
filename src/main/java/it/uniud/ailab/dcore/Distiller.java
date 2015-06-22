@@ -255,17 +255,4 @@ public class Distiller {
 
         return output;
     }
-
-    // <editor-fold desc="Support methods">
-    /**
-     * Instantiates a Distiller object using the default configuration and
-     * returns it.
-     *
-     * @return a Distiller ready to work.
-     */
-    public static Distiller getDefault() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("default.xml");
-        return (Distiller) context.getBean("distiller");
-    }
-    // </editor-fold>
 }

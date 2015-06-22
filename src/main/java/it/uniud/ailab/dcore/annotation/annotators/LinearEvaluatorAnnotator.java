@@ -26,18 +26,45 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.Gram;
 
 /**
- *
+ * The annotator that calculates the importance of an n-gram in a document, 
+ * defined as keyphraseness, using a simple linear combination of all the 
+ * gram features found by previous annotator.
+ * 
  * @author Marco Basaldella
  */
 public class LinearEvaluatorAnnotator implements Annotator {
         
-    private Map<String,Double> weights;
+    /**
+     * The weights of the linear combination that generates the scores.
+     */
+    private Map<String,Double> weights = new HashMap<>();
     
-    @Required
-    public void setWeights(HashMap<String,Double> weights) {
+    /**
+     * Sets the weight of the the linear combination that will generate the 
+     * scores.
+     * 
+     * @param weights the weights of the features
+     */
+    public void setWeights(Map<String,Double> weights) {
         this.weights = weights;
     }
-
+    
+    /**
+     * Adds a feature to the linear combination.
+     * 
+     * @param feature the feature to add.
+     * @param weight the weight of the feature to add.
+     */
+    public void addWeight(String feature, double weight) {
+        weights.put(feature, weight);
+    }    
+    
+    /**
+     * The method which performs the actual scoring of the grams.
+     * 
+     * @param b the blackboard to annotate
+     * @param c the component to annotate
+     */
     @Override
     public void annotate(Blackboard b,DocumentComponent c) {        
         for (Gram g : b.getGrams())
