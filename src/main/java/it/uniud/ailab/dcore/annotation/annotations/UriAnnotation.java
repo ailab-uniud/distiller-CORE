@@ -14,8 +14,9 @@
  * 	See the License for the specific language governing permissions and
  * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.annotation;
+package it.uniud.ailab.dcore.annotation.annotations;
 
+import it.uniud.ailab.dcore.annotation.Annotation;
 import java.net.URI;
 
 /**

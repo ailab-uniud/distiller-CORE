@@ -14,11 +14,10 @@
  * 	See the License for the specific language governing permissions and
  * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.annotation.gram;
+package it.uniud.ailab.dcore.annotation.annotators;
 
-import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.engine.Evaluator;
+import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import java.util.Collection;
@@ -44,7 +43,7 @@ public class SkylineGramFilter implements Annotator {
         Map<Gram, Double> scoredGrams = new HashMap<>();
 
         for (Gram g : grams) {
-            scoredGrams.put(g, g.getFeature(Evaluator.SCORE));
+            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
         List<Map.Entry<Gram, Double>> gramsToTrash

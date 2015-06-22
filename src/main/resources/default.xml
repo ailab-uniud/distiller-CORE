@@ -59,79 +59,79 @@
       
     <!-- italian and english wikipedia annotator by the University of Pisa -->
     <bean id="tagme" 
-          class="it.uniud.ailab.dcore.annotation.token.TagMeTokenAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator" />
     <bean id="tagmegram" 
-          class="it.uniud.ailab.dcore.annotation.gram.TagMeGramAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.annotators.TagMeGramAnnotator" />
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
-          class="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
     <!-- emotional intensity annotator -->
     <bean id="syuzhet" 
-          class="it.uniud.ailab.dcore.annotation.gram.SyuzhetAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
     <!-- filter that keeps only the most important  grams (i.e. with the highest
          calculated keyphraseness  -->
     <bean id="skylineGramFilter" 
-          class="it.uniud.ailab.dcore.annotation.gram.SkylineGramFilter"/>    
+          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilter"/>    
     <!-- annotator that infers concept that can't be found in the document -->
     <bean id="wikipediaInference" 
-          class="it.uniud.ailab.dcore.annotation.component.WikipediaInferenceAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator" />
     
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
-          class="it.uniud.ailab.dcore.generation.SimpleNGramGenerator" >
-        <property name="gramLanguages">
+          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
+        <!--<property name="gramLanguages">
             <list>
                 <ref bean="english"/>
                 <ref bean="italian"/>
             </list>
-        </property>    
+        </property>-->    
     </bean>
     
     <!-- Evaluators -->
     <bean id="linearEvaluator"
-          class="it.uniud.ailab.dcore.evaluation.LinearEvaluator">
+          class="it.uniud.ailab.dcore.annotation.annotators.LinearEvaluatorAnnotator">
         <property name="weights">
             <map key-type="java.lang.String" value-type="java.lang.Double">
                 <entry value="0.15">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.DEPTH"/>
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.DEPTH"/>
                     </key>
                 </entry>
                 <entry value="0.25">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.HEIGHT"/>
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.HEIGHT"/>
                     </key>                     
                 </entry>
                 <entry value="0.1">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.gram.SyuzhetAnnotator.INTENSITY"/>
-                    </key>                     
-                </entry>
-                <entry value="0.1">
-                    <key>
-                        <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.LIFESPAN"/>
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.LIFESPAN"/>
                     </key> 
                 </entry>
                 <entry value="0.1">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.gram.StatisticalAnnotator.FREQUENCY"/>
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.FREQUENCY"/>
                     </key>
+                </entry>
+                <entry value="0">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator.INTENSITY"/>
+                    </key>                     
                 </entry>
                 <entry value="0.3">
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.generation.SimpleNGramGenerator.NOUNVALUE"/>
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.GenericNGramGeneratorAnnotator.NOUNVALUE"/>
                     </key>
                 </entry>
                 <entry value="0.1" >
                     <key>
                         <util:constant 
-                            static-field="it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG"/>
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIFLAG"/>
                     </key>
                 </entry>
             </map>              
@@ -159,11 +159,6 @@
                 <!-- filter the non-interesting grams -->
                 <ref bean="skylineGramFilter"/> 
             </list>
-        </property>
-        <property name="language">
-            <bean class="java.util.Locale">
-                <constructor-arg value="en" type="java.lang.String"/>
-            </bean>
         </property>        
     </bean> 
     

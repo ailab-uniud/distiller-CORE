@@ -4,112 +4,99 @@
  * 
  * 	This file is part of the Distiller-CORE library.
  * 
- * 	Distiller-CORE is free software; you can redistribute it and/or
- * 	modify it under the terms of the GNU Lesser General Public
- * 	License as published by the Free Software Foundation; either
- * 	version 2.1 of the License, or (at your option) any later version.
+ * 	Licensed under the Apache License, Version 2.0 (the "License");
+ * 	you may not use this file except in compliance with the License.
+ * 	You may obtain a copy of the License at
  *
- * 	Distiller-CORE is distributed in the hope that it will be useful,
- * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * 	Lesser General Public License for more details.
+ * 	     http://www.apache.org/licenses/LICENSE-2.0
  *
- * 	You should have received a copy of the GNU Lesser General Public
- * 	License along with this library; if not, write to the Free Software
- * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
+ * 	Unless required by applicable law or agreed to in writing, software
+ * 	distributed under the License is distributed on an "AS IS" BASIS,
+ * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 	See the License for the specific language governing permissions and
+ * 	limitations under the License.
  */
 package it.uniud.ailab.dcore;
 
 import it.uniud.ailab.dcore.DistilledOutput.*;
-import it.uniud.ailab.dcore.annotation.InferenceAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.Pipeline;
-import it.uniud.ailab.dcore.annotation.UriAnnotation;
-import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.engine.Evaluator;
-import it.uniud.ailab.dcore.engine.NGramGenerator;
-import it.uniud.ailab.dcore.engine.PreProcessor;
+import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
+import it.uniud.ailab.dcore.annotation.Annotator;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.annotation.component.WikipediaInferenceAnnotator;
-import static it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator.WIKIFLAG;
+import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
+import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIFLAG;
 import it.uniud.ailab.dcore.persistence.Gram;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The keyphrase extractor object.
- *
- *
+ * The information extractor object.
+ * 
  * @author Marco Basaldella
  * @author Dario De Nart
  */
 public class Distiller {
 
     // all these fields will be injected via setter method
-    
     /**
-     * The first step of the actual pipeline: this annotator should
-     * decide in which language the document is written.
+     * The first step of the actual pipeline: this annotator should decide in
+     * which language the document is written.
      */
     private Annotator languageDetector;
-    
+
     /**
      * The annotation pipelines. There should be one for language.
      */
-    private Map<Locale,Pipeline> pipelines = new HashMap<>();
-    
-    
-    
-    private PreProcessor[] preProcessors;
-    private NGramGenerator[] gramGenerators;
-    private Evaluator evaluator;
+    private Map<Locale, Pipeline> pipelines = new HashMap<>();
+
+    /**
+     * The language of the document.
+     */
     private Locale documentLocale = null;
 
-    // the blackboard that will contain the text all its annotations.
+    /**
+     * The Object that will contain the text all its annotations.
+     */
     private Blackboard blackboard;
 
-    
-    
-    @Required
-    public void setEvaluator(Evaluator evaluator) {
-        this.evaluator = evaluator;
-    }
-
-    @Required
-    public void setGramGenerators(NGramGenerator gramGenerators[]) {
-        this.gramGenerators = gramGenerators;
-    }
-
-    @Required
-    public void setPreProcessors(PreProcessor[] preProcessors) {
-        this.preProcessors = preProcessors;
-    }
-
+    /**
+     * Sets the language detector.
+     *
+     * @param languageDetector the language detector.
+     */
     @Required
     public void setLanguageDetector(Annotator languageDetector) {
         this.languageDetector = languageDetector;
     }
 
+    /**
+     * Set the annotation pipelines.
+     *
+     * @param pipelines the annotation pipelines.
+     */
     @Required
-    public void setPipelines(HashMap<Locale,Pipeline> pipelines) {
+    public void setPipelines(HashMap<Locale, Pipeline> pipelines) {
         this.pipelines = pipelines;
     }
-    
-    public void addPipeline(Locale locale,Pipeline pipeline) {
-        pipelines.put(locale, pipeline);
-    }
-    
-    
 
     /**
-     * Sets the locale in which the text extraction will be performed. The value 
-     * should be null for auto-detection of the locale of the IETF formatted 
-     * language tag if manual locale setting is desired. For example, passing 
+     * Adds a pipeline to the pipelines map.
+     *
+     * @param locale the language that the pipeline will process
+     * @param pipeline the pipeline to add
+     */
+    public void addPipeline(Locale locale, Pipeline pipeline) {
+        pipelines.put(locale, pipeline);
+    }
+
+    /**
+     * Sets the locale in which the text extraction will be performed. The value
+     * should be null for auto-detection of the locale of the IETF formatted
+     * language tag if manual locale setting is desired. For example, passing
      * "en-US" will set the locale to English. An empty locale equals to the
      * "auto" parameter.
      *
@@ -117,6 +104,15 @@ public class Distiller {
      */
     public void setLocale(Locale locale) throws IllegalArgumentException {
         this.documentLocale = locale;
+    }
+
+    /**
+     * Gets the blackboard.
+     * 
+     * @return the blackboard.
+     */
+    public Blackboard getBlackboard() {
+        return blackboard;
     }
 
     /**
@@ -130,29 +126,31 @@ public class Distiller {
 
         blackboard = new Blackboard();
         blackboard.createDocument(text);
-        
-        if (documentLocale == null)
-            // if no language has been set, automatically detect it.
-            if (languageDetector != null)
+
+        if (documentLocale == null) // if no language has been set, automatically detect it.
+        {
+            if (languageDetector != null) {
                 languageDetector.annotate(blackboard, blackboard.getStructure());
-            else
-                // but if there's no language and no language detector, 
-                // throw an exception.
+            } else // but if there's no language and no language detector, 
+            // throw an exception.
+            {
                 throw new RuntimeException(
                         "I can't decide the language of the document: no language is specified and no language detector is set.");
-        else 
-            // set the pre-determined language
+            }
+        } else // set the pre-determined language
+        {
             blackboard.getStructure().setLanguage(documentLocale);
+        }
 
         Pipeline pipeline = pipelines.get(blackboard.getStructure().getLanguage());
-        
+
         if (pipeline == null) {
-            throw new RuntimeException("No pipeline for the language " + 
-                    blackboard.getStructure().getLanguage().getLanguage());
+            throw new RuntimeException("No pipeline for the language "
+                    + blackboard.getStructure().getLanguage().getLanguage());
         }
-        
+
         for (Annotator annotator : pipeline.getAnnotators()) {
-            annotator.annotate(blackboard,blackboard.getStructure());
+            annotator.annotate(blackboard, blackboard.getStructure());
         }
 
         return blackboard;
@@ -167,7 +165,7 @@ public class Distiller {
      * @return the distilled output
      */
     public DistilledOutput distill(String text) {
-        
+
         DistilledOutput output = new DistilledOutput();
 
         output.setOriginalText(text);
@@ -185,8 +183,8 @@ public class Distiller {
             Gram originalGram = blackboard.getGrams().get(i);
             gram.setSurface(originalGram.getSurface());
             gram.setKeyphraseness(originalGram.getFeature(
-                    it.uniud.ailab.dcore.engine.Evaluator.SCORE));
-            
+                    it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));
+
             UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIFLAG);
             if (wikiAnn != null) {
                 gram.setConceptName(wikiAnn.getSurface());
@@ -199,8 +197,8 @@ public class Distiller {
 
         for (int i = 0; i < output.getRelatedConcepts().length; i++) {
             InferredConcept related = output.getRelatedConcepts()[i];
-            InferenceAnnotation originalRelatedConcept = 
-                    (InferenceAnnotation) blackboard.getAnnotations(
+            InferenceAnnotation originalRelatedConcept
+                    = (InferenceAnnotation) blackboard.getAnnotations(
                             WikipediaInferenceAnnotator.RELATED).get(i);
 
             related.setConcept(originalRelatedConcept.getConcept());
@@ -222,7 +220,7 @@ public class Distiller {
         }
 
         output.setExtractionCompleted(true);
-        
+
         return output;
     }
 
@@ -238,9 +236,4 @@ public class Distiller {
         return (Distiller) context.getBean("distiller");
     }
     // </editor-fold>
-
-    public Blackboard getBlackboard() {
-        return blackboard;
-    }
-
 }

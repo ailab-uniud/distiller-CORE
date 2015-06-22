@@ -29,14 +29,14 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
-import it.uniud.ailab.dcore.engine.Annotator;
+import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 //import gpl.pierrick.brihaye.aramorph.AraMorph;
 //import gpl.pierrick.brihaye.aramorph.Solution;
-import it.uniud.ailab.dcore.engine.Blackboard;
+import it.uniud.ailab.dcore.Blackboard;
 
 /**
  * A bootstrapper annotator for the English language developed using the 

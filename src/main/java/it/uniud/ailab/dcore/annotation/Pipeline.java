@@ -17,12 +17,10 @@
 package it.uniud.ailab.dcore.annotation;
 
 import com.rits.cloning.Cloner;
-import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.Blackboard;
+import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * A pipeline of annotators.
@@ -33,8 +31,6 @@ public class Pipeline implements Annotator {
     
     private List<Annotator> annotators = new LinkedList<>();
     
-    private Locale language;
-
     /**
      * Returns a deep copy of the annotators in the pipeline.
      * 
@@ -61,26 +57,6 @@ public class Pipeline implements Annotator {
     public void addAnnotator(Annotator a) {
         this.annotators.add(a);
     }
-
-    /**
-     * Gets the language supported by the pipeline.
-     * 
-     * @return the language supported by the pipeline
-     */
-    public Locale getLanguage() {
-        return language;
-    }
-
-    /**
-     * Sets the language supported by the pipeline.
-     * 
-     * @param language the language supported by the pipeline
-     */
-    public void setLanguage(Locale language) {
-        this.language = language;
-    }
-    
-    
 
     /**
      * Runs the pipeline.

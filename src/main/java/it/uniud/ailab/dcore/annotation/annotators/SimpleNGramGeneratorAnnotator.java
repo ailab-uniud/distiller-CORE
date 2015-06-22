@@ -1,25 +1,20 @@
 /*
  * 	Copyright (C) 2015 Artificial Intelligence
  * 	Laboratory @ University of Udine.
- * 
- * 	This file is part of the Distiller-CORE library.
- * 
- * 	Distiller-CORE is free software; you can redistribute it and/or
- * 	modify it under the terms of the GNU Lesser General Public
- * 	License as published by the Free Software Foundation; either
- * 	version 2.1 of the License, or (at your option) any later version.
  *
- * 	Distiller-CORE is distributed in the hope that it will be useful,
- * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * 	Lesser General Public License for more details.
+ * 	Licensed under the Apache License, Version 2.0 (the "License");
+ * 	you may not use this file except in compliance with the License.
+ * 	You may obtain a copy of the License at
  *
- * 	You should have received a copy of the GNU Lesser General Public
- * 	License along with this library; if not, write to the Free Software
- * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
+ * 	     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * 	Unless required by applicable law or agreed to in writing, software
+ * 	distributed under the License is distributed on an "AS IS" BASIS,
+ * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 	See the License for the specific language governing permissions and
+ * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.generation;
+package it.uniud.ailab.dcore.annotation.annotators;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -35,10 +30,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import it.uniud.ailab.dcore.engine.NGramGenerator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.engine.Blackboard;
-import it.uniud.ailab.dcore.annotation.FeatureAnnotation;
+import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -62,13 +56,7 @@ import it.uniud.ailab.dcore.persistence.Token;
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-public class SimpleNGramGenerator implements NGramGenerator {
-    
-    /**
-     * The identifier for the annotation produced by the n-gram generator, which
-     * counts the number of nouns in a n-gram.
-     */
-    public static final String NOUNVALUE = "NounValue";
+public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnotator {
 
     // <editor-fold desc="private fields">
     /**
@@ -99,7 +87,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
      * 
      * @param posDatabasePath the path of the JSON file used as database
      */
-    public SimpleNGramGenerator(String posDatabasePath) {
+    public SimpleNGramGeneratorAnnotator(String posDatabasePath) {
 
         validPOSPatterns = new HashMap<>();
         languages = new ArrayList<>();
@@ -110,7 +98,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
     /**
      * Initializes the nGram generator with the default POS patterns. 
      */
-    public SimpleNGramGenerator() {
+    public SimpleNGramGeneratorAnnotator() {
         // a neat trick to get the database path: instead of doing this.getClass(), 
         // since you can't use 'this' in a constructor call (like this(this.. )), 
         // we call getClass on a simple Annotation instance.
@@ -118,31 +106,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
                 getResource("ailab/posPatterns.json").getFile());
     }
     // </editor-fold>
-    
-    // <editor-fold desc="getters and setters">    
-    /**
-     * Sets the languages that will be used in the n-gram generation pipeline.
-     * 
-     * @param langs the languages that will be used in the n-gram generation pipeline.
-     * @see it.uniud.ailab.dcore.engine.NGramGenerator
-     */
-    @Override
-    public void setGramLanguages(List<Locale> langs) {
-        this.languages = langs;            
-    }
-
-    /**
-     * Gets the languages that will be used in the n-gram generation pipeline.
-     * 
-     * @return the languages that will be used in the n-gram generation pipeline.
-     * @see it.uniud.ailab.dcore.engine.NGramGenerator
-     */
-    @Override
-    public List<Locale> getGramLanguages() {
-        return this.languages;
-    }
-    // </editor-fold>
-    
+   
     // <editor-fold desc="worker methods">
     
     /**
@@ -161,7 +125,7 @@ public class SimpleNGramGenerator implements NGramGenerator {
         try {
             loadDatabase(component.getLanguage());
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(SimpleNGramGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimpleNGramGeneratorAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // do the actual nGram generation.

@@ -1,38 +1,30 @@
 /*
  * 	Copyright (C) 2015 Artificial Intelligence
  * 	Laboratory @ University of Udine.
- * 
- * 	This file is part of the Distiller-CORE library.
- * 
- * 	Distiller-CORE is free software; you can redistribute it and/or
- * 	modify it under the terms of the GNU Lesser General Public
- * 	License as published by the Free Software Foundation; either
- * 	version 2.1 of the License, or (at your option) any later version.
  *
- * 	Distiller-CORE is distributed in the hope that it will be useful,
- * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * 	Lesser General Public License for more details.
+ * 	Licensed under the Apache License, Version 2.0 (the "License");
+ * 	you may not use this file except in compliance with the License.
+ * 	You may obtain a copy of the License at
  *
- * 	You should have received a copy of the GNU Lesser General Public
- * 	License along with this library; if not, write to the Free Software
- * 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * 	MA 02110-1301  USA or see <http://www.gnu.org/licenses/>.
+ * 	     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * 	Unless required by applicable law or agreed to in writing, software
+ * 	distributed under the License is distributed on an "AS IS" BASIS,
+ * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 	See the License for the specific language governing permissions and
+ * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.annotation.token;
+package it.uniud.ailab.dcore.annotation.annotators;
 
-import it.uniud.ailab.dcore.annotation.generic.WikipediaAnnotator;
 import it.uniud.ailab.dcore.annotation.*;
-import it.uniud.ailab.dcore.engine.Annotator;
-import it.uniud.ailab.dcore.engine.Blackboard;
+import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.Blackboard;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -47,7 +39,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import it.uniud.ailab.dcore.annotation.TextAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -58,7 +50,7 @@ import it.uniud.ailab.dcore.persistence.Token;
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-public class TagMeTokenAnnotator implements Annotator, WikipediaAnnotator {
+public class TagMeTokenAnnotator implements Annotator, GenericWikipediaAnnotator {
 
     private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
     private final String apiKey = "Dario.de.NART.2014";
