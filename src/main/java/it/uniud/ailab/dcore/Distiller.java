@@ -29,15 +29,14 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import static it.uniud.ailab.dcore.utils.AnnotatorUtils.getAnnotatorSimpleName;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The information extractor object.
+ * The information extractor object. This is the class that runs the different
+ * annotation pipelines.
  * 
  * @author Marco Basaldella
  * @author Dario De Nart

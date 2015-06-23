@@ -21,7 +21,8 @@ package it.uniud.ailab.dcore.annotation.annotators;
  * between different annotators: every Wikipedia annotator should use the 
  * Wikiflag here defined to annotate grams or tokens which are respectively 
  * title and part of the title of a Wikipedia page.
- * This way, subsequent steps of the Distiller do not have to be aware of 
+ * 
+ * This way, subsequent steps of the distiller do not have to be aware of 
  * what annotator precedes them, but they just have to now that someone put a 
  * "Wikiflag" over that n-gram (or token).
  *

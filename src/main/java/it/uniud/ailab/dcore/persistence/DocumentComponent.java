@@ -34,24 +34,33 @@ public abstract class DocumentComponent {
     private String text;
     private Locale language;
     
+    /**
+     * Creates a document component.
+     * 
+     * @param text the text of the component
+     * @param language the language of the component
+     */
     public DocumentComponent(String text,Locale language) {
         this.text = text;
         this.language = language;
     }
-    
-    
-    public DocumentComponent(String text) {
-        this(text,null);
-    }
-    
-    // <editor-fold desc="getters and setters">
-    
 
-    
+    // <editor-fold desc="getters and setters">
+
+    /**
+     * Returns the text of the component
+     * 
+     * @return the text of the component.
+     */
     public String getText() {
         return text;
     }
     
+    /**
+     * Sets the language of the component.
+     * 
+     * @param language the language of the component
+     */
     public void setLanguage(Locale language) {
         this.language = language;
         if (hasComponents()) {
@@ -60,12 +69,22 @@ public abstract class DocumentComponent {
         }
     }
     
-    
+    /**
+     * Returns the language of the component.
+     * 
+     * @return the language of the component.
+     */
     public Locale getLanguage() {
         return this.language;
     }
     
-    
+    /**
+     * Check if the component is a leaf ( so it can be a 
+     * {@link it.uniud.ailab.dcore.persistence.Sentence}), or if it has children,
+     * so it's surely a {@link it.uniud.ailab.dcore.persistence.DocumentComposite}.
+     * 
+     * @return true if the component has children; otherwise false.
+     */
     public boolean hasComponents() {
         List<DocumentComponent> comps = getComponents();
         return !(comps == null);
@@ -91,13 +110,29 @@ public abstract class DocumentComponent {
      */
     public abstract List<TextAnnotation> getAnnotations() ;
     
+    /**
+     * Adds a gram to the component.
+     * 
+     * @param g the gram to add
+     */
     public abstract void addGram(Gram g);
     
+    /**
+     * Returns the gram associated with the component.
+     * 
+     * @return the gram associated with the component.
+     */
     public abstract List<Gram> getGrams();
     
     
     // </editor-fold>
     
+    /**
+     * Get the string representation of the component.
+     * 
+     * @return the string that represent the component (which has been set
+     * in the constructor).
+     */
     @Override
     public String toString() {
         return text;

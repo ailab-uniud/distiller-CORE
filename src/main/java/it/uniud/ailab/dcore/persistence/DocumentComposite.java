@@ -31,23 +31,49 @@ import java.util.Locale;
  */
 public class DocumentComposite extends DocumentComponent {
 
+    /**
+     * The children of the current instance.
+     */
     private List<DocumentComponent> components;
 
+    /**
+     * Create a document composite.
+     * 
+     * @param text the text of the composite.
+     * @param language the language of the composite.
+     */
     public DocumentComposite(String text, Locale language) {
         super(text, language);
         components = new ArrayList<DocumentComponent>();
     }
 
+    /**
+     * Create a composite with no language associated. This requires
+     * a call to setLanguage before many of the annotators can actually work.
+     * 
+     * @param text the text of the composite.
+     */
     public DocumentComposite(String text) {
         this(text, null);
     }
 
     //<editor-fold desc="Getters and setters">
+     /**
+     * Gets the sub-components of the composite.
+     * 
+     * @return the sub-components
+     */
     @Override
     public List<DocumentComponent> getComponents() {
         return components;
     }
-
+    
+    /**
+     * Gets the annotations of the composite (more specifically, 
+     * the annotations of all of its sub-components).
+     * 
+     * @return the annotations of the composite.
+     */
     @Override
     public List<TextAnnotation> getAnnotations() {
         List<TextAnnotation> ret = new ArrayList<>();
@@ -59,20 +85,44 @@ public class DocumentComposite extends DocumentComponent {
         return ret;
     }
 
+    /**
+     * Add a component to the composite.
+     * 
+     * @param component the component to add.
+     */
     public void addComponent(DocumentComponent component) {
         this.components.add(component);
     }
 
+    /**
+     * Sets the components of the composite, deleting the previous set ones
+     * (if any).
+     * 
+     * @param components the new components of the composite.
+     */
     public void setComponents(List<DocumentComponent> components) {
         this.components = components;
     }
     //</editor-fold>
 
+    /**
+     * You can't add a gram on a composite, since a Gram which is not associated
+     * with a particular sentence has no sense. In other words, if I associate
+     * a gram with a composite, how can I know what sub-component he belongs to?
+     * 
+     * @param g the gram to add
+     */
     @Override
     public void addGram(Gram g) {
         throw new UnsupportedOperationException("You can't add Grams on a Composite object."); 
     }
 
+    /**
+     * Get all the grams of the component; more specifically, get all the grams
+     * of all its sub-components.
+     * 
+     * @return the gram that appear in the component.
+     */
     @Override
     public List<Gram> getGrams() {
         List<Gram> ret = new ArrayList<>();

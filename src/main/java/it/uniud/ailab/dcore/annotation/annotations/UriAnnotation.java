@@ -20,7 +20,7 @@ import it.uniud.ailab.dcore.annotation.Annotation;
 import java.net.URI;
 
 /**
- * Annotates a chunk of text with an URI.
+ * An annotation that annotates a chunk of text with an URI.
  * 
  * @author Marco Basaldella
  */

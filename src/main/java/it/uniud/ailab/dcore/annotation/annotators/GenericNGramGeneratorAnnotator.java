@@ -23,13 +23,11 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 /**
  * This module generates the n-grams of the document, using the 
  * {@link it.uniud.ailab.dcore.persistence.Annotation}s produced by the
- * {@link it.uniud.ailab.dcore.engine.PreProcessor} and assigning them
+ * previous Annotators and assigning them
  * {@link it.uniud.ailab.dcore.annotation.Feature}s accordingly. 
  * 
  * To correctly evaluate annotations, the module must know their syntax.
  * See the single Annotators to check how they output their result. 
- * For example, different PoS taggers for the same language can use different
- * tag sets.
  * 
  * @author Marco Basaldella
  * @author Dario De Nart

@@ -99,6 +99,11 @@ public class SyuzhetAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard,DocumentComponent component) {
         
+        // skip non-english components
+        if (!component.getLanguage().getLanguage().equals("en")) {
+            return;
+        }
+        
         loadDefinitions();
         
         List<Sentence> sentences = DocumentUtils.getSentences(component);

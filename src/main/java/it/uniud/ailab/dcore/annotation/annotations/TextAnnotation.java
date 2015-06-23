@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * A simple annotation of one (or more tokens) with a string. This way we can
+ * annotate text portions of the document with other text.
  *
  * @author Marco Basaldella
  */
@@ -69,7 +71,7 @@ public class TextAnnotation extends Annotation {
     }
     
     /**
-     * Two annotations are the same if the annotator, the annotated
+     * Two text annotations are the same if the annotator, the annotated
      * text and the annotation are the same. 
      * 
      * For example, the words "Software" and "Engineering" may be annotated by

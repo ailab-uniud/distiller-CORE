@@ -19,8 +19,10 @@
 package it.uniud.ailab.dcore;
 
 /**
+ * A class that summarizes the relevant output of the distiller in a simple, 
+ * easy to navigate and JSON-ready structure.
  *
- * @author Marco
+ * @author Marco Basaldella
  */
 public class DistilledOutput {
     

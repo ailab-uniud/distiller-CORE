@@ -19,19 +19,31 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.annotation.Annotator;
 
 /**
- * This module reads the {@link it.uniud.ailab.dcore.annotation.Feature}s produced 
+ * Evaluators read the {@link it.uniud.ailab.dcore.annotation.Feature}s produced 
  * by the {@link org.uniud.dcore.engine.GramGenerator} and other annotators and 
  * evaluates them to generate the output of the Distiller.
  * 
- * To correctly evaluate features, the module must know their meaning.
+ * To correctly evaluate features, evaluators must know their meaning.
  * See the GramGenerator and the gram annotators you're using to check 
  * what their annotation mean.
+ * 
+ * This class is provided as a superclass for Evaluators, to use them
+ * interchangeably in the annotation pipeline.
+ * 
+ * Note that one may decide to use different evaluators in the pipeline by
+ * not implementing this interface; while this offers the possibility to 
+ * combine different evaluation techniques in a single pipeline, it causes the 
+ * inability to use subsequent annotators in the pipeline that depend on this
+ * interface.
  * 
  * @author Marco Basaldella
  * @author Dario De Nart
  */
 public interface GenericEvaluatorAnnotator extends Annotator {
     
+    /**
+     * The importance of a gram in the document, also known as keyphraseness. 
+     */
     public static final String SCORE = "Score";
     
 }

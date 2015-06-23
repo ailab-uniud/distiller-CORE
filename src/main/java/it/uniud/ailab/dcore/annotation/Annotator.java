@@ -24,18 +24,19 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 
 
 /**
- * The Annotator interface should be implemented by any class that reads 
+ * The interface that should be used by any class that reads 
  * the whole text (or parts of it) and produces annotations over it.
  * 
- * Part-Of-Speech taggers and Named-Entity-Recognition modules are examples
+ * Part of Speech taggers and Named Entity Recognition modules are examples
  * of annotators.
  * 
- * @author Marco Basaldella, Dario De Nart
+ * @author Marco Basaldella
+ * @author Dario De Nart
  */
 public interface Annotator {
     
     /**
-     * The abstract annotation class. All classes that perform some kind of 
+     * The abstract annotation method. All classes that perform some kind of 
      * annotation (splitting, PoS tagging, entity linking...) must inherit from
      * Annotator. They annotate the blackboard given as first parameter or a 
      * component of the blackboard, given as second parameter. 

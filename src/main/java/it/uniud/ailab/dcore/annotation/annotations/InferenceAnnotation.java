@@ -20,6 +20,11 @@ import it.uniud.ailab.dcore.annotation.Annotation;
 import java.net.URI;
 
 /**
+ * This annotation represents an inferred concept. For example, having a document 
+ * that talks about Ferraris, the distiller may infer the concept "sports cars".
+ * 
+ * Each inferred concept should have a score, to allow ranking of the inferred
+ * concepts by importance.
  *
  * @author Marco Basaldella
  */

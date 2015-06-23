@@ -19,8 +19,15 @@
 package it.uniud.ailab.dcore.annotation;
 
 /**
- *
- * @author Marco
+ * An abstract annotation. It forces child annotators to identify themselves
+ * by calling the one-argument constructor, where they have to pass their 
+ * identifier as a string. 
+ * 
+ * Identifiers should be set as public static final fields in each Annotator
+ * class, such as in 
+ * {@link it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator}.
+ * 
+ * @author Marco Basaldella
  */
 public class Annotation {
     protected final String annotator;
@@ -29,6 +36,11 @@ public class Annotation {
         this.annotator = annotator;
     }
     
+    /**
+     * Gets the identifier of the annotator that produced the annotation.
+     * 
+     * @return the identifier of the annotator.
+     */
     public String getAnnotator() {
         return annotator;
     }

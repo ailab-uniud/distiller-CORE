@@ -45,7 +45,9 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 
 /**
- *
+ * Adds the Wikiflag as defined in
+ * {@link it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator}
+ * to sequence of tokens which text coincides with the title of a Wikipedia page. 
  * 
  * @author Dario De Nart
  * @author Marco Basaldella

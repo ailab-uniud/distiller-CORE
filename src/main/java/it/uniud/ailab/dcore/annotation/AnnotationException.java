@@ -20,7 +20,7 @@
 package it.uniud.ailab.dcore.annotation;
 
 /**
- * Exception thrown when an annotation error occurs.
+ * Exception thrown when an annotation error occurs. 
  *
  * @author Marco Basaldella
  */

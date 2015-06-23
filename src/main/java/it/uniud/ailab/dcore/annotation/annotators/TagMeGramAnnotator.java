@@ -28,10 +28,10 @@ import it.uniud.ailab.dcore.utils.WikipediaUtils;
 
 /**
  * Adds the Wikiflag as defined in
- * {@link it.uniud.ailab.dcore.annotation.generic.GenericWikipediaAnnotator} to grams
- * which text coincides with a Wikipedia page. Note: it requires a previous
- * annotations of the tokens by
- * {@link it.uniud.ailab.dcore.annotation.tokens.TagMeTokenAnnotator}
+ * {@link it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator}
+ * to grams which text coincides with the title of a Wikipedia page. 
+ * Note: it requires a previous annotations of the tokens by
+ * {@link it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator}
  *
  * @author Marco Basaldella
  */

@@ -18,7 +18,6 @@ package it.uniud.ailab.dcore.annotation.annotators;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Required;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;

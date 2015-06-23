@@ -46,28 +46,12 @@ import java.util.stream.Collectors;
  */
 public class Blackboard {
     
-//    // <editor-fold desc="Singleton Pattern">
-//    /**
-//     * Instance of the singleton.
-//     */ 
-//    private final static Blackboard INSTANCE = new Blackboard();
-//    
     /**
      * Instantiates an empty blackboard.
      */
     public Blackboard() { 
         createDocument("");
     }
-        
-//    /**
-//     * The singleton of the class. 
-//     * @return the document model.
-//     */
-//    public static Blackboard Instance() {
-//        return INSTANCE;
-//    }   
-//    // </editor-fold>
-      
     /**
      * The full raw text of the document.
      */
@@ -96,7 +80,7 @@ public class Blackboard {
      * 
      * @param rawText the text of the new document.
      */    
-    public void createDocument(String rawText)
+    public final void createDocument(String rawText)
     {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText);
@@ -174,14 +158,30 @@ public class Blackboard {
         gramContainer.remove(g.getSignature());
     }
     
+    /**
+     * Adds an annotation in the blackboard.
+     * 
+     * @param a the annotation to add
+     */
     public void addAnnotation(Annotation a) {
         annotations.add(a);
     }
     
+    /**
+     * Get all the annotations.
+     * 
+     * @return the annotations stored in the blackboard
+     */
     public List<Annotation> getAnnotations() {
         return annotations;
     }
     
+    /**
+     * Gets the annotations produced by a specific annotator.
+     * 
+     * @param annotator the annotator identifier
+     * @return the annotations produced by the specified annotator
+     */
     public List<Annotation> getAnnotations(String annotator) {        
         return annotations.stream().filter((a) -> 
                 (a.getAnnotator().equals(annotator))).
