@@ -28,6 +28,15 @@ import java.util.Locale;
  */
 public class WikipediaUtils {
     
+    /**
+     * Generates a Wikipedia page URI from a string.
+     * 
+     * @param target the page title
+     * @param locale the language of the Wikipedia you need (for example, 
+     * use Locale.ENGLISH for en.wikipedia)
+     * @return the URI that points to that Wikipedia page. Note that the page
+     * may not actually exists
+     */
     public static URI generateWikiUri(String target, Locale locale) {
         URI uri = null;
         

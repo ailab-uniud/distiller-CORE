@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
-import it.uniud.ailab.dcore.persistence.Token;
 
 /**
  * Utilies for the {@link it.uniud.ailab.dcore.persistence.DocumentComponent} 
@@ -33,6 +32,12 @@ import it.uniud.ailab.dcore.persistence.Token;
  */
 public class DocumentUtils {
             
+    /**
+     * Gets all the sentences of a document component.
+     * 
+     * @param component the component of which you want the sentences
+     * @return the sentences of the component
+     */
     public static List<Sentence> getSentences(DocumentComponent component) {
         List<Sentence> ret = new ArrayList<>();
         
@@ -45,29 +50,5 @@ public class DocumentUtils {
         
         return ret;
     }   
-    
-    public static String getAnnotatedComponent(DocumentComponent c) {
-        
-        String ret = "";
-        
-        if (c.hasComponents()) {
-            
-            ret = ret + "Component\n";
-            
-            for (DocumentComponent comp : c.getComponents()) {
-                ret = ret + getAnnotatedComponent(comp);
-            }
-            
-        } else {
-            for (Token t : ((Sentence)c).getTokens()) {
-                ret = ret + (ret.length() == 0 ? "" : " ") + t;
-            }
-            ret = ret + "\n";
-        }
-        
-        return ret;
-    }
-    
-    
-    
+
 }

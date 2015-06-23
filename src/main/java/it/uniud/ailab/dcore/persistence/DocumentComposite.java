@@ -44,7 +44,7 @@ public class DocumentComposite extends DocumentComponent {
      */
     public DocumentComposite(String text, Locale language) {
         super(text, language);
-        components = new ArrayList<DocumentComponent>();
+        components = new ArrayList<>();
     }
 
     /**

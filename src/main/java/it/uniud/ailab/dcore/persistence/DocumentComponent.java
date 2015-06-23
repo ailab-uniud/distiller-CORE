@@ -73,6 +73,8 @@ public abstract class DocumentComponent {
      * Returns the language of the component.
      * 
      * @return the language of the component.
+     * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a>
+     * specification to know about language tags used by Java.
      */
     public Locale getLanguage() {
         return this.language;

@@ -19,11 +19,18 @@ package it.uniud.ailab.dcore.utils;
 import it.uniud.ailab.dcore.annotation.Annotator;
 
 /**
+ * Some utilities that help with Annotators.
  *
  * @author Marco Basaldella
  */
 public class AnnotatorUtils {
     
+    /**
+     * Get the class name of the Annotator.
+     * 
+     * @param a the annotator.
+     * @return the name of the annotator.
+     */
     public static String getAnnotatorSimpleName(Annotator a) {
         
         return a.getClass().getSimpleName();

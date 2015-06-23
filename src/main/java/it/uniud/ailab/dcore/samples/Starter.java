@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
+ * A simple class that demonstrates some extractions with the distiller.
  *
  * @author Marco Basaldella
  */

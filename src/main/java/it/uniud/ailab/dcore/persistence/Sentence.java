@@ -51,65 +51,67 @@ public class Sentence extends DocumentComponent {
     
     // </editor-fold>
     
+    /**
+     * Creates a sentence with the specified text and language.
+     * 
+     * @param text the text of the sentence
+     * @param language the language of the sentence
+     */    
     public Sentence(String text,Locale language) {
         super(text,language);
         tokenizedSentence = new ArrayList<>();
         grams = new ArrayList<>();        
     }
     
+    /**
+     * Creates a sentence with the specified text. This requires
+     * a call to setLanguage before many of the annotators can actually work.
+     * 
+     * @param text the text of the sentence.
+     */
     public Sentence(String text) {
         this(text,null);
     }
     
+    /**
+     * Sets the tokens of the sentence.
+     * 
+     * @param tokenzedSentence the tokens of the sentence.
+     */
+    public void setTokens(List<Token> tokenzedSentence) {
+        this.tokenizedSentence = tokenzedSentence;
+    }
+    
+    /**
+     * Appends a tokens at the end of the token list of the sentence.
+     * 
+     * @param t the token to add
+     */
+    public void addToken(Token t) {
+        this.tokenizedSentence.add(t);
+    }
+    
+    /**
+     * Returns the tokens of the sentence.
+     * 
+     * @return the tokens of the sentence.
+     */
     public List<Token> getTokens() {
-
         return tokenizedSentence;
     }      
     
+    /**
+     * Returns an array containing the POS tags of the tokens of the sentence.
+     * 
+     * @return an array containing the POS tags of the sentence.
+     */
     public String[] getPosTaggedSentence() {
         String[] output = new String[tokenizedSentence.size()];
         for (int i = 0; i < tokenizedSentence.size(); i++) {
             output[i] = tokenizedSentence.get(i).getPoS();
         }
         return output;
-    }
-
-    public void setTokens(List<Token> tokenzedSentence) {
-        this.tokenizedSentence = tokenzedSentence;
-    }
-    
-    public void addToken(Token t) {
-        this.tokenizedSentence.add(t);
-    }
-
-    /**
-     * Returns the language of the sentence, formatted as an IETF language tag.
-     *
-     * @return the language of the sentence.
-     * @see <a href="http://tools.ietf.org/html/rfc5646">RFC5646</a>
-     * specification.
-     */
-    public Locale getLanguage() {
-        return this.language;
-    }
-
-    /**
-     * Sets the language of the sentence
-     *
-     * @param language the language of the sentence.
-     * @throws IllegalStateException if the language is set more than once.
-     */
-    @Override
-    public void setLanguage(Locale language) throws IllegalStateException {
-        if (this.language == null) {
-            this.language = language;
-        } else {
-            throw new IllegalStateException(String.format(
-                    "Trying to set language %s on sentence which is already set as %s",
-                    language.toLanguageTag(), this.language));
-        }
-    }
-
+    }    
     // </editor-fold>
     
     /**
