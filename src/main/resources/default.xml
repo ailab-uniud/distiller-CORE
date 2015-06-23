@@ -41,8 +41,6 @@
     <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
     
     <!-- Annotators -->  
-    <bean id="stanford" 
-          class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapper" />
     <bean id="openNLP" 
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
       <!-- Example of local models path -->

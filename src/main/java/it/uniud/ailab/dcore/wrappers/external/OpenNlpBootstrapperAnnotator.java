@@ -46,15 +46,25 @@ import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
 /**
  * A bootstrapper annotator for the English language developed using the Apache
  * OpenNLP library. The annotator splits the document, tokenizes it and performs
- * POS tagging; the stemming is performed using the Snowball stemmer instead.
+ * POS tagging; the stemming is performed using the Snowball stemmer. 
  *
- * This annotator can support every language the OpenNLP library supports.
+ * This annotator can support every language the OpenNLP library supports. For
+ * more info and a CoreNLP tutorial, please refer to
+ * <a href="http://opennlp.apache.org/documentation/manual/opennlp.html">
+ * the official Apache documentation</a>.
+ *
+ * For a list of models that are ready to use with CoreNLP, please see
+ * <a href="http://opennlp.sourceforge.net/models-1.5/">
+ * this model list on the Apache OpenNLP website</a>.
+ *
+ * For the Italian language, we use Andrea Ciapetti's models, which are
+ * available on
+ * <a href="http://github.com/aciapetti/opennlp-italian-models">
+ * his GitHub page</a>.
  *
  * @author Marco Basaldella
  */
 public class OpenNlpBootstrapperAnnotator implements Annotator {
-
-    private static final Logger LOG = Logger.getLogger(Annotator.class.getName());
 
     /**
      * Variable that contains the database paths of the models for the various
@@ -78,19 +88,6 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
 
     /**
      * Annotates the document using the Apache OpenNLP tools.
-     *
-     * For more info and a CoreNLP tutorial, please refer to
-     * <a href="http://opennlp.apache.org/documentation/manual/opennlp.html">
-     * the official Apache documentation</a>.
-     *
-     * For a list of models that are ready to use with CoreNLP, please see
-     * <a href="http://opennlp.sourceforge.net/models-1.5/">
-     * this model list on the Apache OpenNLP website</a>.
-     *
-     * For the Italian language, we use Andrea Ciapetti's models, which are
-     * available on
-     * <a href="http://github.com/aciapetti/opennlp-italian-models">
-     * his GitHub page</a>.
      *
      * @param component the component to annotate.
      */
