@@ -74,12 +74,12 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
     /**
      * The maximum size of n-grams to detect.
      */
-    private int maxNgramSize;
+    private int maxGramSize;
     
     /**
      * The default maximum size of n-grams.
      */
-    private static final int DEFAULT_MAX_NGRAM_SIZE = 5;
+    private static final int DEFAULT_MAX_NGRAM_SIZE = 3;
     
     // </editor-fold>
 
@@ -91,7 +91,7 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
 
         validPOSPatterns = new HashMap<>();
         posDatabasePaths = new HashMap<>();
-        maxNgramSize = DEFAULT_MAX_NGRAM_SIZE;
+        maxGramSize = DEFAULT_MAX_NGRAM_SIZE;
         
         posDatabasePaths.put(Locale.ENGLISH, 
                 getClass().getClassLoader().
@@ -128,8 +128,8 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
      *
      * @param maxNgramSize the maximum size of an n-gram
      */
-    public void setMaxNgramSize(int maxNgramSize) {
-        this.maxNgramSize = maxNgramSize;
+    public void setMaxGramSize(int maxNgramSize) {
+        this.maxGramSize = maxNgramSize;
     }
 
     // <editor-fold desc="worker methods">
@@ -201,14 +201,14 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
             // the second of size 2, ... and so on.
             // then, we compare these buffers with the valid known PoS patterns
             // and save the ngram if it matches.
-            ArrayList<Token>[] lastReadBuffers = new ArrayList[maxNgramSize];
-            for (int size = 0; size < maxNgramSize; size++) {
+            ArrayList<Token>[] lastReadBuffers = new ArrayList[maxGramSize];
+            for (int size = 0; size < maxGramSize; size++) {
                 lastReadBuffers[size] = new ArrayList<>();
             }
 
             for (int i = 0; i < allWords.size(); i++) {
                 Token word = allWords.get(i);
-                for (int size = 0; size < maxNgramSize; size++) {
+                for (int size = 0; size < maxGramSize; size++) {
                     // if the buffer is not full, fill it
                     if (lastReadBuffers[size].size() < size + 1) {
                         lastReadBuffers[size].add(word);
@@ -303,6 +303,14 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
         }
 
         JSONArray patternBlock = (JSONArray) languageBlock.get("patterns");
+        
+        try {
+            maxGramSize = Integer.parseInt(languageBlock.get("maxGramSize").toString());
+        } catch (Exception e ) {
+            // the field is badly formatted or non-existent: set to default
+            maxGramSize = DEFAULT_MAX_NGRAM_SIZE;;
+        }
+        
         Iterator<JSONObject> patternIterator = patternBlock.iterator();
 
         // put the patterns in the hashmap
