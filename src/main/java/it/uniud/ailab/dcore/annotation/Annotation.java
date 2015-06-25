@@ -29,7 +29,7 @@ package it.uniud.ailab.dcore.annotation;
  * 
  * @author Marco Basaldella
  */
-public class Annotation {
+public abstract class Annotation {
     protected final String annotator;
     
     protected Annotation(String annotator) {

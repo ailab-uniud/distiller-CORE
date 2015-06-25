@@ -44,9 +44,9 @@ public class BlackboardUtils {
      * Prints the scores of an extraction to stdout.
      * 
      * @param b the annotated blackboard
-     * @param printAnnotations you can set it to true to print some more information
+     * @param printDetails you can set it to true to print some more information
      */
-    public static void printScores(Blackboard b, boolean printAnnotations) {
+    public static void printScores(Blackboard b, boolean printDetails) {
 
         Collection<Gram> grams = b.getGrams();
         
@@ -71,7 +71,23 @@ public class BlackboardUtils {
         for (Map.Entry<Gram, Double> scoredGram : ordered.collect(Collectors.toList())) {
             System.out.print(String.format("%-24s", scoredGram.getKey().getSignature()));           
             for (FeatureAnnotation f : scoredGram.getKey().getFeatures()) {
-                System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(), f.getValue()));
+                System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(), f.getScore()));
+            }
+
+            if (printDetails) {
+
+                System.out.println();
+                System.out.print(String.format("%-24s", "--POS pattern:"));
+                
+                System.out.print(scoredGram.getKey().getTokens().get(0).getPoS());
+                for (int i = 1; 
+                        i < scoredGram.getKey().getTokens().size();
+                        i++)
+                {
+                    System.out.print("/" + 
+                            scoredGram.getKey().getTokens().get(i).getPoS());
+                }
+
             }
 
             List<TextAnnotation> ann = new ArrayList<TextAnnotation>();
@@ -80,7 +96,7 @@ public class BlackboardUtils {
                 ann.addAll(t.getAnnotations());
             }
 
-            if (printAnnotations && !ann.isEmpty()) {
+            if (printDetails && !ann.isEmpty()) {
 
                 System.out.println();
                 System.out.print(String.format("%-24s", "--Annotations:"));

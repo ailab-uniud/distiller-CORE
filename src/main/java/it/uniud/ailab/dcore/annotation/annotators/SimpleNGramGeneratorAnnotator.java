@@ -79,7 +79,7 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
     /**
      * The default maximum size of n-grams.
      */
-    private static final int DEFAULT_MAX_NGRAM_SIZE = 3;
+    private static final int DEFAULT_MAX_NGRAM_SIZE = 5;
     
     // </editor-fold>
 

@@ -191,7 +191,7 @@ public class Gram {
         if (features.get(featureName) == null) {
             return 0;
         }
-        return features.get(featureName).getValue();
+        return features.get(featureName).getScore();
     }
 
     /**
@@ -252,7 +252,7 @@ public class Gram {
         }
 
         public void put(FeatureAnnotation f) {
-            this.put(f.getAnnotator(), f.getValue());
+            this.put(f.getAnnotator(), f.getScore());
         }
 
         public void put(String name, double value) {

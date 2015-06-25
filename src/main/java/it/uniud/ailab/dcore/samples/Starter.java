@@ -59,6 +59,13 @@ public class Starter {
             + "Diede al marito un figlio: Giovanni (18 giugno 1332-16 febbraio 1391), imperatore bizantino dal 1341 al 1376 e dal 1379 al 1391. "
             + "Divenne imperatrice nel 1328. "
             + "Alla morte di Andronico III, avvenuta il 15 giugno 1341, Anna venne nominata reggente per il figlio Giovanni V Paleologo, ruolo che ricoprì dal 1341 al 1347[1]. Dovette tuttavia dividere il potere con il ministro del marito Giovanni Cantacuzeno col quale si scontrò in quanto ella voleva portare avanti una politica filopapista. Cantacuzeno riuscì a divenire imperatore col nome di Giovanni VI e di fatto divise il potere con Giovanni V finché si ritirò in convento lasciandolo unico imperatore. ";
+    
+    
+    private static String softEngIT = "L'ingegneria del software identifica una formalizzazione del processo di realizzazione e di manutenzione di un sistema informativo. Per tale associazione con una idea quasi biologica di vita si parla spesso di ciclo di vita di un software, concetto che ha assunto con il passare dei decenni un'importanza sempre più elevata, spostando l'idea di software come manufatto verso un'idea di prodotto industriale. " +
+            "La necessità di creare una scienza che si occupi della realizzazione dei sistemi informativi nasce dalla necessità di sviluppare prodotti sempre più complessi ed evoluti che rispondano a esigenze di correttezza del processo realizzativo e di facile manutenzione. " +
+            "Il software come prodotto industriale diventa anche oggetto di un attento esame per estendere le capacità di realizzazione dello stesso. Nasce in pratica un concetto simile alle ottimizzazioni da catena di montaggio per le industrie del secolo scorso. Si cercano quindi di identificare nella realizzazione del software, quegli obiettivi a cui tengono le industrie del software, come qualità del software realizzato e soprattutto di rilasciare un prodotto perfettamente documentato e facilmente \"manutenibile\". " +
+            "La nuova scienza, l'ingegneria del software, si preoccupa effettivamente di concretizzare queste esigenze, cercando di definire modelli che permettano a team di tecnici di realizzare in cooperazione prodotti sempre più evoluti e di qualità. " +
+            "L'ingegneria del software definisce quindi un insieme di processi, ovvero sequenze di fasi che individuano tappe specifiche nella realizzazione di un sistema software tutte documentate e ispezionabili, che offrano in sostanza perfetta visibilità alla diversa tipologia degli utenti del sistema, per il controllo dei singoli prodotti e/o per l'eventuale manutenzione.";
 
     private static String softEngPT = "Engenharia de Software é uma área da computação voltada à especificação, desenvolvimento e manutenção de sistemas de software, com aplicação de tecnologias e práticas de gerência de projetos e outras disciplinas, visando organização, produtividade e qualidade. "
             + "Atualmente, essas tecnologias e práticas englobam linguagens de programação, banco de dados, ferramentas, plataformas, bibliotecas, padrões, processos e a questão da Qualidade de software."
@@ -70,7 +77,7 @@ public class Starter {
             dosto,
             topGear,
             sortedMap,
-            annaSavoia,
+            softEngIT,
 //            softEngPT
         };
              

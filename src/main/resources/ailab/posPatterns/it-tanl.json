@@ -1,84 +1,371 @@
-{ 
-	"languages":[
-                        {
-				"language": "it",
-                                "tagset": "ciapetti's tagset from https://github.com/aciapetti/opennlp-italian-models/blob/master/lang/it/POS/tagsDictionaryIt.txt",
-				"patterns":[
-				 {
-					"pattern":"SP",
-					"nounCount": 1
-				 },
-				 {
-					"pattern":"S",
-					"nounCount": 1
-				 },
-				 {
-					"pattern":"S/A",
-					"nounCount": 1
-				 },
-				 {
-					"pattern":"A/N",
-					"nounCount": 1
-				 },
-				 {
-					"pattern":"S/S",
-					"nounCount": 2
-				 },
-				 {
-					"pattern":"SP/S",
-					"nounCount": 2
-				 },
-				 {
-					"pattern":"SP/SP",
-					"nounCount": 2
-				 },
-				 {
-					"pattern":"S/SP",
-					"nounCount": 2
-				 },
-				 				 {
-					"pattern":"S/E/S",
-					"nounCount": 2
-				 },
-                                 			 {
-					"pattern":"S/EA/S",
-					"nounCount": 2
-				 },
-				 				 {
-					"pattern":"S/E/SP",
-					"nounCount": 2
-				 },
-                                  				 {
-					"pattern":"S/EA/SP",
-					"nounCount": 2
-				 },
-				 				 {
-					"pattern":"S/E/S/S",
-					"nounCount": 3
-				 },
-                                  				 {
-					"pattern":"S/EA/S/S",
-					"nounCount": 3
-				 },
-                                  				 {
-					"pattern":"S/EA/S/SP",
-					"nounCount": 3
-				 },
-                                  				 {
-					"pattern":"S/E/S/SP",
-					"nounCount": 3
-				 },
-                                  				 {
-					"pattern":"S/EA/SP/SP",
-					"nounCount": 3
-				 },
-                                  				 {
-					"pattern":"S/E/SP/SP",
-					"nounCount": 3
-				 }
-				 
-				]
-			}
-                ]
+{
+    "languages": [{
+        "language": "it",
+        "tagset": "ciapetti's tagset from https://github.com/aciapetti/opennlp-italian-models/blob/master/lang/it/POS/tagsDictionaryIt.txt",
+        "maxGramSize": 4,
+        "patterns": [{
+            "pattern": "SP/As/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/E/Vf",
+            "nounCount": 1
+        }, {
+            "pattern": "SP/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "N",
+            "nounCount": 0
+        }, {
+            "pattern": "SP",
+            "nounCount": 1
+        }, {
+            "pattern": "SP",
+            "nounCount": 1
+        }, {
+            "pattern": "SWs",
+            "nounCount": 1
+        }, {
+            "pattern": "SWp",
+            "nounCount": 1
+        }, {
+            "pattern": "SWn",
+            "nounCount": 1
+        }, {
+            "pattern": "SP/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "SP/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As",
+            "nounCount": 1
+        }, {
+            "pattern": "B",
+            "nounCount": 0
+        }, {
+            "pattern": "Ss/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Vip",
+            "nounCount": 0
+        }, {
+            "pattern": "Ss/BN/Vis3",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/As/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/CC/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn/EA/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/E/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn/E/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "SP/Vis3",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/EA/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/E/Sp/EA/Sp",
+            "nounCount": 3
+        }, {
+            "pattern": "Ss/E/Sp",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/Ap",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/As/As",
+            "nounCount": 1
+        }, {
+            "pattern": "Sn/As",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/E/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "SP/EA/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/Vis3",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/Sp/EA/Ss",
+            "nounCount": 3
+        }, {
+            "pattern": "SP/Sp",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As/EA/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/EA/N",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/CC",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/B",
+            "nounCount": 1
+        }, {
+            "pattern": "Sn/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/EA/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/EA/Vcp3",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/EA/Sp",
+            "nounCount": 1
+        }, {
+            "pattern": "SP/EA/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "As/Ss",
+            "nounCount": 1
+        }, {
+            "pattern": "Sn/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/E/Ss/CC/Ss",
+            "nounCount": 3
+        }, {
+            "pattern": "SWn/As",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/E/Ss/As",
+            "nounCount": 2
+        }, {
+            "pattern": "As/B/As/E/SP",
+            "nounCount": 1
+        }, {
+            "pattern": "As/Ss/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn/Ap/FS",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/E/RD/Ss",
+            "nounCount": 1
+        }, {
+            "pattern": "As/Ss/As",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/Ap/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/Ap/CC/Ap/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/E/Ap/Sp/FS",
+            "nounCount": 4
+        }, {
+            "pattern": "Ap/Sp",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/E/Ss/CC/Ss/FS",
+            "nounCount": 3
+        }, {
+            "pattern": "Ss/EA/As/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn/Ap/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn/Ap/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/EA/Sn/Ap",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As/EA/Sn/Ap",
+            "nounCount": 2
+        }, {
+            "pattern": "SP/EA/SP/SP",
+            "nounCount": 3
+        }, {
+            "pattern": "Ap/Sp/PR",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/Vis3",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/EA/SP/SP",
+            "nounCount": 3
+        }, {
+            "pattern": "Vp/Ss/As",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/Ap/CC/Sp/E/Sn/Ap",
+            "nounCount": 3
+        }, {
+            "pattern": "Sp/E/Sp",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/Ap/E/Ss/CC/Ss/EA/SP",
+            "nounCount": 4
+        }, {
+            "pattern": "Ss/As/E/Sn/Ap",
+            "nounCount": 2
+        }, {
+            "pattern": "Sn/Ap",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/E/SP/FS",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/Ap/FS",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/EA/Sp",
+            "nounCount": 2
+        }, {
+            "pattern": "Vp/E/Ss",
+            "nounCount": 1
+        }, {
+            "pattern": "Sn/As/E/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/Ap/Sp/EA/Ss",
+            "nounCount": 3
+        }, {
+            "pattern": "Sp/PR",
+            "nounCount": 1
+        }, {
+            "pattern": "SP/As",
+            "nounCount": 1
+        }, {
+            "pattern": "SP/E/SP/SP/E/SP",
+            "nounCount": 6
+        }, {
+            "pattern": "Sp/Sp",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/E/SP/SP/SP",
+            "nounCount": 4
+        }, {
+            "pattern": "Sp/Ap/EA/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/CC/Sn",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/CC",
+            "nounCount": 1
+        }, {
+            "pattern": "Vf",
+            "nounCount": 0
+        }, {
+            "pattern": "NOs/Sn",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/EA/Sn",
+            "nounCount": 1
+        }, {
+            "pattern": "Vip3/Sp",
+            "nounCount": 1
+        }, {
+            "pattern": "SP/RD/Sp/SP",
+            "nounCount": 3
+        }, {
+            "pattern": "SP/E/Ss",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As/CC/As",
+            "nounCount": 1
+        }, {
+            "pattern": "As/B",
+            "nounCount": 0
+        }, {
+            "pattern": "SP/SP/SP",
+            "nounCount": 3
+        }, {
+            "pattern": "Ss/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/DI",
+            "nounCount": 1
+        }, {
+            "pattern": "As/CC/Ss/As",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/E/Sp/Ss",
+            "nounCount": 3
+        }, {
+            "pattern": "Sp/E/Ss/As",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As/EA/Sp",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/As/CC/Ss/As",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/E/SWn",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/E/Sn/E/Ss",
+            "nounCount": 2
+        }, {
+            "pattern": "Sp/SWn",
+            "nounCount": 2
+        }, {
+            "pattern": "An/Ss",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/Vf",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/Vf",
+            "nounCount": 1
+        }, {
+            "pattern": "CS",
+            "nounCount": 0
+        }, {
+            "pattern": "As/SP",
+            "nounCount": 1
+        }, {
+            "pattern": "Sp/EA/SP",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/Sn/CC/Ss",
+            "nounCount": 3
+        }, {
+            "pattern": "Ap/Sp/Ap",
+            "nounCount": 1
+        }, {
+            "pattern": "Ss/EA/SWs",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/EA/SWp",
+            "nounCount": 2
+        }, {
+            "pattern": "Ss/EA/SWn",
+            "nounCount": 2
+        }]
+    }]
 }
-				 

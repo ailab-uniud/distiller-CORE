@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.annotation.Annotation;
+import it.uniud.ailab.dcore.annotation.annotations.ScoredAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.util.ArrayList;
@@ -186,6 +187,10 @@ public class Blackboard {
         return annotations.stream().filter((a) -> 
                 (a.getAnnotator().equals(annotator))).
                 collect(Collectors.toList());
+    }
+
+    public void removeAnnotation(Annotation ann) {
+        annotations.remove(ann);
     }
 
 }

@@ -71,7 +71,7 @@ public class LinearEvaluatorAnnotator implements Annotator {
             double score = 0;
             for (FeatureAnnotation f : g.getFeatures()) {
                 if (weights.containsKey(f.getAnnotator())) {
-                    score += f.getValue() * weights.get(f.getAnnotator());
+                    score += f.getScore() * weights.get(f.getAnnotator());
                 }
             }            
             g.putFeature(it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE, score);

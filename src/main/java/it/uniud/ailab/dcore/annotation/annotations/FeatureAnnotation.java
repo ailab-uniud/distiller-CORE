@@ -26,19 +26,21 @@ import it.uniud.ailab.dcore.annotation.Annotation;
  * 
  * @author Marco Basaldella
  */
-public class FeatureAnnotation extends Annotation {
+public class FeatureAnnotation 
+        extends Annotation
+        implements ScoredAnnotation {
     
-    private final double value;
+    private final double score;
     
     /**
      * A feature.
      * 
      * @param annotator the annotator that generated the feature.
-     * @param value the value of the feature.
+     * @param score the value of the feature.
      */
-    public FeatureAnnotation(String annotator,double value) {
+    public FeatureAnnotation(String annotator,double score) {
         super(annotator);
-        this.value = value;
+        this.score = score;
     }
     
     /**
@@ -46,7 +48,8 @@ public class FeatureAnnotation extends Annotation {
      * 
      * @return the value of the feature
      */
-    public double getValue() {
-        return value;
+    @Override
+    public double getScore() {
+        return score;
     }  
 }
