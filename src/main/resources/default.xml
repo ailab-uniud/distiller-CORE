@@ -131,7 +131,7 @@
                             static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.FREQUENCY"/>
                     </key>
                 </entry>
-                <entry value="0">
+                <entry value="0.05">
                     <key>
                         <util:constant 
                             static-field="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator.INTENSITY"/>
@@ -166,7 +166,7 @@
                 <!-- annotate the n-grmas -->
                 <ref bean="statistical" />
                 <ref bean="tagmegram" />
-                <ref bean="syuzhet" />
+                <!-- <ref bean="syuzhet" /> -->
                 <!-- evaluate the keyphraseness -->
                 <ref bean="linearEvaluator"/>
                 <!-- infer concepts -->

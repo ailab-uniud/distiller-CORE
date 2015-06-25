@@ -48,7 +48,7 @@ public class SyuzhetAnnotator implements Annotator {
         SUM;
     }
     
-    private Mode mode = Mode.SUM;
+    private Mode mode = Mode.AVERAGE;
     
     private Map<String,Integer> weights = new HashMap<>();
 
