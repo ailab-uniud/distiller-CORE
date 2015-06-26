@@ -43,6 +43,7 @@ import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Adds the Wikiflag as defined in
@@ -54,16 +55,35 @@ import it.uniud.ailab.dcore.persistence.Token;
  */
 public class TagMeTokenAnnotator implements Annotator, GenericWikipediaAnnotator {
 
+    /**
+     * The endpoint of TagMe's API.
+     */
     private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
-    private final String apiKey = "Dario.de.NART.2014";
     
-    // JSON parser
-    private final JSONParser parser;
+    /**
+     * The API key for TagMe. You can get one writing an email to
+     * tagme [at] di [dot] unipi [dot] it
+     */
+    private String apiKey;
+    
+    /**
+     * The JSON parser object.
+     */
+    private final JSONParser parser = new JSONParser();
 
-    public TagMeTokenAnnotator() {
-        parser = new JSONParser();
+    /**
+     * Set the API key for querying TagMe. You can get one for tree writing an
+     * email to tagme [at] di [dot] unipi [dot] it.
+     * 
+     * @param apiKey the API key to use
+     */
+    @Required
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
+    
+    
     /**
      * The method that actually does the job: it tags a text string with
      * Wikipedia page titles when needed, and puts the result in a convenient

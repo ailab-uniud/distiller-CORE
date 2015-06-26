@@ -1,2 +1,4 @@
 /target/
 /OpenNLPmodels/
+/src/main/resources/config.xml
+

@@ -57,8 +57,12 @@
     </bean>
       
     <!-- italian and english wikipedia annotator by the University of Pisa -->
+    <!-- get your key for free writing to tagme [at] di [dot] unipi [dot] it -->
+    <!-- "Dario.de.NART.2014" -->
     <bean id="tagme" 
-          class="it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator" >
+        <property name="apiKey" value="INSERT YOUR KEY HERE"/>
+    </bean>
     <bean id="tagmegram" 
           class="it.uniud.ailab.dcore.annotation.annotators.TagMeGramAnnotator" />
     <!-- annotator for statistical features of grams -->
