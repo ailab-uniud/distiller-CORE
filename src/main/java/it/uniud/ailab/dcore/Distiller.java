@@ -233,7 +233,7 @@ public class Distiller {
                             WikipediaInferenceAnnotator.RELATED).get(i);
 
             related.setConcept(originalRelatedConcept.getConcept());
-            related.setConceptPath(originalRelatedConcept.getConcept());
+            related.setConceptPath(originalRelatedConcept.getUri().toASCIIString());
             related.setScore(originalRelatedConcept.getScore());
         }
 
@@ -246,7 +246,7 @@ public class Distiller {
                     WikipediaInferenceAnnotator.HYPERNYMS).get(i);
 
             hypernym.setConcept(originalHypernym.getConcept());
-            hypernym.setConceptPath(originalHypernym.getConcept());
+            hypernym.setConceptPath(originalHypernym.getUri().toASCIIString());
             hypernym.setScore(originalHypernym.getScore());
         }
 

@@ -45,6 +45,9 @@
       <!--
       <property name="modelPaths">
           <map key-type="java.lang.String" value-type="java.lang.String">
+              <entry key="en-sent" value="/opt/drest/models/en-sent.bin"/>
+              <entry key="en-token" value="/opt/drest/models/en-token.bin"/>
+              <entry key="en-pos-maxent" value="/opt/drest/models/en-pos-maxent.bin"/>
               <entry key="it-sent" value="/opt/drest/models/it/it-sent.bin"/>
               <entry key="it-token" value="/opt/drest/models/it/it-token.bin"/>
               <entry key="it-pos-maxent" value="/opt/drest/models/it/it-pos-maxent.bin"/>
