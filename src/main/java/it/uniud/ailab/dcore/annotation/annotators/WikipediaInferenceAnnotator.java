@@ -99,7 +99,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
      * The user agent that will be used for HTTP requests (since Wikipedia
      * requests it).
      */
-    private final String userAgent = "Distiller (Artificial Intelligence Laboratory; carlo.tasso@uniud.it|dario.denart@uniud.it|basaldella.marco@spes.uniud.it) University Of Udine";
+    private String userAgent;
 
     /**
      * The query that will be performed using the Wikipedia OpenSearch APIs.
@@ -136,6 +136,17 @@ public class WikipediaInferenceAnnotator implements Annotator {
      * The language of the currently analyzed component.
      */
     Locale componentLocale;
+
+    /**
+     * Set the user agent used for requests to Wikipedia.
+     * 
+     * @param userAgent the user agent string
+     */
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+    
+    
     
     @Override
     public void annotate(Blackboard blackboard,DocumentComponent component) {

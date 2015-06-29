@@ -76,8 +76,11 @@
     <bean id="skylineGramFilter" 
           class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
     <!-- annotator that infers concept that can't be found in the document -->
+    <!-- Please insert ** your own ** user agent in the appropriate field -->
     <bean id="wikipediaInference" 
-          class="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator" >
+        <!-- <property name="userAgent" value="Please insert your own user agent here"/> -->
+    </bean>
     <!-- filter for keeping only the best related concepts -->
     <bean id="relatedFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleAnnotationFilterAnnotator" >
         <property name="range" value="10"/>
