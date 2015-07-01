@@ -1,6 +1,6 @@
 # Distiller-CORE library #
  
-Distiller is a framework to extract and infer knowledge from text. Distiller takes its roots from DIKpE [1] and further evolutions [4], but it is improved with multilanguage support [5], entity linking [2] and concept inference. By now, Distiller supports only keyphrase in Italian and English; we plan to include support for keyphrase extraction in other languages, such as Portuguese, Romanian and Arabic.
+Distiller is a framework to extract and infer knowledge from texts. Distiller takes its roots from DIKpE [1] and further evolutions [4], but it is improved with multilanguage support [5], entity linking [2] and concept inference. By now, Distiller supports only keyphrase in Italian and English; we plan to include support for keyphrase extraction in other languages, such as Portuguese, Romanian and Arabic.
 
 The default Distiller pipeline works on keyphrase extraction; anyways, since the framework is built with extensibility in mind, it's possible to extend it and write pipelines for any high-level NLP task. As an example, we include a simple Sentiment Analysis module, based on M.L. Jokers' Syuzhet library [3].
 
