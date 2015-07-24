@@ -27,9 +27,20 @@ import java.util.HashMap;
  */
 public abstract class KeyphraseEvaluator extends Evaluator {
     
+    /**
+     * The input documents.
+     */
     private String[] inputDocuments;
+    /**
+     * The keyphrases for the input documents.
+     */
     private String[][] goldKeyphrases;
 
+    /**
+     * An abstract evaluator for the Keyphrase Extraction task.
+     * 
+     * @param goldStandardPath the directory of the gold standard.
+     */
     public KeyphraseEvaluator(String goldStandardPath) {
         super(goldStandardPath);
     }
@@ -51,6 +62,12 @@ public abstract class KeyphraseEvaluator extends Evaluator {
      */
     public abstract String[][] loadGoldKeyphrases();
     
+    /**
+     * Evaluate the keyphrases using the given dataset and settings.
+     * 
+     * @param pipeline the distiller instance to evaluate.
+     * @return the metrics and their score.
+     */
     @Override
     public HashMap<String,Double> evaluate(Distiller pipeline) {
         
