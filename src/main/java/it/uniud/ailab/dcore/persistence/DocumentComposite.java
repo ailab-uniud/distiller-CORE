@@ -80,8 +80,7 @@ public class DocumentComposite extends DocumentComponent {
         for (DocumentComponent c : getComponents())
         {
             ret.addAll(c.getAnnotations());
-        }
-        
+        }        
         return ret;
     }
 
