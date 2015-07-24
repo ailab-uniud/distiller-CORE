@@ -28,6 +28,31 @@ import java.util.HashMap;
 public abstract class Evaluator {
     
     /**
+     * The path where the evaluator will find the input documents and the
+     * gold standard results.
+     */
+    private final String goldStandardPath;
+    
+    /**
+     * Creates an evaluator that will look for the gold standard in the specified
+     * path.
+     * 
+     * @param goldStandardPath the folder that contains the gold standard.
+     */
+    public Evaluator(String goldStandardPath) {
+        this.goldStandardPath = goldStandardPath;
+    } 
+
+    /**
+     * Get the path where the evaluator should search for the gold standard.
+     * 
+     * @return the folder that contains the gold standard.
+     */
+    protected String getGoldStandardPath() {
+        return goldStandardPath;
+    }
+    
+    /**
      * Evaluates a distiller instance using one or more metrics.
      * 
      * @param pipeline the distiller instance to evaluate
