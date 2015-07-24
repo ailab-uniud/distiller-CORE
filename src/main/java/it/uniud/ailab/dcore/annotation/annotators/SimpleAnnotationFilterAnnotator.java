@@ -21,7 +21,6 @@ import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.annotations.ScoredAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

@@ -74,6 +74,10 @@ public abstract class KeyphraseEvaluator extends Evaluator {
         inputDocuments = loadInputDocuments();
         goldKeyphrases = loadGoldKeyphrases();
         
+        for (String document : inputDocuments) {
+            
+        }
+        
         return null;
     }
     

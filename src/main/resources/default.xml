@@ -75,6 +75,9 @@
          calculated keyphraseness  -->
     <bean id="skylineGramFilter" 
           class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
+    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
+        <property name="cut" value="15"/>
+    </bean> 
     <!-- annotator that infers concept that can't be found in the document -->
     <!-- Please insert ** your own ** user agent in the appropriate field -->
     <bean id="wikipediaInference" 

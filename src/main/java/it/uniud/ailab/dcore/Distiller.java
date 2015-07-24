@@ -26,13 +26,18 @@ import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.Pipeline;
 import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
 import static it.uniud.ailab.dcore.utils.AnnotatorUtils.getAnnotatorSimpleName;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The information extractor object. This is the class that runs the different
@@ -206,12 +211,24 @@ public class Distiller {
         output.setDetectedLanguage(blackboard.getStructure().
                 getLanguage().getLanguage());
 
-        // Copy the grams
+        // Copy the grams, sorted by descending score
         output.initializeGrams(blackboard.getGrams().size());
+        
+        Collection<Gram> grams = blackboard.getGrams();
+        Map<Gram, Double> scoredGrams = new HashMap<>();
+
+        for (Gram g : grams) {
+            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
+        }
+
+        List<Map.Entry<Gram, Double>> sortedGrams
+                = scoredGrams.entrySet().stream().sorted(
+                        Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toList());
 
         for (int i = 0; i < output.getGrams().length; i++) {
             DetectedGram gram = output.getGrams()[i];
-            Gram originalGram = blackboard.getGrams().get(i);
+            Gram originalGram = sortedGrams.get(i).getKey();
             gram.setSurface(originalGram.getSurface());
             gram.setKeyphraseness(originalGram.getFeature(
                     it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));
