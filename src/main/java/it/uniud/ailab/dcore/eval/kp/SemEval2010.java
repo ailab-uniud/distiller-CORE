@@ -16,15 +16,15 @@
  */
 package it.uniud.ailab.dcore.eval.kp;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -41,35 +41,42 @@ public class SemEval2010 extends KeyphraseEvaluator {
     }
 
     @Override
-    public String[] loadInputDocuments() {
+    public Map<String,String> loadInputDocuments() {
         
-        List<String> documents = new ArrayList<>();
+        Map<String,String> documents = new HashMap<>();
         
         try {
-            File dir = new File(this.getGoldStandardPath() + "/test");
+            File[] dir = new File(this.getGoldStandardPath() + "/test").listFiles();
+            Arrays.sort(dir);
             
-            for (File f : dir.listFiles()) {
-                String document = new String(Files.readAllBytes(f.toPath()));
-                documents.add(document);
+            for (File f : dir) {
+                String document = String.join(
+                        " ",
+                        Files.readAllLines(
+                                f.toPath(),StandardCharsets.UTF_8));
+                
+                String docName = f.getName().substring(0,f.getName().indexOf("."));
+                
+                documents.put(docName,document);
             }
         } catch (IOException ex) {
             Logger.getLogger(SemEval2010.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return documents.toArray(new String[documents.size()]);
+        return documents;
     }
 
     @Override
-    public String[][] loadGoldKeyphrases() {
+    public Map<String,String[]> loadGoldKeyphrases() {
 
         // default is a zero-sized output array
-        String[][] keyphrases = new String[0][];
+        Map<String,String[]> keyphrases = null;
 
         try {
             
             File gold = new File(this.getGoldStandardPath() + "/test_answer/test.combined.stem.final");
             
-            List<List<String>> buffer = new ArrayList<>();
+            Map<String,String[]> buffer = new HashMap<>();
 
             // navigate through the lines
             try (Stream<String> lines = Files.lines(gold.toPath(), StandardCharsets.UTF_8)) {
@@ -77,23 +84,21 @@ public class SemEval2010 extends KeyphraseEvaluator {
                 for (String line : (Iterable<String>) lines::iterator) {
                     List<String> documentKPs = new ArrayList<>();
                     // remove the name of the document
-                    line = line.substring(line.indexOf(':')+2);
-                    for (String kp: line.split(",")) 
+                    String kpLine = line.substring(line.indexOf(':')+2);
+                    for (String kp: kpLine.split(",")) 
                         documentKPs.add(kp);
                     
-                    buffer.add(documentKPs);
+                    buffer.put(line.substring(0,line.indexOf(':') - 1),
+                            documentKPs.toArray(new String[documentKPs.size()]));
                 }
             }
             
             // copy the gold standard to the output array
-            
-            keyphrases = new String[buffer.size()][];
-            for (int i = 0; i < keyphrases.length; i++) {
-                keyphrases[i] = buffer.get(i).toArray(new String[buffer.get(i).size()]);
-            }
+            keyphrases = buffer;
 
         } catch (IOException ex) {
             Logger.getLogger(SemEval2010.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Unable to load gold standard",ex);
         }
 
         return keyphrases;

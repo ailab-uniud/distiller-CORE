@@ -75,6 +75,29 @@ public class DistillerFactory {
     }
     
     /**
+     * Instantiates a Distiller object using the default evaluation configuration.
+     *
+     * @return a Distiller ready to work.
+     */
+    public static Distiller getDefaultEval() {
+        
+        
+        try {
+            ApplicationContext context = new ClassPathXmlApplicationContext("eval.xml");
+            return (Distiller) context.getBean("distiller");        
+        } catch (BeanDefinitionStoreException bsde) {
+            try {
+                throw bsde.getCause();
+            } catch (IOException ioe) {
+                // the configuration file does not exist or is not accessible:
+                throw new RuntimeException("FATAL: Impossible to load the default evaluation pipeline.",ioe);
+            } catch (Throwable te) {
+                throw bsde;
+            }            
+        }        
+    }
+    
+    /**
      * Instantiates a Distiller object using the default configuration and
      * returns it. Please note that you should create a config.xml file 
      * and copy the content of default.xml inside it to get the framework to work.

@@ -17,7 +17,7 @@
 package it.uniud.ailab.dcore.eval;
 
 import it.uniud.ailab.dcore.Distiller;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract evaluator object that runs a distiller pipeline and evaluates 
@@ -59,6 +59,6 @@ public abstract class Evaluator {
      * @return an hashmap with the name of the metrics as keys and the result
      * of the evaluation of as values
      */
-    public abstract HashMap<String,Double> evaluate(Distiller pipeline);
+    public abstract Map<String,Double> evaluate(Distiller pipeline);
     
 }

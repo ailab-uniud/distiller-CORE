@@ -32,7 +32,7 @@ public class Evaluation {
                 { new SemEval2010("/usr/local/dcore/eval/SemEval2010/") };
         
         for (KeyphraseEvaluator task : tasks) {
-            task.evaluate(DistillerFactory.getDefault());
+            task.evaluate(DistillerFactory.getDefaultEval());
         }
         
     }    
