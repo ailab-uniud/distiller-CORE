@@ -128,7 +128,7 @@ public abstract class KeyphraseEvaluator extends Evaluator {
         System.out.println();
         System.out.println("Precision   : " + precision);
         System.out.println("Recall      : " + recall);
-        System.out.println("FMeasure    : " + fmeasure);
+        System.out.println("F-Measure   : " + fmeasure);
         System.out.println();
 
         return null;
