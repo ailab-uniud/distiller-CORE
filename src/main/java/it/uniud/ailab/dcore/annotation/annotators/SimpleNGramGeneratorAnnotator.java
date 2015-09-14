@@ -222,7 +222,19 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                         // it's a nGram that could be a keyphrase.  
                         int nounValue = checkGramNounValue(lastReadBuffers[size]);
                         if (nounValue > 0) {
-                            Gram g = new Gram(lastReadBuffers[size],
+
+                            // the identifier is the stem of the words
+                            String identifier = lastReadBuffers[size].get(0).getText();
+                            for (int k = 1; k < lastReadBuffers[size].size(); k++) {
+                                identifier = identifier + " " + 
+                                        lastReadBuffers[size].get(k).getStem();
+                            }
+
+                            identifier = identifier.toLowerCase();
+
+                            Gram g = new Gram(
+                                    identifier,
+                                    lastReadBuffers[size],
                                     sentenceText.substring(
                                             startIndexes[i - (lastReadBuffers[size].size() - 1)],
                                             endIndexes[i]));

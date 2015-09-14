@@ -69,7 +69,7 @@ public class BlackboardUtils {
                         Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);
 
         for (Map.Entry<Gram, Double> scoredGram : ordered.collect(Collectors.toList())) {
-            System.out.print(String.format("%-24s", scoredGram.getKey().getSignature()));           
+            System.out.print(String.format("%-24s", scoredGram.getKey().getIdentifier()));           
             for (FeatureAnnotation f : scoredGram.getKey().getFeatures()) {
                 System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(), f.getScore()));
             }

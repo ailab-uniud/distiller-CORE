@@ -117,14 +117,14 @@ public class Blackboard {
      */
     public void addGram(DocumentComponent unit,Gram newGram) {        
         
-        Gram gram = gramContainer.get(newGram.getSignature());
+        Gram gram = gramContainer.get(newGram.getIdentifier());
         
         // Deep clone the object instead of referencing the found one.
         // this way, we're free to modify it by adding annotations without
         // modifying the old object.
         if (gram == null) {
             Gram cloned = (new Cloner()).deepClone(newGram);
-            gramContainer.put(cloned.getSignature(), cloned);
+            gramContainer.put(cloned.getIdentifier(), cloned);
             gram = cloned;
         } else {
             // copy the annotations in the stored gram
@@ -156,7 +156,7 @@ public class Blackboard {
      * @param g the gram to remove.
      */
     public void removeGram(Gram g) {
-        gramContainer.remove(g.getSignature());
+        gramContainer.remove(g.getIdentifier());
     }
     
     /**

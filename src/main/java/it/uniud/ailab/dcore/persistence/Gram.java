@@ -66,48 +66,52 @@ public class Gram {
     private FeatureContainer features;
 
     /**
-     * A n-gram, which is composed by a list of sequences, and has a list of
-     * features.
+     * Instantiated an n-gram. Usually, the surface should be simply the the 
+     * concatenation of the text of the tokens. The signature can be used for 
+     * comparison, so be sure to generate different signatures for n-grams
+     * that are different in your domain. For example, you can use the sequence 
+     * of the stems of the tokens, so that n-grams with the same stemmed form 
+     * are considered equal.
+     * 
      *
-     * @param sequence
+     * @param sequence the tokens that form the gram
+     * @param identifier unique identifier of the gram.
+     * @param surface the pretty-printed string representation of the gram
      */
-    public Gram(List<Token> sequence, String surface) {
+    public Gram(String identifier, List<Token> sequence, String surface) {
         words = new ArrayList<>();
         annotations = new ArrayList<>();
         words.addAll(sequence);
         this.surface = surface;
-        identifier = "";
-        //features = new HashMap<String, Double>();
+        this.identifier = identifier;
         features = new FeatureContainer();
         appareances = new ArrayList<>();
     }
 
     /**
-     * A string that identifies the gram.
+     * The human-readable form of the gram.
      *
-     * @return a string that identifies the gram.
+     * @return the human-readable form of the gram.
      */
     public String getSurface() {
         return this.surface;
     }
 
     /**
-     * The signature of the gram is the stemmed or lemmatized version of the
-     * surface. This way. grams with the same surface may have the same
-     * signature.
+     * The identifier of the gram. Please note that it is possible that two
+     * grams with different surface or tokens may have the same identifier, 
+     * based on the policy of the class that generated the gram.
+     * 
+     * For example, "italian" and "Italy" may have the same identifier, because
+     * the identifier has been generated using the same stem "ital". Otherwise,
+     * the identifier may be the same link on an external ontology: in this 
+     * case, both words may have been associated with the entity "Italy".
+     * 
      *
      * @return the signature of the gram.
      */
-    public String getSignature() {
-        // lazily generate the identifier
-        if (identifier.isEmpty()) {
-            identifier = identifier + words.get(0).getText();
-            for (int i = 1; i < words.size(); i++) {
-                identifier = identifier + " " + words.get(i).getStem();
-            }
-        }
-
-        return this.identifier.toLowerCase();
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     /**
