@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public abstract class Annotable {
     
-    Map<String,Annotation> annotations = new HashMap<>();
+    private Map<String,Annotation> annotations = new HashMap<>();
     
     public void addAnnotation(Annotation ann) {
         annotations.put(ann.getAnnotator(),ann);
@@ -37,10 +37,11 @@ public abstract class Annotable {
         return annotations.get(annotator);
     }
     
+    public Annotation[] getAnnotations() {
+        return annotations.values().toArray(new Annotation[annotations.size()]);
+    }
+    
     public boolean hasAnnotation(String annotator) {
         return annotations.containsKey(annotator);
     }
-    
-
-    
 }

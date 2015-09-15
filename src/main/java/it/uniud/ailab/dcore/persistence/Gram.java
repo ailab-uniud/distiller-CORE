@@ -16,12 +16,11 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.*;
 
 /**
  * The Gram is the data structure in which all the data concerning a NGram is
@@ -30,7 +29,7 @@ import java.util.Map.*;
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-public class Gram {
+public class Gram extends Annotable {
 
     /**
      * The string representation of the gram.
@@ -48,22 +47,6 @@ public class Gram {
      * The concept Units in which the gram appears.
      */
     private List<DocumentComponent> appareances;
-    /**
-     * Annotations over the gram.
-     */
-    private List<Annotation> annotations;
-
-    /**
-     * The gram
-     * {@link it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation}
-     * container. This special structure is needed for faster getting of
-     * features, since they're the main way for evaluators to calcolate the
-     * importance of a gram in a document.
-     *
-     * Note that one may add FeatureAnnotations in the annotations list, but
-     * this way is not guaranteed that every evaluator will read them.
-     */
-    private FeatureContainer features;
 
     /**
      * Instantiated an n-gram. Usually, the surface should be simply the the 
@@ -80,11 +63,9 @@ public class Gram {
      */
     public Gram(String identifier, List<Token> sequence, String surface) {
         words = new ArrayList<>();
-        annotations = new ArrayList<>();
         words.addAll(sequence);
         this.surface = surface;
         this.identifier = identifier;
-        features = new FeatureContainer();
         appareances = new ArrayList<>();
     }
 
@@ -124,30 +105,6 @@ public class Gram {
     }
 
     // <editor-fold desc="Feature and annotation Management">
-    /**
-     * Get the annotation produced by the annotator identified by the input
-     * string.
-     *
-     * @param annotator the annotator identifier
-     * @return an annotation
-     */
-    public Annotation getAnnotation(String annotator) {
-        for (Annotation a : annotations) {
-            if (a.getAnnotator().equals(annotator)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Adds an annotation to the gram.
-     *
-     * @param annotation the annotation to add
-     */
-    public void addAnnotation(Annotation annotation) {
-        annotations.add(annotation);
-    }
 
     /**
      * Adds a feature to the gram.
@@ -155,8 +112,9 @@ public class Gram {
      * @param feature the identifier of the feature
      * @param value the value of the feature
      */
-    public void putFeature(String feature, double value) {
-        features.put(feature, value);
+    public void putFeature(String feature, double value) {        
+        addAnnotation(new FeatureAnnotation(feature,value));
+        
     }
 
     /**
@@ -165,7 +123,7 @@ public class Gram {
      * @param f the feature to add.
      */
     public void putFeature(FeatureAnnotation f) {
-        features.put(f);
+        addAnnotation(f);
     }
 
     /**
@@ -176,7 +134,7 @@ public class Gram {
      * @return true if the gram has the feature; false otherwise
      */
     public boolean hasFeature(String featureName) {
-        return features.get(featureName) != null;
+        return this.hasAnnotation(featureName);
     }
 
     /**
@@ -192,10 +150,11 @@ public class Gram {
      */
     public double getFeature(String featureName) {
         // null check; if the feature is not specified, we assume it's 0.
-        if (features.get(featureName) == null) {
+        if (!this.hasAnnotation(featureName)) {
             return 0;
         }
-        return features.get(featureName).getScore();
+        return ((FeatureAnnotation) getAnnotation(featureName))
+                .getScore();
     }
 
     /**
@@ -204,7 +163,15 @@ public class Gram {
      * @return all the features associated with the gram.
      */
     public FeatureAnnotation[] getFeatures() {
-        return features.getAll();
+        
+        List<FeatureAnnotation> features = new ArrayList<>();
+        
+        for (Annotation ann : getAnnotations()) {
+            if (ann instanceof FeatureAnnotation)
+                features.add((FeatureAnnotation)ann);
+        }
+        
+        return features.toArray(new FeatureAnnotation[features.size()]);        
     }
 
     /**
@@ -213,7 +180,8 @@ public class Gram {
      * @param features the new features of the gram.
      */
     public void setFeatures(FeatureAnnotation[] features) {
-        this.features.putAll(features);
+        for (FeatureAnnotation f : features)
+            this.addAnnotation(f);
     }
     // </editor-fold> 
 
@@ -237,52 +205,4 @@ public class Gram {
         return appareances;
     }
     // </editor-fold>
-
-    /**
-     * For optimization sake, FeatureAnnotations are unboxed and put in a
-     * HashMap, which is much more convenient in storing and expecially
-     * retrieving key-value pairs.
-     * 
-     * The code of this class is not commented since it's self-explanatory.
-     *
-     * @author Marco Basaldella
-     */
-    private class FeatureContainer {
-
-        private HashMap<String, Double> container;
-
-        public FeatureContainer() {
-            container = new HashMap<>();
-        }
-
-        public void put(FeatureAnnotation f) {
-            this.put(f.getAnnotator(), f.getScore());
-        }
-
-        public void put(String name, double value) {
-            container.put(name, value);
-        }
-
-        public FeatureAnnotation get(String key) {
-            Double d = container.get(key);
-            return d == null ? null : new FeatureAnnotation(key, d);
-        }
-
-        public void putAll(FeatureAnnotation[] features) {
-            for (FeatureAnnotation f : features) {
-                this.put(f);
-            }
-        }
-
-        public FeatureAnnotation[] getAll() {
-            FeatureAnnotation[] features = new FeatureAnnotation[container.size()];
-            int i = 0;
-
-            for (Entry<String, Double> feature : container.entrySet()) {
-                features[i++] = new FeatureAnnotation(feature.getKey(), feature.getValue());
-            }
-
-            return features;
-        }
-    }
 }
