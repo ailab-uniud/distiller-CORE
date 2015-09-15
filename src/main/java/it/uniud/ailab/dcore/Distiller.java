@@ -18,7 +18,7 @@
  */
 package it.uniud.ailab.dcore;
 
-import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIFLAG;
+import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.*;
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.DistilledOutput.*;
@@ -233,7 +233,7 @@ public class Distiller {
             gram.setKeyphraseness(originalGram.getFeature(
                     it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));
 
-            UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIFLAG);
+            UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIURI);
             if (wikiAnn != null) {
                 gram.setConceptName(wikiAnn.getSurface());
                 gram.setConceptPath(wikiAnn.getUri().toASCIIString());

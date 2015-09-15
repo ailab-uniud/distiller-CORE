@@ -16,6 +16,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import java.util.List;
 import java.util.Locale;
@@ -29,9 +30,9 @@ import java.util.Locale;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public abstract class DocumentComponent {  
+public abstract class DocumentComponent extends Annotable {  
     
-    private String text;
+    private final String text;
     private Locale language;
     
     /**
@@ -105,13 +106,6 @@ public abstract class DocumentComponent {
      */
     public abstract List<DocumentComponent> getComponents();
         
-    /**
-     * Returns all the annotations associated on a component.
-     * 
-     * @return the list of annotations.
-     */
-    public abstract List<TextAnnotation> getAnnotations() ;
-    
     /**
      * Adds a gram to the component.
      * 

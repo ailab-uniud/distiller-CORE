@@ -45,4 +45,16 @@ public abstract class Annotation {
         return annotator;
     }
     
+    /**
+     * By default, the toString method returns the name of the annotation.
+     * When an annotation is specialized, it should be good practice to override
+     * this method.
+     * 
+     * @return the name of the annotation
+     */
+    @Override
+    public String toString() {
+        return annotator;
+    }
+    
 }

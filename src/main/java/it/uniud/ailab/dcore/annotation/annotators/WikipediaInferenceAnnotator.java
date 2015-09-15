@@ -24,6 +24,8 @@ import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
+import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIURI;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.utils.WikipediaUtils;
@@ -206,30 +208,31 @@ public class WikipediaInferenceAnnotator implements Annotator {
             // this will contain the related links
             ArrayList<String> wikiLinks = new ArrayList<>();
 
-            String page = null;
+            String page = ((UriAnnotation) currentGram.getAnnotation(WIKIURI))
+                    .getUriTitle();
 
+            /*
             // get the correct annotation that generated the wikiflag
-            for (TextAnnotation a : currentGram.getTokens().get(0).
-                    getAnnotations(WIKIFLAG)) {
-                // the annotations have the same length, so we may have a legit
-                // wikipedia surface as the gram
-                if (a.getTokens().length == currentGram.getTokens().size()) {
-                    
-                    boolean isTagged = true;
-                    
-                    for (int i = 0; i < a.getTokens().length && isTagged; i++) {
-                        isTagged = a.getTokens()[i].equals(
-                                    currentGram.getTokens().get(i));
-                    }
-                    
-                    if (isTagged) {
-                        page = a.getAnnotation();
-                    }
-                    
-                }                    
-                    
-            }
-                
+            TextAnnotation a = (TextAnnotation) currentGram.getTokens().get(0).
+                    getAnnotation(WIKIFLAG);
+
+            // the annotations have the same length, so we may have a legit
+            // wikipedia surface as the gram
+            
+            if (a.getTokens().length == currentGram.getTokens().size()) {
+
+                boolean isTagged = true;
+
+                for (int i = 0; i < a.getTokens().length && isTagged; i++) {
+                    isTagged = a.getTokens()[i].equals(
+                            currentGram.getTokens().get(i));
+                }
+
+                if (isTagged) {
+                    page = a.getAnnotation();
+                }
+            }*/
+
             if (page == null)
                 throw new AnnotationException(this,
                         "I couldn't find the correct annotation.");

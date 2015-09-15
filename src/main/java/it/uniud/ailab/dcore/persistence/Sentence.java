@@ -136,23 +136,6 @@ public class Sentence extends DocumentComponent {
     }
 
     /**
-     * Get all the annotations associated with the single tokens that compose
-     * the sentence.
-     * 
-     * @return all the annotations of all the tokens.
-     */
-    @Override
-    public List<TextAnnotation> getAnnotations() {
-        List<TextAnnotation> ret = new ArrayList<TextAnnotation>();
-        for (Token t : getTokens())
-        {
-            ret.addAll(t.getAnnotations());
-        }
-        
-        return ret;
-    }
-    
-    /**
      * Add a n-gram to the sentence.
      * 
      * @param g the gram to add. 

@@ -108,9 +108,11 @@ public class Blackboard {
     }
     
     /**
-     * Adds a Gram in the Gram Container. If the gram is already present, 
-     * the method updates it adding the new occurrence; moreover, it will write
-     * the annotations of the new gram on the stored one.
+     * Adds a Gram in the Gram Container, merging grams with the same identifier.
+     * If the gram is already present, the method updates it adding the 
+     * new occurrence. Annotations of the new gram are <b>not</b> merged into
+     * the old gram. This is because it's good practice to annotate grams only
+     * when they've <b>all</b> been added into the blackboard.
      * 
      * @param unit the concept unit where the gram appears
      * @param newGram the gram to add
@@ -127,13 +129,8 @@ public class Blackboard {
             gramContainer.put(cloned.getIdentifier(), cloned);
             gram = cloned;
         } else {
-            // copy the annotations in the stored gram
-            for (int i = 0; i < newGram.getTokens().size(); i++) {
-                Token newToken = newGram.getTokens().get(i);
-                for (TextAnnotation a : newToken.getAnnotations()) {
-                    gram.getTokens().get(i).addAnnotation(a);
-                }
-            }
+            // add the surface of the new gram
+            gram.addSurfaces(newGram.getSurfaces(), newGram.getTokenLists());
         }
         
         gram.addAppaerance(unit);

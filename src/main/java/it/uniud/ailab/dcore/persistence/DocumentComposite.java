@@ -16,7 +16,6 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
-import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -66,22 +65,6 @@ public class DocumentComposite extends DocumentComponent {
     @Override
     public List<DocumentComponent> getComponents() {
         return components;
-    }
-    
-    /**
-     * Gets the annotations of the composite (more specifically, 
-     * the annotations of all of its sub-components).
-     * 
-     * @return the annotations of the composite.
-     */
-    @Override
-    public List<TextAnnotation> getAnnotations() {
-        List<TextAnnotation> ret = new ArrayList<>();
-        for (DocumentComponent c : getComponents())
-        {
-            ret.addAll(c.getAnnotations());
-        }        
-        return ret;
     }
 
     /**
