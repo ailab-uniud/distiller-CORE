@@ -21,6 +21,7 @@ import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -90,20 +91,15 @@ public class BlackboardUtils {
 
             }
 
-            List<TextAnnotation> ann = new ArrayList<TextAnnotation>();
+            Annotation[] anns = scoredGram.getKey().getAnnotations();
 
-            for (Token t : scoredGram.getKey().getTokens()) {
-                ann.addAll(t.getAnnotations());
-            }
-
-            if (printDetails && !ann.isEmpty()) {
+            if (printDetails && anns.length > 0) {
 
                 System.out.println();
                 System.out.print(String.format("%-24s", "--Annotations:"));
 
-                for (TextAnnotation a : ann) {
-                    System.out.print(String.format("%-12s:\"%-12s\":%-12s ; ",
-                            a.getAnnotator(), a.getAnnotatedText(), a.getAnnotation()));
+                for (Annotation a : anns) {
+                    System.out.print(a + " ; ");
                 }
             }
 

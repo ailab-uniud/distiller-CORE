@@ -24,16 +24,23 @@ package it.uniud.ailab.dcore.annotation.annotators;
  * 
  * This way, subsequent steps of the distiller do not have to be aware of 
  * what annotator precedes them, but they just have to now that someone put a 
- * "Wikiflag" over that n-gram (or token).
+ * "Wikiflag" over that n-gram (or generic Annotable).
  *
  * @author Marco Basaldella
  */
 public interface GenericWikipediaAnnotator {
     
     /**
-     * This field will be set to 1 if the specified gram coincides with a 
-     * Wikipedia entry.
+     * This should be used to add FeatureAnnotations with value 1 when the 
+     * specified Annotable is associated to a Wikipedia entry.
      */
     public static final String WIKIFLAG = "Wikiflag";
+    
+    /**
+     * This should be used to add UriAnnotations with a the Wikipedia URI to
+     * associate at the Annotable object.
+     */
+    public static final String WIKIURI = "Wikiuri";
+    
     
 }

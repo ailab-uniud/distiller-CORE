@@ -46,38 +46,51 @@ public class TagMeGramAnnotator implements Annotator, GenericWikipediaAnnotator 
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         for (Gram g : blackboard.getGrams()) {
-            // check if the gram coincides with a TagMe annotation
-            List<Token> tokens = g.getTokens();
-
-            
-            // we should check if all the tokens of the gram have the 
-            // same annotation
-            for (TextAnnotation a : tokens.get(0).getAnnotations(TagMeTokenAnnotator.WIKIFLAG)) {
-
-                // the annotations have the same length, so we may have a legit
-                // wikipedia surface as the gram
-                if (a.getTokens().length == g.getTokens().size()) {
-                    
-                    boolean isTagged = true;
-                    
-                    for (int i = 0; i < a.getTokens().length && isTagged; i++) {
-                        isTagged = a.getTokens()[i].equals(
-                                    g.getTokens().get(i));
-                    }                    
-                    
-                    if (isTagged) {
-                        g.putFeature(WIKIFLAG, 1);
-                        
-                        g.addAnnotation(new UriAnnotation(
-                                WIKIFLAG,
-                                a.getAnnotatedText(),
-                                a.getAnnotation(),
-                                WikipediaUtils.generateWikiUri(a.getAnnotation(),
-                                        component.getLanguage())));
-                    }
-                }
-            } // for (TextAnnotation a :  ...
+            annotateGram(component,g);
         } // for (Gram g : ...
+    }
+
+    private void annotateGram(DocumentComponent component,Gram g) {
+        // check if the gram coincides with a TagMe annotation
+        
+        for (List<Token> tokens : g.getTokenLists()) {
+            
+            // we should check if all the tokens of the gram have the
+            // same annotation
+            TextAnnotation a = (TextAnnotation) tokens.get(0).getAnnotation(TagMeTokenAnnotator.WIKIFLAG);
+            
+            if (a == null) {
+                continue;
+            }
+            
+            boolean isTagged = false;
+            
+            // the annotations have the same length, so we may have a legit
+            // wikipedia surface as the gram
+            if (a.getTokens().length == g.getTokens().size()) {
+                
+                isTagged = true;
+                
+                for (int i = 0; i < a.getTokens().length && isTagged; i++) {
+                    isTagged = a.getTokens()[i].equals(
+                            g.getTokens().get(i));
+                }
+                
+                if (isTagged) {
+                    g.putFeature(WIKIFLAG, 1);
+                    
+                    g.addAnnotation(new UriAnnotation(
+                            WIKIURI,
+                            a.getAnnotatedText(),
+                            a.getAnnotation(),
+                            WikipediaUtils.generateWikiUri(a.getAnnotation(),
+                                    component.getLanguage())));
+                }
+            }
+            
+            if (isTagged) break;
+            
+        } // for (List<Token> tokens : ...   
     }
 
 }

@@ -74,10 +74,10 @@ public class Starter {
     public static void main(String[] args) {
         
         String[] texts = new String[] {
-            dosto,
+//            dosto,
             topGear,
-            sortedMap,
-            softEngIT,
+//            sortedMap,
+//            softEngIT,
 //            softEngPT
         };
              

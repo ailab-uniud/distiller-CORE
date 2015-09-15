@@ -19,8 +19,11 @@ package it.uniud.ailab.dcore.persistence;
 import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.utils.ListUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 /**
  * The Gram is the data structure in which all the data concerning a NGram is
@@ -32,17 +35,17 @@ import java.util.List;
 public class Gram extends Annotable {
 
     /**
-     * The string representation of the gram.
-     */
-    private final String surface;
-    /**
      * The stemmed (or lemmatized) surface.
      */
-    private String identifier;
+    private final String identifier;
     /**
-     * The words forming the surface of the gram.
+     * The different list of words forming the surface of the gram.
      */
-    private ArrayList<Token> words;
+    private List<List<Token>> tokenLists;
+    /**
+     * The different string representation of the gram.
+     */
+    private final List<String> surfaces;
     /**
      * The concept Units in which the gram appears.
      */
@@ -62,20 +65,84 @@ public class Gram extends Annotable {
      * @param surface the pretty-printed string representation of the gram
      */
     public Gram(String identifier, List<Token> sequence, String surface) {
-        words = new ArrayList<>();
-        words.addAll(sequence);
-        this.surface = surface;
+        tokenLists = new ArrayList<>();
+        tokenLists.add(sequence);
+        
+        surfaces = new ArrayList<>();
+        surfaces.add(surface);
+        
         this.identifier = identifier;
         appareances = new ArrayList<>();
     }
+    
+    /**
+     * Adds a surface to the n-gram. Duplicates are permitted.
+     * 
+     * @param surface the surface to add
+     * @param tokens the tokens that form the surface
+     */
+    public void addSurface(String surface,List<Token> tokens) {
+        surfaces.add(surface);
+        tokenLists.add(tokens);
+    }
+    
+     /**
+     * Adds a group of surfaces to the n-gram. Duplicates are permitted.
+     * 
+     * @param surfaces the surface to add
+     * @param tokenLists the tokens that form the surface
+     */
+    public void addSurfaces(List<String> surfaces,List<List<Token>> tokenLists) {
+        
+        if (surfaces.size() != tokenLists.size())
+            throw new IllegalArgumentException(
+                "Mismatching size of surfaces and token lists.");
+        
+        this.surfaces.addAll(surfaces);
+        
+        // note: do not use addAll. The references are lost if you don't copy
+        for (List<Token> t : tokenLists) {
+            this.tokenLists.add(new ArrayList<Token>(t));
+        }
+    }
 
     /**
-     * The human-readable form of the gram.
+     * The tokens that form the most common surface of the gram.
+     *
+     * @return the tokens of the surface of the gram.
+     */
+    public List<Token> getTokens() {
+        return tokenLists.get(surfaces.indexOf(ListUtils.mostCommon(surfaces)));
+    }
+    
+    /**
+     * Returns all the possible lists of tokens that form the gram.
+     * 
+     * @return all the possible lists of tokens that form the gram.
+     */
+    public List<List<Token>> getTokenLists() {
+        return tokenLists;
+    }
+
+    /**
+     * The human-readable form of the gram. This is the most common surface
+     * between all the surfaces associated with the gram; if there are more than
+     * one, the first one that has been added to the gram is selected.
      *
      * @return the human-readable form of the gram.
      */
     public String getSurface() {
-        return this.surface;
+        return ListUtils.mostCommon(surfaces);
+    }
+    
+    /**
+     * Returns all the surfaces of the gram. Note: may contain 
+     * duplicates.
+     * 
+     * @return all the surfaces of the gram.
+     */
+    public List<String> getSurfaces() {
+        return surfaces;
     }
 
     /**
@@ -93,15 +160,6 @@ public class Gram extends Annotable {
      */
     public String getIdentifier() {
         return this.identifier;
-    }
-
-    /**
-     * The tokens of the identifier of the gram.
-     *
-     * @return the tokens of the identifier of the gram.
-     */
-    public List<Token> getTokens() {
-        return words;
     }
 
     // <editor-fold desc="Feature and annotation Management">

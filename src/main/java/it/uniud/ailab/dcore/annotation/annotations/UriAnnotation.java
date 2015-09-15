@@ -49,4 +49,9 @@ public class UriAnnotation extends Annotation {
         return uri;
     }
     
+    @Override
+    public String toString() {
+        return annotator + ": " + uri.toASCIIString();
+    }
+    
 }
