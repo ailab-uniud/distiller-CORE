@@ -93,8 +93,8 @@ public class PhraseMaximalityAnnotator implements Annotator {
                      Double maximality = 0.0;
                      for(Gram g2: superterms){
                          maximality = Math.max(
-                                 g2.getFeature(StatisticalAnnotator.FREQUENCY)/
-                                         g.getFeature(StatisticalAnnotator.FREQUENCY)
+                                 g2.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)/
+                                         g.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)
                                  , maximality);
                      }
                      g.putFeature(MAXIMALITY, 1.0-maximality);

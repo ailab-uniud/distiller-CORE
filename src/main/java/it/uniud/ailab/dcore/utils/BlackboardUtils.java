@@ -18,13 +18,11 @@ package it.uniud.ailab.dcore.utils;
 
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
-import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
 import it.uniud.ailab.dcore.persistence.Gram;
-import it.uniud.ailab.dcore.persistence.Token;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

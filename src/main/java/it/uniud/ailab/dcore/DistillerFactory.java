@@ -146,7 +146,7 @@ public class DistillerFactory {
         evaluator.addWeight(StatisticalAnnotator.DEPTH, 0.15);
         evaluator.addWeight(StatisticalAnnotator.HEIGHT, 0.25);
         evaluator.addWeight(StatisticalAnnotator.LIFESPAN, 0.1);
-        evaluator.addWeight(StatisticalAnnotator.FREQUENCY, 0.1);  
+        evaluator.addWeight(StatisticalAnnotator.FREQUENCY_SENTENCE, 0.1);  
         evaluator.addWeight(GenericNGramGeneratorAnnotator.NOUNVALUE,0.3);
         evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
        

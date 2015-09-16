@@ -23,66 +23,72 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import java.util.ArrayList;
 
 /**
- * Annotates grams with statistical information such as their frequency, 
- * their width and their depth in the {@link it.uniud.ailab.dcore.persistence.DocumentComponent}
- * passed as input.
- * 
- * Document depth is defined as : ( index of sentence of last occurrence
- *                                  / total # of sentences )
- * Document height is defined as : ( index of sentence of first occurrence
- *                                  / total # of sentences )
- * Frequency is defined as : total # of occurrences / 
- *                           total # of sentences
- * Life span is defined as : ( index of sentence of last occurrence -
- *                              index of sentence of first occurrence) 
- *                              / total # of sentences.
- * 
+ * Annotates grams with statistical information such as their frequency, their
+ * width and their depth in the
+ * {@link it.uniud.ailab.dcore.persistence.DocumentComponent} passed as input.
+ *
+ * Document depth is defined as : ( index of sentence of last occurrence / total
+ * # of sentences ) Document height is defined as : ( index of sentence of first
+ * occurrence / total # of sentences ) Frequency is defined as : total # of
+ * occurrences / total # of sentences Life span is defined as : ( index of
+ * sentence of last occurrence - index of sentence of first occurrence) / total
+ * # of sentences.
+ *
  *
  * @author Marco Basaldella
  */
 public class StatisticalAnnotator implements Annotator {
-    
+
     // We use final fields to avoid spelling errors in feature naming.
     // Plus, is more handy to refer to a feature by ClassName.FeatureName, 
     // so that the code is much more readable.
-    
     /**
-     * Document depth, defined as ( index of sentence of last occurrence / total of sentences ).
+     * Document depth, defined as ( index of sentence of last occurrence / total
+     * of sentences ).
      */
     public static final String DEPTH = "Depth";
-    
+
     /**
-     * Document depth, defined as ( index of sentence of first occurrence / total of sentences ).
+     * Document depth, defined as ( index of sentence of first occurrence /
+     * total of sentences ).
      */
     public static final String HEIGHT = "Height";
-    
+
     /**
-     * Document frequency, defined as the total count of occurrences of the
-     * gram in text.
+     * Document frequency, defined as the total count of occurrences of the gram
+     * in text normalized by the number of sentences. Note: if a gram appears
+     * twice in a sentence, is counted once.
      */
-    public static final String FREQUENCY = "Freq";
-    
+    public static final String FREQUENCY_SENTENCE = "Freq_Sentence";
+
     /**
-     * Life span, defined as ( index of sentence of last occurrence -
-     *                         index of sentence of first occurrence) 
-     *                         / total # of sentences.
-     * 
-     * This can be expressed as (depth - (1 - height)) or equally as
-     *                          depth + height - 1.
+     * Document frequency, defined as the total count of occurrences of the gram
+     * in text.
+     */
+    public static final String FREQUENCY = "Freq_Absolute";
+
+    /**
+     * Life span, defined as ( index of sentence of last occurrence - index of
+     * sentence of first occurrence) / total # of sentences.
+     *
+     * This can be expressed as (depth - (1 - height)) or equally as depth +
+     * height - 1.
      */
     public static final String LIFESPAN = "LifeSpan";
-    
+
     /**
      * Annotates grams with statistical information such as their frequency,
      * their width and their depth in the
-     * {@link it.uniud.ailab.dcore.persistence.DocumentComponent} passed as input.
-     * 
+     * {@link it.uniud.ailab.dcore.persistence.DocumentComponent} passed as
+     * input.
+     *
      * @param component the component to analyze.
      */
     @Override
-    public void annotate(Blackboard blackboard,DocumentComponent component) {
+    public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         List<Sentence> sentences = DocumentUtils.getSentences(component);
 
@@ -95,25 +101,45 @@ public class StatisticalAnnotator implements Annotator {
         // see the variable declarations above.
         for (Sentence s : sentences) {
             count++;
+            
+            //buffer to avoid writing some annotations more than once
+            // every sentence
+            List<String> surfaces = new ArrayList<>();
+
             for (Gram g : s.getGrams()) {
-                
-                double depth = ( count / size );
-                g.putFeature(DEPTH, depth);
-                
-                // check if it's the first appaerance
-                // if not, set the height 1 - depth
-                if (!g.hasFeature(HEIGHT))
-                    g.putFeature(HEIGHT, 1 - depth);
-                
-                g.putFeature(LIFESPAN, g.getFeature(DEPTH) + g.getFeature(HEIGHT) - 1);                
-                
-                if (g.hasFeature(FREQUENCY))
-                    g.putFeature(FREQUENCY,g.getFeature(FREQUENCY) + 1);
-                else 
+
+                if (g.hasFeature(FREQUENCY)) {
+                    g.putFeature(FREQUENCY, g.getFeature(FREQUENCY) + 1);
+                } else {
                     g.putFeature(FREQUENCY, 1);
-                
-                
-            }            
-        }        
-    }    
+                }
+
+                if (!surfaces.contains(g.getSurface())) {
+
+                    surfaces.add(g.getSurface());
+
+                    double depth = (count / size);
+                    g.putFeature(DEPTH, depth);
+
+                    // check if it's the first appaerance
+                    // if not, set the height 1 - depth
+                    if (!g.hasFeature(HEIGHT)) {
+                        g.putFeature(HEIGHT, 1 - depth);
+                    }
+
+                    g.putFeature(LIFESPAN, g.getFeature(DEPTH) + g.getFeature(HEIGHT) - 1);
+
+                    double increment = 1.0 / sentences.size();
+
+                    if (g.hasFeature(FREQUENCY_SENTENCE)) {
+                        g.putFeature(FREQUENCY_SENTENCE, g.getFeature(FREQUENCY_SENTENCE) + increment);
+                    } else {
+                        g.putFeature(FREQUENCY_SENTENCE, increment);
+                    }
+
+                }
+
+            }
+        }
+    }
 }
