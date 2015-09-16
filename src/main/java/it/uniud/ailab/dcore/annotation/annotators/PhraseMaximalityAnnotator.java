@@ -28,15 +28,19 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- *
- * @author Dario
+ * Annotates grams with the Maximality feature. Maximality gives a hint of
+ * how much an n-gram is a concept of its own right ngrams with low
+ * maximality tend to appear in the text just as subsets of longer phrases,
+ * therefore are less interesting. Maximality is explained in detail in the
+ * following paper http://ceur-ws.org/Vol-1384/paper2.pdf
+ * 
+ * WARNING : this annotator requires some other annotator to compute the 
+ * frequency of n-grams in the blackboard.
+ * 
+ * @author Dario De Nart
  */
 public class PhraseMaximalityAnnotator implements Annotator {
-    
-    // We use final fields to avoid spelling errors in feature naming.
-    // Plus, is more handy to refer to a feature by ClassName.FeatureName, 
-    // so that the code is much more readable.
-    
+
     /**
      * The phrase maximality in the document
      */
@@ -75,7 +79,7 @@ public class PhraseMaximalityAnnotator implements Annotator {
         for (Sentence s : sentences) {
             
             for (Gram g : s.getGrams()) {
-                // thou shalt not waste computational time
+                // annotate grams only once 
                  if (!g.hasFeature(MAXIMALITY)){
                      HashSet<Gram> superterms = new HashSet<>();
                      String surface = gram2surface.get(g);
@@ -84,13 +88,15 @@ public class PhraseMaximalityAnnotator implements Annotator {
                              superterms.add(surfaces.get(candidate));
                          }
                      }
-                     // now we have a nice HashSet stuffed up with the superterms
+                     // now we have a HashSet stuffed up with the superterms
                      // i.e. the n-grams that contain the current n-gram
                      Double maximality = 0.0;
                      for(Gram g2: superterms){
-                         maximality = Math.max(g2.getFeature(StatisticalAnnotator.FREQUENCY)/g.getFeature(StatisticalAnnotator.FREQUENCY), maximality);
+                         maximality = Math.max(
+                                 g2.getFeature(StatisticalAnnotator.FREQUENCY)/
+                                         g.getFeature(StatisticalAnnotator.FREQUENCY)
+                                 , maximality);
                      }
-                     // slam dunk!
                      g.putFeature(MAXIMALITY, 1.0-maximality);
                  }
                 
