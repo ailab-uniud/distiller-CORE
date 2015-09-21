@@ -37,34 +37,29 @@ public class TextAnnotation extends Annotation {
      */
     private final Token[] annotatedTokens;
     
-    /**
-     * The annotation. For example, address of the Wikipedia page 
-     * "Software_Engineering".
-     */
-    private final String annotation ;
-    
-    
     public TextAnnotation(String annotator, Token[] annotatedTokens, String annotation) {
         super(annotator);
         this.annotatedTokens = annotatedTokens;
-        this.annotation = annotation;
-    }
-    
-    public String getAnnotatedText() {
+        super.addString(annotation);
         
         List<String> tokenText = new ArrayList<>();
-        
         Arrays.asList(annotatedTokens).
                 stream().forEach(t -> {
                   tokenText.add(t.getText());
                 });
         
-        return String.join(" ", tokenText);
+        super.addString(String.join(" ", tokenText));
+        
     }
     
     public String getAnnotation() {
-        return annotation;
+        return super.getStringAt(0);
     }
+    
+    public String getAnnotatedText() {
+        return super.getStringAt(1);
+    }    
+    
     
     public Token[] getTokens() {
         return annotatedTokens;
@@ -95,7 +90,7 @@ public class TextAnnotation extends Annotation {
         
         return (this.getAnnotatedText().equals(other.getAnnotatedText())) &&
                 (this.annotator.equals(other.getAnnotator())) &&
-                (this.annotation.equals(other.getAnnotation()));
+                (this.getAnnotation().equals(other.getAnnotation()));
     }
 
 }

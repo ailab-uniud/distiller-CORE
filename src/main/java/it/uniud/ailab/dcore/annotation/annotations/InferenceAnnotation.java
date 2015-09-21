@@ -18,6 +18,9 @@ package it.uniud.ailab.dcore.annotation.annotations;
 
 import it.uniud.ailab.dcore.annotation.Annotation;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This annotation represents an inferred concept. For example, having a document 
@@ -33,21 +36,6 @@ public class InferenceAnnotation
         implements ScoredAnnotation {
     
     /**
-     * The concept inferred.
-     */
-    private final String concept;
-
-    /**
-     * The score associated to the concept.
-     */
-    private final double score;
-    
-    /**
-     * The URI associated with the concept.
-     */
-    private final URI uri;
-    
-    /**
      * Instantiates the annotation.
      * 
      * @param annotator the annotator that generated the annotation.
@@ -58,9 +46,10 @@ public class InferenceAnnotation
     public InferenceAnnotation(String annotator,String concept,
             double score,URI uri) {
         super(annotator);
-        this.concept = concept;
-        this.score = score;
-        this.uri = uri;
+        
+        super.addString(concept);
+        super.addNumber(score);
+        super.addString(uri.toString());
     }
     
     /**
@@ -69,7 +58,7 @@ public class InferenceAnnotation
      * @return the concept.
      */
     public String getConcept() {
-        return concept;
+        return super.getStringAt(0);
     }
 
     /**
@@ -79,7 +68,7 @@ public class InferenceAnnotation
      */
     @Override
     public double getScore() {
-        return score;
+        return super.getNumberAt(1).doubleValue();
     }
     
     /**
@@ -88,6 +77,22 @@ public class InferenceAnnotation
      * @return the URI associated with the concept.
      */
     public URI getUri() {
+        
+        URI uri = null;
+        
+        try {
+            uri = new URI(super.getStringAt(2));
+        } catch (URISyntaxException ex) {
+            
+            // The catch is mandatory, but it's very unlikely that
+            // this may happen
+            
+            Logger.getLogger(InferenceAnnotation.class.getName())
+                    .log(Level.SEVERE, 
+                            "Absurdity: URI converted to String cannot be converted back to URI",
+                            ex);
+        }
+        
         return uri;
     }
 }

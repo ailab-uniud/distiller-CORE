@@ -30,8 +30,6 @@ public class FeatureAnnotation
         extends Annotation
         implements ScoredAnnotation {
     
-    private final double score;
-    
     /**
      * A feature.
      * 
@@ -40,7 +38,8 @@ public class FeatureAnnotation
      */
     public FeatureAnnotation(String annotator,double score) {
         super(annotator);
-        this.score = score;
+        
+        super.addNumber(score);
     }
     
     /**
@@ -50,6 +49,6 @@ public class FeatureAnnotation
      */
     @Override
     public double getScore() {
-        return score;
-    }  
+        return super.getNumberAt(0).doubleValue();
+    }
 }
