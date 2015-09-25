@@ -16,34 +16,19 @@
  */
 package it.uniud.ailab.dcore.annotation;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * A generic for an object that can be annotated. 
- * 
+ * A set of default annotations. An annotator that produces an annotation
+ * that is (conceptually equal to one) listed in this file should use the
+ * constant defined there.
  *
  * @author Marco Basaldella
  */
-public abstract class Annotable {
+public class DefaultAnnotations {
     
-    private Map<String,Annotation> annotations = new HashMap<>();
+    public final String SENTENCE_INDEX = "SentenceIndex";
     
-    public abstract String getIdentifier();
+    public final String SENTENCE_COUNT = "SentenceCount";
     
-    public void addAnnotation(Annotation ann) {
-        annotations.put(ann.getAnnotator(),ann);
-    }
+    public final String CHAR_COUNT = "CharCount";
     
-    public Annotation getAnnotation(String annotator) {
-        return annotations.get(annotator);
-    }
-    
-    public Annotation[] getAnnotations() {
-        return annotations.values().toArray(new Annotation[annotations.size()]);
-    }
-    
-    public boolean hasAnnotation(String annotator) {
-        return annotations.containsKey(annotator);
-    }
 }

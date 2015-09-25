@@ -104,12 +104,12 @@ public class DistillerFactory {
      *
      * @return a Distiller ready to work.
      */
-    private static Distiller getDefaultXML() {
+    public static Distiller getDefaultXML() {
         ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
         return (Distiller) context.getBean("distiller");
     }
     
-    private static Distiller getDefaultCode() {
+    public static Distiller getDefaultCode() {
         Distiller d = new Distiller();
         
         // set the language detector tool

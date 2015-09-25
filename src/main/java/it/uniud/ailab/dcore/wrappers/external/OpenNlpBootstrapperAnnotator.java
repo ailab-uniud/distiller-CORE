@@ -64,6 +64,12 @@ import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
  * @author Marco Basaldella
  */
 public class OpenNlpBootstrapperAnnotator implements Annotator {
+    
+    /**
+     * A counter that keeps track of the number of sentences identified
+     * by the Annotator, used as identifier for the generated Sentences.
+     */
+    private static int sentenceCounter = 0;
 
     /**
      * Variable that contains the database paths of the models for the various
@@ -118,7 +124,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         for (String sentenceString : sentences) {
 
             // the distilled sentence object
-            Sentence sentence = new Sentence(sentenceString);
+            Sentence sentence = new Sentence(sentenceString,
+                    ""+sentenceCounter++);
             sentence.setLanguage(component.getLanguage());
 
             // Tokenize the sentence

@@ -34,6 +34,7 @@ public abstract class DocumentComponent extends Annotable {
     
     private final String text;
     private Locale language;
+    private final String identifier;
     
     /**
      * Creates a document component.
@@ -41,9 +42,10 @@ public abstract class DocumentComponent extends Annotable {
      * @param text the text of the component
      * @param language the language of the component
      */
-    public DocumentComponent(String text,Locale language) {
+    public DocumentComponent(String text,Locale language,String identifier) {
         this.text = text;
         this.language = language;
+        this.identifier = identifier;
     }
 
     // <editor-fold desc="getters and setters">
@@ -122,6 +124,16 @@ public abstract class DocumentComponent extends Annotable {
     
     
     // </editor-fold>
+    
+        
+    /**
+     * Returns the identifier of the component.
+     * @return the output friendly identifier.
+     */
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
     
     /**
      * Get the string representation of the component.

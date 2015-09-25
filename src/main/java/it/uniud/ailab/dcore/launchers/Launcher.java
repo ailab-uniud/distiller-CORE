@@ -14,26 +14,33 @@
  * 	See the License for the specific language governing permissions and
  * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.samples;
+package it.uniud.ailab.dcore.launchers;
 
-import it.uniud.ailab.dcore.DistillerFactory;
-import it.uniud.ailab.dcore.eval.kp.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Run the evaluation routines for keyphrase extraction.
- *
+ * The class is responsible for the usage of the Distiller via command-line.
+ * It's able to: 
+ * <ul>
+ * <li>Select a pre-defined pipeline and start it, or</li>
+ * <li>Load a custom pipeline</li>
+ * <li>Select an input document or folder</li>
+ * <li>Process the pipeline over the document or the documents contained in the 
+ * folder</li>
+ * <li>Print the reslit of the computation.</li>
+ * </ul>
+ * 
+ * 
  * @author Marco Basaldella
  */
-public class Evaluation {
+public class Launcher {
     
     public static void main(String[] args) {
         
-        KeyphraseEvaluator[] tasks = new KeyphraseEvaluator[]
-                { new SemEval2010("/usr/local/dcore/eval/SemEval2010/") };
+        System.out.println("Distiller Launcher");      
         
-        for (KeyphraseEvaluator task : tasks) {
-            task.evaluate(DistillerFactory.getDefaultEval());
-        }
         
-    }    
+    }
+    
 }

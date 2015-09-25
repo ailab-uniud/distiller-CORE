@@ -14,11 +14,12 @@
  * 	See the License for the specific language governing permissions and
  * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.samples;
+package it.uniud.ailab.dcore.launchers;
 
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.DistillerFactory;
+import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.utils.BlackboardUtils;
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +34,10 @@ import java.nio.file.Files;
 public class Simple {
     
     public static void main(String[] args) throws IOException {
-        Distiller d = DistillerFactory.getDefault();
+        Distiller d = DistillerFactory.getDefaultCode();
         
         File f = new File(args[0]);
+        
         String document = String.join(
                         " ",
                         Files.readAllLines(
@@ -47,6 +49,9 @@ public class Simple {
         Blackboard b = d.getBlackboard();
         BlackboardUtils.printScores(b,true);
         BlackboardUtils.printInference(b);
+        
+        CsvPrinter printer = new CsvPrinter("/tmp/output.txt");
+        printer.printGrams(b);
         
     }
     

@@ -186,4 +186,9 @@ public class Token extends Annotable {
         }
         return PoS.equals(other.PoS);
     }
+
+    @Override
+    public String getIdentifier() {
+        return getText();
+    }
 }
