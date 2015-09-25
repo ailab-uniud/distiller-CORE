@@ -31,7 +31,7 @@ import java.nio.file.Files;
  *
  * @author Marco Basaldella
  */
-public class Simple {
+public class SimpleKE {
     
     public static void main(String[] args) throws IOException {
         Distiller d = DistillerFactory.getDefaultCode();
