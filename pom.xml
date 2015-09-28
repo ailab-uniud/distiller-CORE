@@ -7,6 +7,7 @@
     <packaging>jar</packaging>
     <build>
         <plugins>
+            <!-- Select default main class -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -22,6 +23,7 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--- Uber-jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
