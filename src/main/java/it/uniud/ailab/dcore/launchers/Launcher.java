@@ -18,6 +18,7 @@ package it.uniud.ailab.dcore.launchers;
 
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.DistillerFactory;
+import it.uniud.ailab.dcore.io.CsvPrinter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -299,7 +300,12 @@ public class Launcher {
         d.distill(String.join(" ",
                 Files.readAllLines(
                         inputPath.toPath(), StandardCharsets.UTF_8)));
-
+        
+        CsvPrinter printer = new CsvPrinter();
+        
+        if (printGrams) {
+            printer.printGrams("grams.txt", d.getBlackboard());           
+        }
     }
 
     private static void analyzeDir() {

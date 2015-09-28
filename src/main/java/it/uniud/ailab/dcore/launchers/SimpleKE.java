@@ -50,8 +50,8 @@ public class SimpleKE {
         BlackboardUtils.printScores(b,true);
         BlackboardUtils.printInference(b);
         
-        CsvPrinter printer = new CsvPrinter("/tmp/output.txt");
-        printer.printGrams(b);
+        CsvPrinter printer = new CsvPrinter();
+        printer.printGrams("/tmp/output.txt",b);
         
     }
     

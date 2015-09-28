@@ -39,43 +39,45 @@ public class CsvPrinter extends GenericSheetPrinter {
     private final char delimiter;
     
     /**
-     * The output file name.
-     */
-    private final String fileName;
-    
-    /**
      * Flag used to determine if the output file should contain the column 
      * headers or not.
      */
     private final boolean printHeaders;
     
-    public CsvPrinter(String fileName) {
-        this(fileName,',',true);
+    /**
+     * Default field delimiter.
+     */
+    private static final char DEFAULT_DELIMITER = ',';
+    /**
+     * Default print headers option.
+     */
+    private static final boolean DEFAULT_HEADERS = true;
+    
+    public CsvPrinter() {
+        this(DEFAULT_DELIMITER,DEFAULT_HEADERS);
     }
     
-    public CsvPrinter(String fileName,char delimiter) {
-        this(fileName,delimiter,true);
+    public CsvPrinter(char delimiter) {
+        this(delimiter,DEFAULT_HEADERS);
     }
     
-    public CsvPrinter(String fileName,boolean printHeaders) {
-        this(fileName,',',printHeaders);
+    public CsvPrinter(boolean printHeaders) {
+        this(DEFAULT_DELIMITER,printHeaders);
     }
     
-    public CsvPrinter(String fileName,char delimiter,boolean printHeaders) {
-        this.fileName = fileName;
+    public CsvPrinter(char delimiter,boolean printHeaders) {
         this.delimiter = delimiter;
         this.printHeaders = printHeaders;
     }
     
-    public void printGrams(Blackboard b) {
+    public void printGrams(String fileName, Blackboard b) {
         
-        this.loadGrams(b.getStructure());
-        
-        writeFile();
+        this.loadGrams(b.getStructure());        
+        writeFile(fileName);
         
     }
 
-    private void writeFile() {
+    private void writeFile(String fileName) {
         
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(fileName),delimiter);
