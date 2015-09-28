@@ -36,6 +36,8 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 /**
@@ -75,14 +77,13 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
      * The maximum size of n-grams to detect.
      */
     private int maxGramSize;
-    
+
     /**
      * The default maximum size of n-grams.
      */
     private static final int DEFAULT_MAX_NGRAM_SIZE = 3;
-    
-    // </editor-fold>
 
+    // </editor-fold>
     // <editor-fold desc="constructor">
     /**
      * Initializes the nGram generator.
@@ -92,11 +93,11 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
         validPOSPatterns = new HashMap<>();
         posDatabasePaths = new HashMap<>();
         maxGramSize = DEFAULT_MAX_NGRAM_SIZE;
-        
-        posDatabasePaths.put(Locale.ENGLISH, 
+
+        posDatabasePaths.put(Locale.ENGLISH,
                 getClass().getClassLoader().
                 getResource("ailab/posPatterns/en-penn.json").getFile());
-        posDatabasePaths.put(Locale.ITALIAN, 
+        posDatabasePaths.put(Locale.ITALIAN,
                 getClass().getClassLoader().
                 getResource("ailab/posPatterns/it-tanl.json").getFile());
     }
@@ -226,8 +227,8 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                             // the identifier is the stem of the words
                             String identifier = lastReadBuffers[size].get(0).getText();
                             for (int k = 1; k < lastReadBuffers[size].size(); k++) {
-                                identifier = identifier + " " + 
-                                        lastReadBuffers[size].get(k).getStem();
+                                identifier = identifier + " "
+                                        + lastReadBuffers[size].get(k).getStem();
                             }
 
                             identifier = identifier.toLowerCase();
@@ -291,8 +292,22 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
      */
     private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
-        BufferedReader reader = new BufferedReader(new FileReader(posDatabasePaths.get(lang)));
 
+        InputStreamReader is;
+
+        // running from command-line and loading inside the JAR
+        if (posDatabasePaths.get(lang).contains("!")) {
+            is = new InputStreamReader(
+                    getClass().getResourceAsStream(
+                    posDatabasePaths.get(lang).substring(
+                            posDatabasePaths.get(lang).lastIndexOf("!") + 1)));
+        } else {
+            // normal operation
+            is = new FileReader(posDatabasePaths.get(lang));
+        }
+
+        
+        BufferedReader reader = new BufferedReader(is);
         Object obj = (new JSONParser()).parse(reader);
         JSONObject fileblock = (JSONObject) obj;
         JSONArray pagesBlock = (JSONArray) fileblock.get("languages");
@@ -315,14 +330,14 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
         }
 
         JSONArray patternBlock = (JSONArray) languageBlock.get("patterns");
-        
+
         try {
             maxGramSize = Integer.parseInt(languageBlock.get("maxGramSize").toString());
-        } catch (Exception e ) {
+        } catch (Exception e) {
             // the field is badly formatted or non-existent: set to default
             maxGramSize = DEFAULT_MAX_NGRAM_SIZE;;
         }
-        
+
         Iterator<JSONObject> patternIterator = patternBlock.iterator();
 
         // put the patterns in the hashmap
