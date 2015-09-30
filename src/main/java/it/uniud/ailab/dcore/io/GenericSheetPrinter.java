@@ -39,16 +39,13 @@ import java.util.Map;
  */
 public abstract class GenericSheetPrinter {
 
-    private final List<String> headers;
-    private final List<Map<String, Either<String, Number>>> rows;
-    
+    private List<String> headers;
+    private List<Map<String, Either<String, Number>>> rows;
+    private List<Either<String, Number>> headerTypes;
+
     private final String ID_COLUMN = "ID";
 
     protected GenericSheetPrinter() {
-        headers = new ArrayList<>();
-        rows = new ArrayList<>();
-        
-        headers.add(ID_COLUMN);
     }
 
     /**
@@ -58,6 +55,15 @@ public abstract class GenericSheetPrinter {
      */
     public List<String> getHeaders() {
         return headers;
+    }
+
+    /**
+     * Return the types of the headers detected by the printer.
+     *
+     * @return the types of the headers of the table.
+     */
+    public List<Either<String, Number>> getHeaderTypes() {
+        return headerTypes;
     }
 
     /**
@@ -77,10 +83,9 @@ public abstract class GenericSheetPrinter {
     private void addRow(Annotable annotable) {
 
         Map<String, Either<String, Number>> row = new HashMap<>();
+        row.put(ID_COLUMN, new Left<>(annotable.getIdentifier()));
 
         for (Annotation a : annotable.getAnnotations()) {
-            
-            row.put(ID_COLUMN, new Left<>(annotable.getIdentifier()));
 
             // If it's a single-valued annotation, just add the value.
             // elsewhise, customize the headers with a counter.
@@ -89,24 +94,30 @@ public abstract class GenericSheetPrinter {
                 // Check if the annotation is already tracked in the headers
                 if (!headers.contains(a.getAnnotator())) {
                     headers.add(a.getAnnotator());
+                    headerTypes.add(a.getValueAt(0));
                 }
 
                 row.put(a.getAnnotator(), a.getValueAt(0));
 
             } else {
-                String[] newHeaders = new String[a.size()];
-                for (int i = 0; i < newHeaders.length; i++) {
-                    newHeaders[i] = a.getAnnotator() + "$" + i;
+                List<String> newHeaders = new ArrayList<>();
+                List<Either<String, Number>> newHeaderTypes
+                        = new ArrayList<>();
+
+                for (int i = 0; i < newHeaders.size(); i++) {
+                    newHeaders.add(a.getAnnotator() + "$" + i);
+                    newHeaderTypes.add(a.getValueAt(i));
                 }
 
                 // Check if the annotation is already tracked in the headers 
                 // else, add all the new headers
-                if (!headers.contains(newHeaders[0])) {
-                    headers.addAll(Arrays.asList(newHeaders));
+                if (!headers.contains(newHeaders.get(0))) {
+                    headers.addAll(newHeaders);
+                    headerTypes.addAll(newHeaderTypes);
                 }
 
-                for (int i = 0; i < newHeaders.length; i++) {
-                    row.put(newHeaders[i], a.getValueAt(i));
+                for (int i = 0; i < newHeaders.size(); i++) {
+                    row.put(newHeaders.get(i), a.getValueAt(i));
                 }
 
             }
@@ -123,12 +134,15 @@ public abstract class GenericSheetPrinter {
      * @param c the component to analyze.
      */
     public void loadSentences(DocumentComponent c) {
+
+        init();
+
         if (!c.hasComponents()) {
             // c is a sentence, so print its annotations
             addRow(c);
         } else {
-            for (DocumentComponent sub : c.getComponents()) {
-                loadSentences(c);
+            for (Sentence s : DocumentUtils.getSentences(c)) {
+                addRow(s);
             }
         }
     }
@@ -139,6 +153,9 @@ public abstract class GenericSheetPrinter {
      * @param c the component to analyze.
      */
     public void loadGrams(DocumentComponent c) {
+
+        init();
+
         for (Gram g : c.getGrams()) {
             addRow(g);
         }
@@ -150,6 +167,9 @@ public abstract class GenericSheetPrinter {
      * @param c the component to analyze.
      */
     public void loadTokens(DocumentComponent c) {
+
+        init();
+
         List<Token> tokens;
 
         if (!c.hasComponents()) {
@@ -164,5 +184,14 @@ public abstract class GenericSheetPrinter {
         for (Token t : tokens) {
             addRow(t);
         }
+    }
+
+    private void init() {
+        headers = new ArrayList<>();
+        rows = new ArrayList<>();
+        headerTypes = new ArrayList<>();
+
+        headers.add(ID_COLUMN);
+        headerTypes.add(new Left<>(ID_COLUMN));
     }
 }

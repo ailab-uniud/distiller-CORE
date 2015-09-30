@@ -19,6 +19,8 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import java.util.List;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
+import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -46,14 +48,14 @@ public class StatisticalAnnotator implements Annotator {
     // Plus, is more handy to refer to a feature by ClassName.FeatureName, 
     // so that the code is much more readable.
     /**
-     * Document depth, defined as ( index of sentence of last occurrence / total
-     * of sentences ).
+     * Document depth of a gram, defined as ( index of sentence of last
+     * occurrence / total # of sentences ).
      */
     public static final String DEPTH = "Depth";
 
     /**
-     * Document depth, defined as ( index of sentence of first occurrence /
-     * total of sentences ).
+     * Document depth of a gram, defined as ( index of sentence of first
+     * occurrence / total # of sentences ).
      */
     public static final String HEIGHT = "Height";
 
@@ -71,8 +73,8 @@ public class StatisticalAnnotator implements Annotator {
     public static final String FREQUENCY = "Freq_Absolute";
 
     /**
-     * Life span, defined as ( index of sentence of last occurrence - index of
-     * sentence of first occurrence) / total # of sentences.
+     * Life span of a gram, defined as ( index of sentence of last occurrence -
+     * index of sentence of first occurrence) / total # of sentences.
      *
      * This can be expressed as (depth - (1 - height)) or equally as depth +
      * height - 1.
@@ -80,10 +82,16 @@ public class StatisticalAnnotator implements Annotator {
     public static final String LIFESPAN = "LifeSpan";
 
     /**
-     * Annotates grams with statistical information such as their frequency,
-     * their width and their depth in the
+     * Annotates grams and sentences with statistical information.
+     * <p>
+     * Grams are annotated with information such as their frequency, their width
+     * and their depth in the
      * {@link it.uniud.ailab.dcore.persistence.DocumentComponent} passed as
      * input.
+     * <p>
+     * Sentences are annotated with their length, expressed both in number of
+     * words and number of characters (including whitespaces).
+     *
      *
      * @param component the component to analyze.
      */
@@ -101,6 +109,16 @@ public class StatisticalAnnotator implements Annotator {
         // see the variable declarations above.
         for (Sentence s : sentences) {
             count++;
+
+            s.addAnnotation(
+                    new FeatureAnnotation(
+                            DefaultAnnotations.WORD_COUNT,
+                            s.getTokens().size()));
+            
+            s.addAnnotation(
+                    new FeatureAnnotation(
+                            DefaultAnnotations.CHAR_COUNT,
+                            s.getText().length()));
             
             //buffer to avoid writing some annotations more than once
             // every sentence

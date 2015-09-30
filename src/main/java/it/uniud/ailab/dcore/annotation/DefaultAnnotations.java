@@ -25,10 +25,12 @@ package it.uniud.ailab.dcore.annotation;
  */
 public class DefaultAnnotations {
     
-    public final String SENTENCE_INDEX = "SentenceIndex";
+    public static final String SENTENCE_INDEX = "SentenceIndex";
     
-    public final String SENTENCE_COUNT = "SentenceCount";
+    public static final String SENTENCE_COUNT = "SentenceCount";
     
-    public final String CHAR_COUNT = "CharCount";
+    public static final String CHAR_COUNT = "CharCount";
+    
+    public static final String WORD_COUNT = "WordCount";
     
 }

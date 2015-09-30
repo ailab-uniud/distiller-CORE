@@ -29,7 +29,15 @@ public abstract class Annotable {
     
     private Map<String,Annotation> annotations = new HashMap<>();
     
-    public abstract String getIdentifier();
+    private final String identifier;
+    
+    protected Annotable(String identifier) {
+        this.identifier = identifier;
+    }
+    
+    public String getIdentifier() {
+        return identifier;
+    }
     
     public void addAnnotation(Annotation ann) {
         annotations.put(ann.getAnnotator(),ann);

@@ -74,7 +74,7 @@ public class Launcher {
      * Determines whether the annotations over grams should be printed or not.
      */
     private static boolean printGrams = false;
-    
+
     /**
      * Verbose mode flag.
      */
@@ -111,13 +111,10 @@ public class Launcher {
         }
 
         // read the options.
-        if (!readOptions(cmd)) {
-            // if something went wrong, exit.
-            return;
+        if (readOptions(cmd)) {
+            // everything's good! proceed
+            doWork();
         }
-
-        // everything's good! proceed
-        doWork();
     }
 
     private static boolean readOptions(CommandLine cmd) {
@@ -133,7 +130,7 @@ public class Launcher {
             printError("You can set either -f or -d options, not both.");
             return false;
         }
-        
+
         if (cmd.hasOption("f")) {
             inputPath = new File(cmd.getOptionValue("f"));
             if (!inputPath.exists() || !inputPath.isFile()) {
@@ -151,6 +148,7 @@ public class Launcher {
             printError("No input file or directory detected.");
             return false;
         }
+
         if (cmd.hasOption("o")) {
             outputPath = new File(cmd.getOptionValue("o"));
             if (!outputPath.exists() && !outputPath.mkdir()) {
@@ -173,7 +171,7 @@ public class Launcher {
             printError("You should select something to print.");
             return false;
         }
-        
+
         if (cmd.hasOption("v")) {
             verbose = true;
         }
@@ -249,7 +247,7 @@ public class Launcher {
                 .hasArg(false)
                 .build()
         );
-        
+
         // verbose distillation
         options.addOption(Option.builder("v")
                 .longOpt("verbose")
@@ -285,8 +283,8 @@ public class Launcher {
                 analyzeDir();
             }
         } catch (IOException ioe) {
-            System.err.println("Error while analyzing: " + 
-                    inputPath.getAbsolutePath());
+            System.err.println("Error while analyzing: "
+                    + inputPath.getAbsolutePath());
             System.err.println(ioe.getLocalizedMessage());
         }
 
@@ -295,17 +293,43 @@ public class Launcher {
     private static void analyzeFile(File inputPath) throws IOException {
 
         Distiller d = DistillerFactory.getDefaultCode();
-        d.setVerbose(verbose);        
+        d.setVerbose(verbose);
 
         d.distill(String.join(" ",
                 Files.readAllLines(
                         inputPath.toPath(), StandardCharsets.UTF_8)));
-        
+
         CsvPrinter printer = new CsvPrinter();
         
+        String fileName = inputPath.toPath().getFileName().toString();
+        
+        fileName = fileName.endsWith(".txt") ? 
+                fileName.substring(0, fileName.length() - 4) :
+                fileName;
+        
+
         if (printGrams) {
-            printer.printGrams("grams.txt", d.getBlackboard());           
+
+            String gramsPath = outputPath.getAbsolutePath()
+                    + "/grams.txt";
+
+            printer.printGrams(gramsPath, d.getBlackboard());
+
+            System.out.println(
+                    "Saved grams in " + gramsPath);
         }
+
+        if (printSentences) {
+
+            String sentPath = outputPath.getAbsolutePath()
+                    + "/sentences.txt";
+
+            printer.printSentences(sentPath, d.getBlackboard());
+
+            System.out.println(
+                    "Saved sentences in " + sentPath);
+        }
+
     }
 
     private static void analyzeDir() {
