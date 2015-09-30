@@ -45,7 +45,7 @@ import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
 /**
  * A bootstrapper annotator for the English language developed using the Apache
  * OpenNLP library. The annotator splits the document, tokenizes it and performs
- * POS tagging; the stemming is performed using the Snowball stemmer. 
+ * POS tagging; the stemming is performed using the Snowball stemmer.
  *
  * This annotator can support every language the OpenNLP library supports. For
  * more info and a CoreNLP tutorial, please refer to
@@ -66,6 +66,12 @@ import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
 public class OpenNlpBootstrapperAnnotator implements Annotator {
 
     /**
+     * A counter that keeps track of the number of sentences identified by the
+     * Annotator, used as identifier for the generated Sentences.
+     */
+    private int sentenceCounter = 1;
+
+    /**
      * Variable that contains the database paths of the models for the various
      * OpenNLP component. The name of the entries should match the naming
      * convention of the OpenNLP toolkit, i.e. ($lang)-($tool), e.g. as
@@ -76,13 +82,13 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
 
     // Caches for the models used, so subsequent calls of the annotator
     // don't have to reload the models
-    private static Map<String, SentenceModel> sentenceModelsCache
+    private static final Map<String, SentenceModel> sentenceModelsCache
             = new HashMap<>();
 
-    private static Map<String, TokenizerModel> tokenizerModelsCache
+    private static final Map<String, TokenizerModel> tokenizerModelsCache
             = new HashMap<>();
 
-    private static Map<String, POSModel> posModelsCache
+    private static final Map<String, POSModel> posModelsCache
             = new HashMap<>();
 
     /**
@@ -91,7 +97,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      * @param component the component to annotate.
      */
     @Override
-    public void annotate(Blackboard blackboard,DocumentComponent component) {
+    public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         if (databasePaths.entrySet().isEmpty()) {
             SetDefaultModels();
@@ -118,7 +124,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         for (String sentenceString : sentences) {
 
             // the distilled sentence object
-            Sentence sentence = new Sentence(sentenceString);
+            Sentence sentence = new Sentence(sentenceString,
+                    "" + sentenceCounter++);
             sentence.setLanguage(component.getLanguage());
 
             // Tokenize the sentence
@@ -154,7 +161,6 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 sentence.addToken(t);
 
             } // for 
-
             ((DocumentComposite) component).addComponent(sentence);
 
         } // for (String sentenceString : sentences)
@@ -237,7 +243,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 //LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
             } catch (IOException ex) {
                 //LOG.log(Level.SEVERE, "Savefile error", ex);
-                throw new AnnotationException(this,"Failed to download " + e.getValue(),ex);
+                throw new AnnotationException(this, "Failed to download " + e.getValue(), ex);
             } finally {
 
                 // if something went wrong, put the default value.
@@ -303,7 +309,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         }
         return sentenceModelsCache.get(modelId);
     }
-    
+
     /**
      * Loads a tokenizer model or retrieves it from cache if has been already
      * loaded before.
@@ -352,7 +358,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         }
         return tokenizerModelsCache.get(modelId);
     }
-    
+
     /**
      * Loads a POStagger model or retrieves it from cache if has been already
      * loaded before.

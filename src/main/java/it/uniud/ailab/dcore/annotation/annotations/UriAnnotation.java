@@ -18,40 +18,54 @@ package it.uniud.ailab.dcore.annotation.annotations;
 
 import it.uniud.ailab.dcore.annotation.Annotation;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An annotation that annotates a chunk of text with an URI.
- * 
+ *
  * @author Marco Basaldella
  */
 public class UriAnnotation extends Annotation {
-    
-    private final String surface;
-    private final String uriTitle;
-    private final URI uri;
 
     public UriAnnotation(String annotator, String surface, String uriTitle, URI uri) {
         super(annotator);
-        this.surface = surface;
-        this.uriTitle = uriTitle;
-        this.uri = uri;
+        super.addString(surface);
+        super.addString(uriTitle);
+        super.addString(uri.toString());
     }
 
     public String getSurface() {
-        return surface;
+        return super.getStringAt(0);
     }
 
     public String getUriTitle() {
-        return uriTitle;
+        return super.getStringAt(1);
     }
 
     public URI getUri() {
+
+        URI uri = null;
+
+        try {
+            uri = new URI(super.getStringAt(2));
+        } catch (URISyntaxException ex) {
+
+            // The catch is mandatory, but it's very unlikely that
+            // this may happen
+            Logger.getLogger(InferenceAnnotation.class.getName())
+                    .log(Level.SEVERE,
+                            "Absurdity: URI converted to String cannot be converted back to URI",
+                            ex);
+        }
+
         return uri;
     }
-    
+
     @Override
     public String toString() {
-        return annotator + ": " + uri.toASCIIString();
+        return annotator + ": " + getUri().toASCIIString();
     }
-    
+
 }

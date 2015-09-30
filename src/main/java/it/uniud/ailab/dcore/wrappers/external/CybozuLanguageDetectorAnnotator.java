@@ -62,7 +62,7 @@ public class CybozuLanguageDetectorAnnotator implements Annotator {
      * 
      * @param text the text to analyze.
      * @return the code of the language detected
-     * @throws LangDetectException
+     * @throws LangDetectException when the model can't be loaded
      */
     public String detect(String text) throws LangDetectException {
         
@@ -96,8 +96,8 @@ public class CybozuLanguageDetectorAnnotator implements Annotator {
      * Note: the component supports only components written in a single language
      * and with no children.
      * 
-     * @param blackboard
-     * @param component 
+     * @param blackboard the current blackboard
+     * @param component the component to analyze
      */
     @Override
     public void annotate(Blackboard blackboard,DocumentComponent component) {

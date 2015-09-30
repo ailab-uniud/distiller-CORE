@@ -19,8 +19,6 @@ package it.uniud.ailab.dcore.persistence;
 import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The smallest object of the Distiller, which represents a component of a sentence
@@ -28,10 +26,6 @@ import java.util.List;
  */
 public class Token extends Annotable {
 
-    /**
-     * The text of the token.
-     */
-    private final String text;
     /**
      * The stem of the word or, if a lemmatizer is used instead of a stemmer, 
      * the lemma.
@@ -48,7 +42,7 @@ public class Token extends Annotable {
      * @param text the text of the token.
      */
     public Token(String text){
-        this.text = text;
+        super(text);
     }
     
     // <editor-fold desc="Id, stem and PoS">
@@ -77,7 +71,7 @@ public class Token extends Annotable {
      * @return the text of the token.
      */
     public String getText() {
-        return text;
+        return super.getIdentifier();
     }
 
     /**
@@ -148,7 +142,7 @@ public class Token extends Annotable {
      */
     @Override
     public String toString() {
-        String ret = text + " {(POS:" + getPoS() + ")" ;
+        String ret = getText() + " {(POS:" + getPoS() + ")" ;
         for (Annotation a : getAnnotations()) {
             if (a instanceof TextAnnotation)
                 ret = ret + ", (" + a.getAnnotator() + ":" + 
@@ -178,12 +172,17 @@ public class Token extends Annotable {
             return false;
         }
         final Token other = (Token) obj;
-        if (!text.equals(other.text)) {
+        if (!getText().equals(other.getText())) {
             return false;
         }
         if (!stem.equals(other.stem)) {
             return false;
         }
         return PoS.equals(other.PoS);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return getText();
     }
 }

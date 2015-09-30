@@ -14,26 +14,23 @@
  * 	See the License for the specific language governing permissions and
  * 	limitations under the License.
  */
-package it.uniud.ailab.dcore.samples;
-
-import it.uniud.ailab.dcore.DistillerFactory;
-import it.uniud.ailab.dcore.eval.kp.*;
+package it.uniud.ailab.dcore.annotation;
 
 /**
- * Run the evaluation routines for keyphrase extraction.
+ * A set of default annotations. An annotator that produces an annotation
+ * that is (conceptually equal to one) listed in this file should use the
+ * constant defined there.
  *
  * @author Marco Basaldella
  */
-public class Evaluation {
+public class DefaultAnnotations {
     
-    public static void main(String[] args) {
-        
-        KeyphraseEvaluator[] tasks = new KeyphraseEvaluator[]
-                { new SemEval2010("/usr/local/dcore/eval/SemEval2010/") };
-        
-        for (KeyphraseEvaluator task : tasks) {
-            task.evaluate(DistillerFactory.getDefaultEval());
-        }
-        
-    }    
+    public static final String SENTENCE_INDEX = "SentenceIndex";
+    
+    public static final String SENTENCE_COUNT = "SentenceCount";
+    
+    public static final String CHAR_COUNT = "CharCount";
+    
+    public static final String WORD_COUNT = "WordCount";
+    
 }

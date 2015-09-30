@@ -40,21 +40,34 @@ public class DocumentComposite extends DocumentComponent {
      * 
      * @param text the text of the composite.
      * @param language the language of the composite.
+     * @param identifier the output friendly identifier of the composite
      */
-    public DocumentComposite(String text, Locale language) {
-        super(text, language);
+    public DocumentComposite(String text, Locale language,String identifier) {
+        super(text, language,identifier);
         components = new ArrayList<>();
     }
-
+    
     /**
      * Create a composite with no language associated. This requires
      * a call to setLanguage before many of the annotators can actually work.
      * 
      * @param text the text of the composite.
+     * @param id the output friendly identifier of the composite
      */
-    public DocumentComposite(String text) {
-        this(text, null);
+    public DocumentComposite(String text,String id) {
+        this(text, null,id);
     }
+
+    
+//    /**
+//     * Create a composite with no language associated. This requires
+//     * a call to setLanguage before many of the annotators can actually work.
+//     * 
+//     * @param text the text of the composite.
+//     */
+//    public DocumentComposite(String text) {
+//        this(text, null,text.substring(0, 17) + "...");
+//    }
 
     //<editor-fold desc="Getters and setters">
      /**
@@ -115,5 +128,4 @@ public class DocumentComposite extends DocumentComponent {
         
         return ret;
     }
-
 }

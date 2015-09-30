@@ -35,10 +35,6 @@ import java.util.function.BinaryOperator;
 public class Gram extends Annotable {
 
     /**
-     * The stemmed (or lemmatized) surface.
-     */
-    private final String identifier;
-    /**
      * The different list of words forming the surface of the gram.
      */
     private List<List<Token>> tokenLists;
@@ -65,13 +61,14 @@ public class Gram extends Annotable {
      * @param surface the pretty-printed string representation of the gram
      */
     public Gram(String identifier, List<Token> sequence, String surface) {
+        
+        super(identifier);
+        
         tokenLists = new ArrayList<>();
         tokenLists.add(sequence);
         
         surfaces = new ArrayList<>();
         surfaces.add(surface);
-        
-        this.identifier = identifier;
         appareances = new ArrayList<>();
     }
     
@@ -158,8 +155,9 @@ public class Gram extends Annotable {
      *
      * @return the signature of the gram.
      */
+    @Override
     public String getIdentifier() {
-        return this.identifier;
+        return super.getIdentifier();
     }
 
     // <editor-fold desc="Feature and annotation Management">

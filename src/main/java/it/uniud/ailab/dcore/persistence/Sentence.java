@@ -16,7 +16,6 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
-import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -32,11 +31,6 @@ import java.util.Locale;
 public class Sentence extends DocumentComponent {
     
     // <editor-fold desc="Private fields">
-
-    /**
-     * The language of the sentence.
-     */
-    private Locale language;
 
     /**
      * The {@link it.uniud.ailab.dcore.persistence.Token}s that form the sentence.
@@ -56,9 +50,10 @@ public class Sentence extends DocumentComponent {
      * 
      * @param text the text of the sentence
      * @param language the language of the sentence
+     * @param identifier the output friendly identifier of the sentence
      */    
-    public Sentence(String text,Locale language) {
-        super(text,language);
+    public Sentence(String text,Locale language,String identifier) {
+        super(text,language,identifier);
         tokenizedSentence = new ArrayList<>();
         grams = new ArrayList<>();        
     }
@@ -67,10 +62,11 @@ public class Sentence extends DocumentComponent {
      * Creates a sentence with the specified text. This requires
      * a call to setLanguage before many of the annotators can actually work.
      * 
-     * @param text the text of the sentence.
+     * @param text the text of the sentence
+     * @param identifier the output friendly identifier of the sentence
      */
-    public Sentence(String text) {
-        this(text,null);
+    public Sentence(String text,String identifier) {
+        this(text,null,identifier);
     }
     
     /**
