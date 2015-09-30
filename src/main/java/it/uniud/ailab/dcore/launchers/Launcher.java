@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Locale;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -42,6 +43,8 @@ import org.apache.commons.cli.ParseException;
  * <li>Process the pipeline over the document or the documents contained in the
  * folder</li>
  * <li>Print the result of the computation.</li>
+ * 
+ * The input files should be saved in UTF-8 or UTF-16 format.
  * </ul>
  *
  *
@@ -73,6 +76,11 @@ public class Launcher {
      * The command-line options.
      */
     private static final Options options = new Options();
+
+    /**
+     * The language to use to distill.
+     */
+    private static Locale language = null;
 
     /**
      * Determines whether the annotations over sentences should be printed or
@@ -208,6 +216,10 @@ public class Launcher {
             verbose = true;
         }
 
+        if (cmd.hasOption("l")) {
+            language = new Locale(cmd.getOptionValue("l"));
+        }
+
         return true;
     }
 
@@ -295,6 +307,14 @@ public class Launcher {
                 .desc("Print details while extracting")
                 .hasArg(false)
                 .build());
+
+        options.addOption(Option.builder("l")
+                .longOpt("language")
+                .desc("LANGUAGE of the input document (optional)")
+                .hasArg(true)
+                .argName("LANGUAGE")
+                .build()
+        );
     }
 
     /**
@@ -336,9 +356,8 @@ public class Launcher {
                 analyzeDir(inputPath);
             }
         } catch (IOException ioe) {
-            System.err.println("Error while analyzing: "
-                    + inputPath.getAbsolutePath());
             System.err.println(ioe.getLocalizedMessage());
+            System.err.println(ioe.toString());
         }
 
     }
@@ -346,11 +365,11 @@ public class Launcher {
     /**
      * Distill the content of a file.
      *
-     * @param inputPath the file to analyze.
+     * @param filePath the file to analyze.
      *
      * @throws IOException if there's an error reading the file.
      */
-    private static void analyzeFile(File inputPath) throws IOException {
+    private static void analyzeFile(File filePath) throws IOException {
 
         Distiller d = null;
 
@@ -372,15 +391,18 @@ public class Launcher {
             return;
         }
 
+        if (language != null) {
+            d.setLocale(language);
+        }
+
         d.setVerbose(verbose);
 
-        d.distill(String.join(" ",
-                Files.readAllLines(
-                        inputPath.toPath(), StandardCharsets.UTF_8)));
+        String document = loadDocument(filePath);
+        d.distill(document);
 
-        CsvPrinter printer = new CsvPrinter('\t');
+        CsvPrinter printer = new CsvPrinter();
 
-        String fileName = inputPath.toPath().getFileName().toString();
+        String fileName = filePath.toPath().getFileName().toString();
 
         fileName = fileName.endsWith(".txt")
                 ? fileName.substring(0, fileName.length() - 4)
@@ -411,6 +433,63 @@ public class Launcher {
     }
 
     /**
+     * Load the document trying different charsets. The charset tried, are, in
+     * order:
+     * <ul>
+     * <li>UTF-16;</li>
+     * <li>UTF-8;</li>
+     * <li>US-ASCII.</li>
+     * </ul>
+     *
+     * @param filePath the path of the document
+     * @return the text of the document
+     * @throws IOException if the charset is not supported
+     */
+    private static String loadDocument(File filePath) throws IOException {
+
+        String document = "";
+
+        IOException exception = null;
+        // try different charsets. if none is recognized, throw the
+        // exception detected when reading.
+        try {
+            document = String.join(" ", Files.readAllLines(
+                    filePath.toPath(), StandardCharsets.UTF_8));
+
+        } catch (java.nio.charset.MalformedInputException e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            try {
+                exception = null;
+                document = String.join(" ", Files.readAllLines(
+                        filePath.toPath(), StandardCharsets.UTF_16));
+
+            } catch (java.nio.charset.MalformedInputException e) {
+                exception = e;
+            }
+        }
+
+        if (exception != null) {
+            try {
+                exception = null;
+                document = String.join(" ", Files.readAllLines(
+                        filePath.toPath(), StandardCharsets.US_ASCII));
+
+            } catch (java.nio.charset.MalformedInputException e) {
+                exception = e;
+            }
+        }
+
+        // no charset has been recognized
+        if (exception != null) {
+            throw exception;
+        }
+        return document;
+    }
+
+    /**
      * Distill the content of a directory.
      *
      * @param inputPath the directory analyze.
@@ -418,6 +497,14 @@ public class Launcher {
      * @throws IOException if there's an error reading the file.
      */
     private static void analyzeDir(File inputPath) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        File folderPath = inputPath;
+
+        for (File f : folderPath.listFiles()) {
+
+            System.out.println("Analyzing " + f.getAbsolutePath() + "...");
+            analyzeFile(f);
+
+        }
+
     }
 }
