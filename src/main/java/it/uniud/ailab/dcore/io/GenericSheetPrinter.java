@@ -208,6 +208,9 @@ public abstract class GenericSheetPrinter {
         }
     }
 
+    /**
+     * Clear the spreadsheet.
+     */
     private void init() {
         headers = new ArrayList<>();
         rows = new ArrayList<>();

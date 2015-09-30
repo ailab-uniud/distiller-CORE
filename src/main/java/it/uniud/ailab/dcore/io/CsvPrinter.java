@@ -53,35 +53,74 @@ public class CsvPrinter extends GenericSheetPrinter {
      */
     private static final boolean DEFAULT_HEADERS = true;
 
+    /**
+     * Instantiates the {@code CsvPrinter} with the default options.
+     */
     public CsvPrinter() {
         this(DEFAULT_DELIMITER, DEFAULT_HEADERS);
     }
 
+    /**
+     * Instantiates the {@code CsvPrinter} with the default header options.
+     *
+     * @param delimiter delimiter of the records in a row
+     */
     public CsvPrinter(char delimiter) {
         this(delimiter, DEFAULT_HEADERS);
     }
 
+    /**
+     * Instantiates the {@code CsvPrinter} with the default delimiter options.
+     *
+     * @param printHeaders true if the printer should write the headers of the
+     * table; false otherwise.
+     */
     public CsvPrinter(boolean printHeaders) {
         this(DEFAULT_DELIMITER, printHeaders);
     }
 
+    /**
+     * Instantiates the {@code CsvPrinter} with the specified options.
+     *
+     * @param delimiter delimiter of the records in a row
+     * @param printHeaders true if the printer should write the headers of the
+     * table; false otherwise.
+     */
     public CsvPrinter(char delimiter, boolean printHeaders) {
         this.delimiter = delimiter;
         this.printHeaders = printHeaders;
     }
 
-    public void printGrams(String fileName, Blackboard b) {
+    /**
+     * Write the annotations contained in the document n-grams in the specified
+     * file.
+     *
+     * @param fileName the name of the file to write.
+     * @param b the blackboard to analyze.
+     */
+    public void writeGrams(String fileName, Blackboard b) {
 
         this.loadGrams(b.getStructure());
         writeFile(fileName);
-
     }
 
-    public void printSentences(String sentPath, Blackboard blackboard) {
-        this.loadSentences(blackboard.getStructure());
-        writeFile(sentPath);
+    /**
+     * Write the annotations contained in the document sentences in the
+     * specified file.
+     *
+     * @param fileName the name of the file to write.
+     * @param b the blackboard to analyze.
+     */
+    public void writeSentences(String fileName, Blackboard b) {
+        this.loadSentences(b.getStructure());
+        writeFile(fileName);
     }
 
+    /**
+     * Writes the annotations contained in the printer on the specified file.
+     * 
+     * @param fileName the path where to write.
+     */
     private void writeFile(String fileName) {
 
         try {
@@ -90,7 +129,7 @@ public class CsvPrinter extends GenericSheetPrinter {
                             delimiter, CSVWriter.DEFAULT_QUOTE_CHARACTER);
 
             writer.writeNext(getHeaders().
-                    toArray(new String[getHeaders().size()]),false);
+                    toArray(new String[getHeaders().size()]), false);
 
             // build the rows            
             for (Map<String, Either<String, Number>> row : this.getRows()) {
@@ -124,7 +163,7 @@ public class CsvPrinter extends GenericSheetPrinter {
                     }
                 }
 
-                writer.writeNext(rowArray,false);
+                writer.writeNext(rowArray, false);
             }
 
             writer.close();

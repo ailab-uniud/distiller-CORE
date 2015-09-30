@@ -47,7 +47,6 @@ import org.apache.commons.cli.ParseException;
  * The input files should be saved in UTF-8 or UTF-16 format.
  * </ul>
  *
- *
  * @author Marco Basaldella
  */
 public class Launcher {
@@ -413,7 +412,7 @@ public class Launcher {
             String gramsPath = outputPath.getAbsolutePath()
                     + "/" + fileName + ".grams.txt";
 
-            printer.printGrams(gramsPath, d.getBlackboard());
+            printer.writeGrams(gramsPath, d.getBlackboard());
 
             System.out.println(
                     "Saved grams in " + gramsPath);
@@ -424,7 +423,7 @@ public class Launcher {
             String sentPath = outputPath.getAbsolutePath()
                     + "/" + fileName + ".sentences.txt";
 
-            printer.printSentences(sentPath, d.getBlackboard());
+            printer.writeSentences(sentPath, d.getBlackboard());
 
             System.out.println(
                     "Saved sentences in " + sentPath);
