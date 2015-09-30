@@ -23,7 +23,6 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import it.uniud.ailab.dcore.utils.Either;
 import it.uniud.ailab.dcore.utils.Either.Left;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +73,20 @@ public abstract class GenericSheetPrinter {
     public List<Map<String, Either<String, Number>>> getRows() {
         return rows;
     }
+    
+    /**
+     * Searches the table to check if contains a row with a certain identifier.
+     * 
+     * @param id the identifier of the row to search
+     * @return true if the table contains the row
+     */
+    public boolean containsRow(String id) {
+        for (Map<String, Either<String, Number>> row : rows)
+            if (row.get(ID_COLUMN).getLeft().equals(id))
+                return true;
+        
+        return false;                
+    }
 
     /**
      * Stores a generic annotable object.
@@ -83,7 +96,13 @@ public abstract class GenericSheetPrinter {
     private void addRow(Annotable annotable) {
 
         Map<String, Either<String, Number>> row = new HashMap<>();
-        row.put(ID_COLUMN, new Left<>(annotable.getIdentifier()));
+        
+        String rowId = annotable.getIdentifier();
+        
+        if (containsRow(rowId))
+            return;
+        
+        row.put(ID_COLUMN, new Left<>(rowId));
 
         for (Annotation a : annotable.getAnnotations()) {
 

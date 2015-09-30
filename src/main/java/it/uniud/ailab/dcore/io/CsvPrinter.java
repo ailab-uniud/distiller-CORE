@@ -113,7 +113,7 @@ public class CsvPrinter extends GenericSheetPrinter {
                         rowArray[i]
                                 = // if there's no decimal part in the numeric
                                 // value, avoid printing ".0"
-                                cell.getRight().intValue()
+                                cell.getRight().doubleValue()
                                 == Math.floor(cell.getRight().doubleValue())
                                         ? String.format(
                                                 Locale.US, "%d",
