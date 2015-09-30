@@ -19,11 +19,13 @@ package it.uniud.ailab.dcore;
 import it.uniud.ailab.dcore.annotation.Pipeline;
 import it.uniud.ailab.dcore.annotation.annotators.*;
 import it.uniud.ailab.dcore.wrappers.external.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * A simple factory that generates the default Distiller configuration either
@@ -95,6 +97,29 @@ public class DistillerFactory {
                 throw bsde;
             }            
         }        
+    }
+    
+    /**
+     * Instantiates a Distiller object using the specified configuration and
+     * returns it. 
+     *
+     * @param path the path where the config file is located
+     * @return a Distiller ready to work.
+     */
+    public static Distiller loadFromXML(File path) {
+        // We add the file:// thing before because, for some ??? reason, 
+        // the Spring Framework decided that all paths are relative paths.
+        
+        // So, we get the file, retrieve is absolute path, and then add the
+        // file:// prefix to be sure that the Spring Frameworks treats 
+        // all paths as absolute paths. 
+        
+        // This is less problematic, because the Java platform will handle the
+        // File and produce its absolute path, even if it has been created
+        // using a relative one.
+        ApplicationContext context = new FileSystemXmlApplicationContext(
+                "file://" + path.getAbsolutePath());
+        return (Distiller) context.getBean("distiller");
     }
     
     /**

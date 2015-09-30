@@ -60,6 +60,16 @@ public class Launcher {
     private static File outputPath;
 
     /**
+     * The path of the pipeline to use.
+     */
+    private static File configPath;
+
+    /**
+     * Which of the default pipelines has been selected by the user.
+     */
+    private static String defaultConfig = null;
+
+    /**
      * The command-line options.
      */
     private static final Options options = new Options();
@@ -117,6 +127,12 @@ public class Launcher {
         }
     }
 
+    /**
+     * Reads the command line options.
+     *
+     * @param cmd the command line options.
+     * @return true if everything have been parsed right; false otherwise.
+     */
     private static boolean readOptions(CommandLine cmd) {
 
         // if the user wants help, display that and close
@@ -159,6 +175,22 @@ public class Launcher {
             outputPath = new File(System.getProperty("user.dir"));
         }
 
+        if (cmd.hasOption("c") && cmd.hasOption("cd")) {
+            printError("You should specify only one pipeline!");
+            return false;
+        } else if (!cmd.hasOption("c") && !cmd.hasOption("cd")) {
+            printError("You should specify a pipeline!");
+            return false;
+        } else if (cmd.hasOption("c")) {
+            configPath = new File(cmd.getOptionValue("c"));
+            if (!configPath.exists() || !configPath.isFile()) {
+                printError("Invalid path: " + configPath.getAbsolutePath());
+                return false;
+            }
+        } else if (cmd.hasOption("cd")) {
+            defaultConfig = cmd.getOptionValue("cd");
+        }
+
         if (cmd.hasOption("ps")) {
             printSentences = true;
         }
@@ -192,11 +224,20 @@ public class Launcher {
         );
 
         // load the pipeline
-        options.addOption(Option.builder("p")
-                .longOpt("pipeline")
-                .desc("Use the pipeline contained in the PATH configuration file")
+        options.addOption(Option.builder("c")
+                .longOpt("config")
+                .desc("Use the configuration located in PATH")
                 .hasArg(true)
                 .argName("FILE")
+                .build()
+        );
+
+        // load the pipeline
+        options.addOption(Option.builder("cd")
+                .longOpt("config-default")
+                .desc("Use one of the default configurations")
+                .hasArg(true)
+                .argName("PIPELINE")
                 .build()
         );
 
@@ -215,7 +256,7 @@ public class Launcher {
         // load the input directory
         inputGroup.addOption(Option.builder("d")
                 .longOpt("dir")
-                .desc("Analyze all files contained in DIR")
+                .desc("Analyze all files contained in DIR (not recursive)")
                 .hasArg(true)
                 .argName("DIR")
                 .build()
@@ -256,12 +297,21 @@ public class Launcher {
                 .build());
     }
 
+    /**
+     * Displays an error message followed by the instructions on how to use the
+     * Launcher.
+     *
+     * @param message the error message.
+     */
     private static void printError(String message) {
         System.out.println("Error: " + message);
         System.out.println();
         printHelp();
     }
 
+    /**
+     * Displays the instructions.
+     */
     private static void printHelp() {
 
         System.out.println("Distiller-CORE library - http://ailab.uniud.it");
@@ -274,13 +324,16 @@ public class Launcher {
                 + ".jar", options);
     }
 
+    /**
+     * Decide what Distillation (single or directory) execute and run it.
+     */
     private static void doWork() {
 
         try {
             if (inputPath.isFile()) {
                 analyzeFile(inputPath);
             } else {
-                analyzeDir();
+                analyzeDir(inputPath);
             }
         } catch (IOException ioe) {
             System.err.println("Error while analyzing: "
@@ -290,28 +343,53 @@ public class Launcher {
 
     }
 
+    /**
+     * Distill the content of a file.
+     *
+     * @param inputPath the file to analyze.
+     *
+     * @throws IOException if there's an error reading the file.
+     */
     private static void analyzeFile(File inputPath) throws IOException {
 
-        Distiller d = DistillerFactory.getDefaultCode();
+        Distiller d = null;
+
+        if (defaultConfig == null) {
+            d = DistillerFactory.loadFromXML(configPath);
+        } else if (defaultConfig.equals("simpleKE")) {
+            d = DistillerFactory.getDefaultCode();
+
+        } // add other default pipelines HERE
+        // please remeber to document the new pipeline in the help message
+        // that is printed below 
+        else {
+
+            System.out.println("Unrecognized configuration. Supported parameters:");
+            System.out.println("- simpleKE : simple, offline keyphrase extraction");
+            System.out.println();
+
+            printError("Please select a valid configuration.");
+            return;
+        }
+
         d.setVerbose(verbose);
 
         d.distill(String.join(" ",
                 Files.readAllLines(
                         inputPath.toPath(), StandardCharsets.UTF_8)));
 
-        CsvPrinter printer = new CsvPrinter();
-        
+        CsvPrinter printer = new CsvPrinter('\t');
+
         String fileName = inputPath.toPath().getFileName().toString();
-        
-        fileName = fileName.endsWith(".txt") ? 
-                fileName.substring(0, fileName.length() - 4) :
-                fileName;
-        
+
+        fileName = fileName.endsWith(".txt")
+                ? fileName.substring(0, fileName.length() - 4)
+                : fileName;
 
         if (printGrams) {
 
             String gramsPath = outputPath.getAbsolutePath()
-                    + "/grams.txt";
+                    + "/" + fileName + ".grams.txt";
 
             printer.printGrams(gramsPath, d.getBlackboard());
 
@@ -322,7 +400,7 @@ public class Launcher {
         if (printSentences) {
 
             String sentPath = outputPath.getAbsolutePath()
-                    + "/sentences.txt";
+                    + "/" + fileName + ".sentences.txt";
 
             printer.printSentences(sentPath, d.getBlackboard());
 
@@ -332,7 +410,14 @@ public class Launcher {
 
     }
 
-    private static void analyzeDir() {
+    /**
+     * Distill the content of a directory.
+     *
+     * @param inputPath the directory analyze.
+     *
+     * @throws IOException if there's an error reading the file.
+     */
+    private static void analyzeDir(File inputPath) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

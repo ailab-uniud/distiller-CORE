@@ -16,6 +16,7 @@
  */
 package it.uniud.ailab.dcore.io;
 
+import com.sun.media.jfxmedia.logging.Logger;
 import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.*;
@@ -73,19 +74,21 @@ public abstract class GenericSheetPrinter {
     public List<Map<String, Either<String, Number>>> getRows() {
         return rows;
     }
-    
+
     /**
      * Searches the table to check if contains a row with a certain identifier.
-     * 
+     *
      * @param id the identifier of the row to search
      * @return true if the table contains the row
      */
     public boolean containsRow(String id) {
-        for (Map<String, Either<String, Number>> row : rows)
-            if (row.get(ID_COLUMN).getLeft().equals(id))
+        for (Map<String, Either<String, Number>> row : rows) {
+            if (row.get(ID_COLUMN).getLeft().equals(id)) {
                 return true;
-        
-        return false;                
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -96,12 +99,13 @@ public abstract class GenericSheetPrinter {
     private void addRow(Annotable annotable) {
 
         Map<String, Either<String, Number>> row = new HashMap<>();
-        
+
         String rowId = annotable.getIdentifier();
-        
-        if (containsRow(rowId))
+
+        if (containsRow(rowId)) {
             return;
-        
+        }
+
         row.put(ID_COLUMN, new Left<>(rowId));
 
         for (Annotation a : annotable.getAnnotations()) {
@@ -109,7 +113,6 @@ public abstract class GenericSheetPrinter {
             // If it's a single-valued annotation, just add the value.
             // elsewhise, customize the headers with a counter.
             if (a.size() == 1) {
-
                 // Check if the annotation is already tracked in the headers
                 if (!headers.contains(a.getAnnotator())) {
                     headers.add(a.getAnnotator());
@@ -123,7 +126,7 @@ public abstract class GenericSheetPrinter {
                 List<Either<String, Number>> newHeaderTypes
                         = new ArrayList<>();
 
-                for (int i = 0; i < newHeaders.size(); i++) {
+                for (int i = 0; i < a.size(); i++) {
                     newHeaders.add(a.getAnnotator() + "$" + i);
                     newHeaderTypes.add(a.getValueAt(i));
                 }

@@ -90,12 +90,12 @@ public class WikipediaInferenceAnnotator implements Annotator {
     /**
      * Annotation signature of related Wikipedia pages.
      */
-    public static final String RELATED = "Wiki$related";
+    public static final String RELATED = "WikiRelated";
 
     /**
      * Annotations signature of hypernyms Wikipedia pages.
      */
-    public static final String HYPERNYMS = "Wiki$hyper";
+    public static final String HYPERNYMS = "WikiHyper";
 
     /**
      * The user agent that will be used for HTTP requests (since Wikipedia
