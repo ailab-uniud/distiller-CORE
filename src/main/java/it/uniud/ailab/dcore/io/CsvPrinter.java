@@ -100,7 +100,7 @@ public class CsvPrinter extends GenericSheetPrinter {
      */
     public void writeGrams(String fileName, Blackboard b) {
 
-        this.loadGrams(b.getStructure());
+        this.loadGrams(b);
         writeFile(fileName);
     }
 

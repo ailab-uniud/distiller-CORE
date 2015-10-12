@@ -16,6 +16,7 @@
  */
 package it.uniud.ailab.dcore.io;
 
+import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.*;
@@ -165,6 +166,20 @@ public abstract class GenericSheetPrinter {
             for (Sentence s : DocumentUtils.getSentences(c)) {
                 addRow(s);
             }
+        }
+    }
+    
+    /**
+     * Loads all the n-grams in the sheet.
+     *
+     * @param c the component to analyze.
+     */
+    public void loadGrams(Blackboard c) {
+
+        init();
+
+        for (Gram g : c.getGrams()) {
+            addRow(g);
         }
     }
 
