@@ -11,11 +11,11 @@
  
   	     http://www.apache.org/licenses/LICENSE-2.0
  
-  	Unless required by applicable law or agreed to in writing, software
-  	distributed under the License is distributed on an "AS IS" BASIS,
-  	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  	See the License for the specific language governing permissions and
-  	limitations under the License.
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
 -->
 
 
@@ -32,7 +32,7 @@
     </bean>
     <bean id="italian" class="java.util.Locale">
         <constructor-arg value="it" type="java.lang.String"/>
-     </bean>
+    </bean>
     
     
     <!-- Language detectors -->  
@@ -41,24 +41,23 @@
     <!-- Annotators -->  
     <bean id="openNLP" 
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
-      <!-- Example of local models path -->
-      <!--
-      <property name="modelPaths">
-          <map key-type="java.lang.String" value-type="java.lang.String">
-              <entry key="en-sent" value="/opt/drest/models/en-sent.bin"/>
-              <entry key="en-token" value="/opt/drest/models/en-token.bin"/>
-              <entry key="en-pos-maxent" value="/opt/drest/models/en-pos-maxent.bin"/>
-              <entry key="it-sent" value="/opt/drest/models/it/it-sent.bin"/>
-              <entry key="it-token" value="/opt/drest/models/it/it-token.bin"/>
-              <entry key="it-pos-maxent" value="/opt/drest/models/it/it-pos-maxent.bin"/>
-            </map>
-      </property>
-      -->        
+        <!-- Example of local models path -->
+        <!--
+        <property name="modelPaths">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="en-sent" value="/opt/drest/models/en-sent.bin"/>
+                <entry key="en-token" value="/opt/drest/models/en-token.bin"/>
+                <entry key="en-pos-maxent" value="/opt/drest/models/en-pos-maxent.bin"/>
+                <entry key="it-sent" value="/opt/drest/models/it/it-sent.bin"/>
+                <entry key="it-token" value="/opt/drest/models/it/it-token.bin"/>
+                <entry key="it-pos-maxent" value="/opt/drest/models/it/it-pos-maxent.bin"/>
+              </map>
+        </property>
+        -->        
     </bean>
       
     <!-- italian and english wikipedia annotator by the University of Pisa -->
     <!-- get your key for free writing to tagme [at] di [dot] unipi [dot] it -->
-    <!-- "Dario.de.NART.2014" -->
     <bean id="tagme" 
           class="it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator" >
         <property name="apiKey" value="INSERT YOUR KEY HERE"/>
@@ -72,7 +71,7 @@
     <bean id="syuzhet" 
           class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
     <!-- filter that keeps only the most important  grams (i.e. with the highest
-         calculated keyphraseness  -->
+    calculated keyphraseness  -->
     <bean id="skylineGramFilter" 
           class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
     <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
@@ -110,6 +109,20 @@
             <map key-type="java.util.Locale" value-type="java.lang.String">
                 <entry key-ref="english" value="/opt/drest/posPatterns/en-penn.json"/>
                 <entry key-ref="italian" value="/opt/drest/posPatterns/it-tanl.json"/>
+            </map>
+        </property>
+        -->
+    </bean>
+    
+    <!-- Stopword filters -->
+    <bean id="simpleStopword"
+          class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
+        <!-- Example of local stopword file paths -->
+        <!--
+        <property name="stopwordsPath">
+            <map key-type="java.util.Locale" value-type="java.lang.String">
+                <entry key-ref="english" value="/opt/drest/stopwords/generic.txt"/>
+                <entry key-ref="italian" value="/opt/drest/stopwords/generic.txt"/>
             </map>
         </property>
         -->
@@ -176,7 +189,9 @@
                 <ref bean="tagme"/>
                 <!-- generate the n-grams -->
                 <ref bean="nGramGenerator"/>
-                <!-- annotate the n-grmas -->
+                <!-- remove stopwords -->
+                <ref bean="simpleStopword"/>
+                <!-- annotate the n-grams -->
                 <ref bean="statistical" />
                 <ref bean="tagmegram" />
                 <!-- <ref bean="syuzhet" /> -->
