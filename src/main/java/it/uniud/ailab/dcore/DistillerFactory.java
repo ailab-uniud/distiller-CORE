@@ -154,6 +154,10 @@ public class DistillerFactory {
         
         // generate ngrams
         p.addAnnotator(new SimpleNGramGeneratorAnnotator());
+        
+        // remove stopwords
+        p.addAnnotator(new StopwordSimpleFilterAnnotator());
+        
         // annotate ngrams
         p.addAnnotator(new StatisticalAnnotator());
         

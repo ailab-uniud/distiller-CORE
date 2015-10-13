@@ -41,7 +41,7 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 public class SyuzhetAnnotator implements Annotator {
     
     public static final String INTENSITY = "Syuzhet";
-    private static final String INTENSITY_COUNTER = "Syuzhet$counter";
+    private static final String INTENSITY_COUNTER = "Syuzhet_counter";
     
     private enum Mode {
         AVERAGE,
@@ -107,12 +107,15 @@ public class SyuzhetAnnotator implements Annotator {
         loadDefinitions();
         
         List<Sentence> sentences = DocumentUtils.getSentences(component);
+        
         for (Sentence s : sentences) {
+            
             if (s.getGrams().isEmpty())
                 continue;
             
             int accumulator = 0;
             for (Token t : s.getTokens()) {
+                
                 if (weights.containsKey(t.getText()))
                     accumulator+= weights.get(t.getText());
             }
