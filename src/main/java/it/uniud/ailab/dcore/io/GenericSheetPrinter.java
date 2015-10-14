@@ -172,13 +172,13 @@ public abstract class GenericSheetPrinter {
     /**
      * Loads all the n-grams in the sheet.
      *
-     * @param c the component to analyze.
+     * @param b the component to analyze.
      */
-    public void loadGrams(Blackboard c) {
+    public void loadGrams(Blackboard b) {
 
         init();
 
-        for (Gram g : c.getGrams()) {
+        for (Gram g : b.getGrams()) {
             addRow(g);
         }
     }

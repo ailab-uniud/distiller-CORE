@@ -128,4 +128,9 @@ public class DocumentComposite extends DocumentComponent {
         
         return ret;
     }
+
+    @Override
+    public void removeGram(Gram g) {
+        throw new UnsupportedOperationException("You can't remove grams from a composite.");
+    }
 }

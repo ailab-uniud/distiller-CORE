@@ -25,6 +25,8 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Sentence;
+import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -169,6 +171,10 @@ public class Blackboard {
      */
     public void removeGram(Gram g) {
         gramContainer.remove(g.getIdentifier());
+        
+        for (Sentence s : DocumentUtils.getSentences(document)) {
+            s.removeGram(g);
+        }
     }
 
     /**

@@ -120,6 +120,13 @@ public abstract class DocumentComponent extends Annotable {
      * @return the gram associated with the component.
      */
     public abstract List<Gram> getGrams();
+    
+    /**
+     * Remote a gram from the component.
+     * 
+     * @param g the gram tor remove
+     */
+    public abstract void removeGram(Gram g);
 
     // </editor-fold>
 

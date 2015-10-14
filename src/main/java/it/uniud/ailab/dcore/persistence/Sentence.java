@@ -17,6 +17,7 @@
 package it.uniud.ailab.dcore.persistence;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -149,6 +150,35 @@ public class Sentence extends DocumentComponent {
     @Override
     public List<Gram> getGrams() {
         return grams;
+    }
+
+    /**
+     * Removes a gram from the sentence.
+     * 
+     * @param gramToRemove the gram to remove
+     */
+    @Override
+    public void removeGram(Gram gramToRemove) {
+        
+//        for (Gram gram : getGrams())
+//        {
+//            if (gram.getIdentifier().equals(gramToRemove.getIdentifier())) {
+//                this.grams.remove(gram);
+//                break;
+//            }
+//                
+//        }
+        
+        for (Iterator<Gram> gramIterator = grams.iterator(); 
+                gramIterator.hasNext();)
+        {
+            Gram gram = gramIterator.next();
+            
+            if (gram.getIdentifier().equals(gramToRemove.getIdentifier())) {
+                gramIterator.remove();
+            }
+                
+        }
     }
 
 }
