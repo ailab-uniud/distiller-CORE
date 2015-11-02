@@ -1,20 +1,22 @@
 <#if licenseFirst??>
 ${licenseFirst}
 </#if>
-${licensePrefix}	Copyright (C) ${date?date?string("yyyy")} Artificial Intelligence
-${licensePrefix}	Laboratory @ University of Udine.
+${licensePrefix}Copyright (C) ${date?date?string("yyyy")} Artificial Intelligence
+${licensePrefix}Laboratory @ University of Udine.
 ${licensePrefix?replace(" +$", "", "r")}
-${licensePrefix}	Licensed under the Apache License, Version 2.0 (the "License");
-${licensePrefix}	you may not use this file except in compliance with the License.
-${licensePrefix}	You may obtain a copy of the License at
+${licensePrefix}This program is free software; you can redistribute it and/or
+${licensePrefix}modify it under the terms of the GNU General Public License
+${licensePrefix}as published by the Free Software Foundation; either version 2
+${licensePrefix}of the License, or (at your option) any later version.
 ${licensePrefix?replace(" +$", "", "r")}
-${licensePrefix}	     http://www.apache.org/licenses/LICENSE-2.0
+${licensePrefix}This program is distributed in the hope that it will be useful,
+${licensePrefix}but WITHOUT ANY WARRANTY; without even the implied warranty of
+${licensePrefix}MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+${licensePrefix}GNU General Public License for more details.
 ${licensePrefix?replace(" +$", "", "r")}
-${licensePrefix}	Unless required by applicable law or agreed to in writing, software
-${licensePrefix}	distributed under the License is distributed on an "AS IS" BASIS,
-${licensePrefix}	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-${licensePrefix}	See the License for the specific language governing permissions and
-${licensePrefix}	limitations under the License.
+${licensePrefix}You should have received a copy of the GNU General Public License
+${licensePrefix}along with this program; if not, write to the Free Software
+${licensePrefix}Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <#if licenseLast??>
 ${licenseLast}
 </#if>
