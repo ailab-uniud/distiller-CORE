@@ -38,7 +38,6 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
@@ -234,7 +233,6 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                             }
 
                             identifier = identifier.toLowerCase();
-
                             Gram g = new Gram(
                                     identifier,
                                     lastReadBuffers[size],

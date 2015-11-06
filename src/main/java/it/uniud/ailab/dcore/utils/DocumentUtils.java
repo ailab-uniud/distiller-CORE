@@ -24,33 +24,46 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 
 /**
- * Utilies for the {@link it.uniud.ailab.dcore.persistence.DocumentComponent} 
- * interface and its composite pattern classes 
+ * Utilies for the {@link it.uniud.ailab.dcore.persistence.DocumentComponent}
+ * interface and its composite pattern classes
  * {@link it.uniud.ailab.dcore.persistence.DocumentComposite} and
  * {@link it.uniud.ailab.dcore.persistence.Sentence}, used to perform common
  * operations on a document (or parts of it).
- * 
+ *
  * @author Marco Basaldella
  */
 public class DocumentUtils {
-            
+
     /**
      * Gets all the sentences of a document component.
-     * 
+     *
      * @param component the component of which you want the sentences
      * @return the sentences of the component
      */
     public static List<Sentence> getSentences(DocumentComponent component) {
         List<Sentence> ret = new ArrayList<>();
-        
+
         for (DocumentComponent c : component.getComponents()) {
-            if (c.getComponents() == null)
-                ret.add((Sentence)c);
-            else
+            if (c.getComponents() == null) {
+                ret.add((Sentence) c);
+            } else {
                 ret.addAll(getSentences(c));
+            }
+        }
+
+        return ret;
+    }
+
+    public static int getNumberOfPhrasesInDocument(DocumentComponent component) {
+        int numberOfPhrases = 0;
+        List<Sentence> sentences = getSentences(component);
+        for (Sentence sentence : sentences) {
+
+            numberOfPhrases =+ sentence.getPhraseNumber();
+
         }
         
-        return ret;
-    }   
-
+        System.out.println(numberOfPhrases);
+        return numberOfPhrases;
+    }
 }

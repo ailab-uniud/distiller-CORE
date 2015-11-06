@@ -50,6 +50,9 @@ import org.apache.commons.cli.ParseException;
  * </ul>
  *
  * @author Marco Basaldella
+ * 
+ * Add a new KE configuration for linguistic feature calculation, named stanfordKE
+ * @modify Giorgia Chiaradia
  */
 public class Launcher {
 
@@ -378,8 +381,12 @@ public class Launcher {
             d = DistillerFactory.loadFromXML(configPath);
         } else if (defaultConfig.equals("simpleKE")) {
             d = DistillerFactory.getDefaultCode();
+        //use this configuration to use stanford coreNLP parser and add linguistis
+        //features to distiller
+        } else if (defaultConfig.equals("stanfordKE")) { 
+            d = DistillerFactory.getStanfordCode();
 
-        } // add other default pipelines HERE
+        }// add other default pipelines HERE
         // please remeber to document the new pipeline in the help message
         // that is printed below 
         else {

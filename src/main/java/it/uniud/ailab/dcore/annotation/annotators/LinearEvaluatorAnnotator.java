@@ -67,7 +67,7 @@ public class LinearEvaluatorAnnotator implements Annotator {
      * @param c the component to annotate
      */
     @Override
-    public void annotate(Blackboard b,DocumentComponent c) {        
+    public void annotate(Blackboard b,DocumentComponent c) {       
         for (Gram g : b.getGrams())
         {
             double score = 0;
@@ -78,6 +78,6 @@ public class LinearEvaluatorAnnotator implements Annotator {
             }            
             g.putFeature(it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE, score);
         }
-              
+        
     }    
 }

@@ -18,9 +18,14 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import edu.stanford.nlp.dcoref.CorefChain;
 import it.uniud.ailab.dcore.annotation.Annotable;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An abstract conceptual unit of the document. This can be a sentence, a
@@ -30,11 +35,18 @@ import java.util.Locale;
  *
  * @author Marco Basaldella
  * @author Dario De Nart
+ * 
+ * Add a map containing the coreference graph, indixed by anaphors
+ * (I insert the map here in respect to the composite pattern, this is a 
+ * feature not a component of the document, like sentences, ngrams and so on)
+ * 
+ * @modify Giorgia Chiaradia
  */
 public abstract class DocumentComponent extends Annotable {
 
     private final String text;
     private Locale language;
+    private Map<String,Collection<Set<CorefChain.CorefMention>>> documentCoreferenceGraph;
 
     /**
      * Creates a document component.
@@ -46,6 +58,7 @@ public abstract class DocumentComponent extends Annotable {
         super(identifier);
         this.text = text;
         this.language = language;
+        this.documentCoreferenceGraph = new HashMap<>();
 
     }
 
@@ -108,6 +121,24 @@ public abstract class DocumentComponent extends Annotable {
      */
     public abstract List<DocumentComponent> getComponents();
 
+    /**
+     * Set the graph for coreference find out during parsing.
+     * 
+     * @param coreferenceGraph 
+     */
+    public void setCoreferenceMap(Map<String,Collection<Set<CorefChain.CorefMention>>> coreferenceGraph){
+        this.documentCoreferenceGraph = coreferenceGraph;
+    }
+    
+    /**
+     * Get the coreference graph the current document.
+     * 
+     * @return a map contaning anaphors as key and coreference map for those anaphor as value 
+     */
+    public Map getCoreferenceMap(){
+        return this.documentCoreferenceGraph;
+    }
+    
     /**
      * Adds a gram to the component.
      *

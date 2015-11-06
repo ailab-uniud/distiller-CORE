@@ -192,4 +192,65 @@ public class DistillerFactory {
         return d;
     }
 
+    public static Distiller getStanfordCode() {
+        Distiller d = new Distiller();
+
+        // set the language detector tool
+        d.setLanguageDetector(new CybozuLanguageDetectorAnnotator());
+
+        // build the pipeline
+        Pipeline p = new Pipeline();
+        // split the text
+        p.addAnnotator(new StanfordBootstrapperAnnotator() );
+        // add wikipedia tags to tokens
+
+        // Uncomment the lines below to use the TagMe service
+        // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
+        // tagme.setApiKey("INSERT KEY HERE");        
+        // p.addAnnotator(tagme);
+        // generate ngrams
+        p.addAnnotator(new SimpleNGramGeneratorAnnotator());
+
+        
+        
+//        // remove stopwords
+        p.addAnnotator(new StopwordSimpleFilterAnnotator());
+//
+//        // annotate ngrams
+        p.addAnnotator(new StatisticalAnnotator());
+        p.addAnnotator(new CoreferenceResolverAnnotator());
+        // Uncomment to use TagMe
+        // p.addAnnotator(new TagMeGramAnnotator());
+        // Uncomment to use the emotional intensity annotator.
+        // This way you'll see how different annotators lead to different
+        // keyphrases detection
+        // p.addAnnotator(new SyuzhetAnnotator());
+        // evaluate ngram features        
+        LinearEvaluatorAnnotator evaluator = new LinearEvaluatorAnnotator();
+        evaluator.addWeight(StatisticalAnnotator.DEPTH, 0.15);
+        evaluator.addWeight(StatisticalAnnotator.HEIGHT, 0.25);
+        evaluator.addWeight(StatisticalAnnotator.LIFESPAN, 0.1);
+        evaluator.addWeight(StatisticalAnnotator.FREQUENCY_SENTENCE, 0.1);
+        evaluator.addWeight(GenericNGramGeneratorAnnotator.NOUNVALUE, 0.3);
+        evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
+        evaluator.addWeight(CoreferenceResolverAnnotator.NUMBER_OF_REFERENCE, 0.2);
+        evaluator.addWeight(CoreferenceResolverAnnotator.IN_ANAPHORA, 0.2);
+
+        p.addAnnotator(evaluator);
+
+        // Uncomment the line below to infer concepts.
+        // Watch out: the inference process sends lots of requests to Wikipedia, 
+        // so it significantly slows down the process
+        // p.addAnnotator(new WikipediaInferenceAnnotator());
+        // filter results
+        p.addAnnotator(new SkylineGramFilterAnnotator());
+
+        // remove redundant grams
+        //p.addAnnotator(new GramMergerAnnotator());
+        
+        d.addPipeline(Locale.ENGLISH, p);
+
+        return d;
+    }
+
 }
