@@ -30,11 +30,6 @@ import java.util.Locale;
  *
  * @author Marco Basaldella
  * @author Dario De Nart
- * 
- * Add a global variable which contains the number of phrases (single sentence)
- * a sentence is made up and create its setter and getter methods.
- * 
- * @modify by Giorgia Chiaradia
  */
 public class Sentence extends DocumentComponent {
     
@@ -51,11 +46,6 @@ public class Sentence extends DocumentComponent {
      */
     private List<Gram> grams;
     
-    /**
-     * The number of simple phrases contained in a sentence
-     */
-    private int phraseNumber;
-    
     // </editor-fold>
     
     /**
@@ -69,7 +59,6 @@ public class Sentence extends DocumentComponent {
         super(text,language,identifier);
         tokenizedSentence = new ArrayList<>();
         grams = new ArrayList<>(); 
-        phraseNumber = 1;
     }
     
     /**
@@ -184,25 +173,4 @@ public class Sentence extends DocumentComponent {
                 
         }
     }
-
-    /**
-     * Set the number of phrase in the sentence.
-     * 
-     * @param numberOfPhrases 
-     */
-    public void setPhraseNumber(int numberOfPhrases){
-        assert(numberOfPhrases > 0):"a sentence is always made up of almost 1 phrase";
-        
-        this.phraseNumber = numberOfPhrases;
-    }
-    
-    /**
-     * Get the total number of phrases in the sentence:is one when the sentence is simple.
-     * 
-     * @return the number of phrases which compose the sentence 
-     */
-    public int getPhraseNumber(){
-        return this.phraseNumber;
-    }
-    
 }

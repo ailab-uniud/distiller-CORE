@@ -18,6 +18,8 @@
  */
 package it.uniud.ailab.dcore.utils;
 
+import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
+import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
@@ -54,16 +56,31 @@ public class DocumentUtils {
         return ret;
     }
 
-    public static int getNumberOfPhrasesInDocument(DocumentComponent component) {
-        int numberOfPhrases = 0;
+    /**
+     * Get the total number of phrases from which the document id composed. 
+     * 
+     * @param component
+     * @return the total # of simple phrases in the document
+     */
+    public static double getNumberOfPhrasesInDocument(DocumentComponent component) {
+        double numberOfPhrases = 0;
+        
+        //get the sentences in the document
         List<Sentence> sentences = getSentences(component);
+        
         for (Sentence sentence : sentences) {
-
-            numberOfPhrases =+ sentence.getPhraseNumber();
-
+            
+            //get the annotation for phrase count in the single sentence
+            FeatureAnnotation annotation = (FeatureAnnotation)sentence
+                    .getAnnotation(DefaultAnnotations.PHRASES_COUNT);
+            
+            //update the total number of phrases with the one of the current 
+            //sentence
+            numberOfPhrases += annotation.getScore();
         }
         
-        System.out.println(numberOfPhrases);
+        assert(numberOfPhrases >= 1):"total number of phrases must be positive";
+        
         return numberOfPhrases;
     }
 }

@@ -37,6 +37,8 @@ import java.util.Locale;
 import java.util.Properties;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
+import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -80,7 +82,8 @@ public class StanfordBootstrapperAnnotator implements Annotator {
         
         
         if (pipeline == null) {
-            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
+            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
+            //NER, parsing, and coreference resolution 
             Properties props = new Properties();
             props.put("annotators", "tokenize, ssplit, pos, parse, lemma, ner, dcoref");
             pipeline = new StanfordCoreNLP(props);
@@ -169,11 +172,15 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                         phraseCounter++;
                     }
                 }                
-         
-            distilledSentence.setPhraseNumber(phraseCounter);
+                
+            //annotate the sentence with a new feature counting alla the phrases
+            //cointained in the sentence    
+            distilledSentence.addAnnotation(new FeatureAnnotation(
+                    DefaultAnnotations.PHRASES_COUNT, phraseCounter));
             
             // traversing the words in the current sentence
-            // a CoreLabel is a CoreMap with additional token-specific methods
+            // for each token in the text, we create a new token annotate it 
+            // with the word representing it, its pos tag and its lemma
             for (CoreLabel token : stanfordSentence.get(TokensAnnotation.class)) {
                 
                 
@@ -185,12 +192,14 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 // this is the POS tag of the token                
                 t.setPoS(token.get(PartOfSpeechAnnotation.class));
                 
-                // this is the Stem
+                // this is the lemma of the ttoken
                 t.setStem(token.get(LemmaAnnotation.class));
                 
+                //add the token to the sentence
                 distilledSentence.addToken(t);
             }
 
+            //add the sentence to document
             ((DocumentComposite) component).addComponent(distilledSentence);
         }
     }

@@ -35,4 +35,6 @@ public class DefaultAnnotations {
     
     public static final String WORD_COUNT = "WordCount";
     
+    public static final String PHRASES_COUNT = "PhrasesCount";
+    
 }
