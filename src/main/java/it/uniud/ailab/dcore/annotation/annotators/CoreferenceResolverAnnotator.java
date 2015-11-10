@@ -18,24 +18,19 @@
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
-import edu.stanford.nlp.dcoref.CorefChain;
-import edu.stanford.nlp.dcoref.Dictionaries;
-import edu.stanford.nlp.util.IntPair;
 import java.util.List;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
-import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
-import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.annotation.Annotation;
+import it.uniud.ailab.dcore.annotation.annotations.CoreferenceChainAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapperAnnotator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Annotates grams with linguistic features concerning anaphora and coreference
@@ -88,11 +83,12 @@ public class CoreferenceResolverAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        double numberOfPhrases = DocumentUtils.getNumberOfPhrasesInDocument(component);
-        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
-                = ((DocumentComponent) component).getCoreferenceMap();
-        Map<String, Double> pronominalReferencesMap = new HashMap<>();
-        List<String> notPronominalAnaphoras = new ArrayList<>();
+        
+        double numberOfPhrases = DocumentUtils
+                .getNumberOfPhrasesInDocument(component);
+        
+        List<String> mentionList = new ArrayList<>();
+        Map<String, Double> pronominalAnaphoraCounter = new HashMap<>();
         
         // Annotate grams with their statistical features.
         // The implementation is quite straightforward:
@@ -100,104 +96,76 @@ public class CoreferenceResolverAnnotator implements Annotator {
         // see the variable declarations above.
 
         //preprocess graph and getting numberofref for each anaphor
-        for (String anaphor : coreferenceGraph.keySet()) {
-            Collection<Set<CorefChain.CorefMention>> mentions
-                    = coreferenceGraph.get(anaphor);
-
-            double number_of_reference = 0.0;
-
-            for (Set<CorefChain.CorefMention> mSet : mentions) {
-
-                for (CorefChain.CorefMention ment : mSet) {
-                    
-                    String reference = ment.mentionSpan;
-                    //eleiminate self references
-                    if (!reference.equalsIgnoreCase(anaphor)) {
-                        
-                        //find out number of pronominal anaphora, which 
-                        //would be lost in default parsing,
-                        //that eliminates all the pronoms in the pre processing
-                        if (ment.mentionType == Dictionaries.MentionType.PRONOMINAL) {
-                            number_of_reference++;
-                        } else {
-                            notPronominalAnaphoras.add(reference);
-                        }
-                    }
-                }
-            }
+        for(Annotation an : blackboard.getAnnotations(
+                StanfordBootstrapperAnnotator.COREFERENCE)){
             
-            pronominalReferencesMap.put(anaphor, number_of_reference);
+            //get the annotation from blackboard for coreferences annotation 
+            CoreferenceChainAnnotation stanfordAnnotation = (CoreferenceChainAnnotation)an;
+            
+            //each annotation is an anaphor  
+            String anaphor = stanfordAnnotation.getAnnotation();
+            
+            //we count all the times the metions for the current anaphor are 
+            //pronominal anaphoras
+            double pronCount = stanfordAnnotation.getNumberOfPronominalReferences();
+            
+            //insert anaphor and respective pronominal anphora count in the 
+            //general map
+            pronominalAnaphoraCounter.put(anaphor, pronCount);
+            
+            //get all the non-pronominal mentions for the current anaphora
+            List<String> mentions = stanfordAnnotation.getNotPronominalMentions();
+            
+            //add the mentions list to the global one
+            mentionList.addAll(mentions);
         }
-
+        
+        //for each sentence in the document
         for (Sentence s : sentences) {
-            double score = 0;
-            for (Gram g : s.getGrams()) {
-                String surf = g.getSurface();
-                for (String anaphor : pronominalReferencesMap.keySet()) {
-                    if (anaphor.toLowerCase().contains(surf.toLowerCase())
-                            || surf.toLowerCase().contains(anaphor.toLowerCase())) {
+            double score = 0; //initialize variable for NOR feature score
+            
+            //for each n gram control if the anaphor is present in the n gram or
+            //vice-versa
+            for (Gram g : s.getGrams()) { 
+                String surf = g.getSurface(); 
+                for (String anaphor : pronominalAnaphoraCounter.keySet()) {
+                    if (anaphor.toLowerCase().toLowerCase()
+                            .matches(".*\\b" + surf.toLowerCase() + "\\b.*") || 
+                            surf.toLowerCase()
+                                    .matches(".*\\b" + anaphor.toLowerCase() + "\\b.*")) {
                         
                         double score1 = score;
-                        double score2 = pronominalReferencesMap.get(anaphor);
-                        score = Math.max(score1, score2);
-                        g.putFeature(NUMBER_OF_REFERENCE, score);
-
+                        double score2 = pronominalAnaphoraCounter.get(anaphor);
+                        score = Math.max(score1, score2); //get the maximal score 
                     }
                     
                 }
                 
-                if(score > 0){
+                
+                if(score > 0){//if n-gram is an anaphor
+                    //normalize score for NOR by total # of phrases 
                     g.putFeature(NUMBER_OF_REFERENCE, (score/numberOfPhrases));
-                } else {
+                } else { 
                     g.putFeature(NUMBER_OF_REFERENCE, 0.0);
                 }
                 
+                //check if an candidate is or not present in a mention
                 double inAnaphoraScore = 0;
-                for(String references : notPronominalAnaphoras){
-                    if(references.toLowerCase().contains(surf.toLowerCase())
-                            || surf.toLowerCase().contains(references.toLowerCase())){
+                double gramFreq = g.getFeature(StatisticalAnnotator.FREQUENCY);
+                for(String reference : mentionList){
+                    if(reference.toLowerCase().matches(".*\\b" + surf.toLowerCase() + "\\b.*")){
                         inAnaphoraScore++;
                     }
                    
                 }
-                g.putFeature(IN_ANAPHORA, (inAnaphoraScore/g.getFeature(StatisticalAnnotator.FREQUENCY)));
-            }
-//            for (Gram g : s.getGrams()) {
-//                String anaphor = g.getSurface();
-//                if (coreferenceGraph.containsKey(anaphor)) {
-//
-//                    Collection<Set<CorefChain.CorefMention>> mentions
-//                            = coreferenceGraph.get(anaphor);
-//
-//                    double number_of_reference = 0.0;
-//
-//                    for (Set<CorefChain.CorefMention> mSet : mentions) {
-//
-//                        for (CorefChain.CorefMention ment : mSet) {
-//
-//                            //eleiminate self references
-//                            if (!ment.mentionSpan.equalsIgnoreCase(anaphor)) {
-//                                System.out.println(ment.mentionSpan);
-//                                //find out number of pronominal anaphora, which 
-//                                //would be lost in default parsing,
-//                                //that eliminates all the pronoms in the pre processing
-//                                if (ment.mentionType == Dictionaries.MentionType.PRONOMINAL) {
-//
-//                                    number_of_reference++;
-//                                    
-//                                }
-//                            }
-//                        }
-//                    }
-//                    System.out.println("numberOfRef "+ number_of_reference);
-//                    System.out.println("numberOfRef "+ (number_of_reference / numberOfPhrases));
-//                    g.putFeature(NUMBER_OF_REFERENCE, (number_of_reference / numberOfPhrases));
-//                    
-//                } else {
-//                    g.putFeature(NUMBER_OF_REFERENCE, 0.0);
-//                }
-//
-//            }
+                
+                //assuring there aren't repetition or self references 
+                if(inAnaphoraScore >= gramFreq)
+                    inAnaphoraScore = 0;
+                
+                //set the InAnaphora feature for the candidate
+                g.putFeature(IN_ANAPHORA, inAnaphoraScore/gramFreq);
+            }          
         }
     }
 }

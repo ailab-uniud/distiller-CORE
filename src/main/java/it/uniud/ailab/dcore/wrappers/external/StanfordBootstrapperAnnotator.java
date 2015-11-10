@@ -39,6 +39,7 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.CoreferenceChainAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -71,6 +72,8 @@ public class StanfordBootstrapperAnnotator implements Annotator {
      */
     private int sentenceCounter = 0;
    
+    public static final String COREFERENCE = "Coreference";
+    
     /**
      * Annotate the document by splitting the document, tokenizing it, performing PoS tagging  
      * and Named Entity Recognition using the Stanford Core NLP tools. 
@@ -128,21 +131,24 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 stringBuiler.append(tks.get(i).get(LemmaAnnotation.class));
                 stringBuiler.append(" ");
             }
-            
+                                 
             String anaphor = stringBuiler.toString().trim();
             
             //get map of the references to the corefchain obj
-            Collection<Set<CorefChain.CorefMention>> mentionMap = corefChain.getMentionMap().values();
+            Collection<Set<CorefChain.CorefMention>> mentionMap = 
+                    corefChain.getMentionMap().values();
             
             //set the string representing corefchain obj as key
             //set the references map as value
             coreferenceGraph.put(anaphor, mentionMap);
+            
+            //assign to the document a new annotation for corenferences
+            //containing as annotion the anaphors and their mentions 
+            blackboard.addAnnotation(new CoreferenceChainAnnotation(
+                    COREFERENCE, mentionMap, document, anaphor));
         }
         
-        //assing to document a map containing the anaphora as key and the 
-        //coreference graph as value
         component.setCoreferenceMap(coreferenceGraph);
-
         // these are all the sentences in this document
         // a CoreMap is essentially a Map that uses class objects as keys and 
         //has values with custom types
@@ -203,5 +209,5 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             ((DocumentComposite) component).addComponent(distilledSentence);
         }
     }
-
+    
 }
