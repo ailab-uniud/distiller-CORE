@@ -24,7 +24,7 @@ import java.util.Map;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.annotation.Annotation;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class Blackboard {
     /**
      * Container for the n-grams of the document.
      */
-    private Map<String, Gram> gramContainer;
+    private Map<String, Keyphrase> gramContainer;
 
     /**
      * Document-wide annotations. This space can be used to add annotations that
@@ -134,15 +134,15 @@ public class Blackboard {
      * @param unit the concept unit where the gram appears
      * @param newGram the gram to add
      */
-    public void addGram(DocumentComponent unit, Gram newGram) {
+    public void addGram(DocumentComponent unit, Keyphrase newGram) {
 
-        Gram gram = gramContainer.get(newGram.getIdentifier());
+        Keyphrase gram = gramContainer.get(newGram.getIdentifier());
 
         // Deep clone the object instead of referencing the found one.
         // this way, we're free to modify it by adding annotations without
         // modifying the old object.
         if (gram == null) {
-            Gram cloned = (new Cloner()).deepClone(newGram);
+            Keyphrase cloned = (new Cloner()).deepClone(newGram);
             gramContainer.put(cloned.getIdentifier(), cloned);
             gram = cloned;
         } else {
@@ -157,9 +157,9 @@ public class Blackboard {
     /**
      * Retrieves the grams found in the document.
      *
-     * @return a collection of {@link it.uniud.ailab.dcore.persistence.Gram}s.
+     * @return a collection of {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
      */
-    public List<Gram> getGrams() {
+    public List<Keyphrase> getGrams() {
         return new ArrayList(gramContainer.values());
     }
 
@@ -169,7 +169,7 @@ public class Blackboard {
      *
      * @param g the gram to remove.
      */
-    public void removeGram(Gram g) {
+    public void removeGram(Keyphrase g) {
         gramContainer.remove(g.getIdentifier());
         
         for (Sentence s : DocumentUtils.getSentences(document)) {

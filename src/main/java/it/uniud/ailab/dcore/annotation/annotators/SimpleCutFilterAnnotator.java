@@ -21,7 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,14 +55,14 @@ public class SimpleCutFilterAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         
         // get the grams and order them by score
-        Collection<Gram> grams = blackboard.getGrams();
-        Map<Gram, Double> scoredGrams = new HashMap<>();
+        Collection<Keyphrase> grams = blackboard.getGrams();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Gram g : grams) {
+        for (Keyphrase g : grams) {
             scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
-        List<Map.Entry<Gram, Double>> gramsToTrash
+        List<Map.Entry<Keyphrase, Double>> gramsToTrash
                 = scoredGrams.entrySet().stream().sorted(
                         Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class SimpleCutFilterAnnotator implements Annotator {
         }
         
         // now remove the remaining grams from the blackboard.        
-        for (Map.Entry<Gram, Double> e : gramsToTrash) 
+        for (Map.Entry<Keyphrase, Double> e : gramsToTrash) 
             blackboard.removeGram(e.getKey());        
     }
     

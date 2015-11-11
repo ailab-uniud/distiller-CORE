@@ -18,31 +18,146 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.utils.ListUtils;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Keyphrases are "important, topical phrases from within the body of a 
- * document" (Peter Turney: Learning algorithms for keyphrase extraction, 2000).
- * 
- * The purpose of this class is to define some utility methods over a simple
- * ngram to keep track of the appearances of a keyphrase in a document and to
- * offer a quicker way to annotate them.
- * 
+ * The Gram is the data structure in which all the data concerning a NGram is
+ * stored.
+ *
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-public class Keyphrase extends Gram {
+public class Keyphrase extends Annotable {
 
+    /**
+     * The different list of words forming the surface of the gram.
+     */
+    private List<List<Token>> tokenLists;
+    /**
+     * The different string representation of the gram.
+     */
+    private final List<String> surfaces;
     /**
      * The concept Units in which the gram appears.
      */
-    private List<DocumentComponent> appareances = new ArrayList<>();
-    
+    private List<DocumentComponent> appareances;
+
+    /**
+     * Instantiated an n-gram. Usually, the surface should be simply the the 
+     * concatenation of the text of the tokens. The signature can be used for 
+     * comparison, so be sure to generate different signatures for n-grams
+     * that are different in your domain. For example, you can use the sequence 
+     * of the stems of the tokens, so that n-grams with the same stemmed form 
+     * are considered equal.
+     * 
+     *
+     * @param sequence the tokens that form the gram
+     * @param identifier unique identifier of the gram.
+     * @param surface the pretty-printed string representation of the gram
+     */
     public Keyphrase(String identifier, List<Token> sequence, String surface) {
-        super(identifier, sequence, surface);
+        
+        super(identifier);
+        
+        tokenLists = new ArrayList<>();
+        tokenLists.add(sequence);
+        
+        surfaces = new ArrayList<>();
+        surfaces.add(surface);
+        appareances = new ArrayList<>();
+    }
+    
+    /**
+     * Adds a surface to the n-gram. Duplicates are permitted.
+     * 
+     * @param surface the surface to add
+     * @param tokens the tokens that form the surface
+     */
+    public void addSurface(String surface,List<Token> tokens) {
+        surfaces.add(surface);
+        tokenLists.add(tokens);
+    }
+    
+     /**
+     * Adds a group of surfaces to the n-gram. Duplicates are permitted.
+     * 
+     * @param surfaces the surface to add
+     * @param tokenLists the tokens that form the surface
+     */
+    public void addSurfaces(List<String> surfaces,List<List<Token>> tokenLists) {
+        
+        if (surfaces.size() != tokenLists.size())
+            throw new IllegalArgumentException(
+                "Mismatching size of surfaces and token lists.");
+        
+        this.surfaces.addAll(surfaces);
+        
+        // note: do not use addAll. The references are lost if you don't copy
+        for (List<Token> t : tokenLists) {
+            this.tokenLists.add(new ArrayList<Token>(t));
+        }
+    }
+
+    /**
+     * The tokens that form the most common surface of the gram.
+     *
+     * @return the tokens of the surface of the gram.
+     */
+    public List<Token> getTokens() {
+        return tokenLists.get(surfaces.indexOf(ListUtils.mostCommon(surfaces)));
+    }
+    
+    /**
+     * Returns all the possible lists of tokens that form the gram.
+     * 
+     * @return all the possible lists of tokens that form the gram.
+     */
+    public List<List<Token>> getTokenLists() {
+        return tokenLists;
+    }
+
+    /**
+     * The human-readable form of the gram. This is the most common surface
+     * between all the surfaces associated with the gram; if there are more than
+     * one, the first one that has been added to the gram is selected.
+     *
+     * @return the human-readable form of the gram.
+     */
+    public String getSurface() {
+        return ListUtils.mostCommon(surfaces);
+    }
+    
+    /**
+     * Returns all the surfaces of the gram. Note: may contain 
+     * duplicates.
+     * 
+     * @return all the surfaces of the gram.
+     */
+    public List<String> getSurfaces() {
+        return surfaces;
+    }
+
+    /**
+     * The identifier of the gram. Please note that it is possible that two
+     * grams with different surface or tokens may have the same identifier, 
+     * based on the policy of the class that generated the gram.
+     * 
+     * For example, "italian" and "Italy" may have the same identifier, because
+     * the identifier has been generated using the same stem "ital". Otherwise,
+     * the identifier may be the same link on an external ontology: in this 
+     * case, both words may have been associated with the entity "Italy".
+     * 
+     *
+     * @return the signature of the gram.
+     */
+    @Override
+    public String getIdentifier() {
+        return super.getIdentifier();
     }
 
     // <editor-fold desc="Feature and annotation Management">

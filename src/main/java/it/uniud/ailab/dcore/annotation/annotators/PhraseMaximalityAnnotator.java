@@ -21,7 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
@@ -66,10 +66,10 @@ public class PhraseMaximalityAnnotator implements Annotator {
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-        HashMap<String, Gram> surfaces = new HashMap<>();
-        HashMap<Gram, String> gram2surface = new HashMap<>();
+        HashMap<String, Keyphrase> surfaces = new HashMap<>();
+        HashMap<Keyphrase, String> gram2surface = new HashMap<>();
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        for (Gram g:blackboard.getGrams()){
+        for (Keyphrase g:blackboard.getGrams()){
             String stemmedSurface = "";
             for (Token t: g.getTokens()){
                 stemmedSurface += t.getStem() + " ";
@@ -80,10 +80,10 @@ public class PhraseMaximalityAnnotator implements Annotator {
         
         for (Sentence s : sentences) {
             
-            for (Gram g : s.getGrams()) {
+            for (Keyphrase g : s.getGrams()) {
                 // annotate grams only once 
                  if (!g.hasFeature(MAXIMALITY)){
-                     HashSet<Gram> superterms = new HashSet<>();
+                     HashSet<Keyphrase> superterms = new HashSet<>();
                      String surface = gram2surface.get(g);
                      for(String candidate: surfaces.keySet()){
                          if(candidate.contains(surface)){
@@ -93,7 +93,7 @@ public class PhraseMaximalityAnnotator implements Annotator {
                      // now we have a HashSet stuffed up with the superterms
                      // i.e. the n-grams that contain the current n-gram
                      Double maximality = 0.0;
-                     for(Gram g2: superterms){
+                     for(Keyphrase g2: superterms){
                          maximality = Math.max(
                                  g2.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)/
                                          g.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)

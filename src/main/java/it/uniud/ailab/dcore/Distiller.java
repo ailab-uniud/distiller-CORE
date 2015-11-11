@@ -20,7 +20,7 @@ package it.uniud.ailab.dcore;
 
 import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.*;
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.DistilledOutput.*;
 import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
 import it.uniud.ailab.dcore.annotation.Pipeline;
@@ -214,21 +214,21 @@ public class Distiller {
         // Copy the grams, sorted by descending score
         output.initializeGrams(blackboard.getGrams().size());
         
-        Collection<Gram> grams = blackboard.getGrams();
-        Map<Gram, Double> scoredGrams = new HashMap<>();
+        Collection<Keyphrase> grams = blackboard.getGrams();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Gram g : grams) {
+        for (Keyphrase g : grams) {
             scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
-        List<Map.Entry<Gram, Double>> sortedGrams
+        List<Map.Entry<Keyphrase, Double>> sortedGrams
                 = scoredGrams.entrySet().stream().sorted(
                         Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toList());
 
         for (int i = 0; i < output.getGrams().length; i++) {
             DetectedGram gram = output.getGrams()[i];
-            Gram originalGram = sortedGrams.get(i).getKey();
+            Keyphrase originalGram = sortedGrams.get(i).getKey();
             gram.setSurface(originalGram.getSurface());
             gram.setKeyphraseness(originalGram.getFeature(
                     it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));

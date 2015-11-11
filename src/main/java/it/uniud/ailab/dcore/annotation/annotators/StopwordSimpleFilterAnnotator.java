@@ -21,7 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -98,7 +98,7 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
                     log(Level.SEVERE, null, ex);
         }
         
-        for (Gram g : blackboard.getGrams()) {
+        for (Keyphrase g : blackboard.getGrams()) {
             if (stopwords.contains(g.getSurface()) ||
                     stopwords.contains(g.getTokens().get(0).getText()))
                 blackboard.removeGram(g);

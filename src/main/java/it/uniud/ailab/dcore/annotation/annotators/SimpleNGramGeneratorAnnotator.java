@@ -35,7 +35,7 @@ import org.json.simple.parser.ParseException;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.io.InputStreamReader;
@@ -233,7 +233,7 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                             }
 
                             identifier = identifier.toLowerCase();
-                            Gram g = new Gram(
+                            Keyphrase g = new Keyphrase(
                                     identifier,
                                     lastReadBuffers[size],
                                     sentenceText.substring(

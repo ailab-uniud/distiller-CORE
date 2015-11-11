@@ -28,7 +28,7 @@ import java.util.Map;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
@@ -54,7 +54,7 @@ public class SyuzhetAnnotator implements Annotator {
     
     private Map<String,Integer> weights = new HashMap<>();
 
-    private Map<Gram,Integer> counter = new HashMap<>();
+    private Map<Keyphrase,Integer> counter = new HashMap<>();
     
     /**
      * Loads the word valence database created by Finn Årup Nielsen.
@@ -124,7 +124,7 @@ public class SyuzhetAnnotator implements Annotator {
             
             if (mode == Mode.AVERAGE) {
             
-                for (Gram g : s.getGrams())
+                for (Keyphrase g : s.getGrams())
                 {
                     if (!g.hasFeature(INTENSITY_COUNTER)) {
                         g.putFeature(INTENSITY, Math.abs(accumulator));
@@ -143,7 +143,7 @@ public class SyuzhetAnnotator implements Annotator {
                     }
                 }
             } else { // (mode == Mode.SUM)
-                for (Gram g : s.getGrams())
+                for (Keyphrase g : s.getGrams())
                 {
                     if (!g.hasFeature(INTENSITY_COUNTER)) {
                         g.putFeature(INTENSITY, Math.abs(accumulator));

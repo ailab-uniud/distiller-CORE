@@ -144,21 +144,21 @@ public abstract class DocumentComponent extends Annotable {
      *
      * @param g the gram to add
      */
-    public abstract void addGram(Gram g);
+    public abstract void addGram(Keyphrase g);
 
     /**
      * Returns the gram associated with the component.
      *
      * @return the gram associated with the component.
      */
-    public abstract List<Gram> getGrams();
+    public abstract List<Keyphrase> getGrams();
     
     /**
      * Remote a gram from the component.
      * 
      * @param g the gram tor remove
      */
-    public abstract void removeGram(Gram g);
+    public abstract void removeGram(Keyphrase g);
 
     // </editor-fold>
 

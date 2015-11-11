@@ -28,7 +28,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
 import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIURI;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.utils.WikipediaUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -159,7 +159,7 @@ public class WikipediaInferenceAnnotator implements Annotator {
         // Retrieve the grams with a "wikiflag", i.e. the one which
         // text is the same as a Wikipedia page title 
         // for example, "Software Engineering". 
-        List<Gram> wikiGrams = new LinkedList<>();
+        List<Keyphrase> wikiGrams = new LinkedList<>();
         blackboard.getGrams().stream().filter((g) -> 
                 (g.hasFeature(WIKIFLAG))).forEach((g) -> {
             wikiGrams.add(g);
@@ -194,14 +194,14 @@ public class WikipediaInferenceAnnotator implements Annotator {
      * 
      * @param grams the grams to analyze.
      */
-    private void findHyperymsAndRelated(List<Gram> grams) {
+    private void findHyperymsAndRelated(List<Keyphrase> grams) {
         
         HttpURLConnection con = null;
         BufferedReader reader = null;
 
         // We may pipe several article titles in one query, but for some awkward reason,
         // the API won't give us the full category list of the requested terms, nor the full definition
-        for (Gram currentGram : grams) {
+        for (Keyphrase currentGram : grams) {
 
             // this will contain the categories (i.e. our hypernyms)s
             ArrayList<String> wikiCategories = new ArrayList<>();

@@ -24,7 +24,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class StatisticalAnnotator implements Annotator {
             // every sentence
             List<String> surfaces = new ArrayList<>();
 
-            for (Gram g : s.getGrams()) {
+            for (Keyphrase g : s.getGrams()) {
 
                 if (g.hasFeature(FREQUENCY)) {
                     g.putFeature(FREQUENCY, g.getFeature(FREQUENCY) + 1);

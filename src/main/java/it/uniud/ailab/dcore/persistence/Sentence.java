@@ -41,10 +41,10 @@ public class Sentence extends DocumentComponent {
     private List<Token> tokenizedSentence;
 
     /**
-     * The {@link it.uniud.ailab.dcore.persistence.Gram}s that have been detected 
+     * The {@link it.uniud.ailab.dcore.persistence.Keyphrase}s that have been detected 
      * in the sentence.
      */
-    private List<Gram> grams;
+    private List<Keyphrase> grams;
     
     // </editor-fold>
     
@@ -140,7 +140,7 @@ public class Sentence extends DocumentComponent {
      * @param g the gram to add. 
      */
     @Override
-    public void addGram(Gram g) {
+    public void addGram(Keyphrase g) {
         grams.add(g);
     }
     
@@ -150,7 +150,7 @@ public class Sentence extends DocumentComponent {
      * @return the grams that have been found in the sentence.
      */
     @Override
-    public List<Gram> getGrams() {
+    public List<Keyphrase> getGrams() {
         return grams;
     }
 
@@ -160,12 +160,12 @@ public class Sentence extends DocumentComponent {
      * @param gramToRemove the gram to remove
      */
     @Override
-    public void removeGram(Gram gramToRemove) {
+    public void removeGram(Keyphrase gramToRemove) {
 
-        for (Iterator<Gram> gramIterator = grams.iterator(); 
+        for (Iterator<Keyphrase> gramIterator = grams.iterator(); 
                 gramIterator.hasNext();)
         {
-            Gram gram = gramIterator.next();
+            Keyphrase gram = gramIterator.next();
             
             if (gram.getIdentifier().equals(gramToRemove.getIdentifier())) {
                 gramIterator.remove();

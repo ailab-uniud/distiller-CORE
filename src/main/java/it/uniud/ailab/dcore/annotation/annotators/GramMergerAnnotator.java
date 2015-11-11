@@ -21,7 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class GramMergerAnnotator implements Annotator {
 
         List<String> ids = new ArrayList<>();
 
-        for (Gram g : blackboard.getGrams()) {
+        for (Keyphrase g : blackboard.getGrams()) {
             ids.add(g.getIdentifier());
         }
 
@@ -87,7 +87,7 @@ public class GramMergerAnnotator implements Annotator {
             }
         }
         
-        for (Gram g : blackboard.getGrams()) {
+        for (Keyphrase g : blackboard.getGrams()) {
             if (!idsToKeep.contains(g.getIdentifier()))
                 blackboard.removeGram(g);
         }

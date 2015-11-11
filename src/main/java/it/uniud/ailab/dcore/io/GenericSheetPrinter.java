@@ -180,7 +180,7 @@ public abstract class GenericSheetPrinter {
 
         init();
 
-        for (Gram g : b.getGrams()) {
+        for (Keyphrase g : b.getGrams()) {
             addRow(g);
         }
     }
@@ -194,7 +194,7 @@ public abstract class GenericSheetPrinter {
 
         init();
 
-        for (Gram g : c.getGrams()) {
+        for (Keyphrase g : c.getGrams()) {
             addRow(g);
         }
     }

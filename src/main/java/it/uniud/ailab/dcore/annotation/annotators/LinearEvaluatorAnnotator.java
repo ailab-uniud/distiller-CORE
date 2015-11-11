@@ -24,7 +24,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 
 /**
  * The annotator that calculates the importance of an n-gram in a document, 
@@ -68,7 +68,7 @@ public class LinearEvaluatorAnnotator implements Annotator {
      */
     @Override
     public void annotate(Blackboard b,DocumentComponent c) {       
-        for (Gram g : b.getGrams())
+        for (Keyphrase g : b.getGrams())
         {
             double score = 0;
             for (FeatureAnnotation f : g.getFeatures()) {

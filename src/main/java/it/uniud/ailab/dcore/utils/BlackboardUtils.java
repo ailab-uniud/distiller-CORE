@@ -24,7 +24,7 @@ import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +49,7 @@ public class BlackboardUtils {
      */
     public static void printScores(Blackboard b, boolean printDetails) {
 
-        Collection<Gram> grams = b.getGrams();
+        Collection<Keyphrase> grams = b.getGrams();
         
         System.out.println("");
         System.out.println(String.format(
@@ -59,17 +59,17 @@ public class BlackboardUtils {
         
         System.out.println("** SCORES **");
 
-        Map<Gram, Double> scoredGrams = new HashMap<>();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Gram g : grams) {
+        for (Keyphrase g : grams) {
             scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
-        Stream<Map.Entry<Gram, Double>> ordered
+        Stream<Map.Entry<Keyphrase, Double>> ordered
                 = scoredGrams.entrySet().stream().sorted(
                         Collections.reverseOrder(Map.Entry.comparingByValue())).limit(20);
 
-        for (Map.Entry<Gram, Double> scoredGram : ordered.collect(Collectors.toList())) {
+        for (Map.Entry<Keyphrase, Double> scoredGram : ordered.collect(Collectors.toList())) {
             System.out.print(String.format("%-24s", scoredGram.getKey().getIdentifier()));           
             for (FeatureAnnotation f : scoredGram.getKey().getFeatures()) {
                 System.out.print(String.format("%-12s:%8.3f ; ", f.getAnnotator(), f.getScore()));
