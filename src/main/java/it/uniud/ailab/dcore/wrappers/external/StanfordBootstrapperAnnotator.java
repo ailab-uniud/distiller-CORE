@@ -148,7 +148,6 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                     COREFERENCE, mentionMap, document, anaphor));
         }
         
-        component.setCoreferenceMap(coreferenceGraph);
         // these are all the sentences in this document
         // a CoreMap is essentially a Map that uses class objects as keys and 
         //has values with custom types

@@ -46,7 +46,6 @@ public abstract class DocumentComponent extends Annotable {
 
     private final String text;
     private Locale language;
-    private Map<String,Collection<Set<CorefChain.CorefMention>>> documentCoreferenceGraph;
 
     /**
      * Creates a document component.
@@ -58,8 +57,6 @@ public abstract class DocumentComponent extends Annotable {
         super(identifier);
         this.text = text;
         this.language = language;
-        this.documentCoreferenceGraph = new HashMap<>();
-
     }
 
     // <editor-fold desc="getters and setters">
@@ -120,24 +117,6 @@ public abstract class DocumentComponent extends Annotable {
      * concept unit has no children.
      */
     public abstract List<DocumentComponent> getComponents();
-
-    /**
-     * Set the graph for coreference find out during parsing.
-     * 
-     * @param coreferenceGraph 
-     */
-    public void setCoreferenceMap(Map<String,Collection<Set<CorefChain.CorefMention>>> coreferenceGraph){
-        this.documentCoreferenceGraph = coreferenceGraph;
-    }
-    
-    /**
-     * Get the coreference graph the current document.
-     * 
-     * @return a map contaning anaphors as key and coreference map for those anaphor as value 
-     */
-    public Map getCoreferenceMap(){
-        return this.documentCoreferenceGraph;
-    }
     
     /**
      * Adds a gram to the component.
