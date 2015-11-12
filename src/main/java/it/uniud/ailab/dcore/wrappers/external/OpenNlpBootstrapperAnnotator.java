@@ -34,7 +34,6 @@ import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import org.apache.commons.io.FileUtils;
-import org.tartarus.snowball.SnowballStemmer;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
@@ -42,7 +41,6 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
-import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
 
 /**
  * A bootstrapper annotator for the English language developed using the Apache
@@ -138,28 +136,11 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
             POSTaggerME tagger = new POSTaggerME(POSModel);
             String tags[] = tagger.tag(tokens);
 
-            // Get the appropriate stemmer
-            SnowballStemmer stemmer = SnowballStemmerSelector.
-                    getStemmerForLanguage(component.getLanguage());
-
-            if (stemmer == null) {
-                throw new AnnotationException(this,
-                        "Stemmer not available for the language "
-                        + component.getLanguage().getLanguage());
-            }
-
             // put the features detected by OpenNLP in the distiller's
             // sentence
             for (int i = 0; i < tokens.length; i++) {
                 Token t = new Token(tokens[i]);
                 t.setPoS(tags[i]);
-
-                stemmer.setCurrent(tokens[i]);
-                if (stemmer.stem()) {
-                    t.setStem(stemmer.getCurrent());
-                } else {
-                    t.setStem(tokens[i]);
-                }
                 sentence.addToken(t);
 
             } // for 

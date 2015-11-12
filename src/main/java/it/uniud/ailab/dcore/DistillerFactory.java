@@ -146,6 +146,8 @@ public class DistillerFactory {
         p.addAnnotator(new OpenNlpBootstrapperAnnotator());
         // add wikipedia tags to tokens
 
+        //annotate tokens with stemming
+        p.addAnnotator(new PorterStemmerAnnotator());
         // Uncomment the lines below to use the TagMe service
         // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
         // tagme.setApiKey("INSERT KEY HERE");        
@@ -204,6 +206,9 @@ public class DistillerFactory {
         p.addAnnotator(new StanfordBootstrapperAnnotator() );
         // add wikipedia tags to tokens
 
+        //annotate tokens with stemming
+        p.addAnnotator(new PorterStemmerAnnotator());
+        
         // Uncomment the lines below to use the TagMe service
         // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
         // tagme.setApiKey("INSERT KEY HERE");        

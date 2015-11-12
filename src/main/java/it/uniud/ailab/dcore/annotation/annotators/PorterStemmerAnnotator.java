@@ -28,73 +28,87 @@ import it.uniud.ailab.dcore.persistence.Mention.Reference;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
-import it.uniud.ailab.dcore.utils.GramUtils;
 import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- *
+ * Implementation of Porter's Stemmer algorithm. 
+ * This annotator annotates every token forming sentences with its stemming form.
+ * Stemming process usually chops off the ends of words in the hope of obtaining
+ * the base form of the word. It often includes the removal of derivational 
+ * affixes. 
+ * You can always annotate with stem also token of blackboard grams, just 
+ * iterating on the list of grams selected by gram type.
+ * 
  * @author Giorgia Chiaradia
  */
-public class PorterStemmerAnnotator implements Annotator{
+public class PorterStemmerAnnotator implements Annotator {
 
+    /**
+     * Annotate tokens from every sentence with a proper stem based on the 
+     * language of the document. 
+     * It also annotate the mentions token, so to facilitate comparisons during
+     * aanaphora resolution task. 
+     * 
+     * @param blackboard
+     * @param component 
+     */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         //annotate sentences
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        
-        // Get the appropriate stemmer
-            SnowballStemmer stemmer = SnowballStemmerSelector.
-                    getStemmerForLanguage(component.getLanguage());
 
-            if (stemmer == null) {
-                throw new AnnotationException(this,
-                        "Stemmer not available for the language "
-                        + component.getLanguage().getLanguage());
+        // Get the appropriate stemmer basing on document language
+        SnowballStemmer stemmer = SnowballStemmerSelector.
+                getStemmerForLanguage(component.getLanguage());
+
+        if (stemmer == null) {
+            throw new AnnotationException(this,
+                    "Stemmer not available for the language "
+                    + component.getLanguage().getLanguage());
+        }
+
+        //for every sentence
+        for (Sentence sentence : sentences) {
+            //for every token
+            for (Token t : sentence.getTokens()) {
+                //set the stem form to the token
+                if (stemmer.stem()) {
+                    t.setStem(stemmer.getCurrent());
+                } else {
+                    t.setStem(t.getText());
+                }
             }
+        }
 
-        
-        for(Sentence sentence : sentences){
-            for(Gram gram : sentence.getGrams()){
-                for(Token t : gram.getTokens()){
-                    if(stemmer.stem()){
+        //annotate mention n-grams with stem only if anaphora resolutions is 
+        //used in the pipeline 
+        Map<String, Gram> mentions = blackboard.getGramsByType(Mention.MENTION);
+        if (mentions != null) {
+            for (Gram g : mentions.values()) {
+                Mention m = (Mention) g;
+                for (Token t : m.getAnaphorToken()) {
+                    if (stemmer.stem()) {
                         t.setStem(stemmer.getCurrent());
                     } else {
                         t.setStem(t.getText());
                     }
                 }
+
+                //annotate tokens from references
+                for (Reference r : m.getReferences()) {
+                    for (Token t : r.getTokens()) {
+                        if (stemmer.stem()) {
+                            t.setStem(stemmer.getCurrent());
+                        } else {
+                            t.setStem(t.getText());
+                        }
+                    }
+                }
             }
         }
-        
-        //annotate grams
-        Map<String,Gram> mentions = blackboard.getGramsByType(GramUtils.MENTION);
-        for(Gram g : mentions.values()){
-           Mention m = (Mention)g;
-           for(Token t : m.getAnaphorToken()){
-               if(stemmer.stem()){
-                        t.setStem(stemmer.getCurrent());
-                    } else {
-                        t.setStem(t.getText());
-                    }
-           }
-           
-           for(Reference r : m.getReferences()){
-               for(Token t : r.getTokens()){
-               if(stemmer.stem()){
-                        t.setStem(stemmer.getCurrent());
-                    } else {
-                        t.setStem(t.getText());
-                    }
-               }
-           }
-        }
-        
-        //qui si dovrebbe riaggiornare la map di balckboard con i nuovi identificatori???
     }
-    
-    
-    
+
 }

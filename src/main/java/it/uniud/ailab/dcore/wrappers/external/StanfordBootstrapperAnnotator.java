@@ -20,10 +20,7 @@ package it.uniud.ailab.dcore.wrappers.external;
 
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations;
-import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -38,13 +35,11 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
-import it.uniud.ailab.dcore.annotation.annotations.CoreferenceChainAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Mention;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
-import it.uniud.ailab.dcore.utils.GramUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -134,10 +129,12 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 CoreLabel current = tks.get(i);
                 Token t = new Token(current.word());
                 t.setPoS(current.tag());
-                t.setStem(current.lemma());
+                t.setLemma(current.lemma());
                 anaphorsTokens.add(t);
             }
-
+            
+            //the mention n-gram which is formed by the anaphor and a 
+            //list of references
             Mention mention
                     = new Mention(cm.mentionSpan, anaphorsTokens, cm.mentionSpan);
 
@@ -149,31 +146,27 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 for (CorefChain.CorefMention reference : mentions) {
                     List<CoreLabel> tokens = document.get(SentencesAnnotation.class)
                             .get(reference.sentNum - 1).get(TokensAnnotation.class);
+                    
                     //list of tokens which compose the mention
-
                     List<Token> mentionTokens = new ArrayList<>();
                     for (int i = cm.startIndex - 1; i < cm.endIndex - 1; i++) {
                         CoreLabel current = tks.get(i);
+                        //set token features 
                         Token t = new Token(current.word());
                         t.setPoS(current.tag());
-                        t.setStem(current.lemma());
+                        t.setLemma(current.lemma());
                         mentionTokens.add(t);
                     }
+                    //add to mention a new reference
                     mention.addReference(
                             reference.mentionSpan,
                             mentionTokens,
                             reference.mentionType.toString());
                 }
             }
-            
-//            //set the string representing corefchain obj as key
-//            //set the references map as value
-//            coreferenceGraph.put(anaphor, mentionMap);
-//
-//            //assign to the document a new annotation for corenferences
-//            //containing as annotion the anaphors and their mentions 
-//            blackboard.addAnnotation(new CoreferenceChainAnnotation(
-//                    COREFERENCE, mentionMap, document, anaphor));
+
+            //assign to the document a new corenference obj
+            //containing the anaphor and its mentions 
             blackboard.addGram(mention);
         }
 
@@ -222,7 +215,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 t.setPoS(token.tag());
 
                 // this is the lemma of the ttoken
-                t.setStem(token.lemma());
+                t.setLemma(token.lemma());
 
                 //add the token to the sentence
                 distilledSentence.addToken(t);

@@ -29,14 +29,20 @@ import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 public class Token extends Annotable {
 
     /**
-     * The stem of the word or, if a lemmatizer is used instead of a stemmer, 
-     * the lemma.
+     * The stem of the word.
      */
     private String stem;
+    
     /**
      * The part-of-speech tag of the word.
      */
     private String PoS;
+    
+    /**
+     * The lemmatize form of the token, that is obtained removing inflectional 
+     * endings only and returning the base or dictionary form of a word.
+     */
+    private String lemma;
 
     /**
      * Creates a token.
@@ -68,6 +74,15 @@ public class Token extends Annotable {
     }   
     
     /**
+     * Set the lemmatize form of the token.
+     * 
+     * @param lemma the lemma for the token. 
+     */
+    public void setLemma(String lemma){
+        this.lemma = lemma;
+    }
+    
+    /**
      * Returns the text of the token.
      * 
      * @return the text of the token.
@@ -93,6 +108,15 @@ public class Token extends Annotable {
     public String getPoS() {
         return PoS;
     }    
+    
+    /**
+     * Returns the lemmatize form of the token.
+     * 
+     * @return the lemma for token. 
+     */
+    public String getLemma(){
+        return lemma;
+    }
     // </editor-fold>
     
     
@@ -187,4 +211,6 @@ public class Token extends Annotable {
     public String getIdentifier() {
         return getText();
     }
+
+   
 }
