@@ -30,19 +30,18 @@ import java.util.Map;
 public abstract class Evaluator {
     
     /**
-     * The path where the evaluator will find the input documents and the
-     * gold standard results.
+     * The actual gold standard.
      */
-    private final String goldStandardPath;
+    protected final GenericDataset goldStandard;
     
     /**
      * Creates an evaluator that will look for the gold standard in the specified
      * path.
      * 
-     * @param goldStandardPath the folder that contains the gold standard.
+     * @param goldStandard the dataset that contains the gold standard.
      */
-    public Evaluator(String goldStandardPath) {
-        this.goldStandardPath = goldStandardPath;
+    public Evaluator(GenericDataset goldStandard) {
+        this.goldStandard = goldStandard;
     } 
 
     /**
@@ -50,8 +49,8 @@ public abstract class Evaluator {
      * 
      * @return the folder that contains the gold standard.
      */
-    protected String getGoldStandardPath() {
-        return goldStandardPath;
+    public GenericDataset getGoldStandard() {
+        return goldStandard;
     }
     
     /**
