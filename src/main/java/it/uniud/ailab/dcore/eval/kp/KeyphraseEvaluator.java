@@ -18,7 +18,6 @@
  */
 package it.uniud.ailab.dcore.eval.kp;
 
-import opennlp.tools.stemmer.*;
 import it.uniud.ailab.dcore.DistilledOutput;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.eval.Evaluator;
@@ -32,16 +31,15 @@ import java.util.Map;
  */
 public class KeyphraseEvaluator extends Evaluator {
 
-        /**
-     * An abstract evaluator for the Keyphrase Extraction task.
+    /**
+     * An evaluator for the Keyphrase Extraction task.
      *
      * @param goldStandard the gold standard to evaluate.
      */
-
     public KeyphraseEvaluator(GenericDataset goldStandard) {
         super(goldStandard);
     }
-    
+
     /**
      * Evaluate the keyphrases using the given dataset and settings.
      *
@@ -53,15 +51,15 @@ public class KeyphraseEvaluator extends Evaluator {
 
         if (goldStandard.isLoaded()) {
             goldStandard.load();
-        }        
-        
+        }
+
         int docIndex = 0;
         double precision = 0;
         double recall = 0;
         double fmeasure = 0;
 
-        for (Map.Entry<String, String> documentEntry : 
-                goldStandard.getTestSet().entrySet()) {
+        for (Map.Entry<String, String> documentEntry
+                : goldStandard.getTestSet().entrySet()) {
 
             String document = documentEntry.getValue().replace("\\n", " ");
 
@@ -79,20 +77,11 @@ public class KeyphraseEvaluator extends Evaluator {
                 kps[i] = output.getGrams()[i].getSurface();
             }
 
-            PorterStemmer stemmer = new PorterStemmer();
-            for (int i = 0; i < kps.length; i++) {
-                String[] tokens = kps[i].split(" ");
-                for (int j = 0; j < tokens.length; j++) {
-                    tokens[j] = stemmer.stem(tokens[j]);
-                }
-                kps[i] = String.join(" ", tokens);
-            }
-
             double docPrecision = computePrecision(
-                    kps, 
+                    kps,
                     goldStandard.getTestAnswers().get(documentEntry.getKey()));
             double docRecall = computeRecall(
-                    kps, 
+                    kps,
                     goldStandard.getTestAnswers().get(documentEntry.getKey()));
             double docFMeasure = computeFMeasure(docPrecision, docRecall);
 
@@ -124,7 +113,8 @@ public class KeyphraseEvaluator extends Evaluator {
         double matches = 0;
         for (int i = 0; i < kps.length; i++) {
             for (int j = 0; j < goldKeyphrase.length; j++) {
-                if (kps[i].toLowerCase().equals(goldKeyphrase[j])) {
+                if (goldStandard.compare(
+                        kps[i].toLowerCase(), goldKeyphrase[j]) == 0) {
                     matches++;
                 }
             }
@@ -137,7 +127,8 @@ public class KeyphraseEvaluator extends Evaluator {
         double matches = 0;
         for (int i = 0; i < kps.length; i++) {
             for (int j = 0; j < goldKeyphrase.length; j++) {
-                if (kps[i].toLowerCase().equals(goldKeyphrase[j])) {
+                if (goldStandard.compare(
+                        kps[i].toLowerCase(), goldKeyphrase[j]) == 0) {
                     matches++;
                 }
             }
