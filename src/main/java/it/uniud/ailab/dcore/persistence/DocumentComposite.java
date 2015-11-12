@@ -110,7 +110,7 @@ public class DocumentComposite extends DocumentComponent {
      * @param g the gram to add
      */
     @Override
-    public void addGram(Keyphrase g) {
+    public void addGram(Gram g) {
         throw new UnsupportedOperationException("You can't add Grams on a Composite object."); 
     }
 
@@ -121,8 +121,8 @@ public class DocumentComposite extends DocumentComponent {
      * @return the gram that appear in the component.
      */
     @Override
-    public List<Keyphrase> getGrams() {
-        List<Keyphrase> ret = new ArrayList<>();
+    public List<Gram> getGrams() {
+        List<Gram> ret = new ArrayList<>();
         for (DocumentComponent c : getComponents())
         {
             ret.addAll(c.getGrams());
@@ -132,7 +132,7 @@ public class DocumentComposite extends DocumentComponent {
     }
 
     @Override
-    public void removeGram(Keyphrase g) {
+    public void removeGram(Gram g) {
         throw new UnsupportedOperationException("You can't remove grams from a composite.");
     }
 }

@@ -24,6 +24,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 
 /**
@@ -68,15 +69,16 @@ public class LinearEvaluatorAnnotator implements Annotator {
      */
     @Override
     public void annotate(Blackboard b,DocumentComponent c) {       
-        for (Keyphrase g : b.getGrams())
+        for (Gram g : b.getKeyphrases())
         {
+            Keyphrase k = (Keyphrase)g;
             double score = 0;
-            for (FeatureAnnotation f : g.getFeatures()) {
+            for (FeatureAnnotation f : k.getFeatures()) {
                 if (weights.containsKey(f.getAnnotator())) {
                     score += f.getScore() * weights.get(f.getAnnotator());
                 }
             }            
-            g.putFeature(it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE, score);
+            k.putFeature(it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE, score);
         }
         
     }    

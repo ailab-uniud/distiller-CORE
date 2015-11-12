@@ -32,7 +32,7 @@ import java.util.List;
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-public class Keyphrase extends Annotable {
+public class Keyphrase extends Gram {
 
     /**
      * The different list of words forming the surface of the gram.
@@ -46,6 +46,8 @@ public class Keyphrase extends Annotable {
      * The concept Units in which the gram appears.
      */
     private List<DocumentComponent> appareances;
+    
+    public static final String KEYPHRASE = "Keyphrase"; 
 
     /**
      * Instantiated an n-gram. Usually, the surface should be simply the the 
@@ -62,7 +64,7 @@ public class Keyphrase extends Annotable {
      */
     public Keyphrase(String identifier, List<Token> sequence, String surface) {
         
-        super(identifier);
+        super(identifier, sequence, surface,KEYPHRASE);
         
         tokenLists = new ArrayList<>();
         tokenLists.add(sequence);
@@ -78,6 +80,7 @@ public class Keyphrase extends Annotable {
      * @param surface the surface to add
      * @param tokens the tokens that form the surface
      */
+    @Override
     public void addSurface(String surface,List<Token> tokens) {
         surfaces.add(surface);
         tokenLists.add(tokens);
@@ -89,6 +92,7 @@ public class Keyphrase extends Annotable {
      * @param surfaces the surface to add
      * @param tokenLists the tokens that form the surface
      */
+    @Override
     public void addSurfaces(List<String> surfaces,List<List<Token>> tokenLists) {
         
         if (surfaces.size() != tokenLists.size())
@@ -108,6 +112,7 @@ public class Keyphrase extends Annotable {
      *
      * @return the tokens of the surface of the gram.
      */
+    @Override
     public List<Token> getTokens() {
         return tokenLists.get(surfaces.indexOf(ListUtils.mostCommon(surfaces)));
     }
@@ -117,6 +122,7 @@ public class Keyphrase extends Annotable {
      * 
      * @return all the possible lists of tokens that form the gram.
      */
+    @Override
     public List<List<Token>> getTokenLists() {
         return tokenLists;
     }
@@ -128,6 +134,7 @@ public class Keyphrase extends Annotable {
      *
      * @return the human-readable form of the gram.
      */
+    @Override
     public String getSurface() {
         return ListUtils.mostCommon(surfaces);
     }
@@ -138,6 +145,7 @@ public class Keyphrase extends Annotable {
      * 
      * @return all the surfaces of the gram.
      */
+    @Override
     public List<String> getSurfaces() {
         return surfaces;
     }
@@ -248,6 +256,7 @@ public class Keyphrase extends Annotable {
      *
      * @param component the component in which the gram appears
      */
+    @Override
     public void addAppaerance(DocumentComponent component) {
         appareances.add(component);
     }
@@ -257,6 +266,7 @@ public class Keyphrase extends Annotable {
      *
      * @return all the components in which the gram appears.
      */
+    @Override
     public List<DocumentComponent> getAppaerances() {
         return appareances;
     }

@@ -160,9 +160,9 @@ public class WikipediaInferenceAnnotator implements Annotator {
         // text is the same as a Wikipedia page title 
         // for example, "Software Engineering". 
         List<Keyphrase> wikiGrams = new LinkedList<>();
-        blackboard.getGrams().stream().filter((g) -> 
-                (g.hasFeature(WIKIFLAG))).forEach((g) -> {
-            wikiGrams.add(g);
+        blackboard.getKeyphrases().stream().filter((g) -> 
+                (((Keyphrase)g).hasFeature(WIKIFLAG))).forEach((g) -> {
+            wikiGrams.add(((Keyphrase)g));
         });
 
         // Build the related and hypernyms lists, by getting the related links

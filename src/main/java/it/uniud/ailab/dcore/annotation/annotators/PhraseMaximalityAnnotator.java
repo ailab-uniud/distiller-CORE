@@ -21,6 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -69,22 +70,24 @@ public class PhraseMaximalityAnnotator implements Annotator {
         HashMap<String, Keyphrase> surfaces = new HashMap<>();
         HashMap<Keyphrase, String> gram2surface = new HashMap<>();
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        for (Keyphrase g:blackboard.getGrams()){
+        for (Gram g:blackboard.getKeyphrases()){
+            Keyphrase k = (Keyphrase)g;
             String stemmedSurface = "";
             for (Token t: g.getTokens()){
                 stemmedSurface += t.getStem() + " ";
             }
-            surfaces.put(stemmedSurface.trim(), g);
-            gram2surface.put(g, stemmedSurface.trim());
+            surfaces.put(stemmedSurface.trim(), k);
+            gram2surface.put(k, stemmedSurface.trim());
         }
         
         for (Sentence s : sentences) {
             
-            for (Keyphrase g : s.getGrams()) {
+            for (Gram g : s.getGrams()) {
+                Keyphrase k = (Keyphrase)g;
                 // annotate grams only once 
-                 if (!g.hasFeature(MAXIMALITY)){
+                 if (!k.hasFeature(MAXIMALITY)){
                      HashSet<Keyphrase> superterms = new HashSet<>();
-                     String surface = gram2surface.get(g);
+                     String surface = gram2surface.get(k);
                      for(String candidate: surfaces.keySet()){
                          if(candidate.contains(surface)){
                              superterms.add(surfaces.get(candidate));
@@ -96,10 +99,10 @@ public class PhraseMaximalityAnnotator implements Annotator {
                      for(Keyphrase g2: superterms){
                          maximality = Math.max(
                                  g2.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)/
-                                         g.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)
+                                         k.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)
                                  , maximality);
                      }
-                     g.putFeature(MAXIMALITY, 1.0-maximality);
+                     k.putFeature(MAXIMALITY, 1.0-maximality);
                  }
                 
             }

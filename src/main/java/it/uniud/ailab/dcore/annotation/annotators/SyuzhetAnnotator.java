@@ -28,6 +28,7 @@ import java.util.Map;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
@@ -124,34 +125,36 @@ public class SyuzhetAnnotator implements Annotator {
             
             if (mode == Mode.AVERAGE) {
             
-                for (Keyphrase g : s.getGrams())
+                for (Gram g : s.getGrams())
                 {
-                    if (!g.hasFeature(INTENSITY_COUNTER)) {
-                        g.putFeature(INTENSITY, Math.abs(accumulator));
-                        g.putFeature(INTENSITY_COUNTER,1);
+                    Keyphrase k = (Keyphrase)g;
+                    if (!k.hasFeature(INTENSITY_COUNTER)) {
+                        k.putFeature(INTENSITY, Math.abs(accumulator));
+                        k.putFeature(INTENSITY_COUNTER,1);
                     } else {
-                        double counter = g.getFeature(INTENSITY_COUNTER);
+                        double counter = k.getFeature(INTENSITY_COUNTER);
 
                         // recursively increment the average
                         double avg = Math.abs(accumulator) + 
-                                (g.getFeature(INTENSITY) *
+                                (k.getFeature(INTENSITY) *
                                 counter);
 
                         avg = avg / ++counter;
-                        g.putFeature(INTENSITY,avg);
-                        g.putFeature(INTENSITY_COUNTER,counter);
+                        k.putFeature(INTENSITY,avg);
+                        k.putFeature(INTENSITY_COUNTER,counter);
                     }
                 }
             } else { // (mode == Mode.SUM)
-                for (Keyphrase g : s.getGrams())
+                for (Gram g : s.getGrams())
                 {
-                    if (!g.hasFeature(INTENSITY_COUNTER)) {
-                        g.putFeature(INTENSITY, Math.abs(accumulator));
-                        g.putFeature(INTENSITY_COUNTER,1);
+                    Keyphrase k = (Keyphrase)g;
+                    if (!k.hasFeature(INTENSITY_COUNTER)) {
+                        k.putFeature(INTENSITY, Math.abs(accumulator));
+                        k.putFeature(INTENSITY_COUNTER,1);
                     } else {
                         // increment the intensity
-                        double avg = Math.abs(accumulator) + g.getFeature(INTENSITY);
-                        g.putFeature(INTENSITY,avg);
+                        double avg = Math.abs(accumulator) + k.getFeature(INTENSITY);
+                        k.putFeature(INTENSITY,avg);
                     }
                 }
             }

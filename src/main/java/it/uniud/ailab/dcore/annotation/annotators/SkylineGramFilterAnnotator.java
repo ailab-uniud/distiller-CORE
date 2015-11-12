@@ -21,6 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,11 +42,12 @@ public class SkylineGramFilterAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         
         // get the grams and order them by score
-        Collection<Keyphrase> grams = blackboard.getGrams();
+        Collection<Gram> grams = blackboard.getKeyphrases();
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Keyphrase g : grams) {
-            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
+        for (Gram g : grams) {
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
         List<Map.Entry<Keyphrase, Double>> gramsToTrash
@@ -88,7 +90,7 @@ public class SkylineGramFilterAnnotator implements Annotator {
         
         // now remove the remaining grams from the blackboard.        
         for (Map.Entry<Keyphrase, Double> e : gramsToTrash) 
-            blackboard.removeGram(e.getKey());        
+            blackboard.removeKeyphrase(e.getKey());        
     }
     
 }

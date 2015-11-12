@@ -24,6 +24,7 @@ import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +50,7 @@ public class BlackboardUtils {
      */
     public static void printScores(Blackboard b, boolean printDetails) {
 
-        Collection<Keyphrase> grams = b.getGrams();
+        Collection<Gram> grams = b.getKeyphrases();
         
         System.out.println("");
         System.out.println(String.format(
@@ -61,8 +62,9 @@ public class BlackboardUtils {
 
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Keyphrase g : grams) {
-            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
+        for (Gram g : grams) {
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
         Stream<Map.Entry<Keyphrase, Double>> ordered

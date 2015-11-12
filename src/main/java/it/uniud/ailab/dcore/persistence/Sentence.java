@@ -44,7 +44,7 @@ public class Sentence extends DocumentComponent {
      * The {@link it.uniud.ailab.dcore.persistence.Keyphrase}s that have been detected 
      * in the sentence.
      */
-    private List<Keyphrase> grams;
+    private List<Gram> grams;
     
     // </editor-fold>
     
@@ -140,7 +140,7 @@ public class Sentence extends DocumentComponent {
      * @param g the gram to add. 
      */
     @Override
-    public void addGram(Keyphrase g) {
+    public void addGram(Gram g) {
         grams.add(g);
     }
     
@@ -150,7 +150,7 @@ public class Sentence extends DocumentComponent {
      * @return the grams that have been found in the sentence.
      */
     @Override
-    public List<Keyphrase> getGrams() {
+    public List<Gram> getGrams() {
         return grams;
     }
 
@@ -160,12 +160,12 @@ public class Sentence extends DocumentComponent {
      * @param gramToRemove the gram to remove
      */
     @Override
-    public void removeGram(Keyphrase gramToRemove) {
+    public void removeGram(Gram gramToRemove) {
 
-        for (Iterator<Keyphrase> gramIterator = grams.iterator(); 
+        for (Iterator<Gram> gramIterator = grams.iterator(); 
                 gramIterator.hasNext();)
         {
-            Keyphrase gram = gramIterator.next();
+            Gram gram = gramIterator.next();
             
             if (gram.getIdentifier().equals(gramToRemove.getIdentifier())) {
                 gramIterator.remove();

@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import it.uniud.ailab.dcore.utils.Either;
 import it.uniud.ailab.dcore.utils.Either.Left;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,9 +180,10 @@ public abstract class GenericSheetPrinter {
     public void loadGrams(Blackboard b) {
 
         init();
-
-        for (Keyphrase g : b.getGrams()) {
-            addRow(g);
+        Collection<Gram> grams = b.getKeyphrases();
+        for (Gram g : b.getKeyphrases()) {
+            Keyphrase k = (Keyphrase)g;
+            addRow(k);
         }
     }
 
@@ -194,8 +196,9 @@ public abstract class GenericSheetPrinter {
 
         init();
 
-        for (Keyphrase g : c.getGrams()) {
-            addRow(g);
+        for (Gram g : c.getGrams()) {
+            Keyphrase k = (Keyphrase)g;
+            addRow(k);
         }
     }
 

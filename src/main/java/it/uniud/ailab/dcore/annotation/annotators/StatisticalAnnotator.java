@@ -24,6 +24,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
@@ -126,35 +127,35 @@ public class StatisticalAnnotator implements Annotator {
             // every sentence
             List<String> surfaces = new ArrayList<>();
 
-            for (Keyphrase g : s.getGrams()) {
-
-                if (g.hasFeature(FREQUENCY)) {
-                    g.putFeature(FREQUENCY, g.getFeature(FREQUENCY) + 1);
+            for (Gram g : s.getGrams()) {
+                Keyphrase k = (Keyphrase)g;
+                if (k.hasFeature(FREQUENCY)) {
+                    k.putFeature(FREQUENCY, k.getFeature(FREQUENCY) + 1);
                 } else {
-                    g.putFeature(FREQUENCY, 1);
+                    k.putFeature(FREQUENCY, 1);
                 }
 
-                if (!surfaces.contains(g.getSurface())) {
+                if (!surfaces.contains(k.getSurface())) {
 
-                    surfaces.add(g.getSurface());
+                    surfaces.add(k.getSurface());
 
                     double depth = (count / size);
-                    g.putFeature(DEPTH, depth);
+                    k.putFeature(DEPTH, depth);
 
                     // check if it's the first appaerance
                     // if not, set the height 1 - depth
-                    if (!g.hasFeature(HEIGHT)) {
-                        g.putFeature(HEIGHT, 1 - depth);
+                    if (!k.hasFeature(HEIGHT)) {
+                        k.putFeature(HEIGHT, 1 - depth);
                     }
 
-                    g.putFeature(LIFESPAN, g.getFeature(DEPTH) + g.getFeature(HEIGHT) - 1);
+                    k.putFeature(LIFESPAN, k.getFeature(DEPTH) + k.getFeature(HEIGHT) - 1);
 
                     double increment = 1.0 / sentences.size();
 
-                    if (g.hasFeature(FREQUENCY_SENTENCE)) {
-                        g.putFeature(FREQUENCY_SENTENCE, g.getFeature(FREQUENCY_SENTENCE) + increment);
+                    if (k.hasFeature(FREQUENCY_SENTENCE)) {
+                        k.putFeature(FREQUENCY_SENTENCE, k.getFeature(FREQUENCY_SENTENCE) + increment);
                     } else {
-                        g.putFeature(FREQUENCY_SENTENCE, increment);
+                        k.putFeature(FREQUENCY_SENTENCE, increment);
                     }
 
                 }

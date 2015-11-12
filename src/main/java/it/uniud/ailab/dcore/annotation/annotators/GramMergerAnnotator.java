@@ -21,6 +21,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +50,9 @@ public class GramMergerAnnotator implements Annotator {
 
         List<String> ids = new ArrayList<>();
 
-        for (Keyphrase g : blackboard.getGrams()) {
-            ids.add(g.getIdentifier());
+        for (Gram g : blackboard.getKeyphrases()) {
+            Keyphrase k = (Keyphrase)g;
+            ids.add(k.getIdentifier());
         }
 
         // REVERSE SORT: the longest string goes first!
@@ -87,9 +89,10 @@ public class GramMergerAnnotator implements Annotator {
             }
         }
         
-        for (Keyphrase g : blackboard.getGrams()) {
-            if (!idsToKeep.contains(g.getIdentifier()))
-                blackboard.removeGram(g);
+        for (Gram g : blackboard.getKeyphrases()) {
+            Keyphrase k = (Keyphrase)g;
+            if (!idsToKeep.contains(k.getIdentifier()))
+                blackboard.removeKeyphrase(k);
         }
 
     }

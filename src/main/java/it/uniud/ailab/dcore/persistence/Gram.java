@@ -27,17 +27,29 @@ import java.util.List;
  * A generic n-gram, a simple list of n words.
  * 
  * @author Marco Basaldella
+ * @author Giorgia Chiaradia
  */
 public abstract class Gram extends Annotable {
+    
+    /**
+     * The type of n-gram:it can be a concept, a keyphrase, a mention...
+     */
+    private final String type;
     
     /**
      * The different list of words forming the surface of the gram.
      */
     private List<List<Token>> tokenLists;
+    
     /**
      * The different string representation of the gram.
      */
     private final List<String> surfaces;
+    
+    /**
+     * The concept Units in which the gram appears.
+     */
+    private List<DocumentComponent> appareances;
     
     /**
      * Instantiated an n-gram. Usually, the surface should be simply the the 
@@ -52,9 +64,12 @@ public abstract class Gram extends Annotable {
      * @param identifier unique identifier of the gram.
      * @param surface the pretty-printed string representation of the gram
      */
-    public Gram(String identifier, List<Token> sequence, String surface) {
+    public Gram(String identifier, List<Token> sequence, String surface, 
+            String type) {
         
         super(identifier);
+        
+        this.type = type;
         
         tokenLists = new ArrayList<>();
         tokenLists.add(sequence);
@@ -92,6 +107,15 @@ public abstract class Gram extends Annotable {
         for (List<Token> t : tokenLists) {
             this.tokenLists.add(new ArrayList<Token>(t));
         }
+    }
+    
+    /**
+     * Get the type of the Gram that depends on the type of Gram implementation.
+     * 
+     * @return the type of gram. 
+     */
+    public String getType(){
+        return type;
     }
 
     /**
@@ -132,6 +156,26 @@ public abstract class Gram extends Annotable {
     public List<String> getSurfaces() {
         return surfaces;
     }
+    
+    /**
+     * Adds an appearance of the gram; in other words, adds the component in
+     * which the gram appears to the list of the appearances.
+     *
+     * @param component the component in which the gram appears
+     */
+    public void addAppaerance(DocumentComponent component) {
+        appareances.add(component);
+    }
+
+    /**
+     * Gets all the components in which the gram appears.
+     *
+     * @return all the components in which the gram appears.
+     */
+    public List<DocumentComponent> getAppaerances() {
+        return appareances;
+    }
+    
     
     /**
      * The identifier of the gram. Please note that it is possible that two

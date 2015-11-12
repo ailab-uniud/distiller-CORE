@@ -24,6 +24,7 @@ import java.util.Map;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.annotation.Annotation;
+import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
@@ -60,9 +61,11 @@ public class Blackboard {
     private DocumentComponent document;
 
     /**
-     * Container for the n-grams of the document.
-     */
-    private Map<String, Keyphrase> gramContainer;
+     * Container for the n-grams of the document. Every n-gram is part of a 
+     * specific list identifying the type of n-gram. The types of n-grams are
+     * the key for searching in the main n-gram list.
+     */  
+    private Map<String, Map<String, Gram>> generalNGramsContainer;
 
     /**
      * Document-wide annotations. This space can be used to add annotations that
@@ -88,7 +91,7 @@ public class Blackboard {
     public final void createDocument(String rawText, String documentId) {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText, documentId);
-        this.gramContainer = new HashMap<>();
+        this.generalNGramsContainer = new HashMap<>();
         this.annotations = new ArrayList<>();
     }
 
@@ -101,7 +104,7 @@ public class Blackboard {
     public final void createDocument(String rawText) {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText, DEFAULT_DOCUMENT_ID);
-        this.gramContainer = new HashMap<>();
+        this.generalNGramsContainer = new HashMap<>();
         this.annotations = new ArrayList<>();
     }
 
@@ -134,16 +137,20 @@ public class Blackboard {
      * @param unit the concept unit where the gram appears
      * @param newGram the gram to add
      */
-    public void addGram(DocumentComponent unit, Keyphrase newGram) {
+    public void addGram(DocumentComponent unit, Gram newGram) {
 
-        Keyphrase gram = gramContainer.get(newGram.getIdentifier());
+        Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
+        if(grams == null){
+            grams = new HashMap<>();
+        }
+        Gram gram = grams.get(newGram.getIdentifier());
 
         // Deep clone the object instead of referencing the found one.
         // this way, we're free to modify it by adding annotations without
         // modifying the old object.
         if (gram == null) {
-            Keyphrase cloned = (new Cloner()).deepClone(newGram);
-            gramContainer.put(cloned.getIdentifier(), cloned);
+            Gram cloned = (new Cloner()).deepClone(newGram);
+            grams.put(cloned.getIdentifier(), cloned);
             gram = cloned;
         } else {
             // add the surface of the new gram
@@ -152,6 +159,34 @@ public class Blackboard {
 
         gram.addAppaerance(unit);
         unit.addGram(gram);
+        generalNGramsContainer.put(newGram.getType(), grams);
+    }
+    
+    public void addGram(Gram newGram) {
+
+        Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
+        if(grams == null){
+            grams = new HashMap<>();
+        }
+        Gram gram = grams.get(newGram.getIdentifier());
+
+        // Deep clone the object instead of referencing the found one.
+        // this way, we're free to modify it by adding annotations without
+        // modifying the old object.
+        if (gram == null) {
+            Gram cloned = (new Cloner()).deepClone(newGram);
+            grams.put(cloned.getIdentifier(), cloned);
+        } else {
+            // add the surface of the new gram
+            gram.addSurfaces(newGram.getSurfaces(), newGram.getTokenLists());
+        }
+        
+        generalNGramsContainer.put(newGram.getType(), grams);
+    }
+    
+      
+    public Map<String, Gram> getGramsByType(String gramType){
+        return generalNGramsContainer.get(gramType);
     }
 
     /**
@@ -159,8 +194,10 @@ public class Blackboard {
      *
      * @return a collection of {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
      */
-    public List<Keyphrase> getGrams() {
-        return new ArrayList(gramContainer.values());
+    @Deprecated
+    public List<Gram> getKeyphrases() {
+        
+        return new ArrayList(generalNGramsContainer.get(Keyphrase.KEYPHRASE).values());
     }
 
     /**
@@ -169,8 +206,10 @@ public class Blackboard {
      *
      * @param g the gram to remove.
      */
-    public void removeGram(Keyphrase g) {
-        gramContainer.remove(g.getIdentifier());
+    @Deprecated
+    public void removeKeyphrase(Keyphrase g) {
+        generalNGramsContainer.get(Keyphrase.KEYPHRASE)
+                .remove(g.getIdentifier());
         
         for (Sentence s : DocumentUtils.getSentences(document)) {
             s.removeGram(g);

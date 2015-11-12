@@ -27,6 +27,7 @@ import it.uniud.ailab.dcore.annotation.Pipeline;
 import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
+import it.uniud.ailab.dcore.persistence.Gram;
 import static it.uniud.ailab.dcore.utils.AnnotatorUtils.getAnnotatorSimpleName;
 import java.util.Collection;
 import java.util.Collections;
@@ -212,13 +213,14 @@ public class Distiller {
                 getLanguage().getLanguage());
 
         // Copy the grams, sorted by descending score
-        output.initializeGrams(blackboard.getGrams().size());
+        output.initializeGrams(blackboard.getKeyphrases().size());
         
-        Collection<Keyphrase> grams = blackboard.getGrams();
+        Collection<Gram> grams = blackboard.getKeyphrases();
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Keyphrase g : grams) {
-            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
+        for (Gram g : grams) {
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
         List<Map.Entry<Keyphrase, Double>> sortedGrams
