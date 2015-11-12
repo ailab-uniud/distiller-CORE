@@ -16,8 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package it.uniud.ailab.dcore.eval.kp;
+package it.uniud.ailab.dcore.eval.datasets;
 
+import it.uniud.ailab.dcore.eval.GenericDataset;
+import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +38,7 @@ import java.util.stream.Stream;
  *
  * @author Marco Basaldella
  */
-public class SemEval2010 extends KeyphraseEvaluator {
+public class SemEval2010 extends GenericDataset {
 
     public SemEval2010(String goldStandardPath) {
         super(goldStandardPath);
@@ -48,7 +50,7 @@ public class SemEval2010 extends KeyphraseEvaluator {
         Map<String,String> documents = new HashMap<>();
         
         try {
-            File[] dir = new File(this.getGoldStandardPath() + "/test").listFiles();
+            File[] dir = new File(datasetPath + "/test").listFiles();
             Arrays.sort(dir);
             
             for (File f : dir) {
@@ -69,14 +71,14 @@ public class SemEval2010 extends KeyphraseEvaluator {
     }
 
     @Override
-    public Map<String,String[]> loadGoldKeyphrases() {
+    public Map<String,String[]> loadGoldResults() {
 
         // default is a zero-sized output array
         Map<String,String[]> keyphrases = null;
 
         try {
             
-            File gold = new File(this.getGoldStandardPath() + "/test_answer/test.combined.stem.final");
+            File gold = new File(datasetPath + "/test_answer/test.combined.stem.final");
             
             Map<String,String[]> buffer = new HashMap<>();
 

@@ -18,7 +18,9 @@
  */
 package it.uniud.ailab.dcore.launchers;
 
+import it.uniud.ailab.dcore.eval.datasets.SemEval2010;
 import it.uniud.ailab.dcore.DistillerFactory;
+import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.kp.*;
 
 /**
@@ -43,22 +45,23 @@ public class KeyphraseEvaluation {
     }
 
     public static void evaluate(Dataset dataset, String folder) {
-        KeyphraseEvaluator task;
+        GenericDataset kpDataset;
 
         switch (dataset) {
             case SEMEVAL:
-                task = new SemEval2010(folder);
+                kpDataset = new SemEval2010(folder);
                 break;
             default:
-                task = null;
+                kpDataset = null;
         }
 
-        if (task == null) {
+        if (kpDataset == null) {
             throw new UnsupportedOperationException(
                     "Unknown dataset:" + dataset);
         }
 
-        task.evaluate(DistillerFactory.getDefaultEval());
+        (new KeyphraseEvaluator(kpDataset)).
+                evaluate(DistillerFactory.getDefaultEval());
 
     }
 }

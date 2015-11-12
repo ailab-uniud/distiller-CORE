@@ -22,6 +22,7 @@ import opennlp.tools.stemmer.*;
 import it.uniud.ailab.dcore.DistilledOutput;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.eval.Evaluator;
+import it.uniud.ailab.dcore.eval.GenericDataset;
 import java.util.Map;
 
 /**
@@ -29,40 +30,18 @@ import java.util.Map;
  *
  * @author Marco Basaldella
  */
-public abstract class KeyphraseEvaluator extends Evaluator {
+public class KeyphraseEvaluator extends Evaluator {
 
-    /**
-     * The input documents.
-     */
-    private Map<String, String> inputDocuments;
-    /**
-     * The keyphrases for the input documents.
-     */
-    private Map<String, String[]> goldKeyphrases;
-
-    /**
+        /**
      * An abstract evaluator for the Keyphrase Extraction task.
      *
-     * @param goldStandardPath the directory of the gold standard.
+     * @param goldStandard the gold standard to evaluate.
      */
-    public KeyphraseEvaluator(String goldStandardPath) {
-        super(goldStandardPath);
+
+    public KeyphraseEvaluator(GenericDataset goldStandard) {
+        super(goldStandard);
     }
-
-    /**
-     * Loads the input documents and returns them.
-     *
-     * @return the input documents.
-     */
-    public abstract Map<String, String> loadInputDocuments();
-
-    /**
-     * Loads the gold standard keyphrases and returns them.
-     *
-     * @return the gold standard keyphrases.
-     */
-    public abstract Map<String, String[]> loadGoldKeyphrases();
-
+    
     /**
      * Evaluate the keyphrases using the given dataset and settings.
      *
@@ -72,19 +51,22 @@ public abstract class KeyphraseEvaluator extends Evaluator {
     @Override
     public Map<String, Double> evaluate(Distiller pipeline) {
 
-        inputDocuments = loadInputDocuments();
-        goldKeyphrases = loadGoldKeyphrases();
+        if (goldStandard.isLoaded()) {
+            goldStandard.load();
+        }        
+        
         int docIndex = 0;
         double precision = 0;
         double recall = 0;
         double fmeasure = 0;
 
-        for (Map.Entry<String, String> documentEntry : inputDocuments.entrySet()) {
+        for (Map.Entry<String, String> documentEntry : 
+                goldStandard.getInputDocuments().entrySet()) {
 
             String document = documentEntry.getValue().replace("\\n", " ");
 
             System.out.println("Evaluating document " + ++docIndex
-                    + " of " + inputDocuments.size() + "...");
+                    + " of " + goldStandard.getInputDocuments().size() + "...");
 
             System.out.println("Document identifier: " + documentEntry.getKey());
             System.out.println("Document's first 40 chars: "
@@ -107,9 +89,11 @@ public abstract class KeyphraseEvaluator extends Evaluator {
             }
 
             double docPrecision = computePrecision(
-                    kps, goldKeyphrases.get(documentEntry.getKey()));
+                    kps, 
+                    goldStandard.getGoldResults().get(documentEntry.getKey()));
             double docRecall = computeRecall(
-                    kps, goldKeyphrases.get(documentEntry.getKey()));
+                    kps, 
+                    goldStandard.getGoldResults().get(documentEntry.getKey()));
             double docFMeasure = computeFMeasure(docPrecision, docRecall);
 
             System.out.println("Precision   : " + docPrecision);
@@ -121,9 +105,9 @@ public abstract class KeyphraseEvaluator extends Evaluator {
             fmeasure = fmeasure + docFMeasure;
         }
 
-        precision = precision / inputDocuments.size();
-        recall = recall / inputDocuments.size();
-        fmeasure = fmeasure / inputDocuments.size();
+        precision = precision / goldStandard.getInputDocuments().size();
+        recall = recall / goldStandard.getInputDocuments().size();
+        fmeasure = fmeasure / goldStandard.getInputDocuments().size();
 
         System.out.println();
         System.out.println("*** EVALUATION COMPLETE ***");
