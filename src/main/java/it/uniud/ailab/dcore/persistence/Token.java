@@ -168,7 +168,9 @@ public class Token extends Annotable {
      */
     @Override
     public String toString() {
-        String ret = getText() + " {(POS:" + getPoS() + ")" ;
+        String ret = getText() + " {(POS:" + getPoS() + "), " 
+                + "(Lemma: " + getLemma() + "), "
+                + "(Stem: " +getStem()+ ")";
         for (Annotation a : getAnnotations()) {
             if (a instanceof TextAnnotation)
                 ret = ret + ", (" + a.getAnnotator() + ":" + 

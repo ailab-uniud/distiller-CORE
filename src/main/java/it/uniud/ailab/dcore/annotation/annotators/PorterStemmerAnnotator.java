@@ -75,12 +75,14 @@ public class PorterStemmerAnnotator implements Annotator {
             //for every token
             for (Token t : sentence.getTokens()) {
                 //set the stem form to the token
+                stemmer.setCurrent(t.getText());
                 if (stemmer.stem()) {
                     t.setStem(stemmer.getCurrent());
                 } else {
                     t.setStem(t.getText());
                 }
             }
+            
         }
 
         //annotate mention n-grams with stem only if anaphora resolutions is 
@@ -90,16 +92,17 @@ public class PorterStemmerAnnotator implements Annotator {
             for (Gram g : mentions.values()) {
                 Mention m = (Mention) g;
                 for (Token t : m.getAnaphorToken()) {
+                    stemmer.setCurrent(t.getText());
                     if (stemmer.stem()) {
                         t.setStem(stemmer.getCurrent());
                     } else {
                         t.setStem(t.getText());
                     }
                 }
-
                 //annotate tokens from references
                 for (Reference r : m.getReferences()) {
                     for (Token t : r.getTokens()) {
+                        stemmer.setCurrent(t.getText());
                         if (stemmer.stem()) {
                             t.setStem(stemmer.getCurrent());
                         } else {

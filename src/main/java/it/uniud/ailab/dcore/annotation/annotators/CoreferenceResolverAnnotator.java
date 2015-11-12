@@ -83,62 +83,57 @@ public class CoreferenceResolverAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
+        //get all the sentences in the document
         List<Sentence> sentences = DocumentUtils.getSentences(component);
 
+        //get the total number of phrases in the document
         double numberOfPhrases = DocumentUtils
                 .getNumberOfPhrasesInDocument(component);
 
+        //prepare the list containing the references which are not
+        //pronominal
         List<String> notPronominalAnaphora = new ArrayList<>();
+        
+        //prepare the map containing the anaphor and the number of pronominal 
+        //references
         Map<String, Double> pronominalAnaphoraCounter = new HashMap<>();
-
-        // Annotate grams with their statistical features.
-        // The implementation is quite straightforward:
-        // for the definitions of depth, height and frequency, just
-        // see the variable declarations above.
-//        //preprocess graph and getting numberofref for each anaphor
-//        for(Annotation an : blackboard.getAnnotations(
-//                StanfordBootstrapperAnnotator.COREFERENCE)){
-//            
-//            //get the annotation from blackboard for coreferences annotation 
-//            CoreferenceChainAnnotation stanfordAnnotation = (CoreferenceChainAnnotation)an;
-//            
-//            //each annotation is an anaphor  
-//            String anaphor = stanfordAnnotation.getAnnotation();
-//            
-//            //we count all the times the metions for the current anaphor are 
-//            //pronominal anaphoras
-//            double pronCount = stanfordAnnotation.getNumberOfPronominalReferences();
-//            
-//            //insert anaphor and respective pronominal anphora count in the 
-//            //general map
-//            pronominalAnaphoraCounter.put(anaphor, pronCount);
-//            
-//            //get all the non-pronominal mentions for the current anaphora
-//            List<String> mentions = stanfordAnnotation.getNotPronominalMentions();
-//            
-//            //add the mentions list to the global one
-//            notPronominalAnaphora.addAll(mentions);
-//        }
+        
+        //get the map of grams which type is mention 
         Map<String, Gram> mentions = blackboard.getGramsByType(Mention.MENTION);
-        for (String anaphor : mentions.keySet()) {
-            double numberOfRef = 0;
-            Mention ment = (Mention) mentions.get(anaphor);
-            for (Reference ref : ment.getReferences()) {
-                if (ref.getType().equals("PRONOMINAL")) {
-                    numberOfRef++;
+        
+        //preprocess the metion grams so to distiguish the ones that are 
+        //pronominal and count them, from the ones that are proper name or 
+        //nominal references. All the data structure for mentions will be full
+        //up with the stemmed or lemmatize version of the gram, so to facilitate
+        //the comparison with the candidate keyphrases.
+        for (String anaphor : mentions.keySet()) { //for every anaphor...
+            double numberOfRef = 0; //set number of reference primarly to zero
+            Mention ment = (Mention) mentions.get(anaphor); // assuring the gram 
+                                                            //is a mention
+            //for every reference to anaphor
+            for (Reference ref : ment.getReferences()) { 
+                if (ref.getType().equals("PRONOMINAL")) { //if is a pronoun
+                    numberOfRef++; //increment # of reference for that anaphor
                 } else {
-                    String rootedRef = "";
+                    //if is proper name or nominal, create a string of the 
+                    //stemmed form of the reference
+                    StringBuilder strBuilder = new StringBuilder();
                     for (Token t : ref.getTokens()) {
                         if (t.getStem() == null) {
-                            rootedRef += t.getLemma() + " ";
+                            strBuilder.append(t.getLemma());
                         } else {
-                            rootedRef += t.getStem() + " ";
+                            strBuilder.append(t.getStem());
                         }
+                        strBuilder.append(" ");
                     }
-                    rootedRef = rootedRef.trim();
+                    String rootedRef = strBuilder.toString().trim();
+                    
+                    //add the non pronominal reference(stemmed) to the global list 
                     notPronominalAnaphora.add(rootedRef);
                 }
             }
+            
+            //create a stemmed string for the anaphor n-gram
             String rootedAnaphor = "";
             for (Token t : ment.getAnaphorToken()) {
                 if (t.getStem() == null) {
@@ -148,17 +143,22 @@ public class CoreferenceResolverAnnotator implements Annotator {
                 }
             }
             rootedAnaphor = rootedAnaphor.trim();
+            
+            //add the total # of references for the current anaphor to the map
             pronominalAnaphoraCounter.put(rootedAnaphor, numberOfRef);
         }
-
+        
         //for each sentence in the document
         for (Sentence s : sentences) {
             double score = 0; //initialize variable for NOR feature score
 
-            //for each n gram control if the anaphor is present in the n gram or
-            //vice-versa
+            //for each candidate keyphrase control if the anaphor is present 
+            //in the n gram or vice-versa
             for (Gram g : s.getGrams()) {
+                //assuming the gram is really a keyphrase
                 Keyphrase k = (Keyphrase) g;
+                
+                //create a stemmed form for the entire keyphrase
                 String key = "";
                 for(Token t : k.getTokens()){
                     if (t.getStem() == null) {
@@ -169,12 +169,14 @@ public class CoreferenceResolverAnnotator implements Annotator {
                 }
                 key = key.trim();
                 
+                //iterate on all the anaphors
                 for (String anaphor : pronominalAnaphoraCounter.keySet()) {
+                    //check if the anaphor contains or not the keyphrase
+                    //and vice-versa
                     if (anaphor.toLowerCase().toLowerCase()
                             .matches(".*\\b" + key.toLowerCase() + "\\b.*")
                             || key.toLowerCase()
                             .matches(".*\\b" + anaphor.toLowerCase() + "\\b.*")) {
-
                         double score1 = score;
                         double score2 = pronominalAnaphoraCounter.get(anaphor);
                         score = Math.max(score1, score2); //get the maximal score 
@@ -188,13 +190,18 @@ public class CoreferenceResolverAnnotator implements Annotator {
                 } else {
                     k.putFeature(NUMBER_OF_REFERENCE, 0.0);
                 }
-
-                //check if an candidate is or not present in a mention
-                double inAnaphoraScore = 0;
+                
+                
+                double inAnaphoraScore = 0; //initialize inAnaphora score to zero
+                //get the term frequency 
                 double gramFreq = k.getFeature(StatisticalAnnotator.FREQUENCY);
+                
+                //for each reference to the current anaphor
                 for(String reference : notPronominalAnaphora){
-                    if(reference.toLowerCase().matches(".*\\b" + key.toLowerCase() + "\\b.*")){
-                        inAnaphoraScore++;
+                    //check if an candidate is or not present in a reference
+                    if(reference.toLowerCase()
+                            .matches(".*\\b" + key.toLowerCase() + "\\b.*")){
+                        inAnaphoraScore++;//if it is increment inAnaphora score
                     }
                    
                 }
@@ -203,7 +210,8 @@ public class CoreferenceResolverAnnotator implements Annotator {
                 if(inAnaphoraScore >= gramFreq)
                     inAnaphoraScore = 0;
                 
-                //set the InAnaphora feature for the candidate
+                //set the InAnaphora feature for the candidate, normalizing the 
+                //score to the candidate frequency
                 k.putFeature(IN_ANAPHORA, inAnaphoraScore/gramFreq);
             }
         }

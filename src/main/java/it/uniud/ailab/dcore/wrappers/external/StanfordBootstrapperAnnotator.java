@@ -144,13 +144,17 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             for (Set<CorefChain.CorefMention> mentions : mentionMap) {
                 
                 for (CorefChain.CorefMention reference : mentions) {
+                    //eliminate self-references
+                    if(reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)){
+                        continue;
+                    }
                     List<CoreLabel> tokens = document.get(SentencesAnnotation.class)
                             .get(reference.sentNum - 1).get(TokensAnnotation.class);
                     
                     //list of tokens which compose the mention
                     List<Token> mentionTokens = new ArrayList<>();
-                    for (int i = cm.startIndex - 1; i < cm.endIndex - 1; i++) {
-                        CoreLabel current = tks.get(i);
+                    for (int i = reference.startIndex - 1; i < reference.endIndex - 1; i++) {
+                        CoreLabel current = tokens.get(i);
                         //set token features 
                         Token t = new Token(current.word());
                         t.setPoS(current.tag());

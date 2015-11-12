@@ -41,7 +41,7 @@ public class StanfordKE {
     public static void main(String[] args) throws IOException {
         Distiller d = DistillerFactory.getStanfordCode();
         
-        File f = new File(args[0]);
+        File f = new File("E:/loren.txt");
         
         String document = String.join(
                         " ",
