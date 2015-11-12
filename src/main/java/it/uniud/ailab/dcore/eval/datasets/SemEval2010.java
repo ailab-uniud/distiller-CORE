@@ -45,7 +45,7 @@ public class SemEval2010 extends GenericDataset {
     }
 
     @Override
-    public Map<String,String> loadInputDocuments() {
+    public Map<String,String> loadTestSet() {
         
         Map<String,String> documents = new HashMap<>();
         
@@ -71,7 +71,7 @@ public class SemEval2010 extends GenericDataset {
     }
 
     @Override
-    public Map<String,String[]> loadGoldResults() {
+    public Map<String,String[]> loadTestAnswers() {
 
         // default is a zero-sized output array
         Map<String,String[]> keyphrases = null;
@@ -106,6 +106,16 @@ public class SemEval2010 extends GenericDataset {
         }
 
         return keyphrases;
+    }
+
+    @Override
+    protected Map<String, String> loadTrainingSet() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected Map<String, String[]> loadTrainingAnswers() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

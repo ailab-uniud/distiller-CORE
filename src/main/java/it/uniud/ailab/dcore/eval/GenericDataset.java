@@ -34,14 +34,24 @@ public abstract class GenericDataset {
     protected final String datasetPath;
     
     /**
-     * The input documents. Each document has an identifier and a content.
+     * The training documents. Each document has an identifier and a content.
      */
-    private Map<String, String> inputDocuments;
+    private Map<String, String> trainingDocuments;
     /**
-     * The keyphrases for the input documents. Each list of gold results
+     * The expected answers for the test documents. Each list of training answers
      * is paired to the identifier of the corresponding document.
      */
-    private Map<String, String[]> goldResults;
+    private Map<String, String[]> trainingAnswers;
+    
+    /**
+     * The test documents. Each document has an identifier and a content.
+     */
+    private Map<String, String> testDocuments;
+    /**
+     * The expected answers for the test documents. Each list of test answers
+     * is paired to the identifier of the corresponding document.
+     */
+    private Map<String, String[]> testAnswers;
     
     /**
      * A value that indicates wheter if the documents have already been loaded
@@ -65,23 +75,38 @@ public abstract class GenericDataset {
      *
      * @return the input documents mapped with their identifier.
      */
-    protected abstract Map<String, String> loadInputDocuments(); 
+    protected abstract Map<String, String> loadTestSet(); 
 
     /**
-     * Loads the gold standard result and returns them.
+     * Loads the test set answers and returns them.
      *
-     * @return the gold standard result mapped with the identifier of the
+     * @return the test set answers mapped with the identifier of the
      * document they belong to.
      */
-    protected abstract Map<String, String[]> loadGoldResults();
+    protected abstract Map<String, String[]> loadTestAnswers();
+    
+    /**
+     * Loads the training documents and returns them.
+     *
+     * @return the training documents mapped with their identifier.
+     */
+    protected abstract Map<String, String> loadTrainingSet(); 
+
+    /**
+     * Loads the training set expected answers and returns them.
+     *
+     * @return the training set answers mapped with the identifier of the
+     * document they belong to.
+     */
+    protected abstract Map<String, String[]> loadTrainingAnswers();
 
     /**
      * Get the test set documents for the dataset.
      * 
      * @return the test set for the dataset.
      */
-    public Map<String, String> getInputDocuments() {
-        return inputDocuments;
+    public Map<String, String> getTestSet() {
+        return testDocuments;
     }
 
     /**
@@ -89,12 +114,9 @@ public abstract class GenericDataset {
      * 
      * @return the expected results on the test set of the dataset.
      */
-    public Map<String, String[]> getGoldResults() {
-        return goldResults;
+    public Map<String, String[]> getTestAnswers() {
+        return testAnswers;
     }
-
-    
-    
     
     /**
      * Gets the dataset status: true if the data has already been loaded,
@@ -111,13 +133,17 @@ public abstract class GenericDataset {
      * 
      * @param isLoaded the dataset status.
      */
-    protected void setLoaded(boolean isLoaded) {
+    private void setLoaded(boolean isLoaded) {
         this.isLoaded = isLoaded;
     }
     
     public void load() {
-        loadInputDocuments();
-        loadGoldResults();
+        trainingDocuments = loadTrainingSet();
+        testDocuments = loadTestSet();
+        trainingAnswers = loadTrainingAnswers();
+        testAnswers = loadTestAnswers();
+        
+        setLoaded(true);
     }
     
 }

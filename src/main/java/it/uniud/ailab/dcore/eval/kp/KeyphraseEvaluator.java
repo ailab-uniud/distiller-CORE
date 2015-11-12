@@ -61,12 +61,12 @@ public class KeyphraseEvaluator extends Evaluator {
         double fmeasure = 0;
 
         for (Map.Entry<String, String> documentEntry : 
-                goldStandard.getInputDocuments().entrySet()) {
+                goldStandard.getTestSet().entrySet()) {
 
             String document = documentEntry.getValue().replace("\\n", " ");
 
             System.out.println("Evaluating document " + ++docIndex
-                    + " of " + goldStandard.getInputDocuments().size() + "...");
+                    + " of " + goldStandard.getTestSet().size() + "...");
 
             System.out.println("Document identifier: " + documentEntry.getKey());
             System.out.println("Document's first 40 chars: "
@@ -90,10 +90,10 @@ public class KeyphraseEvaluator extends Evaluator {
 
             double docPrecision = computePrecision(
                     kps, 
-                    goldStandard.getGoldResults().get(documentEntry.getKey()));
+                    goldStandard.getTestAnswers().get(documentEntry.getKey()));
             double docRecall = computeRecall(
                     kps, 
-                    goldStandard.getGoldResults().get(documentEntry.getKey()));
+                    goldStandard.getTestAnswers().get(documentEntry.getKey()));
             double docFMeasure = computeFMeasure(docPrecision, docRecall);
 
             System.out.println("Precision   : " + docPrecision);
@@ -105,9 +105,9 @@ public class KeyphraseEvaluator extends Evaluator {
             fmeasure = fmeasure + docFMeasure;
         }
 
-        precision = precision / goldStandard.getInputDocuments().size();
-        recall = recall / goldStandard.getInputDocuments().size();
-        fmeasure = fmeasure / goldStandard.getInputDocuments().size();
+        precision = precision / goldStandard.getTestSet().size();
+        recall = recall / goldStandard.getTestSet().size();
+        fmeasure = fmeasure / goldStandard.getTestSet().size();
 
         System.out.println();
         System.out.println("*** EVALUATION COMPLETE ***");
