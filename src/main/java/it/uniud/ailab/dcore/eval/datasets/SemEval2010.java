@@ -41,7 +41,7 @@ import opennlp.tools.stemmer.PorterStemmer;
 public class SemEval2010 extends GenericDataset {
 
     public SemEval2010(String goldStandardPath) {
-        super(goldStandardPath);
+        super(goldStandardPath,"SEMEVAL2010");
     }
 
     @Override

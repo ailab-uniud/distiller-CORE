@@ -19,15 +19,17 @@
 package it.uniud.ailab.dcore.eval.training;
 
 import it.uniud.ailab.dcore.Blackboard;
-import it.uniud.ailab.dcore.DistilledOutput;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.TrainingSetGenerator;
+import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
+import java.util.Collection;
 import java.util.Map;
 
 /**
  * Generates a training set for the Keyphrase Extraction task.
- * 
+ *
  * @author Marco Basaldella
  */
 public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
@@ -46,9 +48,8 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
         if (goldStandard.isLoaded()) {
             goldStandard.load();
         }
-        
-        int docIndex = 0;
 
+        int docIndex = 0;
 
         for (Map.Entry<String, String> documentEntry
                 : goldStandard.getTestSet().entrySet()) {
@@ -62,11 +63,31 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
             System.out.println("Document's first 40 chars: "
                     + document.substring(0, 40) + "...");
 
-            Blackboard output = pipeline.distillToBlackboard(document);
+            String[] answers
+                    = goldStandard.getTestAnswers().
+                    get(documentEntry.getKey());
+            
+            Blackboard b = pipeline.distillToBlackboard(document);
 
+            Collection<Gram> candidates
+                    = b.getGramsByType(Keyphrase.KEYPHRASE).values();
+            
+            for (Gram gram : candidates) {
+                Keyphrase candidate = (Keyphrase)gram;
+                candidate.putFeature(goldStandard.getIdentifier(), 0);
+                
+                boolean found = false;
+                for (int i = 0; !found && i < answers.length; i++) {
+                    String answer = answers[i];
+                    if (goldStandard.compare(gram.getSurface(), answer) == 0) {
+                        candidate.putFeature(goldStandard.getIdentifier(), 1);
+                        found = true;
+                    }                    
+                }
+            }
         }
-
+        
         return pipeline;
     }
-    
+
 }

@@ -66,18 +66,34 @@ public abstract class GenericDataset implements Comparator<String> {
     private boolean isLoaded;
     
     /**
+     * An output-friendly string that identifies the dataset.
+     */
+    private final String identifier;
+    
+    /**
      * Create a concrete dataset that will contain the data contained in the 
      * specified path.
      * 
-     * @param datasetPath 
+     * @param datasetPath The folder where the Dataset will look for the document. 
+     * @param identifier An output-friendly string that identifies the dataset.
      */
-    public GenericDataset(String datasetPath) {
+    public GenericDataset(String datasetPath,String identifier) {
         this.datasetPath = datasetPath;
         this.isLoaded = false;
+        this.identifier = identifier;
     }
     
     /**
-     * Compares a <b>candidate</b> item with a <dataset provided> item. Please 
+     * Get an output-friendly string that identifies the dataset.
+     * 
+     * @return an output-friendly string that identifies the dataset.
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+    
+    /**
+     * Compares a <b>candidate</b> item with a <b>dataset provided</b> item. Please 
      * note that the the object to test <b>must</b> be passed as first parameter,
      * while the object to test against <b>must</b> be passed as second 
      * parameter.

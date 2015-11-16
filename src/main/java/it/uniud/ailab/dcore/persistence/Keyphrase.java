@@ -18,7 +18,6 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
-import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.utils.ListUtils;
