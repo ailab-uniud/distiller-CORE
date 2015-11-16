@@ -52,6 +52,13 @@ public abstract class GenericSheetPrinter {
     }
 
     /**
+     * Writes the annotations contained in the printer on the specified file.
+     *
+     * @param fileName the path where to write.
+     */
+    public abstract void writeFile(String fileName);
+
+    /**
      * Returns the headers detected by the printer.
      *
      * @return the headers of the table.
@@ -171,7 +178,7 @@ public abstract class GenericSheetPrinter {
             }
         }
     }
-    
+
     /**
      * Loads all the n-grams in the sheet.
      *
@@ -182,7 +189,7 @@ public abstract class GenericSheetPrinter {
         init();
         Collection<Gram> grams = b.getKeyphrases();
         for (Gram g : b.getKeyphrases()) {
-            Keyphrase k = (Keyphrase)g;
+            Keyphrase k = (Keyphrase) g;
             addRow(k);
         }
     }
@@ -197,7 +204,7 @@ public abstract class GenericSheetPrinter {
         init();
 
         for (Gram g : c.getGrams()) {
-            Keyphrase k = (Keyphrase)g;
+            Keyphrase k = (Keyphrase) g;
             addRow(k);
         }
     }

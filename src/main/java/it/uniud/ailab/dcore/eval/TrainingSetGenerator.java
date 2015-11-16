@@ -19,6 +19,8 @@
 package it.uniud.ailab.dcore.eval;
 
 import it.uniud.ailab.dcore.Distiller;
+import it.uniud.ailab.dcore.io.GenericSheetPrinter;
+import java.util.List;
 
 /**
  * Generates a training set running the a Distiller instance and evaluating its 
@@ -57,8 +59,9 @@ public abstract class TrainingSetGenerator {
      * Evaluates a distiller instance using one or more metrics.
      * 
      * @param pipeline the distiller instance to evaluate
-     * @return the evaluated Distiller, with an extra annotation on the 
-     * Gram to evaluate
+     * @return a list of tables with the output for each file, 
+     * with an extra annotation on the candidates that identifies correct 
+     * and wrong training set samples.
      */
-    public abstract Distiller evaluate(Distiller pipeline);
+    public abstract List<GenericSheetPrinter> evaluate(Distiller pipeline);
 }

@@ -22,9 +22,13 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.TrainingSetGenerator;
+import it.uniud.ailab.dcore.io.CsvPrinter;
+import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,12 +48,14 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
     }
 
     @Override
-    public Distiller evaluate(Distiller pipeline) {
+    public List<GenericSheetPrinter> evaluate(Distiller pipeline) {
         if (goldStandard.isLoaded()) {
             goldStandard.load();
         }
 
         int docIndex = 0;
+        
+        List<GenericSheetPrinter> outputFiles = new ArrayList<>();
 
         for (Map.Entry<String, String> documentEntry
                 : goldStandard.getTestSet().entrySet()) {
@@ -85,9 +91,13 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
                     }                    
                 }
             }
+            
+            CsvPrinter printer = new CsvPrinter();
+            printer.loadGrams(b);
+            outputFiles.add(printer);
         }
         
-        return pipeline;
+        return outputFiles;
     }
 
 }

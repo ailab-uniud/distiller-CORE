@@ -20,11 +20,17 @@ package it.uniud.ailab.dcore.launchers;
 
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.DistillerFactory;
+import it.uniud.ailab.dcore.eval.GenericDataset;
+import it.uniud.ailab.dcore.eval.datasets.SemEval2010;
+import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluator;
+import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
+import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Locale;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -432,7 +438,60 @@ public class Launcher {
         setupDistiller();
         
                 
-        KeyphraseEvaluation.evaluate(dataset,inputPath.getAbsolutePath(),distiller);
+        GenericDataset kpDataset;
+
+        switch (dataset) {
+            case "semeval" :
+                kpDataset = new SemEval2010(inputPath.getAbsolutePath());
+                break;
+            default:
+                kpDataset = null;
+        }
+
+        if (kpDataset == null) {
+            throw new UnsupportedOperationException(
+                    "Unknown dataset:" + dataset);
+        }
+
+        (new KeyphraseEvaluator(kpDataset)).
+                evaluate(distiller);
+
+    }
+    
+    /**
+     * Generates the training set of a Distiller pipeline on the specified dataset,
+     * deferring the work to the appropriate class.
+     */
+    private static void generateTrainingSet() {
+        
+        System.out.println("Launching evaluation...");
+        
+        if (!inputPath.isDirectory()) {
+            System.err.println(
+                    "You should set the folder containing the evaluation files as input.");
+        }
+        
+        setupDistiller();
+        
+                
+        GenericDataset kpDataset;
+
+        switch (dataset) {
+            case "semeval" :
+                kpDataset = new SemEval2010(inputPath.getAbsolutePath());
+                break;
+            default:
+                kpDataset = null;
+        }
+
+        if (kpDataset == null) {
+            throw new UnsupportedOperationException(
+                    "Unknown dataset:" + dataset);
+        }
+
+        List<GenericSheetPrinter> trainingFiles = 
+                (new KeyphraseTrainingSetGenerator(kpDataset))
+                        .evaluate(distiller);
 
     }
 

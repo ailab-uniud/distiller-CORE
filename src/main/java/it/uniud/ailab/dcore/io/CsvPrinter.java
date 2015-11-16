@@ -123,7 +123,8 @@ public class CsvPrinter extends GenericSheetPrinter {
      * 
      * @param fileName the path where to write.
      */
-    private void writeFile(String fileName) {
+    @Override
+    public void writeFile(String fileName) {
 
         try {
             CSVWriter writer
