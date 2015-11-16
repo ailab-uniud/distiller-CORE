@@ -1,16 +1,16 @@
 # Distiller-CORE library #
  
-Distiller is a framework to extract and infer knowledge from texts. Distiller takes its roots from DIKpE [1] and further evolutions [4], but it is improved with multilanguage support [5], entity linking with [2] and concept inference. By now, Distiller supports only keyphrase extraction in Italian and English; we plan to include support for keyphrase extraction in other languages, such as Portuguese, Romanian and Arabic.
+Distiller is a framework to extract and infer knowledge from texts. Distiller takes its roots from DIKpE [1] and further evolutions [4], but it is improved with multilanguage support [5], entity linking with [2] and concept inference. By now, Distiller supports only keyphrase extraction in Italian and English; we plan to include support for keyphrase extraction in other languages.
 
 The default Distiller pipeline works on keyphrase extraction; anyways, since the framework is built with extensibility in mind, it's possible to extend it and write pipelines for any high-level NLP task. As an example, we include a simple Sentiment Analysis module, based on M.L. Jokers' Syuzhet library [3].
 
 ## Architecture ##
 
-The architecture of the framework and its usage is described in "Introducing Distiller: a unifying framework for Knowledge Extraction" , 1st AI*IA Workshop on Intelligent Techniques At LIbraries and Archives, 2015 (upcoming).
+The architecture of the framework and its usage is described in "Introducing Distiller: a unifying framework for Knowledge Extraction" , 1st AI*IA Workshop on Intelligent Techniques At LIbraries and Archives, 2015 [(download link)](http://ceur-ws.org/Vol-1509/ITALIA2015_paper_4.pdf).
 
 ## Build and use the Distiller ##
 
-Distiller, by now, is distibuted as a Netbeans project. You can open it in your favourite IDE or compile it yourself (we won't provide a guide, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)). A download link for the standalone .jar is coming soon. When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central, to make it easier to use it in your projects.
+Distiller, by now, is distibuted as a Netbeans project. You can open it in your favourite IDE or compile it yourself (we won't provide a guide, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)). A download link for the standalone .jar is coming soon. When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central or another Maven repository, to make it easier to use it in your projects.
 
 ## Acknowledgements ##
 
