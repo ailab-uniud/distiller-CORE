@@ -49,7 +49,7 @@ public class KeyphraseEvaluator extends Evaluator {
     @Override
     public Map<String, Double> evaluate(Distiller pipeline) {
 
-        if (goldStandard.isLoaded()) {
+        if (!goldStandard.isLoaded()) {
             goldStandard.load();
         }
 

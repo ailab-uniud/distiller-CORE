@@ -111,12 +111,14 @@ public class SemEval2010 extends GenericDataset {
 
     @Override
     protected Map<String, String> loadTrainingSet() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO: load the actual training set
+        return loadTestSet();
     }
 
     @Override
     protected Map<String, String[]> loadTrainingAnswers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO: load the actual training set
+        return loadTestAnswers();
     }
 
     /**

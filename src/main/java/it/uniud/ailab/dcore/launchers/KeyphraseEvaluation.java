@@ -18,8 +18,8 @@
  */
 package it.uniud.ailab.dcore.launchers;
 
+import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.eval.datasets.SemEval2010;
-import it.uniud.ailab.dcore.DistillerFactory;
 import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.kp.*;
 
@@ -30,13 +30,6 @@ import it.uniud.ailab.dcore.eval.kp.*;
  */
 public class KeyphraseEvaluation {
 
-    public enum Dataset {
-
-        SEMEVAL,
-        DUC,
-        Inspec
-    };
-    
     public static void main(String[] args) {
         
         // Let the main launcher handle this
@@ -44,11 +37,11 @@ public class KeyphraseEvaluation {
         
     }
 
-    public static void evaluate(Dataset dataset, String folder) {
+    public static void evaluate(String dataset, String folder,Distiller d) {
         GenericDataset kpDataset;
 
         switch (dataset) {
-            case SEMEVAL:
+            case "semeval" :
                 kpDataset = new SemEval2010(folder);
                 break;
             default:
@@ -61,7 +54,7 @@ public class KeyphraseEvaluation {
         }
 
         (new KeyphraseEvaluator(kpDataset)).
-                evaluate(DistillerFactory.getDefaultEval());
+                evaluate(d);
 
     }
 }

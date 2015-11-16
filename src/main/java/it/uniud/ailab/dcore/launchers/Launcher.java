@@ -45,16 +45,31 @@ import org.apache.commons.cli.ParseException;
  * <li>Process the pipeline over the document or the documents contained in the
  * folder</li>
  * <li>Print the result of the computation.</li>
- * 
+ *
  * The input files should be saved in UTF-8 or UTF-16 format.
  * </ul>
  *
  * @author Marco Basaldella
- * 
- * Add a new KE configuration for linguistic feature calculation, named stanfordKE
+ *
+ * Add a new KE configuration for linguistic feature calculation, named
+ * stanfordKE
  * @modify Giorgia Chiaradia
  */
 public class Launcher {
+
+    /**
+     * A shared distiller instance.
+     */
+    private static Distiller distiller;
+
+    private enum Mode {
+
+        DEFAULT,
+        EVALUATION,
+        TRAINING_GENERATION;
+    }
+
+    private static Mode mode = Mode.DEFAULT;
 
     /**
      * The file or directory to analyze.
@@ -103,6 +118,11 @@ public class Launcher {
     private static boolean verbose = false;
 
     /**
+     * The dataset that will be used to perform evaluation or training.
+     */
+    private static String dataset = "";
+
+    /**
      * Starts the Distiller using the specified configuration, analyzing the
      * specified file, writing the output in the specified folder.
      *
@@ -136,6 +156,11 @@ public class Launcher {
         if (readOptions(cmd)) {
             // everything's good! proceed
             doWork();
+        } else {
+            printError("Unexpected error while parsing command line options\n"
+                    + "Please contact the developers of the framwork to get "
+                    + "additional help.");
+            return;
         }
     }
 
@@ -152,6 +177,13 @@ public class Launcher {
             printHelp();
             return true;
         }
+
+        // read mode 
+        if (cmd.hasOption("e")) {
+            mode = Mode.EVALUATION;
+            dataset = cmd.getOptionValue("e");
+        }
+
         // set the input file/dir
         inputPath = null;
         if (cmd.hasOption("f") && cmd.hasOption("d")) {
@@ -211,7 +243,7 @@ public class Launcher {
             printGrams = true;
         }
 
-        if (!printSentences && !printGrams) {
+        if (mode == Mode.DEFAULT && !printSentences && !printGrams) {
             printError("You should select something to print.");
             return false;
         }
@@ -236,6 +268,15 @@ public class Launcher {
                 .longOpt("help")
                 .desc("Display this message")
                 .hasArg(false)
+                .build()
+        );
+
+        // load the pipeline
+        options.addOption(Option.builder("e")
+                .longOpt("evaluate")
+                .desc("Evaluate the pipeline using the DATASET dataset")
+                .hasArg(true)
+                .argName("DATASET")
                 .build()
         );
 
@@ -353,16 +394,45 @@ public class Launcher {
      */
     private static void doWork() {
 
-        try {
-            if (inputPath.isFile()) {
-                analyzeFile(inputPath);
-            } else {
-                analyzeDir(inputPath);
-            }
-        } catch (IOException ioe) {
-            System.err.println(ioe.getLocalizedMessage());
-            System.err.println(ioe.toString());
+        switch (mode) {
+
+            case EVALUATION:
+                evaluate();
+                break;
+            case TRAINING_GENERATION:
+                break;
+            default:
+                try {
+                    if (inputPath.isFile()) {
+                        analyzeFile(inputPath);
+                    } else {
+                        analyzeDir(inputPath);
+                    }
+                } catch (IOException ioe) {
+                    System.err.println(ioe.getLocalizedMessage());
+                    System.err.println(ioe.toString());
+                }
         }
+
+    }
+
+    /**
+     * Performs the evaluation of a Distiller pipeline on the specified dataset,
+     * deferring the work to the appropriate class.
+     */
+    private static void evaluate() {
+        
+        System.out.println("Launching evaluation...");
+        
+        if (!inputPath.isDirectory()) {
+            System.err.println(
+                    "You should set the folder containing the evaluation files as input.");
+        }
+        
+        setupDistiller();
+        
+                
+        KeyphraseEvaluation.evaluate(dataset,inputPath.getAbsolutePath(),distiller);
 
     }
 
@@ -375,38 +445,10 @@ public class Launcher {
      */
     private static void analyzeFile(File filePath) throws IOException {
 
-        Distiller d = null;
-
-        if (defaultConfig == null) {
-            d = DistillerFactory.loadFromXML(configPath);
-        } else if (defaultConfig.equals("simpleKE")) {
-            d = DistillerFactory.getDefaultCode();
-        //use this configuration to use stanford coreNLP parser and add linguistis
-        //features to distiller
-        } else if (defaultConfig.equals("stanfordKE")) { 
-            d = DistillerFactory.getStanfordCode();
-
-        }// add other default pipelines HERE
-        // please remeber to document the new pipeline in the help message
-        // that is printed below 
-        else {
-
-            System.out.println("Unrecognized configuration. Supported parameters:");
-            System.out.println("- simpleKE : simple, offline keyphrase extraction");
-            System.out.println();
-
-            printError("Please select a valid configuration.");
-            return;
-        }
-
-        if (language != null) {
-            d.setLocale(language);
-        }
-
-        d.setVerbose(verbose);
+        setupDistiller();
 
         String document = loadDocument(filePath);
-        d.distill(document);
+        distiller.distill(document);
 
         CsvPrinter printer = new CsvPrinter();
 
@@ -421,7 +463,7 @@ public class Launcher {
             String gramsPath = outputPath.getAbsolutePath()
                     + "/" + fileName + ".grams.txt";
 
-            printer.writeGrams(gramsPath, d.getBlackboard());
+            printer.writeGrams(gramsPath, distiller.getBlackboard());
 
             System.out.println(
                     "Saved grams in " + gramsPath);
@@ -432,7 +474,7 @@ public class Launcher {
             String sentPath = outputPath.getAbsolutePath()
                     + "/" + fileName + ".sentences.txt";
 
-            printer.writeSentences(sentPath, d.getBlackboard());
+            printer.writeSentences(sentPath, distiller.getBlackboard());
 
             System.out.println(
                     "Saved sentences in " + sentPath);
@@ -514,5 +556,40 @@ public class Launcher {
 
         }
 
+    }
+    
+    /**
+     * Configures the shared Distiller instance.
+     */
+    private static void setupDistiller() {
+        distiller = null;
+
+        if (defaultConfig == null) {
+            distiller = DistillerFactory.loadFromXML(configPath);
+        } else if (defaultConfig.equals("simpleKE")) {
+            distiller = DistillerFactory.getDefaultCode();
+            //use this configuration to use stanford coreNLP parser and add linguistis
+            //features to distiller
+        } else if (defaultConfig.equals("stanfordKE")) {
+            distiller = DistillerFactory.getStanfordCode();
+
+        }// add other default pipelines HERE
+        // please remeber to document the new pipeline in the help message
+        // that is printed below 
+        else {
+
+            System.out.println("Unrecognized configuration. Supported parameters:");
+            System.out.println("- simpleKE : simple, offline keyphrase extraction");
+            System.out.println();
+
+            printError("Please select a valid configuration.");
+            return;
+        }
+
+        if (language != null) {
+            distiller.setLocale(language);
+        }
+
+        distiller.setVerbose(verbose);
     }
 }
