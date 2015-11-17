@@ -154,6 +154,24 @@ public abstract class GenericDataset implements Comparator<String> {
     }
     
     /**
+     * Get the training set documents for the dataset.
+     * 
+     * @return the training set for the dataset.
+     */
+    public Map<String, String> getTrainingSet() {
+        return trainingDocuments;
+    }
+
+    /**
+     * Get the training set results for the dataset.
+     * 
+     * @return the expected results on the training set of the dataset.
+     */
+    public Map<String, String[]> getTrainingAnswers() {
+        return trainingAnswers;
+    }
+    
+    /**
      * Gets the dataset status: true if the data has already been loaded,
      * false otherwise.
      * 

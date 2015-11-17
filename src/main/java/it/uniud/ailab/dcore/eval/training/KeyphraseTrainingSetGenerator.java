@@ -59,19 +59,19 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
         List<Pair<String, GenericSheetPrinter>> outputFiles = new ArrayList<>();
 
         for (Map.Entry<String, String> documentEntry
-                : goldStandard.getTestSet().entrySet()) {
+                : goldStandard.getTrainingSet().entrySet()) {
 
             String document = documentEntry.getValue().replace("\\n", " ");
 
             System.out.println("Evaluating document " + ++docIndex
-                    + " of " + goldStandard.getTestSet().size() + "...");
+                    + " of " + goldStandard.getTrainingSet().size() + "...");
 
             System.out.println("Document identifier: " + documentEntry.getKey());
             System.out.println("Document's first 40 chars: "
                     + document.substring(0, 40) + "...");
 
             String[] answers
-                    = goldStandard.getTestAnswers().
+                    = goldStandard.getTrainingAnswers().
                     get(documentEntry.getKey());
 
             Blackboard b = pipeline.distillToBlackboard(document);
