@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
+import it.uniud.ailab.dcore.utils.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,14 +49,14 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
     }
 
     @Override
-    public List<GenericSheetPrinter> evaluate(Distiller pipeline) {
-        if (goldStandard.isLoaded()) {
+    public List<Pair<String, GenericSheetPrinter>> evaluate(Distiller pipeline) {
+        if (!goldStandard.isLoaded()) {
             goldStandard.load();
         }
 
         int docIndex = 0;
-        
-        List<GenericSheetPrinter> outputFiles = new ArrayList<>();
+
+        List<Pair<String, GenericSheetPrinter>> outputFiles = new ArrayList<>();
 
         for (Map.Entry<String, String> documentEntry
                 : goldStandard.getTestSet().entrySet()) {
@@ -72,31 +73,31 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
             String[] answers
                     = goldStandard.getTestAnswers().
                     get(documentEntry.getKey());
-            
+
             Blackboard b = pipeline.distillToBlackboard(document);
 
             Collection<Gram> candidates
                     = b.getGramsByType(Keyphrase.KEYPHRASE).values();
-            
+
             for (Gram gram : candidates) {
-                Keyphrase candidate = (Keyphrase)gram;
+                Keyphrase candidate = (Keyphrase) gram;
                 candidate.putFeature(goldStandard.getIdentifier(), 0);
-                
+
                 boolean found = false;
                 for (int i = 0; !found && i < answers.length; i++) {
                     String answer = answers[i];
                     if (goldStandard.compare(gram.getSurface(), answer) == 0) {
                         candidate.putFeature(goldStandard.getIdentifier(), 1);
                         found = true;
-                    }                    
+                    }
                 }
             }
-            
+
             CsvPrinter printer = new CsvPrinter();
             printer.loadGrams(b);
-            outputFiles.add(printer);
+            outputFiles.add(new Pair<>(documentEntry.getKey(), printer));
         }
-        
+
         return outputFiles;
     }
 

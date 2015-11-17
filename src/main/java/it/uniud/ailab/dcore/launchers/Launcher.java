@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluator;
 import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
+import it.uniud.ailab.dcore.utils.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -190,6 +191,12 @@ public class Launcher {
             dataset = cmd.getOptionValue("e");
         }
 
+        // read mode 
+        if (cmd.hasOption("t")) {
+            mode = Mode.TRAINING_GENERATION;
+            dataset = cmd.getOptionValue("t");
+        }
+
         // set the input file/dir
         inputPath = null;
         if (cmd.hasOption("f") && cmd.hasOption("d")) {
@@ -277,10 +284,20 @@ public class Launcher {
                 .build()
         );
 
-        // load the pipeline
+        // work modes: evaluation
         options.addOption(Option.builder("e")
                 .longOpt("evaluate")
                 .desc("Evaluate the pipeline using the DATASET dataset")
+                .hasArg(true)
+                .argName("DATASET")
+                .build()
+        );
+
+        // work modes: training
+        options.addOption(Option.builder("t")
+                .longOpt("training-generation")
+                .desc("Generate a training set for machine learning "
+                        + "using the DATASET dataset")
                 .hasArg(true)
                 .argName("DATASET")
                 .build()
@@ -406,6 +423,7 @@ public class Launcher {
                 evaluate();
                 break;
             case TRAINING_GENERATION:
+                generateTrainingSet();
                 break;
             default:
                 try {
@@ -427,21 +445,20 @@ public class Launcher {
      * deferring the work to the appropriate class.
      */
     private static void evaluate() {
-        
+
         System.out.println("Launching evaluation...");
-        
+
         if (!inputPath.isDirectory()) {
             System.err.println(
                     "You should set the folder containing the evaluation files as input.");
         }
-        
+
         setupDistiller();
-        
-                
+
         GenericDataset kpDataset;
 
         switch (dataset) {
-            case "semeval" :
+            case "semeval":
                 kpDataset = new SemEval2010(inputPath.getAbsolutePath());
                 break;
             default:
@@ -457,27 +474,32 @@ public class Launcher {
                 evaluate(distiller);
 
     }
-    
+
     /**
-     * Generates the training set of a Distiller pipeline on the specified dataset,
-     * deferring the work to the appropriate class.
+     * Generates the training set of a Distiller pipeline on the specified
+     * dataset, deferring the work to the appropriate class.
      */
     private static void generateTrainingSet() {
-        
+
         System.out.println("Launching evaluation...");
-        
+
         if (!inputPath.isDirectory()) {
-            System.err.println(
-                    "You should set the folder containing the evaluation files as input.");
+            printError(
+                    "You should set the folder containing the dataset files as input.");
+            return;
         }
-        
+
+        if (outputPath == null || !outputPath.isDirectory()) {
+            printError(
+                    "You should set an output folder for the training set files.");
+        }
+
         setupDistiller();
-        
-                
+
         GenericDataset kpDataset;
 
         switch (dataset) {
-            case "semeval" :
+            case "semeval":
                 kpDataset = new SemEval2010(inputPath.getAbsolutePath());
                 break;
             default:
@@ -489,9 +511,23 @@ public class Launcher {
                     "Unknown dataset:" + dataset);
         }
 
-        List<GenericSheetPrinter> trainingFiles = 
-                (new KeyphraseTrainingSetGenerator(kpDataset))
-                        .evaluate(distiller);
+        KeyphraseTrainingSetGenerator trainingGenerator
+                = new KeyphraseTrainingSetGenerator(kpDataset);
+
+        List<Pair<String,GenericSheetPrinter>> trainingResult
+                = trainingGenerator.evaluate(distiller);
+        
+        for (Pair<String,GenericSheetPrinter> p : trainingResult) {
+            
+            String filePath = outputPath.getAbsolutePath()
+                    + "/" + p.getLeft() + ".training.txt";
+
+            p.getRight().writeFile(filePath);
+
+            System.out.println(
+                    "Saved training file in " + filePath);
+            
+        }
 
     }
 
@@ -616,7 +652,7 @@ public class Launcher {
         }
 
     }
-    
+
     /**
      * Configures the shared Distiller instance.
      */
