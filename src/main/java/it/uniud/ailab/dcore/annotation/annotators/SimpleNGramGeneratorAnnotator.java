@@ -233,12 +233,17 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                             }
 
                             identifier = identifier.toLowerCase();
+                            int startIndex = 
+                                    startIndexes[i - (lastReadBuffers[size].size() - 1)];
+                            int endIndex = endIndexes[i];
+                                    
+                            
                             Keyphrase g = new Keyphrase(
                                     identifier,
                                     lastReadBuffers[size],
                                     sentenceText.substring(
-                                            startIndexes[i - (lastReadBuffers[size].size() - 1)],
-                                            endIndexes[i]));
+                                            startIndex,
+                                            endIndex));
 
                             g.putFeature(new FeatureAnnotation(
                                     NOUNVALUE, ((float) nounValue) / g.getTokens().size()));

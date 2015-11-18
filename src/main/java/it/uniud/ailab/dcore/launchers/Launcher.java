@@ -22,7 +22,8 @@ import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.DistillerFactory;
 import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.datasets.SemEval2010;
-import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluator;
+import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluator15;
+import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluatorAll;
 import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
@@ -470,7 +471,7 @@ public class Launcher {
                     "Unknown dataset:" + dataset);
         }
 
-        (new KeyphraseEvaluator(kpDataset)).
+        (new KeyphraseEvaluatorAll(kpDataset)).
                 evaluate(distiller);
 
     }

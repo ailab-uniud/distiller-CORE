@@ -55,7 +55,7 @@ import java.util.Set;
  *
  * @author Giorgia Chiaradia
  */
-public class StanfordBootstrapperAnnotator implements Annotator {
+public class StanfordFastBootstrapperAnnotator implements Annotator {
 
     /**
      * The Stanford NLP pipeline. The field is marked static to be optimized for
@@ -86,7 +86,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
             //NER, parsing, and coreference resolution 
             Properties props = new Properties();
-            props.put("annotators", "tokenize, ssplit, pos, parse, lemma, ner, dcoref");
+            props.put("annotators", "tokenize, ssplit, pos, lemma");
             pipeline = new StanfordCoreNLP(props);
 
         }
@@ -100,87 +100,10 @@ public class StanfordBootstrapperAnnotator implements Annotator {
         // run all Annotators on this text
         pipeline.annotate(document);
 
-        //get the graph for coreference resolution
-        Map<Integer, CorefChain> graph
-                = document.get(CorefCoreAnnotations.CorefChainAnnotation.class);
-
-        //prepare the map for coreference graph of document
-        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
-                = new HashMap<>();
-
-        for (CorefChain corefChain : graph.values()) {
-
-            //get the representative mention, that is the word recall in other sentences
-            CorefChain.CorefMention cm = corefChain.getRepresentativeMention();
-
-            //eliminate auto-references
-            if (corefChain.getMentionMap().size() <= 1) {
-                continue;
-            }
-
-            //get the stemmed form of the references, so the comparison with 
-            //grams will be easier
-            List<CoreLabel> tks = document.get(SentencesAnnotation.class)
-                    .get(cm.sentNum - 1).get(TokensAnnotation.class);
-                    //list of tokens which compose the anaphor
-
-            List<Token> anaphorsTokens = new ArrayList<>();
-            for (int i = cm.startIndex - 1; i < cm.endIndex - 1; i++) {
-                CoreLabel current = tks.get(i);
-                Token t = new Token(current.word());
-                t.setPoS(current.tag());
-                t.setLemma(current.lemma());
-                anaphorsTokens.add(t);
-            }
-            
-            //the mention n-gram which is formed by the anaphor and a 
-            //list of references
-            Mention mention
-                    = new Mention(cm.mentionSpan, anaphorsTokens, cm.mentionSpan);
-
-            //get map of the references to the corefchain obj
-            Collection<Set<CorefChain.CorefMention>> mentionMap
-                    = corefChain.getMentionMap().values();
-            for (Set<CorefChain.CorefMention> mentions : mentionMap) {
-                
-                for (CorefChain.CorefMention reference : mentions) {
-                    //eliminate self-references
-                    if(reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)){
-                        continue;
-                    }
-                    List<CoreLabel> tokens = document.get(SentencesAnnotation.class)
-                            .get(reference.sentNum - 1).get(TokensAnnotation.class);
-                    
-                    //list of tokens which compose the mention
-                    List<Token> mentionTokens = new ArrayList<>();
-                    for (int i = reference.startIndex - 1; i < reference.endIndex - 1; i++) {
-                        CoreLabel current = tokens.get(i);
-                        //set token features 
-                        Token t = new Token(current.word());
-                        t.setPoS(current.tag());
-                        t.setLemma(current.lemma());
-                        mentionTokens.add(t);
-                    }
-                    //add to mention a new reference
-                    mention.addReference(
-                            reference.mentionSpan,
-                            mentionTokens,
-                            reference.mentionType.toString());
-                }
-            }
-
-            //assign to the document a new corenference obj
-            //containing the anaphor and its mentions 
-            blackboard.addGram(mention);
-        }
-
         // these are all the sentences in this document
         // a CoreMap is essentially a Map that uses class objects as keys and 
         //has values with custom types
         List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-
-        //A counter that keeps track of the number of phrases in a sentences
-        int phraseCounter = 0;
 
         for (CoreMap stanfordSentence : sentences) {
 
@@ -188,24 +111,6 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                     = new Sentence(stanfordSentence.toString(), "" + sentenceCounter++);
 
             distilledSentence.setLanguage(Locale.ENGLISH);
-
-            //getting the dependency graph of the document so to count the number of phrases 
-            //ROOT sentences are the first level children in the parse tree; every ROOT sentence
-            //is constitute by a group of clauses which can be the principal (main clauses) or not
-            //(coordinate and subordinate). We use ROOT sentences as a starting point to find out all
-            //the phrases present in the sentences themselves, checking out for the tag "S".
-            Tree sentenceTree = stanfordSentence.get(TreeCoreAnnotations.TreeAnnotation.class);
-
-            for (Tree sub : sentenceTree.subTreeList()) {
-                if (sub.label().value().equals("S")) {
-                    phraseCounter++;
-                }
-            }
-
-            //annotate the sentence with a new feature counting alla the phrases
-            //cointained in the sentence    
-            distilledSentence.addAnnotation(new FeatureAnnotation(
-                    DefaultAnnotations.PHRASES_COUNT, phraseCounter));
 
             // traversing the words in the current sentence
             // for each token in the text, we create a new token annotate it 

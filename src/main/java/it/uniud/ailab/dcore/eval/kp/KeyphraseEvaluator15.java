@@ -29,14 +29,14 @@ import java.util.Map;
  *
  * @author Marco Basaldella
  */
-public class KeyphraseEvaluator extends Evaluator {
+public class KeyphraseEvaluator15 extends Evaluator {
 
     /**
      * An evaluator for the Keyphrase Extraction task.
      *
      * @param goldStandard the gold standard to evaluate.
      */
-    public KeyphraseEvaluator(GenericDataset goldStandard) {
+    public KeyphraseEvaluator15(GenericDataset goldStandard) {
         super(goldStandard);
     }
 
