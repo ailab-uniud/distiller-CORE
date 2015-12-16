@@ -49,29 +49,54 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
     }
 
     @Override
-    public List<Pair<String, GenericSheetPrinter>> evaluate(Distiller pipeline) {
+    public List<Pair<String, GenericSheetPrinter>> generateTrainingSet(Distiller pipeline) {
         if (!goldStandard.isLoaded()) {
             goldStandard.load();
         }
 
+        List<Pair<String, GenericSheetPrinter>> outputFiles
+                = doWork(pipeline,
+                        goldStandard.getTrainingSet(),
+                        goldStandard.getTrainingAnswers());
+
+        return outputFiles;
+    }
+
+    @Override
+    public List<Pair<String, GenericSheetPrinter>> generateTestSet(Distiller pipeline) {
+        if (!goldStandard.isLoaded()) {
+            goldStandard.load();
+        }
+
+        List<Pair<String, GenericSheetPrinter>> outputFiles
+                = doWork(pipeline,
+                        goldStandard.getTestSet(),
+                        goldStandard.getTestAnswers());
+
+        return outputFiles;
+    }
+
+    private List<Pair<String, GenericSheetPrinter>> doWork(Distiller pipeline,
+            Map<String, String> workingSet,
+            Map<String, String[]> workingAnswers) {
+
         int docIndex = 0;
 
         List<Pair<String, GenericSheetPrinter>> outputFiles = new ArrayList<>();
-
         for (Map.Entry<String, String> documentEntry
-                : goldStandard.getTrainingSet().entrySet()) {
+                : workingSet.entrySet()) {
 
             String document = documentEntry.getValue().replace("\\n", " ");
 
             System.out.println("Evaluating document " + ++docIndex
-                    + " of " + goldStandard.getTrainingSet().size() + "...");
+                    + " of " + workingSet.size() + "...");
 
             System.out.println("Document identifier: " + documentEntry.getKey());
             System.out.println("Document's first 40 chars: "
                     + document.substring(0, 40) + "...");
 
             String[] answers
-                    = goldStandard.getTrainingAnswers().
+                    = workingAnswers.
                     get(documentEntry.getKey());
 
             Blackboard b = pipeline.distillToBlackboard(document);
@@ -97,7 +122,6 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
             printer.loadGrams(b);
             outputFiles.add(new Pair<>(documentEntry.getKey(), printer));
         }
-
         return outputFiles;
     }
 

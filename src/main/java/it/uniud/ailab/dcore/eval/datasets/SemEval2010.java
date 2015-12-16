@@ -141,7 +141,7 @@ public class SemEval2010 extends GenericDataset {
 
     @Override
     protected Map<String, String[]> loadTrainingAnswers() {
-        
+
         Map<String, String[]> keyphrases = null;
 
         try {
@@ -192,12 +192,37 @@ public class SemEval2010 extends GenericDataset {
     public int compare(String o1, String o2) {
         PorterStemmer stemmer = new PorterStemmer();
         String[] tokens = o1.split(" ");
-        for (int j = 0; j < tokens.length; j++) {
-            tokens[j] = stemmer.stem(tokens[j]);
+
+        for (int i = 0; i < tokens.length; i++) {
+
+            // this is necessary because SEMEVAL tokenizes in a different
+            // way, using not only spaces but also hyphens to separate 
+            // tokens 
+            if (tokens[i].indexOf('-') < 0) {
+                tokens[i] = stemmer.stem(tokens[i]);
+            } else {
+                String[] subtokens = tokens[i].split("-");
+                for (int j = 0; j < subtokens.length; j++) {
+                    subtokens[j] = stemmer.stem(subtokens[j]);
+                }
+                
+                tokens[i] = String.join("-",subtokens);
+            }
         }
         o1 = String.join(" ", tokens);
 
-        return o1.equals(o2) ? 0 : 1;
+        boolean found = false;
+
+        if (o2.indexOf('+') < 0) {
+            found = o1.equals(o2);
+        } else {
+            String[] goldKPs = o2.split("\\+");
+            for (int i = 0; i < goldKPs.length && !found; i++) {
+                found = o1.equals(goldKPs[i]);
+            }
+        }
+
+        return found ? 0 : 1;
     }
 
 }

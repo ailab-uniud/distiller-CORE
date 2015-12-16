@@ -246,7 +246,7 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                                             endIndex));
 
                             g.putFeature(new FeatureAnnotation(
-                                    NOUNVALUE, ((float) nounValue) / g.getTokens().size()));
+                                    NOUNVALUE, ((float) nounValue) / (float)g.getTokens().size()));
                             blackboard.addGram(component, g);
                         }
                     }

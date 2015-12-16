@@ -45,10 +45,20 @@ public abstract class GenericSheetPrinter {
     private List<String> headers;
     private List<Map<String, Either<String, Number>>> rows;
     private List<Either<String, Number>> headerTypes;
+    private final boolean allowDuplicates;
 
     private final String ID_COLUMN = "ID";
 
-    protected GenericSheetPrinter() {
+    /**
+     * Generates a generic sheet printer specifying whether it should allow
+     * lines with the same ID or not.
+     *
+     * @param allowDuplicates true if lines with the same ID are allowed; false
+     * otherwise.
+     */
+    protected GenericSheetPrinter(boolean allowDuplicates) {
+        this.allowDuplicates = allowDuplicates;
+        init();
     }
 
     /**
@@ -102,6 +112,35 @@ public abstract class GenericSheetPrinter {
     }
 
     /**
+     * Add all the values of another printer into the current printer.
+     *
+     * @param p the printer to merge into the current one.
+     */
+    public void addPrinter(GenericSheetPrinter p) {
+
+        // merge headers
+        for (int i = 0; i < p.getHeaders().size(); i++) {
+            int h;
+            if ((h = headers.indexOf(p.getHeaders().get(i))) >= 0) {
+                if (!(headerTypes.get(h).isLeft()
+                        == p.getHeaderTypes().get(i).isLeft())) {
+                    throw new UnsupportedOperationException("Trying to merge "
+                            + "header with the same name but different type: "
+                            + p.getHeaders().get(i));
+                }
+            } else {
+                headers.add(p.getHeaders().get(i));
+                headerTypes.add(p.getHeaderTypes().get(i));
+            }
+        }
+
+        // merge lines
+        for (Map<String, Either<String, Number>> row : p.getRows()) {
+            rows.add(row);
+        }
+    }
+
+    /**
      * Stores a generic annotable object.
      *
      * @param a the Annotable to print.
@@ -112,7 +151,7 @@ public abstract class GenericSheetPrinter {
 
         String rowId = annotable.getIdentifier();
 
-        if (containsRow(rowId)) {
+        if (containsRow(rowId) && !allowDuplicates) {
             return;
         }
 

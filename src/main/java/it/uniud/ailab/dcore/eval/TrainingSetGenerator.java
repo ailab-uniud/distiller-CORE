@@ -24,50 +24,63 @@ import it.uniud.ailab.dcore.utils.Pair;
 import java.util.List;
 
 /**
- * Generates a training set running the a Distiller instance and evaluating its 
- * results, adding an annotation to each candidate item that identifies if 
- * the candidate is right or wrong.
+ * Generates a training set running the a Distiller instance and evaluating its
+ * results, adding an annotation to each candidate item that identifies if the
+ * candidate is right or wrong.
  *
  * @author Marco Basaldella
  */
 public abstract class TrainingSetGenerator {
-    
+
     /**
      * The actual gold standard.
      */
     protected final GenericDataset goldStandard;
-    
+
     /**
-     * Creates an evaluator that will look for the gold standard in the specified
-     * path.
-     * 
+     * Creates an evaluator that will look for the gold standard in the
+     * specified path.
+     *
      * @param goldStandard the dataset that contains the gold standard.
      */
     public TrainingSetGenerator(GenericDataset goldStandard) {
         this.goldStandard = goldStandard;
-    } 
+    }
 
     /**
      * Get the path where the evaluator should search for the gold standard.
-     * 
+     *
      * @return the folder that contains the gold standard.
      */
     public GenericDataset getGoldStandard() {
         return goldStandard;
     }
-    
+
     /**
-     * Evaluates a distiller instance using one or more metrics. Returns a list
-     * of {@link it.uniud.ailab.dcore.utils.Pair} object, where the left
-     * element of the pair is the identifier of a document, and the right
-     * element of the pair is the result of the distillation of the document 
-     * itself.
-     * 
+     * Generates a training set with the specified dataset. Returns a list of
+     * {@link it.uniud.ailab.dcore.utils.Pair} object, where the left element of
+     * the pair is the identifier of a document, and the right element of the
+     * pair is the result of the distillation of the document itself.
+     *
      * @param pipeline the distiller instance to evaluate
      * @return a list of pairs composed by strings of identifiers and tables
      * with the output for each file, with an extra annotation on the candidates
      * that identifies correct and wrong training set samples.
      */
-    public abstract List<Pair<String,GenericSheetPrinter>>
-         evaluate(Distiller pipeline);
+    public abstract List<Pair<String, GenericSheetPrinter>>
+            generateTrainingSet(Distiller pipeline);
+
+    /**
+     * Generates a training set with the specified dataset. Returns a list of
+     * {@link it.uniud.ailab.dcore.utils.Pair} object, where the left element of
+     * the pair is the identifier of a document, and the right element of the
+     * pair is the result of the distillation of the document itself.
+     *
+     * @param pipeline the distiller instance to evaluate
+     * @return a list of pairs composed by strings of identifiers and tables
+     * with the output for each file, with an extra annotation on the candidates
+     * that identifies correct and wrong training set samples.
+     */
+    public abstract List<Pair<String, GenericSheetPrinter>>
+            generateTestSet(Distiller pipeline);
 }

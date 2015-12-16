@@ -139,6 +139,12 @@ public class Distiller {
         this.verbose = verbose;
     }
 
+    /**
+     * Gets the verbose mode of the Distiller.
+     */
+    public boolean  getVerbose() {
+        return verbose;
+    }
     
     
     /**

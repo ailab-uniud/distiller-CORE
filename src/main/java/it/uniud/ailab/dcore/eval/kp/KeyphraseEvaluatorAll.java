@@ -31,6 +31,8 @@ import java.util.Map;
  */
 public class KeyphraseEvaluatorAll extends Evaluator {
 
+    private static boolean verbose = false;
+
     /**
      * An evaluator for the Keyphrase Extraction task.
      *
@@ -48,6 +50,8 @@ public class KeyphraseEvaluatorAll extends Evaluator {
      */
     @Override
     public Map<String, Double> evaluate(Distiller pipeline) {
+
+        verbose = pipeline.getVerbose();
 
         if (!goldStandard.isLoaded()) {
             goldStandard.load();
@@ -123,19 +127,24 @@ public class KeyphraseEvaluatorAll extends Evaluator {
 
         return matches / (kps.length * 1.0);
     }
-
+ 
     private double computeRecall(String[] kps, String[] goldKeyphrase) {
         double matches = 0;
         for (int j = 0; j < goldKeyphrase.length; j++) {
-            
+
             boolean matched = false;
-            
+
             for (int i = 0; i < kps.length && !matched; i++) {
                 if (goldStandard.compare(
                         kps[i].toLowerCase(), goldKeyphrase[j]) == 0) {
                     matches++;
                     matched = true;
                 }
+            }
+
+            if (!matched && verbose) {
+                System.out.println(
+                        "Non matched keyphrase: " + goldKeyphrase[j]);
             }
         }
 

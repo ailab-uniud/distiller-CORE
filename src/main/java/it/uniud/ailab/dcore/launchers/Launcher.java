@@ -22,7 +22,6 @@ import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.DistillerFactory;
 import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.datasets.SemEval2010;
-import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluator15;
 import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluatorAll;
 import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
@@ -482,7 +481,7 @@ public class Launcher {
      */
     private static void generateTrainingSet() {
 
-        System.out.println("Launching evaluation...");
+        System.out.println("Launching training set generation...");
 
         if (!inputPath.isDirectory()) {
             printError(
@@ -514,21 +513,48 @@ public class Launcher {
 
         KeyphraseTrainingSetGenerator trainingGenerator
                 = new KeyphraseTrainingSetGenerator(kpDataset);
-
-        List<Pair<String,GenericSheetPrinter>> trainingResult
-                = trainingGenerator.evaluate(distiller);
         
-        for (Pair<String,GenericSheetPrinter> p : trainingResult) {
+        List<Pair<String,GenericSheetPrinter>> trainingDocuments
+                = trainingGenerator.generateTrainingSet(distiller);
+        
+        GenericSheetPrinter trainingSet = new CsvPrinter
+                (CsvPrinter.DEFAULT_DELIMITER,true,true);
+        
+        for (Pair<String,GenericSheetPrinter> tr : trainingDocuments) {
             
-            String filePath = outputPath.getAbsolutePath()
-                    + "/" + p.getLeft() + ".training.txt";
-
-            p.getRight().writeFile(filePath);
-
-            System.out.println(
-                    "Saved training file in " + filePath);
+            GenericSheetPrinter p = tr.getRight();
+            trainingSet.addPrinter(p);
             
         }
+        
+        String filePath = outputPath.getAbsolutePath()
+                    + "/" + dataset + ".training.txt";
+        
+        trainingSet.writeFile(filePath);
+        System.out.println(
+                    "Saved training file in " + filePath);
+
+        List<Pair<String,GenericSheetPrinter>> testDocuments
+                = trainingGenerator.generateTestSet(distiller);
+        
+        GenericSheetPrinter testSet = new CsvPrinter
+                (CsvPrinter.DEFAULT_DELIMITER,true,true);
+        
+        for (Pair<String,GenericSheetPrinter> tr : testDocuments) {
+            
+            GenericSheetPrinter p = tr.getRight();
+            testSet.addPrinter(p);
+            
+        }
+        
+        filePath = outputPath.getAbsolutePath()
+                    + "/" + dataset + ".test.txt";
+        
+        testSet.writeFile(filePath);
+        System.out.println(
+                    "Saved training file in " + filePath);
+        
+        
 
     }
 

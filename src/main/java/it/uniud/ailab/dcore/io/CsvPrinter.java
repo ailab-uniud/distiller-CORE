@@ -49,17 +49,21 @@ public class CsvPrinter extends GenericSheetPrinter {
     /**
      * Default field delimiter.
      */
-    private static final char DEFAULT_DELIMITER = ',';
+    public static final char DEFAULT_DELIMITER = ',';
     /**
      * Default print headers option.
      */
-    private static final boolean DEFAULT_HEADERS = true;
+    public static final boolean DEFAULT_HEADERS = true;
+    /**
+     * Default allow duplicates options.
+     */
+    public static final boolean DEFAULT_DUPLICATES = false;
 
     /**
      * Instantiates the {@code CsvPrinter} with the default options.
      */
     public CsvPrinter() {
-        this(DEFAULT_DELIMITER, DEFAULT_HEADERS);
+        this(DEFAULT_DELIMITER, DEFAULT_HEADERS,DEFAULT_DUPLICATES);
     }
 
     /**
@@ -68,17 +72,7 @@ public class CsvPrinter extends GenericSheetPrinter {
      * @param delimiter delimiter of the records in a row
      */
     public CsvPrinter(char delimiter) {
-        this(delimiter, DEFAULT_HEADERS);
-    }
-
-    /**
-     * Instantiates the {@code CsvPrinter} with the default delimiter options.
-     *
-     * @param printHeaders true if the printer should write the headers of the
-     * table; false otherwise.
-     */
-    public CsvPrinter(boolean printHeaders) {
-        this(DEFAULT_DELIMITER, printHeaders);
+        this(delimiter, DEFAULT_HEADERS,DEFAULT_DUPLICATES);
     }
 
     /**
@@ -87,8 +81,11 @@ public class CsvPrinter extends GenericSheetPrinter {
      * @param delimiter delimiter of the records in a row
      * @param printHeaders true if the printer should write the headers of the
      * table; false otherwise.
+     * @param allowDuplicates true if lines with the same ID are allowed;
+     * false otherwise.
      */
-    public CsvPrinter(char delimiter, boolean printHeaders) {
+    public CsvPrinter(char delimiter, boolean printHeaders,boolean allowDuplicates) {
+        super(allowDuplicates);
         this.delimiter = delimiter;
         this.printHeaders = printHeaders;
     }
