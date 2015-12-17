@@ -6,7 +6,7 @@ The default Distiller pipeline works on keyphrase extraction; anyways, since the
 
 ## Architecture ##
 
-The architecture of the framework and its usage is described in "Introducing Distiller: a unifying framework for Knowledge Extraction" , 1st AI*IA Workshop on Intelligent Techniques At LIbraries and Archives, 2015 [(download link)](http://ceur-ws.org/Vol-1509/ITALIA2015_paper_4.pdf).
+The architecture of the framework and its usage is described in "Introducing Distiller: a unifying framework for Knowledge Extraction" , 1st AI*IA Workshop on Intelligent Techniques At Libraries and Archives, 2015 [(download link)](http://ceur-ws.org/Vol-1509/ITALIA2015_paper_4.pdf).
 
 ## Build and use the Distiller ##
 
@@ -18,6 +18,20 @@ The "dirty work" in the library is handled mainly by three libraries:
 - [Shuyo Nakatani's Language Detection Library for Java](https://github.com/shuyo/language-detection/);
 - [Apache OpenNLP](https://opennlp.apache.org/);
 - [The Tartarus Snowball Stemmer](http://snowball.tartarus.org/).
+
+## Citing ##
+
+If you use Distiller, please cite this paper:
+
+```@inproceedings{basaldellaintroducing,
+  title={Introducing Distiller: a unifying framework for Knowledge Extraction},
+  author={Basaldella, Marco and De Nart, Dario and Tasso, Carlo},
+  year={2015},
+  booktitle={Proceedings of 1st AI*IA Workshop on Intelligent Techniques At Libraries and Archives co-located with XIV Conference of the Italian Association for Artificial Intelligence (AI*IA 2015)},
+  organization={Associazione Italiana per l'Intelligenza Artificiale},  
+  year={2015}
+}
+```
 
 ## References ##
 
