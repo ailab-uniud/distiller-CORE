@@ -20,6 +20,7 @@ package it.uniud.ailab.dcore.wrappers.external;
 
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations;
+import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -35,6 +36,7 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.NERAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Mention;
@@ -183,7 +185,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
         int phraseCounter = 0;
 
         for (CoreMap stanfordSentence : sentences) {
-
+            
             Sentence distilledSentence
                     = new Sentence(stanfordSentence.toString(), "" + sentenceCounter++);
 
@@ -202,7 +204,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 }
             }
 
-            //annotate the sentence with a new feature counting alla the phrases
+            //annotate the sentence with a new feature counting all the phrases
             //cointained in the sentence    
             distilledSentence.addAnnotation(new FeatureAnnotation(
                     DefaultAnnotations.PHRASES_COUNT, phraseCounter));
@@ -221,6 +223,11 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 // this is the lemma of the ttoken
                 t.setLemma(token.lemma());
 
+                String ner = token.get(NamedEntityTagAnnotation.class);
+                if(!ner.equalsIgnoreCase("O")){
+                    t.addAnnotation(new NERAnnotation(DefaultAnnotations.IS_CHUNK, 
+                        ner));
+                } 
                 //add the token to the sentence
                 distilledSentence.addToken(t);
             }

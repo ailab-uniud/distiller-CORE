@@ -224,6 +224,7 @@ public class DistillerFactory {
 //        // annotate ngrams
         p.addAnnotator(new StatisticalAnnotator());
         p.addAnnotator(new CoreferenceResolverAnnotator());
+        p.addAnnotator(new ChunkingNerAnnotator());
         // Uncomment to use TagMe
         // p.addAnnotator(new TagMeGramAnnotator());
         // Uncomment to use the emotional intensity annotator.
@@ -240,6 +241,7 @@ public class DistillerFactory {
         evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
         evaluator.addWeight(CoreferenceResolverAnnotator.NUMBER_OF_REFERENCE, 0.2);
         evaluator.addWeight(CoreferenceResolverAnnotator.IN_ANAPHORA, 0.2);
+        evaluator.addWeight(ChunkingNerAnnotator.IS_CHUNK, 0.2);
 
         p.addAnnotator(evaluator);
 
