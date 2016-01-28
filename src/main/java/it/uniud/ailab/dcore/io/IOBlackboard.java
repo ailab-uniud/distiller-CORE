@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Artificial Intelligence
+ * Copyright (C) 2016 Artificial Intelligence
  * Laboratory @ University of Udine.
  *
  * This program is free software; you can redistribute it and/or
@@ -16,26 +16,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package it.uniud.ailab.dcore.utils;
-
-import it.uniud.ailab.dcore.annotation.Annotator;
+package it.uniud.ailab.dcore.io;
 
 /**
- * Some utilities that help with Annotators.
- *
+ * A class used by I/O classes to share informations about the reading/writing
+ * process.
+ * 
  * @author Marco Basaldella
  */
-public class AnnotatorUtils {
+public final class IOBlackboard {
     
+    // Where the output classes should write
+    private static String outputPathPrefix;
+
     /**
-     * Get the class name of the Annotator.
+     * Get the prefix of the output path where the module should write.
      * 
-     * @param a the annotator.
-     * @return the name of the annotator.
+     * @return the output path.
      */
-    public static String getAnnotatorSimpleName(Annotator a) {
-        
-        return a.getClass().getSimpleName();
+    public static String getOutputPathPrefix() {
+        return outputPathPrefix;
     }
-    
+
+    /**
+     * Set the prefix of the output path where the module should write.
+     * 
+     * @param outputPath the output path.
+     */
+    public static void setOutputPathPrefix(String outputPath) {
+        outputPathPrefix = outputPath;
+    }
 }

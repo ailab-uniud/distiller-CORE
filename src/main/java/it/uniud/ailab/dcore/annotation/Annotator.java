@@ -20,6 +20,7 @@
 package it.uniud.ailab.dcore.annotation;
 
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.Stage;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 
 
@@ -33,7 +34,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
  * @author Marco Basaldella
  * @author Dario De Nart
  */
-public interface Annotator {
+public interface Annotator extends Stage {
     
     /**
      * The abstract annotation method. All classes that perform some kind of 
@@ -46,5 +47,10 @@ public interface Annotator {
      */
     public void annotate(Blackboard blackboard, DocumentComponent component);
     
+    
+    @Override
+    default void run(Blackboard b) {
+        this.annotate(b, b.getStructure());
+    }    
     
 }

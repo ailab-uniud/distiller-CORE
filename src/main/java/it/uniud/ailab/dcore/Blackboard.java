@@ -73,6 +73,7 @@ public class Blackboard {
      * tagset used by a POS-tagger, or the overall sentiment.
      */
     private List<Annotation> annotations;
+   
 
     /**
      * Instantiates an empty blackboard.

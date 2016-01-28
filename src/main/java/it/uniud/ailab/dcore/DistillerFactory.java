@@ -18,7 +18,6 @@
  */
 package it.uniud.ailab.dcore;
 
-import it.uniud.ailab.dcore.annotation.Pipeline;
 import it.uniud.ailab.dcore.annotation.annotators.*;
 import it.uniud.ailab.dcore.wrappers.external.*;
 import java.io.File;

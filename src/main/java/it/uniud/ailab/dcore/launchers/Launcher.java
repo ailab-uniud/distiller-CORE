@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluatorAll;
 import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
+import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.utils.Pair;
 import java.io.File;
 import java.io.IOException;
@@ -570,37 +571,43 @@ public class Launcher {
         setupDistiller();
 
         String document = loadDocument(filePath);
+        
+        String fileName = filePath.toPath().getFileName().toString();
+        
+        IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath() +
+                     "/" + fileName );
+        
         distiller.distill(document);
 
-        CsvPrinter printer = new CsvPrinter();
-
-        String fileName = filePath.toPath().getFileName().toString();
-
-        fileName = fileName.endsWith(".txt")
-                ? fileName.substring(0, fileName.length() - 4)
-                : fileName;
-
-        if (printGrams) {
-
-            String gramsPath = outputPath.getAbsolutePath()
-                    + "/" + fileName + ".grams.txt";
-
-            printer.writeGrams(gramsPath, distiller.getBlackboard());
-
-            System.out.println(
-                    "Saved grams in " + gramsPath);
-        }
-
-        if (printSentences) {
-
-            String sentPath = outputPath.getAbsolutePath()
-                    + "/" + fileName + ".sentences.txt";
-
-            printer.writeSentences(sentPath, distiller.getBlackboard());
-
-            System.out.println(
-                    "Saved sentences in " + sentPath);
-        }
+//        CsvPrinter printer = new CsvPrinter();
+//
+//        String fileName = filePath.toPath().getFileName().toString();
+//
+//        fileName = fileName.endsWith(".txt")
+//                ? fileName.substring(0, fileName.length() - 4)
+//                : fileName;
+//
+//        if (printGrams) {
+//
+//            String gramsPath = outputPath.getAbsolutePath()
+//                    + "/" + fileName + ".grams.txt";
+//
+//            printer.writeGrams(gramsPath, distiller.getBlackboard());
+//
+//            System.out.println(
+//                    "Saved grams in " + gramsPath);
+//        }
+//
+//        if (printSentences) {
+//
+//            String sentPath = outputPath.getAbsolutePath()
+//                    + "/" + fileName + ".sentences.txt";
+//
+//            printer.writeSentences(sentPath, distiller.getBlackboard());
+//
+//            System.out.println(
+//                    "Saved sentences in " + sentPath);
+//        }
 
     }
 

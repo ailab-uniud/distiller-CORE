@@ -39,7 +39,7 @@ public class Token extends Annotable {
     private String PoS;
     
     /**
-     * The lemmatize form of the token, that is obtained removing inflectional 
+     * The lemmatized form of the token, that is obtained removing inflectional 
      * endings only and returning the base or dictionary form of a word.
      */
     private String lemma;

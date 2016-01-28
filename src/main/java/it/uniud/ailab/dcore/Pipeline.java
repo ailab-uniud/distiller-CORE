@@ -16,10 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package it.uniud.ailab.dcore.annotation;
+package it.uniud.ailab.dcore;
 
 import com.rits.cloning.Cloner;
-import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,16 +29,16 @@ import java.util.List;
  *
  * @author Marco Basaldella
  */
-public class Pipeline implements Annotator {
+public class Pipeline implements Stage {
     
-    private List<Annotator> annotators = new LinkedList<>();
+    private List<Stage> annotators = new LinkedList<>();
     
     /**
      * Returns a deep copy of the annotators in the pipeline.
      * 
      * @return the annotators in the pipeline.
      */
-    public List<Annotator> getAnnotators() {
+    public List<Stage> getAnnotators() {
         return (new Cloner()).deepClone(annotators);
     }
 
@@ -47,7 +47,7 @@ public class Pipeline implements Annotator {
      * 
      * @param annotators the new pipeline.
      */
-    public void setAnnotators(List<Annotator> annotators) {
+    public void setAnnotators(List<Stage> annotators) {
         this.annotators = annotators;
     }
     
@@ -67,9 +67,9 @@ public class Pipeline implements Annotator {
      * @param component the document component in the blackboard to annotate
      */
     @Override
-    public void annotate(Blackboard blackboard, DocumentComponent component) {
-        for (Annotator a : annotators)
-            a.annotate(blackboard, component);
+    public void run(Blackboard blackboard) {
+        for (Stage a : annotators)
+            a.run(blackboard);
     }
     
 }
