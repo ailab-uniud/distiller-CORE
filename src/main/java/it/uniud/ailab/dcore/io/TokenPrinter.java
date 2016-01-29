@@ -19,8 +19,6 @@
 package it.uniud.ailab.dcore.io;
 
 import it.uniud.ailab.dcore.Blackboard;
-import it.uniud.ailab.dcore.annotation.Annotator;
-import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
@@ -67,14 +65,15 @@ public class TokenPrinter implements FileWriterStage {
         this.printLemma = printLemma;
     }
 
-    public void writeFile(String file, DocumentComponent component) {
+    @Override
+    public void writeFile(String file, Blackboard b) {
         File fout = new File(file);
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(fout);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 
-            for (Sentence s : DocumentUtils.getSentences(component)) {
+            for (Sentence s : DocumentUtils.getSentences(b.getStructure())) {
 
                 List<Token> tokens = s.getTokens();
                 
@@ -112,5 +111,10 @@ public class TokenPrinter implements FileWriterStage {
                     "Error while writing CSV file", ex);
         }
 
+    }
+
+    @Override
+    public String getFileSuffix() {
+        return "tokens";
     }
 }

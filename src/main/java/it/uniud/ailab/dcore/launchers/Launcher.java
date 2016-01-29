@@ -249,19 +249,6 @@ public class Launcher {
             defaultConfig = cmd.getOptionValue("cd");
         }
 
-        if (cmd.hasOption("ps")) {
-            printSentences = true;
-        }
-
-        if (cmd.hasOption("pg")) {
-            printGrams = true;
-        }
-
-        if (mode == Mode.DEFAULT && !printSentences && !printGrams) {
-            printError("You should select something to print.");
-            return false;
-        }
-
         if (cmd.hasOption("v")) {
             verbose = true;
         }
@@ -351,22 +338,6 @@ public class Launcher {
                 .desc("Write the output in PATH")
                 .hasArg(true)
                 .argName("PATH")
-                .build()
-        );
-
-        // analyze sentences?
-        options.addOption(Option.builder("ps")
-                .longOpt("print-sentences")
-                .desc("Print sentence annotations")
-                .hasArg(false)
-                .build()
-        );
-
-        // analyze grams?
-        options.addOption(Option.builder("pg")
-                .longOpt("print-grams")
-                .desc("Print grams annotations")
-                .hasArg(false)
                 .build()
         );
 
@@ -578,36 +549,6 @@ public class Launcher {
                      "/" + fileName );
         
         distiller.distill(document);
-
-//        CsvPrinter printer = new CsvPrinter();
-//
-//        String fileName = filePath.toPath().getFileName().toString();
-//
-//        fileName = fileName.endsWith(".txt")
-//                ? fileName.substring(0, fileName.length() - 4)
-//                : fileName;
-//
-//        if (printGrams) {
-//
-//            String gramsPath = outputPath.getAbsolutePath()
-//                    + "/" + fileName + ".grams.txt";
-//
-//            printer.writeGrams(gramsPath, distiller.getBlackboard());
-//
-//            System.out.println(
-//                    "Saved grams in " + gramsPath);
-//        }
-//
-//        if (printSentences) {
-//
-//            String sentPath = outputPath.getAbsolutePath()
-//                    + "/" + fileName + ".sentences.txt";
-//
-//            printer.writeSentences(sentPath, distiller.getBlackboard());
-//
-//            System.out.println(
-//                    "Saved sentences in " + sentPath);
-//        }
 
     }
 
