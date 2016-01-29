@@ -108,18 +108,7 @@ public class Launcher {
      * The language to use to distill.
      */
     private static Locale language = null;
-
-    /**
-     * Determines whether the annotations over sentences should be printed or
-     * not.
-     */
-    private static boolean printSentences = false;
-
-    /**
-     * Determines whether the annotations over grams should be printed or not.
-     */
-    private static boolean printGrams = false;
-
+    
     /**
      * Verbose mode flag.
      */

@@ -20,7 +20,6 @@ package it.uniud.ailab.dcore;
 
 import com.rits.cloning.Cloner;
 import it.uniud.ailab.dcore.annotation.Annotator;
-import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import java.util.LinkedList;
 import java.util.List;
 
