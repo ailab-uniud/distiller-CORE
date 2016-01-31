@@ -26,6 +26,20 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.simple.parser.ParseException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  * The n-gram generator algorithm based on regular expression for pos tagging. 
@@ -50,6 +64,18 @@ import it.uniud.ailab.dcore.persistence.Token;
 public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnotator {
 
     // <editor-fold desc="private fields">
+    
+    /**
+     * The languages that the n-gram generator will process and their POS
+     * pattern database paths.
+     */
+    private Map<Locale, String> posDatabasePaths;
+    
+    /**
+     * The regular expressions used to check if the gram has a valid 
+     * pos pattern.
+     */
+    private List<String> validPosPatterns;
     /**
      * Pattern for first level tagging selection: composition of nouns, adjectives
      * and verbs.
@@ -85,11 +111,36 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
      */
     public RegexNGramGeneratorAnnotator() {
 
+        validPosPatterns = new ArrayList<String>();
+        posDatabasePaths = new HashMap<>();
         maxGramSize = DEFAULT_MAX_NGRAM_SIZE;
-
+        posDatabasePaths.put(Locale.ENGLISH,
+                getClass().getClassLoader().
+                getResource("ailab/posPatterns/en-regex-patterns.json").getFile());
     }
     // </editor-fold>
   
+    
+    /**
+     * Sets the database paths of the POS patterns.
+     *
+     * @param posDatabasePaths the database paths
+     */
+    public void setPosDatabasePaths(Map<Locale, String> posDatabasePaths) {
+        this.posDatabasePaths = posDatabasePaths;
+    }
+
+    /**
+     * Adds to the database paths of the POS patterns a file path for a
+     * specified language..
+     *
+     * @param locale the language of the new path
+     * @param path the path of the POS pattern file for the language
+     */
+    public void addPosDatabasePaths(Locale locale, String path) {
+        posDatabasePaths.put(locale, path);
+    }
+    
     /**
      * Sets the maximum size of an n-gram. If the size is not specified, the
      * maximum n-gram size is initialized to DEFAULT_MAX_NGRAM_SIZE.
@@ -113,10 +164,21 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
+        try {
+            loadDatabase(component.getLanguage());
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(SimpleNGramGeneratorAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+        }
         spotNGrams(blackboard, component);
 
     }
 
+    /**
+     * Performs the actual work, by checking in a document if there are valid
+     * nGram sequences that can be used as keyphrase.
+     *
+     * @param component the DocumentComponent to analyze.
+     */
     /**
      * Performs the actual work, by checking in a document if there are valid
      * nGram sequences that can be used as keyphrase.
@@ -233,27 +295,78 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
         }
 
         // check if the sequence of pos tag is a valid pattern
-        Integer nounValue = 0;
-        if(taggedString.matches(pattern1) || taggedString.matches(pattern2)
-                || taggedString.matches(pattern3)){
+        Integer nounValue = -1;
+        for(String pattern : validPosPatterns){
+            if(taggedString.matches(pattern)){
+                //counting the number of noun present in the string
+                int index = taggedString.indexOf("NN");
+                String posTagString = taggedString;
+                nounValue = 0;
+                    while (index != -1) {
+                        nounValue++;
+                        posTagString = posTagString.substring(index + 1);
+                        index = posTagString.indexOf("NN");
+                    }            
             
-            //counting the number of noun present in the string
-            int index = taggedString.indexOf("NN");
-            String posTagString = taggedString;
-            while (index != -1) {
-                nounValue++;
-                posTagString = posTagString.substring(index + 1);
-                index = posTagString.indexOf("NN");
-            }            
-            
-            System.out.println(taggedString + " = "+ nounValue);
+                System.out.println(taggedString + " = "+ nounValue);
+        
+            } else {
+                break;
+            }
+        }
+        
+        return nounValue;
+    }
+    
+    private void loadDatabase(Locale lang) throws IOException, ParseException {
+        // Get the POS pattern file and parse it.
+
+        InputStreamReader is;
+
+        // running from command-line and loading inside the JAR
+        if (posDatabasePaths.get(lang).contains("!")) {
+            is = new InputStreamReader(
+                    getClass().getResourceAsStream(
+                    posDatabasePaths.get(lang).substring(
+                            posDatabasePaths.get(lang).lastIndexOf("!") + 1)));
         } else {
-            nounValue = -1;
+            // normal operation
+            is = new FileReader(posDatabasePaths.get(lang));
         }
 
         
-        
-        return nounValue;
+        BufferedReader reader = new BufferedReader(is);
+        Object obj = (new JSONParser()).parse(reader);
+        JSONObject fileblock = (JSONObject) obj;
+        JSONArray pagesBlock = (JSONArray) fileblock.get("languages");
+
+        // Find the required language in the specified file
+        Iterator<JSONObject> iterator = pagesBlock.iterator();
+        JSONObject languageBlock = null;
+        while (iterator.hasNext()) {
+            languageBlock = (iterator.next());
+            String currLanguage = (String) languageBlock.get("language");
+            if (currLanguage.equals(lang.getLanguage())) {
+                break;
+            }
+        }
+
+        // If the language is not supported by the database, stop the execution.
+        if (languageBlock == null) {
+            throw new NullPointerException("Language " + lang.getLanguage()
+                    + " not found in file " + posDatabasePaths.get(lang));
+        }
+
+        JSONArray patternBlock = (JSONArray) languageBlock.get("patterns");
+
+        Iterator<JSONObject> patternIterator = patternBlock.iterator();
+
+        // put the patterns in the hashmap
+        while (patternIterator.hasNext()) {
+            JSONObject pattern = (patternIterator.next());
+            String POSpattern = (String) pattern.get("pattern");
+            validPosPatterns.add(POSpattern);
+        }
     }
     // </editor-fold>
 }

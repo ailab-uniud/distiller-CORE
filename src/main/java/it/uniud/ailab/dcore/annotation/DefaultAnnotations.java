@@ -37,6 +37,6 @@ public class DefaultAnnotations {
     
     public static final String PHRASES_COUNT = "PhrasesCount";
     
-    public static final String IS_CHUNK = "IsChunk";
+    public static final String IS_NER = "IsNer";
     
 }

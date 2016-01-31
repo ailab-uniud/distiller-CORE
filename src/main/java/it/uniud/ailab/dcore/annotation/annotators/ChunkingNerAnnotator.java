@@ -40,21 +40,18 @@ public class ChunkingNerAnnotator implements Annotator {
     // Plus, is more handy to refer to a feature by ClassName.FeatureName, 
     // so that the code is much more readable.
     /**
-     * Document number of reference of a gram, defined as ( # of pronominal
-     * anaphor for gram / total # of phrases ).
+     * Binary feature of the gram describing if it is or not a NER.
+     * If the gram is recognized as a NER, the value of the feature is set to 1,
+     * otherwise is set to 0.
      */
-    public static final String IS_CHUNK = "IsAChunk";
+    public static final String IS_NER = "IsANER";
 
     /**
-     * Annotates grams with linguistic information.
+     * Annotates grams with semantic information.
      * <p>
-     * Grams are annotated with information such as their frequency, their width
-     * and their depth in the
-     * {@link it.uniud.ailab.dcore.persistence.DocumentComponent} passed as
-     * input.
+     * Grams are annotated with informations about the property of being or not 
+     * NER entities.
      * <p>
-     * Sentences are annotated with their length, expressed both in number of
-     * words and number of characters (including whitespaces).
      *
      *
      * @param component the component to analyze.
@@ -69,8 +66,8 @@ public class ChunkingNerAnnotator implements Annotator {
         for (Sentence s : sentences) {
             
 
-            //for each candidate keyphrase control if the anaphor is present 
-            //in the n gram or vice-versa
+            //for each candidate keyphrase check if a NER is present 
+            //in the n gram 
             for (Gram g : s.getGrams()) {
                 double score = 0; //initialize variable for NER feature score
                 //assuming the gram is really a keyphrase
@@ -79,14 +76,14 @@ public class ChunkingNerAnnotator implements Annotator {
                 List<Token> tokens = k.getTokens();
                 
                 for(Token t : tokens){
-                    if(t.hasAnnotation(DefaultAnnotations.IS_CHUNK)){
+                    if(t.hasAnnotation(DefaultAnnotations.IS_NER)){
                         
                         //eventually we can distinguish the score basing on ner tag
                         //using the NERAnnotation's string, that contains the 
                         //assigned NER category
 //                        double nerScore;
 //                        String ner = ((NERAnnotation)t.getAnnotation
-//                                        (DefaultAnnotations.IS_CHUNK)).getNerTag();
+//                                        (DefaultAnnotations.IS_NER)).getNerTag();
 //                        if(ner.equalsIgnoreCase("LOCATION")){
 //                            nerScore = 0.2;
 //                        } else if(ner.equalsIgnoreCase("PERSON")){
@@ -101,13 +98,11 @@ public class ChunkingNerAnnotator implements Annotator {
                 
                 if (score > 0) {//if n-gram is an anaphor
                     //normalize score for NOR by total # of phrases 
-                    k.putFeature(IS_CHUNK, (score / tokens.size()));
+                    k.putFeature(IS_NER, 1.0);
                 } else {
-                    k.putFeature(IS_CHUNK, 0.0);
+                    k.putFeature(IS_NER, 0.0);
                 }
-                
-                System.out.println("ner for " + k.getSurface() + " : " + score/tokens.size());
-                
+                                
             }
         }
     }

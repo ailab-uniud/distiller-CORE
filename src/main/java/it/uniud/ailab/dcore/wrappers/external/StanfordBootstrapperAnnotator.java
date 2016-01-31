@@ -225,7 +225,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
 
                 String ner = token.get(NamedEntityTagAnnotation.class);
                 if(!ner.equalsIgnoreCase("O")){
-                    t.addAnnotation(new NERAnnotation(DefaultAnnotations.IS_CHUNK, 
+                    t.addAnnotation(new NERAnnotation(DefaultAnnotations.IS_NER, 
                         ner));
                 } 
                 //add the token to the sentence
