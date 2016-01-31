@@ -44,7 +44,7 @@ public class ChunkingNerAnnotator implements Annotator {
      * If the gram is recognized as a NER, the value of the feature is set to 1,
      * otherwise is set to 0.
      */
-    public static final String IS_NER = "IsANER";
+    public static final String IS_NER = "IsANer";
 
     /**
      * Annotates grams with semantic information.

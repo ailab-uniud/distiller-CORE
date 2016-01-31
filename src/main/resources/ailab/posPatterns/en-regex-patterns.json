@@ -2,7 +2,6 @@
 	"languages":[
 			{ 
 				"language": "en",
-                                "tagset:" : "penn-treebank",
 				"patterns":[
 				 {
 					"pattern":"((JJ|NN|NNP|NNS|NNPS)[/])*(NN|NNP|NNS|NNPS|VB|VBG)",

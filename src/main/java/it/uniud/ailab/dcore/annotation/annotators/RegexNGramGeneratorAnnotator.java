@@ -76,24 +76,7 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
      * pos pattern.
      */
     private List<String> validPosPatterns;
-    /**
-     * Pattern for first level tagging selection: composition of nouns, adjectives
-     * and verbs.
-     */
-    private String pattern1 = "((JJ|NN|NNP|NNS|NNPS)[/])*(NN|NNP|NNS|NNPS|VB|VBG)";
     
-    /**
-     * Pattern for secodn level tagging selection: composition of nouns and 
-     * prepositions.
-     */
-    private String pattern2 = "((NN|NNS)[/])(IN[/])(NN|NNS)";
-    
-    /**
-     * Pattern for third level tagging selection: composition of nouns, adjectives
-     * and verbs in past participle form.
-     */
-    private String pattern3 = "((JJ|VBN)[/])*(NN|NNS)";
-   
     /**
      * The maximum size of n-grams to detect.
      */
