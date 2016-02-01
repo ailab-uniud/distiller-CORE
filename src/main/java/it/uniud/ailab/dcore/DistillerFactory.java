@@ -19,6 +19,8 @@
 package it.uniud.ailab.dcore;
 
 import it.uniud.ailab.dcore.annotation.annotators.*;
+import it.uniud.ailab.dcore.io.GramPrinter;
+import it.uniud.ailab.dcore.io.SentencePrinter;
 import it.uniud.ailab.dcore.wrappers.external.*;
 import java.io.File;
 import java.io.IOException;
@@ -142,30 +144,30 @@ public class DistillerFactory {
         // build the pipeline
         Pipeline p = new Pipeline();
         // split the text
-        p.addAnnotator(new OpenNlpBootstrapperAnnotator());
+        p.addStage(new OpenNlpBootstrapperAnnotator());
         // add wikipedia tags to tokens
 
         //annotate tokens with stemming
-        p.addAnnotator(new PorterStemmerAnnotator());
+        p.addStage(new PorterStemmerAnnotator());
         // Uncomment the lines below to use the TagMe service
         // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
         // tagme.setApiKey("INSERT KEY HERE");        
-        // p.addAnnotator(tagme);
+        // p.addStage(tagme);
         // generate ngrams
-        p.addAnnotator(new SimpleNGramGeneratorAnnotator());
+        p.addStage(new SimpleNGramGeneratorAnnotator());
 
         // remove stopwords
-        p.addAnnotator(new StopwordSimpleFilterAnnotator());
+        p.addStage(new StopwordSimpleFilterAnnotator());
 
         // annotate ngrams
-        p.addAnnotator(new StatisticalAnnotator());
+        p.addStage(new StatisticalAnnotator());
 
         // Uncomment to use TagMe
-        // p.addAnnotator(new TagMeGramAnnotator());
+        // p.addStage(new TagMeGramAnnotator());
         // Uncomment to use the emotional intensity annotator.
         // This way you'll see how different annotators lead to different
         // keyphrases detection
-        // p.addAnnotator(new SyuzhetAnnotator());
+        // p.addStage(new SyuzhetAnnotator());
         // evaluate ngram features        
         LinearEvaluatorAnnotator evaluator = new LinearEvaluatorAnnotator();
         evaluator.addWeight(StatisticalAnnotator.DEPTH, 0.15);
@@ -175,18 +177,20 @@ public class DistillerFactory {
         evaluator.addWeight(GenericNGramGeneratorAnnotator.NOUNVALUE, 0.3);
         evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
 
-        p.addAnnotator(evaluator);
+        p.addStage(evaluator);
 
         // Uncomment the line below to infer concepts.
         // Watch out: the inference process sends lots of requests to Wikipedia, 
         // so it significantly slows down the process
-        // p.addAnnotator(new WikipediaInferenceAnnotator());
+        // p.addStage(new WikipediaInferenceAnnotator());
         // filter results
-        p.addAnnotator(new SkylineGramFilterAnnotator());
+        p.addStage(new SkylineGramFilterAnnotator());
 
         // remove redundant grams
-        //p.addAnnotator(new GramMergerAnnotator());
-        
+        //p.addStage(new GramMergerAnnotator());
+        p.addStage(new GramPrinter());
+        p.addStage(new SentencePrinter());
+
         d.addPipeline(Locale.ENGLISH, p);
         d.addPipeline(Locale.ITALIAN, p);
 
@@ -202,34 +206,32 @@ public class DistillerFactory {
         // build the pipeline
         Pipeline p = new Pipeline();
         // split the text
-        p.addAnnotator(new StanfordBootstrapperAnnotator() );
+        p.addStage(new StanfordBootstrapperAnnotator());
         // add wikipedia tags to tokens
 
         //annotate tokens with stemming
-        p.addAnnotator(new PorterStemmerAnnotator());
-        
+        p.addStage(new PorterStemmerAnnotator());
+
         // Uncomment the lines below to use the TagMe service
         // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
         // tagme.setApiKey("INSERT KEY HERE");        
-        // p.addAnnotator(tagme);
+        // p.addStage(tagme);
         // generate ngrams
-        p.addAnnotator(new SimpleNGramGeneratorAnnotator());
+        p.addStage(new SimpleNGramGeneratorAnnotator());
 
-        
-        
 //        // remove stopwords
-        p.addAnnotator(new StopwordSimpleFilterAnnotator());
+        p.addStage(new StopwordSimpleFilterAnnotator());
 //
 //        // annotate ngrams
-        p.addAnnotator(new StatisticalAnnotator());
-        p.addAnnotator(new CoreferenceResolverAnnotator());
-        p.addAnnotator(new ChunkingNerAnnotator());
+        p.addStage(new StatisticalAnnotator());
+        p.addStage(new CoreferenceResolverAnnotator());
+        p.addStage(new ChunkingNerAnnotator());
         // Uncomment to use TagMe
-        // p.addAnnotator(new TagMeGramAnnotator());
+        // p.addStage(new TagMeGramAnnotator());
         // Uncomment to use the emotional intensity annotator.
         // This way you'll see how different annotators lead to different
         // keyphrases detection
-        // p.addAnnotator(new SyuzhetAnnotator());
+        // p.addStage(new SyuzhetAnnotator());
         // evaluate ngram features        
         LinearEvaluatorAnnotator evaluator = new LinearEvaluatorAnnotator();
         evaluator.addWeight(StatisticalAnnotator.DEPTH, 0.15);
@@ -240,20 +242,12 @@ public class DistillerFactory {
         evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
         evaluator.addWeight(CoreferenceResolverAnnotator.NUMBER_OF_REFERENCE, 0.2);
         evaluator.addWeight(CoreferenceResolverAnnotator.IN_ANAPHORA, 0.2);
-        evaluator.addWeight(ChunkingNerAnnotator.IS_CHUNK, 0.2);
+        evaluator.addWeight(ChunkingNerAnnotator.IS_NER, 0.2);
 
-        p.addAnnotator(evaluator);
+        p.addStage(evaluator);
 
-        // Uncomment the line below to infer concepts.
-        // Watch out: the inference process sends lots of requests to Wikipedia, 
-        // so it significantly slows down the process
-        // p.addAnnotator(new WikipediaInferenceAnnotator());
-        // filter results
-        p.addAnnotator(new SkylineGramFilterAnnotator());
+        p.addStage(new GramPrinter());
 
-        // remove redundant grams
-        //p.addAnnotator(new GramMergerAnnotator());
-        
         d.addPipeline(Locale.ENGLISH, p);
 
         return d;

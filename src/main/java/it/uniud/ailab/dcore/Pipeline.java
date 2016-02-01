@@ -24,51 +24,50 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A pipeline of annotators.
+ * A pipeline of stages.
  *
  * @author Marco Basaldella
  */
 public class Pipeline implements Stage {
     
-    private List<Stage> annotators = new LinkedList<>();
+    private List<Stage> stages = new LinkedList<>();
     
     /**
-     * Returns a deep copy of the annotators in the pipeline.
+     * Returns a deep copy of the stages in the pipeline.
      * 
-     * @return the annotators in the pipeline.
+     * @return the stages in the pipeline.
      */
-    public List<Stage> getAnnotators() {
-        return (new Cloner()).deepClone(annotators);
+    public List<Stage> getStages() {
+        return (new Cloner()).deepClone(stages);
     }
 
     /**
-     * Sets the annotators of the pipeline.
+     * Sets the stages of the pipeline.
      * 
-     * @param annotators the new pipeline.
+     * @param stages the new pipeline.
      */
-    public void setAnnotators(List<Stage> annotators) {
-        this.annotators = annotators;
+    public void setStages(List<Stage> stages) {
+        this.stages = stages;
     }
     
     /**
-     * Adds an annotator to the end of the pipeline.
+     * Adds a stage to the end of the pipeline.
      * 
-     * @param a the annotator to add.
+     * @param s the stage to add.
      */
-    public void addAnnotator(Annotator a) {
-        this.annotators.add(a);
+    public void addStage(Stage s) {
+        this.stages.add(s);
     }
 
     /**
      * Runs the pipeline.
      * 
-     * @param blackboard the blackboard to annotate
-     * @param component the document component in the blackboard to annotate
+     * @param blackboard the blackboard to analyze
      */
     @Override
     public void run(Blackboard blackboard) {
-        for (Stage a : annotators)
-            a.run(blackboard);
+        for (Stage s : stages)
+            s.run(blackboard);
     }
     
 }

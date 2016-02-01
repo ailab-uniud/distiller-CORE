@@ -166,9 +166,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         </property>
     </bean>
     
+    <bean id="printer" 
+          class="it.uniud.ailab.dcore.io.GramPrinter" />
+    
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
-        <property name="annotators">
+        <property name="stages">
             <list>
                 <!-- split the document -->
                 <ref bean="openNLP"/>
@@ -184,6 +187,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 <ref bean="linearEvaluator"/>
                 <!-- filter the non-interesting output -->
                 <ref bean="cutGramFilter"/> 
+                <!-- print the grams -->
+                <ref bean="printer"/>
             </list>
         </property>        
     </bean> 

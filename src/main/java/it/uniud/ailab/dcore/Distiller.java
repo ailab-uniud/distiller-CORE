@@ -168,7 +168,7 @@ public class Distiller {
                     + blackboard.getStructure().getLanguage().getLanguage());
         }
 
-        for (Stage stage : pipeline.getAnnotators()) {
+        for (Stage stage : pipeline.getStages()) {
             
             if (verbose) {
                 System.out.println(String.format("Running %s...",
