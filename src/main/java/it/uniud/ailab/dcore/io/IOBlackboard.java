@@ -21,17 +21,43 @@ package it.uniud.ailab.dcore.io;
 /**
  * A class used by I/O classes to share informations about the reading/writing
  * process.
- * 
+ *
  * @author Marco Basaldella
  */
 public final class IOBlackboard {
-    
+
     // Where the output classes should write
     private static String outputPathPrefix;
 
+    // Where to find all the documents (if a collection is used)
+    private static String documentsFolder;
+    
+    // The path of the currently analyzed document
+    private static String currentDocument;
+
+    /**
+     * Get the path of the folder that contains the documents to analyze (if the
+     * Distiller is analyzing a collection)
+     *
+     * @return the path that contains the documents.
+     */
+    public static String getDocumentsFolder() {
+        return documentsFolder;
+    }
+
+    /**
+     * Set the path of the folder that contains the documents to analyze (if the
+     * Distiller is analyzing a collection)
+     *
+     * @param documentsFolder the path that contains the documents.
+     */
+    public static void setDocumentsFolder(String documentsFolder) {
+        IOBlackboard.documentsFolder = documentsFolder;
+    }
+
     /**
      * Get the prefix of the output path where the module should write.
-     * 
+     *
      * @return the output path.
      */
     public static String getOutputPathPrefix() {
@@ -40,10 +66,20 @@ public final class IOBlackboard {
 
     /**
      * Set the prefix of the output path where the module should write.
-     * 
+     *
      * @param outputPath the output path.
      */
     public static void setOutputPathPrefix(String outputPath) {
         outputPathPrefix = outputPath;
     }
+
+    public static String getCurrentDocument() {
+        return currentDocument;
+    }
+
+    public static void setCurrentDocument(String currentDocument) {
+        IOBlackboard.currentDocument = currentDocument;
+    }
+    
+    
 }

@@ -529,10 +529,12 @@ public class Launcher {
     private static void analyzeFile(File filePath) throws IOException {
 
         setupDistiller();
-
-        String document = loadDocument(filePath);
         
         String fileName = filePath.toPath().getFileName().toString();
+
+        IOBlackboard.setCurrentDocument(filePath.getAbsolutePath());
+        String document = loadDocument(filePath);
+        
         
         IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath() +
                      "/" + fileName );
@@ -607,6 +609,8 @@ public class Launcher {
      */
     private static void analyzeDir(File inputPath) throws IOException {
         File folderPath = inputPath;
+        
+        IOBlackboard.setDocumentsFolder(inputPath.getAbsolutePath());
 
         for (File f : folderPath.listFiles()) {
 

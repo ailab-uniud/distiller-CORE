@@ -55,13 +55,16 @@
           class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
     </bean>
     
+    <bean id="tfidf"
+          class="it.uniud.ailab.dcore.annotation.annotators.TdidfAnnotator"/>
+    
     <bean id="simpleStopword"
           class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
     </bean>
     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.GramPrinter"    />
-    
+          
 
     
     <bean id="defaultPipeline"
@@ -76,6 +79,7 @@
                 <!-- annotate the n-grmas -->
                 <ref bean="statistical" />
                 <ref bean="simpleStopword" />
+                <ref bean="tfidf" />
                 <ref bean="syuzhet" />
                 <ref bean="printer"/>
             </list>

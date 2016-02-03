@@ -41,6 +41,8 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A bootstrapper annotator for the English language developed using the Apache
@@ -77,7 +79,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      * convention of the OpenNLP toolkit, i.e. ($lang)-($tool), e.g. as
      * "en-token".
      */
-    private final Map<String, String> databasePaths
+    private static final Map<String, String> databasePaths
             = new HashMap<>();
 
     // Caches for the models used, so subsequent calls of the annotator
@@ -99,12 +101,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
-        if (databasePaths.entrySet().isEmpty()) {
-            SetDefaultModels();
-        }
-
-        // Download the models (if necessary)
-        PrepareModels();
+        // set up the annotator
+        setup();
 
         // Language tag used to retrieve the datasets
         String langTag = component.getLanguage().getLanguage();
@@ -149,6 +147,15 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         } // for (String sentenceString : sentences)
     } // annotate
 
+    private static void setup() {
+        if (databasePaths.entrySet().isEmpty()) {
+            setDefaultModels();
+        }
+        
+        // Download the models (if necessary)
+        prepareModels();
+    }
+
     // <editor-fold desc="model loading">
     /**
      * Public property to override the default models; the keys should be in the
@@ -164,7 +171,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
     /**
      * Sets the default URLs for some known OpenNLP models.
      */
-    private void SetDefaultModels() {
+    private static void setDefaultModels() {
         databasePaths.put("en-sent", "http://opennlp.sourceforge.net/models-1.5/en-sent.bin");
         databasePaths.put("en-token", "http://opennlp.sourceforge.net/models-1.5/en-token.bin");
         databasePaths.put("en-pos-maxent", "http://opennlp.sourceforge.net/models-1.5/en-pos-maxent.bin");
@@ -181,7 +188,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      * and downloads the online ones.
      *
      */
-    private void PrepareModels() {
+    private static void prepareModels() {
 
         Map<String, String> correctPaths = new HashMap<>();
 
@@ -226,7 +233,9 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 //LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
             } catch (IOException ex) {
                 //LOG.log(Level.SEVERE, "Savefile error", ex);
-                throw new AnnotationException(this, "Failed to download " + e.getValue(), ex);
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator()
+                        , "Failed to download " + e.getValue(), ex);
             } finally {
 
                 // if something went wrong, put the default value.
@@ -251,7 +260,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      * @param modelId the model to retrieve
      * @return the loaded model
      */
-    public SentenceModel getSentenceModel(String modelId) {
+    public static SentenceModel getSentenceModel(String modelId) {
 
         // if the model has not already been loaded, cache it
         if (!sentenceModelsCache.containsKey(modelId)) {
@@ -266,12 +275,14 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 sentModelIn = new FileInputStream(sentPath);
                 sentModel = new SentenceModel(sentModelIn);
             } catch (IOException e) {
-                throw new AnnotationException(this,
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator(),
                         "Error while loading the model file \""
                         + sentPath + "\".",
                         e);
             } catch (NullPointerException e) {
-                throw new AnnotationException(this,
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator(),
                         "Error while looking for the model \""
                         + modelId + "\".",
                         e);
@@ -280,7 +291,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                     try {
                         sentModelIn.close();
                     } catch (IOException e) {
-                        throw new AnnotationException(this,
+                        throw new AnnotationException(
+                                new OpenNlpBootstrapperAnnotator(),
                                 "Error while loading the model file '\""
                                 + modelId + "\".",
                                 e);
@@ -300,7 +312,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      * @param modelId the model to retrieve
      * @return the loaded model
      */
-    public TokenizerModel getTokenizerModel(String modelId) {
+    public static TokenizerModel getTokenizerModel(String modelId) {
 
         // if the model has not already been loaded, cache it
         if (!tokenizerModelsCache.containsKey(modelId)) {
@@ -315,12 +327,14 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 tokenModelIn = new FileInputStream(sentPath);
                 tokenizerModel = new TokenizerModel(tokenModelIn);
             } catch (IOException e) {
-                throw new AnnotationException(this,
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator(),
                         "Error while loading the model file \""
                         + sentPath + "\".",
                         e);
             } catch (NullPointerException e) {
-                throw new AnnotationException(this,
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator(),
                         "Error while looking for the model \""
                         + modelId + "\".",
                         e);
@@ -329,7 +343,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                     try {
                         tokenModelIn.close();
                     } catch (IOException e) {
-                        throw new AnnotationException(this,
+                        throw new AnnotationException(
+                                new OpenNlpBootstrapperAnnotator(),
                                 "Error while loading the model file '\""
                                 + modelId + "\".",
                                 e);
@@ -349,7 +364,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      * @param modelId the model to retrieve
      * @return the loaded model
      */
-    public POSModel getPOSTaggerModel(String modelId) {
+    public static POSModel getPOSTaggerModel(String modelId) {
 
         // if the model has not already been loaded, cache it
         if (!posModelsCache.containsKey(modelId)) {
@@ -364,12 +379,14 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 POSModelIn = new FileInputStream(sentPath);
                 POSModel = new POSModel(POSModelIn);
             } catch (IOException e) {
-                throw new AnnotationException(this,
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator(),
                         "Error while loading the model file \""
                         + sentPath + "\".",
                         e);
             } catch (NullPointerException e) {
-                throw new AnnotationException(this,
+                throw new AnnotationException(
+                        new OpenNlpBootstrapperAnnotator(),
                         "Error while looking for the model \""
                         + modelId + "\".",
                         e);
@@ -378,7 +395,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                     try {
                         POSModelIn.close();
                     } catch (IOException e) {
-                        throw new AnnotationException(this,
+                        throw new AnnotationException(
+                                new OpenNlpBootstrapperAnnotator(),
                                 "Error while loading the model file '\""
                                 + modelId + "\".",
                                 e);
@@ -391,6 +409,40 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         return posModelsCache.get(modelId);
     }
 
+    /**
+     * Utility offered to other elements of the pipeline for text tokenizing.
+     * 
+     * @param text the text to tokenize
+     * @param language the language of the input text
+     * @return an array containing the tokenized text.
+     */
+    public static String[] tokenizeText(String text,String language) {
+        
+        // Split the text into sentences
+        SentenceModel sentModel = getSentenceModel(language + "-sent");
+
+        SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentModel);
+        String sentences[] = sentenceDetector.sentDetect(text);
+
+        // Get the right models
+        TokenizerModel tokenModel = getTokenizerModel(language + "-token");
+
+        // Iterate through sentences and produce the distilled objects, 
+        // i.e. a sentence object with pos-tagged and stemmed tokens.
+        List<String> tokenizedText = new ArrayList<>();
+        
+        for (String sentenceString : sentences) {
+
+            // Tokenize the sentence
+            Tokenizer tokenizer = new TokenizerME(tokenModel);
+            String tokens[] = tokenizer.tokenize(sentenceString);
+            for (String token : tokens)
+                tokenizedText.add(token);
+        }
+        return tokenizedText.toArray(new String[tokenizedText.size()]);
+    }
+    
+    
     //</editor-fold>
     // <editor-fold desc="utilities">
     private static boolean isLocalFile(URL url) {
