@@ -43,16 +43,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- *
+ * A simple and raw tf-idf calculator. It tokenizes each document
+ * using OpenNLP, stems them with the Tartarus Stemmer, and marks each token
+ * with a leading and trailing '§' mark.
+ * 
+ * Then, when the tf-idf value of a token is search 
+* 
  * @author Marco Basaldella
  */
-public class TdidfAnnotator implements Annotator {
+public class RawTdidfAnnotator implements Annotator {
 
     public static final String TFIDF = "tf-idf";
 
-    // see https://guendouz.wordpress.com/2015/02/17/implementation-of-tf-idf-in-java/
-    private static Map<String, String> documents = new HashMap<>();
-    private static Map<String, Integer> docLengths = new HashMap<>();
+    private static final Map<String, String> documents = new HashMap<>();
+    private static final Map<String, Integer> docLengths = new HashMap<>();
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -82,7 +86,8 @@ public class TdidfAnnotator implements Annotator {
                         }
                     }
                     
-                    stemmedSurface = String.join(" ", tokenizedSurface).trim();
+                    stemmedSurface = String.join(" ", 
+                            markTokens(tokenizedSurface)).trim();
 
                     ((Keyphrase) g).putFeature(TFIDF,
                             tfIdf(
@@ -101,7 +106,7 @@ public class TdidfAnnotator implements Annotator {
     private double idf(String term) {
         double n = 0;
         for (String doc : documents.values()) {
-            n += StringUtils.countMatches(doc, term);
+            n += doc.contains(term) ? 1 : 0;
         }
         return Math.log(documents.size() / n);
     }
@@ -113,6 +118,9 @@ public class TdidfAnnotator implements Annotator {
 
     private static void initIndex(Locale locale) {
 
+        if (!documents.isEmpty())
+            return;
+        
         String docPath = IOBlackboard.getDocumentsFolder();
 
         docPath = docPath == null
@@ -156,16 +164,17 @@ public class TdidfAnnotator implements Annotator {
 
                 tokenCount += tokenizedDocument.length;
 
-                document.append(String.join(" ", tokenizedDocument).trim());
+                document.append(String.join(" ", markTokens(tokenizedDocument))
+                        .trim());
                 document.append(" ");
 
             }
 
         } catch (FileNotFoundException e) {
-            throw new AnnotationException(new TdidfAnnotator(),
+            throw new AnnotationException(new RawTdidfAnnotator(),
                     "Can't read the tf-idf database.", e);
         } catch (IOException e) {
-            throw new AnnotationException(new TdidfAnnotator(),
+            throw new AnnotationException(new RawTdidfAnnotator(),
                     "Can't read the tf-idf  database.", e);
         } finally {
             if (br != null) {
@@ -181,6 +190,14 @@ public class TdidfAnnotator implements Annotator {
         documents.put(f.getAbsolutePath(), documentText);
         docLengths.put(f.getAbsolutePath(), tokenCount);
 
+    }
+    
+    private static String[] markTokens(String[] tokens) {
+        
+        for (int i = 0; i < tokens.length; i++)
+            tokens[i] = "§" + tokens[i] + "§";
+        
+        return tokens;
     }
 
 }
