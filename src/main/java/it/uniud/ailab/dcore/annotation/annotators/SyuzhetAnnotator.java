@@ -253,6 +253,8 @@ public class SyuzhetAnnotator implements Annotator {
                         k.putFeature(POLARITY, avg);
                         k.putFeature(POLARITY_COUNTER, counter);
                     }
+                    
+                    intensity = Math.abs(intensity);
 
                     double sentenceAverageIntensity
                             = markedWords > 0

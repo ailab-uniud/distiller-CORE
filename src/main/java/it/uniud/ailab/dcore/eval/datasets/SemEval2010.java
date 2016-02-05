@@ -146,7 +146,7 @@ public class SemEval2010 extends GenericDataset {
 
         try {
 
-            File gold = new File(datasetPath + "/train/train.combined.stem.final");
+            File gold = new File(datasetPath + "/train_answer/train.combined.stem.final");
 
             Map<String, String[]> buffer = new HashMap<>();
 

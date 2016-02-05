@@ -83,7 +83,7 @@
         <property name="stages">
             <list>
                 <!-- split the document -->
-                <ref bean="stanford"/>
+                <ref bean="stanfordFast"/>
                 <ref bean="stemmer"/>
                 <!-- generate the n-grams -->
                 <ref bean="nGramGenerator"/> 
@@ -92,9 +92,9 @@
                 <ref bean="statistical" />
                 <ref bean="tfidf" />
                 <ref bean="syuzhet" />
-                <ref bean="chunkingNer"/>
-                <ref bean="coreferenceResolver"/>
-                <ref bean="dpm"/>
+                <!--<ref bean="chunkingNer"/>
+                <ref bean="coreferenceResolver"/>-->
+                <!--<ref bean="dpm"/>-->
                 <ref bean="printer"/>
             </list>
         </property>        
