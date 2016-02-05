@@ -40,6 +40,13 @@
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
     </bean>
     
+    <bean id="stanford"
+          class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapperAnnotator" />
+    
+    
+    <bean id="stanfordFast"
+          class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator" />
+    
     <bean id="stemmer"
           class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
       
@@ -72,7 +79,7 @@
         <property name="stages">
             <list>
                 <!-- split the document -->
-                <ref bean="openNLP"/>
+                <ref bean="stanfordFast"/>
                 <ref bean="stemmer"/>
                 <!-- generate the n-grams -->
                 <ref bean="nGramGenerator"/>

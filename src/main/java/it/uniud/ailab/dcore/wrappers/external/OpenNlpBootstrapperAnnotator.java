@@ -418,6 +418,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      */
     public static String[] tokenizeText(String text,String language) {
         
+        setup();
+        
         // Split the text into sentences
         SentenceModel sentModel = getSentenceModel(language + "-sent");
 

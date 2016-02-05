@@ -226,7 +226,7 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                         if (nounValue > 0) {
 
                             // the identifier is the stem of the words
-                            String identifier = lastReadBuffers[size].get(0).getText();
+                            String identifier = lastReadBuffers[size].get(0).getStem();
                             for (int k = 1; k < lastReadBuffers[size].size(); k++) {
                                 identifier = identifier + " "
                                         + lastReadBuffers[size].get(k).getStem();
