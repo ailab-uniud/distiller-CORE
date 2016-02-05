@@ -43,13 +43,18 @@
     <bean id="stanford"
           class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapperAnnotator" />
     
-    
     <bean id="stanfordFast"
           class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator" />
     
     <bean id="stemmer"
           class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
-      
+    
+    <bean id="chunkingNer" 
+          class="it.uniud.ailab.dcore.annotation.annotators.ChunkingNerAnnotator"/>    
+    <bean id="coreferenceResolver" 
+          class="it.uniud.ailab.dcore.annotation.annotators.CoreferenceResolverAnnotator"/>
+    <bean id="dpm" 
+          class="it.uniud.ailab.dcore.annotation.annotators.PhraseMaximalityAnnotator"/>
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
           class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
@@ -59,7 +64,8 @@
         
     <!-- N-gram generators -->
     <bean id="nGramGenerator"
-          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
+        <property name="maxGramSize" value="5" />
     </bean>
     
     <bean id="tfidf"
@@ -70,24 +76,25 @@
     </bean>
     
     <bean id="printer"
-          class="it.uniud.ailab.dcore.io.GramPrinter"    />
-          
-
+          class="it.uniud.ailab.dcore.io.GramPrinter"/>
     
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
                 <!-- split the document -->
-                <ref bean="stanfordFast"/>
+                <ref bean="stanford"/>
                 <ref bean="stemmer"/>
                 <!-- generate the n-grams -->
-                <ref bean="nGramGenerator"/>
-                <!-- annotate the n-grmas -->
-                <ref bean="statistical" />
+                <ref bean="nGramGenerator"/> 
+                <!-- annotate the n-grams -->
                 <ref bean="simpleStopword" />
+                <ref bean="statistical" />
                 <ref bean="tfidf" />
                 <ref bean="syuzhet" />
+                <ref bean="chunkingNer"/>
+                <ref bean="coreferenceResolver"/>
+                <ref bean="dpm"/>
                 <ref bean="printer"/>
             </list>
         </property>        

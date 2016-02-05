@@ -48,7 +48,7 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
  */
 public class SyuzhetAnnotator implements Annotator {
 
-    public static final String INTENSITY_AVG = "Intensity_SentengeAverage";
+    public static final String INTENSITY_AVG = "Intensity_SentenceAverage";
     public static final String INTENSITY_SUM = "Intensity_SentenceSum";
     private static final String INTENSITY_COUNTER = "Intensity_Counter";
 

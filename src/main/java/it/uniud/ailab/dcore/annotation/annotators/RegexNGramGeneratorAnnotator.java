@@ -290,8 +290,6 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
                         posTagString = posTagString.substring(index + 1);
                         index = posTagString.indexOf("NN");
                     }            
-            
-                System.out.println(taggedString + " = "+ nounValue);
         
             } else {
                 break;
