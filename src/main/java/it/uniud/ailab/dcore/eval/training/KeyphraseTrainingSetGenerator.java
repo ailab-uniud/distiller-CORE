@@ -120,6 +120,7 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
 
             CsvPrinter printer = new CsvPrinter();
             printer.loadGrams(b);
+            printer.addToAll("DocID",documentEntry.getKey());
             outputFiles.add(new Pair<>(documentEntry.getKey(), printer));
         }
         return outputFiles;

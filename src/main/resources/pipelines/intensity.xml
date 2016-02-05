@@ -76,7 +76,7 @@
     
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
-        <property name="annotators">
+        <property name="stages">
             <list>
                 <!-- split the document -->
                 <ref bean="openNLP"/>

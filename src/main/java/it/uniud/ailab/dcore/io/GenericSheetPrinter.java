@@ -273,6 +273,15 @@ public abstract class GenericSheetPrinter {
         }
     }
 
+    public void addToAll(String key, String value) {
+        headers.add(key);
+        headerTypes.add(new Left<>(key));
+        for (Map<String, Either<String, Number>> row: rows) {
+            row.put(key, new Left<>(value));
+        }
+        
+    }
+
     /**
      * Clear the spreadsheet.
      */
