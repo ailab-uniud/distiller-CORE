@@ -475,6 +475,8 @@ public class Launcher {
         KeyphraseTrainingSetGenerator trainingGenerator
                 = new KeyphraseTrainingSetGenerator(kpDataset);
         
+        IOBlackboard.setDocumentsFolder(kpDataset.getTrainingFolder());
+        
         List<Pair<String,GenericSheetPrinter>> trainingDocuments
                 = trainingGenerator.generateTrainingSet(distiller);
         
@@ -495,6 +497,9 @@ public class Launcher {
         System.out.println(
                     "Saved training file in " + filePath);
 
+        
+        IOBlackboard.setDocumentsFolder(kpDataset.getTestFolder());
+        
         List<Pair<String,GenericSheetPrinter>> testDocuments
                 = trainingGenerator.generateTestSet(distiller);
         

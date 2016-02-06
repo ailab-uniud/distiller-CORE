@@ -198,5 +198,9 @@ public abstract class GenericDataset implements Comparator<String> {
         
         setLoaded(true);
     }
+
+    public abstract String getTrainingFolder();
+
+    public abstract String getTestFolder();
     
 }

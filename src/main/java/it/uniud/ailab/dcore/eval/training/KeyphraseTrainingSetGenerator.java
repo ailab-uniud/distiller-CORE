@@ -24,6 +24,7 @@ import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.eval.TrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
+import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.utils.Pair;
@@ -98,12 +99,18 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
             String[] answers
                     = workingAnswers.
                     get(documentEntry.getKey());
+            
+            IOBlackboard.setCurrentDocument(
+                    IOBlackboard.getDocumentsFolder() +
+                    "/" + 
+                    documentEntry.getKey());
 
             Blackboard b = pipeline.distillToBlackboard(document);
 
             Collection<Gram> candidates
-                    = b.getGramsByType(Keyphrase.KEYPHRASE).values();
-
+                    = b.getKeyphrases();
+            
+            
             for (Gram gram : candidates) {
                 Keyphrase candidate = (Keyphrase) gram;
                 candidate.putFeature(goldStandard.getIdentifier(), 0);

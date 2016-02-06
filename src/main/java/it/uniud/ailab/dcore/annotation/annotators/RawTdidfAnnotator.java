@@ -57,6 +57,8 @@ public class RawTdidfAnnotator implements Annotator {
 
     private static final Map<String, String> documents = new HashMap<>();
     private static final Map<String, Integer> docLengths = new HashMap<>();
+    
+    private static String previousFolder = "";
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -118,10 +120,13 @@ public class RawTdidfAnnotator implements Annotator {
 
     private static void initIndex(Locale locale) {
 
-        if (!documents.isEmpty())
+        String docPath = IOBlackboard.getDocumentsFolder();
+
+        if (!documents.isEmpty() &&
+                previousFolder.equals(docPath))
             return;
         
-        String docPath = IOBlackboard.getDocumentsFolder();
+        previousFolder = docPath ;
 
         docPath = docPath == null
                 ? (new File(IOBlackboard.getCurrentDocument())).getParent()

@@ -59,7 +59,7 @@ public class SemEval2010 extends GenericDataset {
                         Files.readAllLines(
                                 f.toPath(), StandardCharsets.UTF_8));
 
-                String docName = f.getName().substring(0, f.getName().indexOf("."));
+                String docName = f.getName() ;//.substring(0, f.getName().indexOf("."));
 
                 documents.put(docName, document);
             }
@@ -93,7 +93,9 @@ public class SemEval2010 extends GenericDataset {
                         documentKPs.add(kp);
                     }
 
-                    buffer.put(line.substring(0, line.indexOf(':') - 1),
+                    buffer.put(line.substring(0, line.indexOf(':') - 1)
+                            +".txt.final"
+                            ,
                             documentKPs.toArray(new String[documentKPs.size()]));
                 }
             }
@@ -127,7 +129,7 @@ public class SemEval2010 extends GenericDataset {
                             Files.readAllLines(
                                     f.toPath(), StandardCharsets.UTF_8));
 
-                    String docName = f.getName().substring(0, f.getName().indexOf("."));
+                    String docName = f.getName(); //.substring(0, f.getName().indexOf("."));
 
                     documents.put(docName, document);
                 }
@@ -161,7 +163,8 @@ public class SemEval2010 extends GenericDataset {
                         documentKPs.add(kp);
                     }
 
-                    buffer.put(line.substring(0, line.indexOf(':') - 1),
+                    buffer.put(line.substring(0, line.indexOf(':') - 1)
+                            +".txt.final",
                             documentKPs.toArray(new String[documentKPs.size()]));
                 }
             }
@@ -223,6 +226,16 @@ public class SemEval2010 extends GenericDataset {
         }
 
         return found ? 0 : 1;
+    }
+
+    @Override
+    public String getTrainingFolder() {
+        return datasetPath + "/train";
+    }
+
+    @Override
+    public String getTestFolder() {
+        return datasetPath + "/test";
     }
 
 }
