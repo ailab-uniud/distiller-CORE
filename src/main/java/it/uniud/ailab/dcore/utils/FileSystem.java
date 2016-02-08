@@ -18,21 +18,45 @@
  */
 package it.uniud.ailab.dcore.utils;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+
 /**
  * Utility class for I/O.
  *
  * @author Marco Basaldella
  */
-public class IO {
+public class FileSystem {
+
+    public static InputStreamReader getInputStreamFromPath(String path)
+            throws FileNotFoundException {
+        InputStreamReader is;
+
+        // running from command-line and loading inside the JAR
+        if (path.contains("!")) {
+            is = new InputStreamReader(
+                    (new FileSystem()).getClass().getResourceAsStream(
+                            path.substring(
+                                    path.lastIndexOf("!") + 1)));
+        } else {
+            // normal operation
+            is = new FileReader(path);
+        }
+        
+        return is;
+    }
 
     /**
-     * Get the temporary directory path of the underlying file system. On 
+     * Get the temporary directory path of the underlying file system. On
      * Windows, it should return the value of the %TMP% (or %TEMP%) environment
      * variable.
-     * 
+     *
      * @return the temporary directory path.
-     * @see <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213/">
-     * Why are there both TMP and TEMP environment variables, and which one is right?</a>
+     * @see
+     * <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213/">
+     * Why are there both TMP and TEMP environment variables, and which one is
+     * right?</a>
      */
     public static String getTmpPath() {
         return System.getProperty("java.io.tmpdir");

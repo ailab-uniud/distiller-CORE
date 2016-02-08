@@ -34,6 +34,8 @@ import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.utils.FileSystem;
+import java.io.InputStreamReader;
 
 /**
  * Annotates the emotional intensity of grams; currently only the English
@@ -82,14 +84,19 @@ public class SyuzhetAnnotator implements Annotator {
      */
     private void loadAfinn() {
 
-        String csvFile = getClass().getClassLoader().getResource("afinn/afinn.txt").getFile();
         BufferedReader br = null;
+
         String line;
         String cvsSplitBy = "\t";
 
         try {
 
-            br = new BufferedReader(new FileReader(csvFile));
+            InputStreamReader is = FileSystem.getInputStreamFromPath(
+                    getClass().
+                    getClassLoader()
+                    .getResource("afinn/afinn.txt").getFile());
+
+            br = new BufferedReader(is);
             while ((line = br.readLine()) != null) {
                 // use comma as separator
                 String[] parsedLine = line.split(cvsSplitBy);
@@ -253,7 +260,7 @@ public class SyuzhetAnnotator implements Annotator {
                         k.putFeature(POLARITY, avg);
                         k.putFeature(POLARITY_COUNTER, counter);
                     }
-                    
+
                     intensity = Math.abs(intensity);
 
                     double sentenceAverageIntensity
@@ -270,7 +277,7 @@ public class SyuzhetAnnotator implements Annotator {
                         double avg_prev_ia = k.getFeature(INTENSITY_AVG);
 
                         ++counter;
-                        
+
                         double avg_ia = avg_prev_ia
                                 + ((sentenceAverageIntensity - avg_prev_ia)
                                 / counter);
