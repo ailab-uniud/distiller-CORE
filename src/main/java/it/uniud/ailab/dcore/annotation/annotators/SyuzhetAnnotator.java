@@ -91,7 +91,7 @@ public class SyuzhetAnnotator implements Annotator {
 
         try {
 
-            InputStreamReader is = FileSystem.getInputStreamFromPath(
+            InputStreamReader is = FileSystem.getInputStreamReaderFromPath(
                     getClass().
                     getClassLoader()
                     .getResource("afinn/afinn.txt").getFile());
@@ -123,13 +123,18 @@ public class SyuzhetAnnotator implements Annotator {
      * Loads Liu Bing's polarity database.
      */
     private void loadBing() {
-        String positiveFile = getClass().getClassLoader().getResource("bingliu/positive-words.txt").getFile();
+
         BufferedReader br = null;
         String line;
 
         try {
 
-            br = new BufferedReader(new FileReader(positiveFile));
+            InputStreamReader is = FileSystem.getInputStreamReaderFromPath(
+                    getClass().
+                    getClassLoader()
+                    .getResource("bingliu/positive-words.txt").getFile());
+
+            br = new BufferedReader(is);
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith(";")) {
                     weights.put(line, 1);
@@ -151,12 +156,14 @@ public class SyuzhetAnnotator implements Annotator {
             }
         }
 
-        String negativeFile = getClass().getClassLoader()
-                .getResource("bingliu/negative-words.txt").getFile();
-
         try {
 
-            br = new BufferedReader(new FileReader(negativeFile));
+            InputStreamReader is = FileSystem.getInputStreamReaderFromPath(
+                    getClass().
+                    getClassLoader()
+                    .getResource("bingliu/negative-words.txt").getFile());
+
+            br = new BufferedReader(is);
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith(";")) {
                     weights.put(line, -1);

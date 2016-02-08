@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -302,18 +303,8 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
     private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
 
-        InputStreamReader is;
-
-        // running from command-line and loading inside the JAR
-        if (posDatabasePaths.get(lang).contains("!")) {
-            is = new InputStreamReader(
-                    getClass().getResourceAsStream(
-                    posDatabasePaths.get(lang).substring(
-                            posDatabasePaths.get(lang).lastIndexOf("!") + 1)));
-        } else {
-            // normal operation
-            is = new FileReader(posDatabasePaths.get(lang));
-        }
+        InputStreamReader is = 
+                FileSystem.getInputStreamReaderFromPath(posDatabasePaths.get(lang));
 
         
         BufferedReader reader = new BufferedReader(is);

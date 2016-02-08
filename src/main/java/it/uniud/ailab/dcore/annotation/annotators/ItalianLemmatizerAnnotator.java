@@ -24,6 +24,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.utils.Pair;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -113,20 +114,12 @@ public class ItalianLemmatizerAnnotator implements Annotator {
     }
 
     private void loadLexicon() throws IOException {
+        
+        
         String lexiconPath = getClass().getClassLoader().
                 getResource("morph-it/morph-it_048.gz").getFile();
 
-        InputStream is;
-
-        // running from command-line and loading inside the JAR
-        if (lexiconPath.contains("!")) {
-            is = getClass().getResourceAsStream(
-                    lexiconPath.substring(
-                            lexiconPath.lastIndexOf("!") + 1));
-        } else {
-            // normal operation
-            is = new FileInputStream(lexiconPath);
-        }
+        InputStream is = FileSystem.getInputStreamFromPath(lexiconPath);
 
         InputStream gzipStream = new GZIPInputStream(is);
         Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
@@ -160,16 +153,7 @@ public class ItalianLemmatizerAnnotator implements Annotator {
         String mappingPath = getClass().getClassLoader().
                 getResource("morph-it/morph-it_mapping").getFile();
 
-        // running from command-line and loading inside the JAR
-        if (mappingPath.contains("!")) {
-            isr = new InputStreamReader(
-                    getClass().getResourceAsStream(
-                            mappingPath.substring(
-                                    mappingPath.lastIndexOf("!") + 1)));
-        } else {
-            // normal operation
-            isr = new FileReader(mappingPath);
-        }
+        isr = FileSystem.getInputStreamReaderFromPath(mappingPath);
 
         BufferedReader mappingReader = new BufferedReader(isr);
         while ((line = mappingReader.readLine()) != null) {

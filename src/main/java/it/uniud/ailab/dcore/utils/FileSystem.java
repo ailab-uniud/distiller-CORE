@@ -18,8 +18,10 @@
  */
 package it.uniud.ailab.dcore.utils;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
@@ -29,19 +31,36 @@ import java.io.InputStreamReader;
  */
 public class FileSystem {
 
-    public static InputStreamReader getInputStreamFromPath(String path)
+    public static InputStreamReader getInputStreamReaderFromPath(String path)
             throws FileNotFoundException {
-        InputStreamReader is;
+        InputStreamReader isr;
 
         // running from command-line and loading inside the JAR
         if (path.contains("!")) {
-            is = new InputStreamReader(
+            isr = new InputStreamReader(
                     (new FileSystem()).getClass().getResourceAsStream(
                             path.substring(
                                     path.lastIndexOf("!") + 1)));
         } else {
             // normal operation
-            is = new FileReader(path);
+            isr = new FileReader(path);
+        }
+        
+        return isr;
+    }
+    
+    public static InputStream getInputStreamFromPath(String path) throws FileNotFoundException {
+
+        InputStream is;
+
+        // running from command-line and loading inside the JAR
+        if (path.contains("!")) {
+            is = (new FileSystem()).getClass().getResourceAsStream(
+                    path.substring(
+                            path.lastIndexOf("!") + 1));
+        } else {
+            // normal operation
+            is = new FileInputStream(path);
         }
         
         return is;

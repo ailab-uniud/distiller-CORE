@@ -38,6 +38,7 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.InputStreamReader;
 import java.util.Map;
 
@@ -233,11 +234,10 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                             }
 
                             identifier = identifier.toLowerCase();
-                            int startIndex = 
-                                    startIndexes[i - (lastReadBuffers[size].size() - 1)];
+                            int startIndex
+                                    = startIndexes[i - (lastReadBuffers[size].size() - 1)];
                             int endIndex = endIndexes[i];
-                                    
-                            
+
                             Keyphrase g = new Keyphrase(
                                     identifier,
                                     lastReadBuffers[size],
@@ -246,7 +246,7 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                                             endIndex));
 
                             g.putFeature(new FeatureAnnotation(
-                                    NOUNVALUE, ((float) nounValue) / (float)g.getTokens().size()));
+                                    NOUNVALUE, ((float) nounValue) / (float) g.getTokens().size()));
                             blackboard.addGram(component, g);
                         }
                     }
@@ -298,20 +298,9 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
     private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
 
-        InputStreamReader is;
+        InputStreamReader is
+                = FileSystem.getInputStreamReaderFromPath(posDatabasePaths.get(lang));
 
-        // running from command-line and loading inside the JAR
-        if (posDatabasePaths.get(lang).contains("!")) {
-            is = new InputStreamReader(
-                    getClass().getResourceAsStream(
-                    posDatabasePaths.get(lang).substring(
-                            posDatabasePaths.get(lang).lastIndexOf("!") + 1)));
-        } else {
-            // normal operation
-            is = new FileReader(posDatabasePaths.get(lang));
-        }
-
-        
         BufferedReader reader = new BufferedReader(is);
         Object obj = (new JSONParser()).parse(reader);
         JSONObject fileblock = (JSONObject) obj;
