@@ -43,12 +43,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- * A simple and raw tf-idf calculator. It tokenizes each document
- * using OpenNLP, stems them with the Tartarus Stemmer, and marks each token
- * with a leading and trailing '§' mark.
- * 
- * Then, when the tf-idf value of a token is search 
-* 
+ * A simple and raw tf-idf calculator. It tokenizes each document using OpenNLP,
+ * stems them with the Tartarus Stemmer, and marks each token with a leading and
+ * trailing '§' mark.
+ *
+ * Then, when the tf-idf value of a token is search
+ *
  * @author Marco Basaldella
  */
 public class RawTdidfAnnotator implements Annotator {
@@ -57,7 +57,7 @@ public class RawTdidfAnnotator implements Annotator {
 
     private static final Map<String, String> documents = new HashMap<>();
     private static final Map<String, Integer> docLengths = new HashMap<>();
-    
+
     private static String previousFolder = "";
 
     @Override
@@ -87,8 +87,8 @@ public class RawTdidfAnnotator implements Annotator {
                             tokenizedSurface[i] = stemmer.getCurrent();
                         }
                     }
-                    
-                    stemmedSurface = String.join(" ", 
+
+                    stemmedSurface = String.join(" ",
                             markTokens(tokenizedSurface)).trim();
 
                     ((Keyphrase) g).putFeature(TFIDF,
@@ -102,7 +102,7 @@ public class RawTdidfAnnotator implements Annotator {
 
     private double tf(String docId, String term) {
         double result = StringUtils.countMatches(documents.get(docId), term);
-        return result / docLengths.get(docId) ;
+        return result / docLengths.get(docId);
     }
 
     private double idf(String term) {
@@ -122,15 +122,20 @@ public class RawTdidfAnnotator implements Annotator {
 
         String docPath = IOBlackboard.getDocumentsFolder();
 
-        if (!documents.isEmpty() &&
-                previousFolder.equals(docPath))
+        if (!documents.isEmpty()
+                && previousFolder.equals(docPath)) {
             return;
-        
-        previousFolder = docPath ;
+        }
+
+        System.out.println("Doc path from folder  : " + docPath);
+        String parentPath = (new File(IOBlackboard.getCurrentDocument())).getParent();
+        System.out.println("Doc path from document: " + parentPath);
 
         docPath = docPath == null
-                ? (new File(IOBlackboard.getCurrentDocument())).getParent()
+                ? parentPath
                 : docPath;
+
+        previousFolder = docPath;
 
         System.out.println("Building tf-idf index...");
 
@@ -196,12 +201,13 @@ public class RawTdidfAnnotator implements Annotator {
         docLengths.put(f.getAbsolutePath(), tokenCount);
 
     }
-    
+
     private static String[] markTokens(String[] tokens) {
-        
-        for (int i = 0; i < tokens.length; i++)
+
+        for (int i = 0; i < tokens.length; i++) {
             tokens[i] = "§" + tokens[i] + "§";
-        
+        }
+
         return tokens;
     }
 
