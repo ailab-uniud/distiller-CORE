@@ -32,6 +32,7 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Annotates grams with linguistic features concerning anaphora and coreference
@@ -173,10 +174,13 @@ public class CoreferenceResolverAnnotator implements Annotator {
                 for (String anaphor : pronominalAnaphoraCounter.keySet()) {
                     //check if the anaphor contains or not the keyphrase
                     //and vice-versa
-                    if (anaphor.toLowerCase().toLowerCase()
-                            .matches(".*\\b" + key.toLowerCase() + "\\b.*")
+                    String escapedKey = Pattern.quote(key.toLowerCase());
+                    String escapedAnaphora = Pattern.quote(anaphor.toLowerCase());
+                    
+                    if (anaphor.toLowerCase()
+                            .matches(".*\\b" + escapedKey + "\\b.*")
                             || key.toLowerCase()
-                            .matches(".*\\b" + anaphor.toLowerCase() + "\\b.*")) {
+                            .matches(".*\\b" + escapedAnaphora + "\\b.*")) {
                         double score1 = score;
                         double score2 = pronominalAnaphoraCounter.get(anaphor);
                         score = Math.max(score1, score2); //get the maximal score 
