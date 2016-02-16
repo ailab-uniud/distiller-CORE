@@ -27,6 +27,7 @@ import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.io.IOBlackboard;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.utils.Pair;
 import java.io.File;
 import java.io.IOException;
@@ -100,6 +101,11 @@ public class Launcher {
     private static String defaultConfig = null;
 
     /**
+     * Which of the packaged pipelines has been selected by the user.
+     */
+    private static String packagedConfig = null;
+
+    /**
      * The command-line options.
      */
     private static final Options options = new Options();
@@ -108,7 +114,7 @@ public class Launcher {
      * The language to use to distill.
      */
     private static Locale language = null;
-    
+
     /**
      * Verbose mode flag.
      */
@@ -222,10 +228,15 @@ public class Launcher {
             outputPath = new File(System.getProperty("user.dir"));
         }
 
-        if (cmd.hasOption("c") && cmd.hasOption("cd")) {
+        int optionCount
+                = (cmd.hasOption("c") ? 1 : 0)
+                + (cmd.hasOption("cd") ? 1 : 0)
+                + (cmd.hasOption("cp") ? 1 : 0);
+
+        if (optionCount > 1) {
             printError("You should specify only one pipeline!");
             return false;
-        } else if (!cmd.hasOption("c") && !cmd.hasOption("cd")) {
+        } else if (optionCount < 1) {
             printError("You should specify a pipeline!");
             return false;
         } else if (cmd.hasOption("c")) {
@@ -236,6 +247,8 @@ public class Launcher {
             }
         } else if (cmd.hasOption("cd")) {
             defaultConfig = cmd.getOptionValue("cd");
+        } else if (cmd.hasOption("cp")) {
+            packagedConfig = cmd.getOptionValue("cp");
         }
 
         if (cmd.hasOption("v")) {
@@ -282,17 +295,26 @@ public class Launcher {
 
         // load the pipeline
         options.addOption(Option.builder("c")
-                .longOpt("config")
+                .longOpt("config-file")
                 .desc("Use the configuration located in PATH")
                 .hasArg(true)
                 .argName("FILE")
                 .build()
         );
 
-        // load the pipeline
+        // load the pipeline-2
         options.addOption(Option.builder("cd")
                 .longOpt("config-default")
-                .desc("Use one of the default configurations")
+                .desc("Use one of the default configurations (deprecated)")
+                .hasArg(true)
+                .argName("PIPELINE")
+                .build()
+        );
+
+        // load the pipeline-3
+        options.addOption(Option.builder("cp")
+                .longOpt("config-packaged")
+                .desc("Use one of the pre-packaged configurations")
                 .hasArg(true)
                 .argName("PIPELINE")
                 .build()
@@ -474,53 +496,49 @@ public class Launcher {
 
         KeyphraseTrainingSetGenerator trainingGenerator
                 = new KeyphraseTrainingSetGenerator(kpDataset);
-        
+
         IOBlackboard.setDocumentsFolder(kpDataset.getTrainingFolder());
-        
-        List<Pair<String,GenericSheetPrinter>> trainingDocuments
+
+        List<Pair<String, GenericSheetPrinter>> trainingDocuments
                 = trainingGenerator.generateTrainingSet(distiller);
-        
-        GenericSheetPrinter trainingSet = new CsvPrinter
-                (CsvPrinter.DEFAULT_DELIMITER,true,true);
-        
-        for (Pair<String,GenericSheetPrinter> tr : trainingDocuments) {
-            
+
+        GenericSheetPrinter trainingSet = new CsvPrinter(CsvPrinter.DEFAULT_DELIMITER, true, true);
+
+        for (Pair<String, GenericSheetPrinter> tr : trainingDocuments) {
+
             GenericSheetPrinter p = tr.getRight();
             trainingSet.addPrinter(p);
-            
+
         }
-        
+
         String filePath = outputPath.getAbsolutePath()
-                    + "/" + dataset + ".training.txt";
-        
+                + FileSystem.getSeparator()
+                + dataset + ".training.txt";
         trainingSet.writeFile(filePath);
         System.out.println(
-                    "Saved training file in " + filePath);
+                "Saved training file in " + filePath);
 
-        
         IOBlackboard.setDocumentsFolder(kpDataset.getTestFolder());
-        
-        List<Pair<String,GenericSheetPrinter>> testDocuments
+
+        List<Pair<String, GenericSheetPrinter>> testDocuments
                 = trainingGenerator.generateTestSet(distiller);
-        
-        GenericSheetPrinter testSet = new CsvPrinter
-                (CsvPrinter.DEFAULT_DELIMITER,true,true);
-        
-        for (Pair<String,GenericSheetPrinter> tr : testDocuments) {
-            
+
+        GenericSheetPrinter testSet = new CsvPrinter(CsvPrinter.DEFAULT_DELIMITER, true, true);
+
+        for (Pair<String, GenericSheetPrinter> tr : testDocuments) {
+
             GenericSheetPrinter p = tr.getRight();
             testSet.addPrinter(p);
-            
+
         }
-        
+
         filePath = outputPath.getAbsolutePath()
-                    + "/" + dataset + ".test.txt";
-        
+                + FileSystem.getSeparator()
+                + dataset + ".test.txt";
+
         testSet.writeFile(filePath);
         System.out.println(
-                    "Saved training file in " + filePath);
-        
-        
+                "Saved training file in " + filePath);
 
     }
 
@@ -534,16 +552,16 @@ public class Launcher {
     private static void analyzeFile(File filePath) throws IOException {
 
         setupDistiller();
-        
+
         String fileName = filePath.toPath().getFileName().toString();
 
         IOBlackboard.setCurrentDocument(filePath.getAbsolutePath());
         String document = loadDocument(filePath);
-        
-        
-        IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath() +
-                     "/" + fileName );
-        
+
+        IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
+                + FileSystem.getSeparator()
+                + fileName);
+
         distiller.distill(document);
 
     }
@@ -614,7 +632,7 @@ public class Launcher {
      */
     private static void analyzeDir(File inputPath) throws IOException {
         File folderPath = inputPath;
-        
+
         IOBlackboard.setDocumentsFolder(inputPath.getAbsolutePath());
 
         for (File f : folderPath.listFiles()) {
@@ -632,8 +650,14 @@ public class Launcher {
     private static void setupDistiller() {
         distiller = null;
 
-        if (defaultConfig == null) {
+        if (defaultConfig == null && packagedConfig == null) {
             distiller = DistillerFactory.loadFromXML(configPath);
+        } else if (defaultConfig == null) {
+            distiller = DistillerFactory.loadFromPackagedXML(
+                    "pipelines"
+                    + FileSystem.getSeparator()
+                    + packagedConfig
+                    + ".xml");
         } else if (defaultConfig.equals("simpleKE")) {
             distiller = DistillerFactory.getDefaultCode();
             //use this configuration to use stanford coreNLP parser and add linguistis

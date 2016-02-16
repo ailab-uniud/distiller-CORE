@@ -27,6 +27,7 @@ import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.utils.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,7 +103,7 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
             
             IOBlackboard.setCurrentDocument(
                     IOBlackboard.getDocumentsFolder() +
-                    "/" + 
+                    FileSystem.getSeparator() +
                     documentEntry.getKey());
 
             Blackboard b = pipeline.distillToBlackboard(document);

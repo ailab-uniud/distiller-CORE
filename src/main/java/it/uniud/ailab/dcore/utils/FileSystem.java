@@ -97,4 +97,13 @@ public class FileSystem {
     public static String getTmpPath() {
         return System.getProperty("java.io.tmpdir");
     }
+    
+    /**
+     * Get the separator for the underlying OS. 
+     * 
+     * @return the path separator for the underlying OS.
+     */
+    public static String getSeparator() {
+        return java.io.File.separator;
+    }
 }

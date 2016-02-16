@@ -19,6 +19,7 @@
 package it.uniud.ailab.dcore.eval.datasets;
 
 import it.uniud.ailab.dcore.eval.GenericDataset;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +51,9 @@ public class SemEval2010 extends GenericDataset {
         Map<String, String> documents = new HashMap<>();
 
         try {
-            File[] dir = new File(datasetPath + "/test").listFiles();
+            File[] dir = new File(datasetPath + 
+                    FileSystem.getSeparator() +
+                    "test").listFiles();
             Arrays.sort(dir);
 
             for (File f : dir) {
@@ -78,7 +81,11 @@ public class SemEval2010 extends GenericDataset {
 
         try {
 
-            File gold = new File(datasetPath + "/test_answer/test.combined.stem.final");
+            File gold = new File(datasetPath + 
+                    FileSystem.getSeparator() +
+                    "test_answer" +
+                    FileSystem.getSeparator() +
+                    "test.combined.stem.final");
 
             Map<String, String[]> buffer = new HashMap<>();
 
@@ -116,7 +123,9 @@ public class SemEval2010 extends GenericDataset {
         Map<String, String> documents = new HashMap<>();
 
         try {
-            File[] dir = new File(datasetPath + "/train").listFiles();
+            File[] dir = new File(datasetPath + 
+                    FileSystem.getSeparator() +
+                    "train").listFiles();
             Arrays.sort(dir);
 
             for (File f : dir) {
@@ -148,7 +157,11 @@ public class SemEval2010 extends GenericDataset {
 
         try {
 
-            File gold = new File(datasetPath + "/train_answer/train.combined.stem.final");
+            File gold = new File(datasetPath + 
+                    FileSystem.getSeparator() +
+                    "train_answer" +
+                    FileSystem.getSeparator() +
+                    "train.combined.stem.final");
 
             Map<String, String[]> buffer = new HashMap<>();
 

@@ -21,6 +21,7 @@ package it.uniud.ailab.dcore;
 import it.uniud.ailab.dcore.annotation.annotators.*;
 import it.uniud.ailab.dcore.io.GramPrinter;
 import it.uniud.ailab.dcore.io.SentencePrinter;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.wrappers.external.*;
 import java.io.File;
 import java.io.IOException;
@@ -132,6 +133,19 @@ public class DistillerFactory {
      */
     public static Distiller getDefaultXML() {
         ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
+        return (Distiller) context.getBean("distiller");
+    }
+
+    /**
+     * Instantiates a Distiller object using a configuration packaged in the
+     * Distiller JAR file and returns it.
+     *
+     * @param configPath the path of the pipeline
+     * @return a Distiller ready to work.
+     */
+    public static Distiller loadFromPackagedXML(String configPath) {
+        
+        ApplicationContext context = new ClassPathXmlApplicationContext(configPath);
         return (Distiller) context.getBean("distiller");
     }
 
