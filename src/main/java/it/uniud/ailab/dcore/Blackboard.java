@@ -198,7 +198,8 @@ public class Blackboard {
     @Deprecated
     public List<Gram> getKeyphrases() {
         
-        return new ArrayList(generalNGramsContainer.get(Keyphrase.KEYPHRASE).values());
+        Map<String,Gram> kps = generalNGramsContainer.get(Keyphrase.KEYPHRASE);        
+        return kps != null ? new ArrayList(kps.values()) : new ArrayList();
     }
 
     /**

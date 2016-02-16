@@ -18,14 +18,27 @@
  */
 package it.uniud.ailab.dcore;
 
+import it.uniud.ailab.dcore.DistilledOutput.DetectedGram;
+import it.uniud.ailab.dcore.DistilledOutput.InferredConcept;
 import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
+import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
+import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIURI;
+import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
+import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import static it.uniud.ailab.dcore.utils.StageUtils.getStageName;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The information extractor object. This is the class that runs the different
@@ -206,64 +219,64 @@ public class Distiller {
         output.setDetectedLanguage(blackboard.getStructure().
                 getLanguage().getLanguage());
 
-//        // Copy the grams, sorted by descending score
-//        output.initializeGrams(blackboard.getKeyphrases().size());
-//        
-//        Collection<Gram> grams = blackboard.getKeyphrases();
-//        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
-//
-//        for (Gram g : grams) {
-//            Keyphrase k = (Keyphrase)g;
-//            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
-//        }
-//
-//        List<Map.Entry<Keyphrase, Double>> sortedGrams
-//                = scoredGrams.entrySet().stream().sorted(
-//                        Collections.reverseOrder(Map.Entry.comparingByValue()))
-//                .collect(Collectors.toList());
-//
-//        for (int i = 0; i < output.getGrams().length; i++) {
-//            DetectedGram gram = output.getGrams()[i];
-//            Keyphrase originalGram = sortedGrams.get(i).getKey();
-//            gram.setSurface(originalGram.getSurface());
-//            gram.setKeyphraseness(originalGram.getFeature(
-//                    it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));
-//
-//            UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIURI);
-//            if (wikiAnn != null) {
-//                gram.setConceptName(wikiAnn.getSurface());
-//                gram.setConceptPath(wikiAnn.getUri().toASCIIString());
-//            }
-//        }
-//
-//        output.initializeRelatedConcepts(blackboard.getAnnotations(
-//                WikipediaInferenceAnnotator.RELATED).size());
-//
-//        for (int i = 0; i < output.getRelatedConcepts().length; i++) {
-//            InferredConcept related = output.getRelatedConcepts()[i];
-//            InferenceAnnotation originalRelatedConcept
-//                    = (InferenceAnnotation) blackboard.getAnnotations(
-//                            WikipediaInferenceAnnotator.RELATED).get(i);
-//
-//            related.setConcept(originalRelatedConcept.getConcept());
-//            related.setConceptPath(originalRelatedConcept.getUri().toASCIIString());
-//            related.setScore(originalRelatedConcept.getScore());
-//        }
-//
-//        output.initializeHypernyms(blackboard.getAnnotations(
-//                WikipediaInferenceAnnotator.HYPERNYMS).size());
-//
-//        for (int i = 0; i < output.getHypernyms().length; i++) {
-//            InferredConcept hypernym = output.getHypernyms()[i];
-//            InferenceAnnotation originalHypernym = (InferenceAnnotation) blackboard.getAnnotations(
-//                    WikipediaInferenceAnnotator.HYPERNYMS).get(i);
-//
-//            hypernym.setConcept(originalHypernym.getConcept());
-//            hypernym.setConceptPath(originalHypernym.getUri().toASCIIString());
-//            hypernym.setScore(originalHypernym.getScore());
-//        }
-//
-//        output.setExtractionCompleted(true);
+        // Copy the grams, sorted by descending score
+        output.initializeGrams(blackboard.getKeyphrases().size());
+        
+        Collection<Gram> grams = blackboard.getKeyphrases();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
+
+        for (Gram g : grams) {
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
+        }
+
+        List<Map.Entry<Keyphrase, Double>> sortedGrams
+                = scoredGrams.entrySet().stream().sorted(
+                        Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < output.getGrams().length; i++) {
+            DetectedGram gram = output.getGrams()[i];
+            Keyphrase originalGram = sortedGrams.get(i).getKey();
+            gram.setSurface(originalGram.getSurface());
+            gram.setKeyphraseness(originalGram.getFeature(
+                    it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));
+
+            UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIURI);
+            if (wikiAnn != null) {
+                gram.setConceptName(wikiAnn.getSurface());
+                gram.setConceptPath(wikiAnn.getUri().toASCIIString());
+            }
+        }
+
+        output.initializeRelatedConcepts(blackboard.getAnnotations(
+                WikipediaInferenceAnnotator.RELATED).size());
+
+        for (int i = 0; i < output.getRelatedConcepts().length; i++) {
+            InferredConcept related = output.getRelatedConcepts()[i];
+            InferenceAnnotation originalRelatedConcept
+                    = (InferenceAnnotation) blackboard.getAnnotations(
+                            WikipediaInferenceAnnotator.RELATED).get(i);
+
+            related.setConcept(originalRelatedConcept.getConcept());
+            related.setConceptPath(originalRelatedConcept.getUri().toASCIIString());
+            related.setScore(originalRelatedConcept.getScore());
+        }
+
+        output.initializeHypernyms(blackboard.getAnnotations(
+                WikipediaInferenceAnnotator.HYPERNYMS).size());
+
+        for (int i = 0; i < output.getHypernyms().length; i++) {
+            InferredConcept hypernym = output.getHypernyms()[i];
+            InferenceAnnotation originalHypernym = (InferenceAnnotation) blackboard.getAnnotations(
+                    WikipediaInferenceAnnotator.HYPERNYMS).get(i);
+
+            hypernym.setConcept(originalHypernym.getConcept());
+            hypernym.setConceptPath(originalHypernym.getUri().toASCIIString());
+            hypernym.setScore(originalHypernym.getScore());
+        }
+
+        output.setExtractionCompleted(true);
 
         return output;
     }
