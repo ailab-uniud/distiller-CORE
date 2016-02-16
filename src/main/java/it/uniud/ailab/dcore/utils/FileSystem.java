@@ -31,6 +31,15 @@ import java.io.InputStreamReader;
  */
 public class FileSystem {
 
+    /**
+     * Get an {@link java.io.InputStreamReader} from the provided path, 
+     * where the path can  point both to the underlying OS' file system or to 
+     * a file contained inside a JAR file.
+     *
+     * @param path the path which needs to be converted to an InputStream
+     * @return the resulting {@link java.io.InputStreamReader} 
+     * @throws FileNotFoundException if the file does not exists
+     */
     public static InputStreamReader getInputStreamReaderFromPath(String path)
             throws FileNotFoundException {
         InputStreamReader isr;
@@ -45,10 +54,19 @@ public class FileSystem {
             // normal operation
             isr = new FileReader(path);
         }
-        
+
         return isr;
     }
-    
+
+    /**
+     * Get an {@link java.io.InputStream} from the provided path, 
+     * where the path can  point both to the underlying OS' file system or to 
+     * a file contained inside a JAR file.
+     *
+     * @param path the path which needs to be converted to an InputStream
+     * @return the resulting {@link java.io.InputStream}
+     * @throws FileNotFoundException if the file does not exists
+     */
     public static InputStream getInputStreamFromPath(String path) throws FileNotFoundException {
 
         InputStream is;
@@ -62,7 +80,7 @@ public class FileSystem {
             // normal operation
             is = new FileInputStream(path);
         }
-        
+
         return is;
     }
 
@@ -72,8 +90,7 @@ public class FileSystem {
      * variable.
      *
      * @return the temporary directory path.
-     * @see
-     * <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213/">
+     * @see <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213/">
      * Why are there both TMP and TEMP environment variables, and which one is
      * right?</a>
      */

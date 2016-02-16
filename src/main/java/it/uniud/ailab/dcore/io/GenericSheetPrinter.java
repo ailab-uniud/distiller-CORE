@@ -273,6 +273,12 @@ public abstract class GenericSheetPrinter {
         }
     }
 
+    /**
+     * Adds to all rows a field with the specified value.
+     * 
+     * @param key the name of the column to add.
+     * @param value the value of the field to add.
+     */
     public void addToAll(String key, String value) {
         headers.add(key);
         headerTypes.add(new Left<>(key));

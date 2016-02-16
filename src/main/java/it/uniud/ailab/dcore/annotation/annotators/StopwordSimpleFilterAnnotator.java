@@ -55,6 +55,10 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
 
     private Set<String> stopwords;    
     
+    /**
+     * A stopword filter annotator, that removes Grams from the blackboard
+     * that start with forbidden words.
+     */
     public StopwordSimpleFilterAnnotator() {
         stopwordsPath = new HashMap<>();
         stopwords = new HashSet<>();

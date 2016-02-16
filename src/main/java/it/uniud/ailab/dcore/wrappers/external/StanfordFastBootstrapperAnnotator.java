@@ -58,6 +58,9 @@ public class StanfordFastBootstrapperAnnotator implements Annotator {
      */
     private int sentenceCounter = 0;
 
+    /**
+     * Identifier for the Coreference annotation.
+     */
     public static final String COREFERENCE = "Coreference";
 
     /**

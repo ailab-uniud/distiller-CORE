@@ -73,10 +73,20 @@ public final class IOBlackboard {
         outputPathPrefix = outputPath;
     }
 
+    /**
+     * Get the path of the currently analyzed document.
+     * 
+     * @return the path of the currently analyzed document.
+     */
     public static String getCurrentDocument() {
         return currentDocument;
     }
-
+    
+    /**
+     * Set the path of the currently analyzed document.
+     * 
+     * @param currentDocument the path of the currently analyzed document.
+     */
     public static void setCurrentDocument(String currentDocument) {
         IOBlackboard.currentDocument = currentDocument;
     }

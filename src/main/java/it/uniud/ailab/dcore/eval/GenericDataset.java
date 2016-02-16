@@ -190,6 +190,9 @@ public abstract class GenericDataset implements Comparator<String> {
         this.isLoaded = isLoaded;
     }
     
+    /**
+     * Load the dataset. 
+     */
     public void load() {
         trainingDocuments = loadTrainingSet();
         testDocuments = loadTestSet();
@@ -199,8 +202,18 @@ public abstract class GenericDataset implements Comparator<String> {
         setLoaded(true);
     }
 
+    /**
+     * Get the folder that contains the training set.
+     *
+     * @return the folder that contains the training set.
+     */
     public abstract String getTrainingFolder();
 
+    /**
+     * Get the folder that contains the test set.
+     *
+     * @return the folder that contains the test set.
+     */
     public abstract String getTestFolder();
     
 }

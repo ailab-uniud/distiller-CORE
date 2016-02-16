@@ -30,6 +30,12 @@ import java.util.List;
  */
 public class GramUtils {
 
+    /**
+     * Get the surfaces of the provided grams.
+     * 
+     * @param source a collection of grams
+     * @return the surfaces of the grams
+     */
     public static List<String> getSurfaces(Collection<Gram> source) {
 
         ArrayList<String> results = new ArrayList<>();
@@ -40,6 +46,12 @@ public class GramUtils {
         return results;
     }
     
+    /**
+     * Get the identifiers of the provided grams.
+     * 
+     * @param source a collection of grams
+     * @return the identifiers of the grams
+     */
     public static List<String> getIdentifiers(Collection<Gram> source) {
 
         ArrayList<String> results = new ArrayList<>();

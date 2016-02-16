@@ -128,6 +128,7 @@ public class Distiller {
 
     /**
      * Gets the verbose mode of the Distiller.
+     * @return TRUE if the Distillation is set to VERBOSE mode.
      */
     public boolean  getVerbose() {
         return verbose;

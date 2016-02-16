@@ -52,7 +52,12 @@ public abstract class Gram extends Annotable {
     private List<DocumentComponent> appareances;
     
     /**
-     * Instantiated an n-gram. Usually, the surface should be simply the the 
+     * The identifier for a GRAM object.
+     */
+    public static final String GRAM = "GRAM";
+    
+    /**
+     * Instantiates an n-gram. Usually, the surface should be simply the the 
      * concatenation of the text of the tokens. The signature can be used for 
      * comparison, so be sure to generate different signatures for n-grams
      * that are different in your domain. For example, you can use the sequence 
@@ -63,6 +68,7 @@ public abstract class Gram extends Annotable {
      * @param sequence the tokens that form the gram
      * @param identifier unique identifier of the gram.
      * @param surface the pretty-printed string representation of the gram
+     * @param type the type of gram that will be generated.
      */
     public Gram(String identifier, List<Token> sequence, String surface, 
             String type) {

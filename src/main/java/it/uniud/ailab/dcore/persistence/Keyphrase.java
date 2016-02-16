@@ -46,6 +46,9 @@ public class Keyphrase extends Gram {
      */
     private List<DocumentComponent> appareances;
     
+    /**
+     * The identifier for a Keyphrase object.
+     */
     public static final String KEYPHRASE = "Keyphrase"; 
 
     /**

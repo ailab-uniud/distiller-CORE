@@ -181,7 +181,7 @@ public class SemEval2010 extends GenericDataset {
     }
 
     /**
-     * Compares a <b>candidate</b> item with a <dataset provided> item. Please
+     * Compares a <b>candidate</b> item with a <b>dataset provided</b> item. Please
      * note that the the object to test <b>must</b> be passed as first
      * parameter, while the object to test against <b>must</b> be passed as
      * second parameter.
@@ -228,11 +228,19 @@ public class SemEval2010 extends GenericDataset {
         return found ? 0 : 1;
     }
 
+    /**
+     * {@inheritDoc} 
+     * @return {@inheritDoc} 
+     */
     @Override
     public String getTrainingFolder() {
         return datasetPath + "/train";
     }
 
+    /**
+     * {@inheritDoc} 
+     * @return {@inheritDoc} 
+     */
     @Override
     public String getTestFolder() {
         return datasetPath + "/test";

@@ -72,6 +72,9 @@ public class StanfordBootstrapperAnnotator implements Annotator {
      */
     private int sentenceCounter = 0;
 
+    /**
+     * Identifier for the Coreference annotation.
+     */
     public static final String COREFERENCE = "Coreference";
 
     /**
@@ -124,7 +127,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             //grams will be easier
             List<CoreLabel> tks = document.get(SentencesAnnotation.class)
                     .get(cm.sentNum - 1).get(TokensAnnotation.class);
-                    //list of tokens which compose the anaphor
+            //list of tokens which compose the anaphor
 
             List<Token> anaphorsTokens = new ArrayList<>();
             for (int i = cm.startIndex - 1; i < cm.endIndex - 1; i++) {
@@ -134,7 +137,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 t.setLemma(current.lemma());
                 anaphorsTokens.add(t);
             }
-            
+
             //the mention n-gram which is formed by the anaphor and a 
             //list of references
             Mention mention
@@ -144,15 +147,15 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             Collection<Set<CorefChain.CorefMention>> mentionMap
                     = corefChain.getMentionMap().values();
             for (Set<CorefChain.CorefMention> mentions : mentionMap) {
-                
+
                 for (CorefChain.CorefMention reference : mentions) {
                     //eliminate self-references
-                    if(reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)){
+                    if (reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)) {
                         continue;
                     }
                     List<CoreLabel> tokens = document.get(SentencesAnnotation.class)
                             .get(reference.sentNum - 1).get(TokensAnnotation.class);
-                    
+
                     //list of tokens which compose the mention
                     List<Token> mentionTokens = new ArrayList<>();
                     for (int i = reference.startIndex - 1; i < reference.endIndex - 1; i++) {
@@ -185,7 +188,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
         int phraseCounter = 0;
 
         for (CoreMap stanfordSentence : sentences) {
-            
+
             Sentence distilledSentence
                     = new Sentence(stanfordSentence.toString(), "" + sentenceCounter++);
 
@@ -224,10 +227,10 @@ public class StanfordBootstrapperAnnotator implements Annotator {
                 t.setLemma(token.lemma());
 
                 String ner = token.get(NamedEntityTagAnnotation.class);
-                if(!ner.equalsIgnoreCase("O")){
-                    t.addAnnotation(new NERAnnotation(DefaultAnnotations.IS_NER, 
-                        ner));
-                } 
+                if (!ner.equalsIgnoreCase("O")) {
+                    t.addAnnotation(new NERAnnotation(DefaultAnnotations.IS_NER,
+                            ner));
+                }
                 //add the token to the sentence
                 distilledSentence.addToken(t);
             }

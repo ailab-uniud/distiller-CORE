@@ -52,6 +52,7 @@ public abstract class DocumentComponent extends Annotable {
      *
      * @param text the text of the component
      * @param language the language of the component
+     * @param identifier the unique identifier for the component
      */
     public DocumentComponent(String text, Locale language, String identifier) {
         super(identifier);
