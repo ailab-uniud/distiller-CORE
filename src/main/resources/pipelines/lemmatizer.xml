@@ -60,11 +60,6 @@
       
     <bean id="morphit" 
           class="it.uniud.ailab.dcore.annotation.annotators.ItalianLemmatizerAnnotator"  />
-    <!-- emotional intensity annotator -->
-    <bean id="syuzhet" 
-          class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
-    <!-- filter that keeps only the most important  grams (i.e. with the highest
-    calculated keyphraseness  -->
     
     <bean   id="outputWriter"
             class="it.uniud.ailab.dcore.io.TokenPrinter" >
@@ -82,8 +77,6 @@
                 <ref bean="openNLP"/>
                 <!-- lemmatize the tokens -->
                 <ref bean="morphit"/>
-                <!-- generate intensity -->
-                <ref bean="syuzhet"/>
                 <!-- write output -->
                 <ref bean="outputWriter"/>
             </list>
