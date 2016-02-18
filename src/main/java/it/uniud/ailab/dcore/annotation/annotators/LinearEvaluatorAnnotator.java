@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
@@ -23,6 +25,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 
 /**
  * The annotator that calculates the importance of an n-gram in a document, 
@@ -65,17 +68,18 @@ public class LinearEvaluatorAnnotator implements Annotator {
      * @param c the component to annotate
      */
     @Override
-    public void annotate(Blackboard b,DocumentComponent c) {        
-        for (Gram g : b.getGrams())
+    public void annotate(Blackboard b,DocumentComponent c) {       
+        for (Gram g : b.getKeyphrases())
         {
+            Keyphrase k = (Keyphrase)g;
             double score = 0;
-            for (FeatureAnnotation f : g.getFeatures()) {
+            for (FeatureAnnotation f : k.getFeatures()) {
                 if (weights.containsKey(f.getAnnotator())) {
                     score += f.getScore() * weights.get(f.getAnnotator());
                 }
             }            
-            g.putFeature(it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE, score);
+            k.putFeature(it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE, score);
         }
-              
+        
     }    
 }

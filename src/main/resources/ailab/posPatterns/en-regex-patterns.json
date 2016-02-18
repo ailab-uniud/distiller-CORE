@@ -1,0 +1,24 @@
+{ 
+	"languages":[
+			{ 
+				"language": "en",
+				"patterns":[
+				 {
+					"pattern":"((JJ|NN|NNP|NNS|NNPS)[/])*(NN|NNP|NNS|NNPS|VB|VBG)",
+                                        "description":"Pattern for first level tagging selection composition of nouns, adjectives and verbs"
+                                        
+					
+				 },
+                                 {
+                                        "pattern":"((NN|NNS)[/])(IN[/])(NN|NNS)",
+                                        "description":"Pattern for secodn level tagging selection: composition of nouns and prepositions"
+                                 },
+                                 {
+                                        "pattern":"((JJ|VBN)[/])*(NN|NNS)",
+                                        "description":"Pattern for third level tagging selection: composition of nouns, adjectives and verbs in past participle form"
+                                 }
+				]
+			}
+                ]
+}
+				 

@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.io;
 
@@ -24,6 +26,7 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import it.uniud.ailab.dcore.utils.Either;
 import it.uniud.ailab.dcore.utils.Either.Left;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +45,28 @@ public abstract class GenericSheetPrinter {
     private List<String> headers;
     private List<Map<String, Either<String, Number>>> rows;
     private List<Either<String, Number>> headerTypes;
+    private final boolean allowDuplicates;
 
     private final String ID_COLUMN = "ID";
 
-    protected GenericSheetPrinter() {
+    /**
+     * Generates a generic sheet printer specifying whether it should allow
+     * lines with the same ID or not.
+     *
+     * @param allowDuplicates true if lines with the same ID are allowed; false
+     * otherwise.
+     */
+    protected GenericSheetPrinter(boolean allowDuplicates) {
+        this.allowDuplicates = allowDuplicates;
+        init();
     }
+
+    /**
+     * Writes the annotations contained in the printer on the specified file.
+     *
+     * @param fileName the path where to write.
+     */
+    public abstract void writeFile(String fileName);
 
     /**
      * Returns the headers detected by the printer.
@@ -92,6 +112,35 @@ public abstract class GenericSheetPrinter {
     }
 
     /**
+     * Add all the values of another printer into the current printer.
+     *
+     * @param p the printer to merge into the current one.
+     */
+    public void addPrinter(GenericSheetPrinter p) {
+
+        // merge headers
+        for (int i = 0; i < p.getHeaders().size(); i++) {
+            int h;
+            if ((h = headers.indexOf(p.getHeaders().get(i))) >= 0) {
+                if (!(headerTypes.get(h).isLeft()
+                        == p.getHeaderTypes().get(i).isLeft())) {
+                    throw new UnsupportedOperationException("Trying to merge "
+                            + "header with the same name but different type: "
+                            + p.getHeaders().get(i));
+                }
+            } else {
+                headers.add(p.getHeaders().get(i));
+                headerTypes.add(p.getHeaderTypes().get(i));
+            }
+        }
+
+        // merge lines
+        for (Map<String, Either<String, Number>> row : p.getRows()) {
+            rows.add(row);
+        }
+    }
+
+    /**
      * Stores a generic annotable object.
      *
      * @param a the Annotable to print.
@@ -102,7 +151,7 @@ public abstract class GenericSheetPrinter {
 
         String rowId = annotable.getIdentifier();
 
-        if (containsRow(rowId)) {
+        if (containsRow(rowId) && !allowDuplicates) {
             return;
         }
 
@@ -168,7 +217,7 @@ public abstract class GenericSheetPrinter {
             }
         }
     }
-    
+
     /**
      * Loads all the n-grams in the sheet.
      *
@@ -177,9 +226,10 @@ public abstract class GenericSheetPrinter {
     public void loadGrams(Blackboard b) {
 
         init();
-
-        for (Gram g : b.getGrams()) {
-            addRow(g);
+        Collection<Gram> grams = b.getKeyphrases();
+        for (Gram g : b.getKeyphrases()) {
+            Keyphrase k = (Keyphrase) g;
+            addRow(k);
         }
     }
 
@@ -193,7 +243,8 @@ public abstract class GenericSheetPrinter {
         init();
 
         for (Gram g : c.getGrams()) {
-            addRow(g);
+            Keyphrase k = (Keyphrase) g;
+            addRow(k);
         }
     }
 
@@ -220,6 +271,21 @@ public abstract class GenericSheetPrinter {
         for (Token t : tokens) {
             addRow(t);
         }
+    }
+
+    /**
+     * Adds to all rows a field with the specified value.
+     * 
+     * @param key the name of the column to add.
+     * @param value the value of the field to add.
+     */
+    public void addToAll(String key, String value) {
+        headers.add(key);
+        headerTypes.add(new Left<>(key));
+        for (Map<String, Either<String, Number>> row: rows) {
+            row.put(key, new Left<>(value));
+        }
+        
     }
 
     /**

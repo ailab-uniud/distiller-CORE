@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
@@ -20,6 +22,7 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,14 +42,15 @@ public class SkylineGramFilterAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         
         // get the grams and order them by score
-        Collection<Gram> grams = blackboard.getGrams();
-        Map<Gram, Double> scoredGrams = new HashMap<>();
+        Collection<Gram> grams = blackboard.getKeyphrases();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
         for (Gram g : grams) {
-            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
-        List<Map.Entry<Gram, Double>> gramsToTrash
+        List<Map.Entry<Keyphrase, Double>> gramsToTrash
                 = scoredGrams.entrySet().stream().sorted(
                         Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toList());
@@ -85,8 +89,8 @@ public class SkylineGramFilterAnnotator implements Annotator {
         }
         
         // now remove the remaining grams from the blackboard.        
-        for (Map.Entry<Gram, Double> e : gramsToTrash) 
-            blackboard.removeGram(e.getKey());        
+        for (Map.Entry<Keyphrase, Double> e : gramsToTrash) 
+            blackboard.removeKeyphrase(e.getKey());        
     }
     
 }

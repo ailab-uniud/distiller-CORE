@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.persistence;
 
@@ -27,14 +29,20 @@ import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 public class Token extends Annotable {
 
     /**
-     * The stem of the word or, if a lemmatizer is used instead of a stemmer, 
-     * the lemma.
+     * The stem of the word.
      */
     private String stem;
+    
     /**
      * The part-of-speech tag of the word.
      */
     private String PoS;
+    
+    /**
+     * The lemmatized form of the token, that is obtained removing inflectional 
+     * endings only and returning the base or dictionary form of a word.
+     */
+    private String lemma;
 
     /**
      * Creates a token.
@@ -66,6 +74,15 @@ public class Token extends Annotable {
     }   
     
     /**
+     * Set the lemmatize form of the token.
+     * 
+     * @param lemma the lemma for the token. 
+     */
+    public void setLemma(String lemma){
+        this.lemma = lemma;
+    }
+    
+    /**
      * Returns the text of the token.
      * 
      * @return the text of the token.
@@ -91,6 +108,15 @@ public class Token extends Annotable {
     public String getPoS() {
         return PoS;
     }    
+    
+    /**
+     * Returns the lemmatize form of the token.
+     * 
+     * @return the lemma for token. 
+     */
+    public String getLemma(){
+        return lemma;
+    }
     // </editor-fold>
     
     
@@ -142,7 +168,9 @@ public class Token extends Annotable {
      */
     @Override
     public String toString() {
-        String ret = getText() + " {(POS:" + getPoS() + ")" ;
+        String ret = getText() + " {(POS:" + getPoS() + "), " 
+                + "(Lemma: " + getLemma() + "), "
+                + "(Stem: " +getStem()+ ")";
         for (Annotation a : getAnnotations()) {
             if (a instanceof TextAnnotation)
                 ret = ret + ", (" + a.getAnnotator() + ":" + 
@@ -185,4 +213,6 @@ public class Token extends Annotable {
     public String getIdentifier() {
         return getText();
     }
+
+   
 }

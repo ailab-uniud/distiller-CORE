@@ -1,54 +1,63 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.persistence;
 
 import it.uniud.ailab.dcore.annotation.Annotable;
-import it.uniud.ailab.dcore.annotation.Annotation;
-import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.utils.ListUtils;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.BinaryOperator;
 
 /**
- * The Gram is the data structure in which all the data concerning a NGram is
- * stored.
- *
- * @author Dario De Nart
+ * A generic n-gram, a simple list of n words.
+ * 
  * @author Marco Basaldella
+ * @author Giorgia Chiaradia
  */
-public class Gram extends Annotable {
-
+public abstract class Gram extends Annotable {
+    
+    /**
+     * The type of n-gram:it can be a concept, a keyphrase, a mention...
+     */
+    private final String type;
+    
     /**
      * The different list of words forming the surface of the gram.
      */
     private List<List<Token>> tokenLists;
+    
     /**
      * The different string representation of the gram.
      */
     private final List<String> surfaces;
+    
     /**
      * The concept Units in which the gram appears.
      */
     private List<DocumentComponent> appareances;
-
+    
     /**
-     * Instantiated an n-gram. Usually, the surface should be simply the the 
+     * The identifier for a GRAM object.
+     */
+    public static final String GRAM = "GRAM";
+    
+    /**
+     * Instantiates an n-gram. Usually, the surface should be simply the the 
      * concatenation of the text of the tokens. The signature can be used for 
      * comparison, so be sure to generate different signatures for n-grams
      * that are different in your domain. For example, you can use the sequence 
@@ -59,17 +68,20 @@ public class Gram extends Annotable {
      * @param sequence the tokens that form the gram
      * @param identifier unique identifier of the gram.
      * @param surface the pretty-printed string representation of the gram
+     * @param type the type of gram that will be generated.
      */
-    public Gram(String identifier, List<Token> sequence, String surface) {
+    public Gram(String identifier, List<Token> sequence, String surface, 
+            String type) {
         
         super(identifier);
+        
+        this.type = type;
         
         tokenLists = new ArrayList<>();
         tokenLists.add(sequence);
         
         surfaces = new ArrayList<>();
         surfaces.add(surface);
-        appareances = new ArrayList<>();
     }
     
     /**
@@ -101,6 +113,15 @@ public class Gram extends Annotable {
         for (List<Token> t : tokenLists) {
             this.tokenLists.add(new ArrayList<Token>(t));
         }
+    }
+    
+    /**
+     * Get the type of the Gram that depends on the type of Gram implementation.
+     * 
+     * @return the type of gram. 
+     */
+    public String getType(){
+        return type;
     }
 
     /**
@@ -141,107 +162,7 @@ public class Gram extends Annotable {
     public List<String> getSurfaces() {
         return surfaces;
     }
-
-    /**
-     * The identifier of the gram. Please note that it is possible that two
-     * grams with different surface or tokens may have the same identifier, 
-     * based on the policy of the class that generated the gram.
-     * 
-     * For example, "italian" and "Italy" may have the same identifier, because
-     * the identifier has been generated using the same stem "ital". Otherwise,
-     * the identifier may be the same link on an external ontology: in this 
-     * case, both words may have been associated with the entity "Italy".
-     * 
-     *
-     * @return the signature of the gram.
-     */
-    @Override
-    public String getIdentifier() {
-        return super.getIdentifier();
-    }
-
-    // <editor-fold desc="Feature and annotation Management">
-
-    /**
-     * Adds a feature to the gram.
-     *
-     * @param feature the identifier of the feature
-     * @param value the value of the feature
-     */
-    public void putFeature(String feature, double value) {        
-        addAnnotation(new FeatureAnnotation(feature,value));
-        
-    }
-
-    /**
-     * Adds a feature to the gram,
-     *
-     * @param f the feature to add.
-     */
-    public void putFeature(FeatureAnnotation f) {
-        addAnnotation(f);
-    }
-
-    /**
-     * Check if the gram has been annotated by the annotator specified via input
-     * string.
-     *
-     * @param featureName the name of the feature to search
-     * @return true if the gram has the feature; false otherwise
-     */
-    public boolean hasFeature(String featureName) {
-        return this.hasAnnotation(featureName);
-    }
-
-    /**
-     * Gets the feature generated by the annotator specified via input string.
-     *
-     * Please note that this method makes no difference between a feature that
-     * has been assigned with value 0 and a feature that has not been assigned
-     * to the gram, since in both cases the value 0 will be returned.
-     *
-     * @param featureName the name of the feature to search
-     * @return the value of the feature. Returns 0 if the feature is not in the
-     * gram.
-     */
-    public double getFeature(String featureName) {
-        // null check; if the feature is not specified, we assume it's 0.
-        if (!this.hasAnnotation(featureName)) {
-            return 0;
-        }
-        return ((FeatureAnnotation) getAnnotation(featureName))
-                .getScore();
-    }
-
-    /**
-     * Returns all the features associated with the gram.
-     *
-     * @return all the features associated with the gram.
-     */
-    public FeatureAnnotation[] getFeatures() {
-        
-        List<FeatureAnnotation> features = new ArrayList<>();
-        
-        for (Annotation ann : getAnnotations()) {
-            if (ann instanceof FeatureAnnotation)
-                features.add((FeatureAnnotation)ann);
-        }
-        
-        return features.toArray(new FeatureAnnotation[features.size()]);        
-    }
-
-    /**
-     * Sets the features of the gram, deleting the previous ones (if any).
-     *
-     * @param features the new features of the gram.
-     */
-    public void setFeatures(FeatureAnnotation[] features) {
-        for (FeatureAnnotation f : features)
-            this.addAnnotation(f);
-    }
-    // </editor-fold> 
-
-    // <editor-fold desc="Location Management">      
+    
     /**
      * Adds an appearance of the gram; in other words, adds the component in
      * which the gram appears to the list of the appearances.
@@ -260,5 +181,24 @@ public class Gram extends Annotable {
     public List<DocumentComponent> getAppaerances() {
         return appareances;
     }
-    // </editor-fold>
+    
+    
+    /**
+     * The identifier of the gram. Please note that it is possible that two
+     * grams with different surface or tokens may have the same identifier, 
+     * based on the policy of the class that generated the gram.
+     * 
+     * For example, "italian" and "Italy" may have the same identifier, because
+     * the identifier has been generated using the same stem "ital". Otherwise,
+     * the identifier may be the same link on an external ontology: in this 
+     * case, both words may have been associated with the entity "Italy".
+     * 
+     *
+     * @return the signature of the gram.
+     */
+    @Override
+    public String getIdentifier() {
+        return super.getIdentifier();
+    }
+    
 }

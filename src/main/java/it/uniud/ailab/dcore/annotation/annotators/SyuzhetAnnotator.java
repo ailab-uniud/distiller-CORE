@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
@@ -25,135 +27,281 @@ import java.util.List;
 import java.util.Map;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.utils.FileSystem;
+import java.io.InputStreamReader;
 
 /**
- * Annotates the emotional intensity of grams; currently only the English language
- * is supported.
- * 
+ * Annotates the emotional intensity of grams; currently only the English
+ * language is supported.
+ *
  * @author Marco Basaldella
- * @see http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010
+ * @see
+ * <a href="http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010">The
+ * AFINN Dataset page</a>
+ * @see <a href="https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html">Liu
+ * Bing's Sentiment Analysis works</a>
  */
 public class SyuzhetAnnotator implements Annotator {
-    
-    public static final String INTENSITY = "Syuzhet";
-    private static final String INTENSITY_COUNTER = "Syuzhet_counter";
-    
-    private enum Mode {
-        AVERAGE,
-        SUM;
-    }
-    
-    private Mode mode = Mode.AVERAGE;
-    
-    private Map<String,Integer> weights = new HashMap<>();
 
-    private Map<Gram,Integer> counter = new HashMap<>();
-    
+    public static final String INTENSITY_AVG = "Intensity_SentenceAverage";
+    public static final String INTENSITY_SUM = "Intensity_SentenceSum";
+    private static final String INTENSITY_COUNTER = "Intensity_Counter";
+
+    public static final String POLARITY = "Polarity";
+    private static final String POLARITY_COUNTER = "Polarity_Counter";
+
+    private enum Dataset {
+
+        BING,
+        AFINN;
+    }
+
+    private Dataset dataset = Dataset.AFINN;
+
+    private Map<String, Integer> weights = new HashMap<>();
+
     /**
      * Loads the word valence database created by Finn Årup Nielsen.
      */
     private void loadDefinitions() {
-        String csvFile = getClass().getClassLoader().getResource("afinn/afinn.txt").getFile();
-	BufferedReader br = null;
-	String line;
-	String cvsSplitBy = "\t";
- 
-	try {
-            
-            br = new BufferedReader(new FileReader(csvFile));
+
+        if (dataset == Dataset.AFINN) {
+            loadAfinn();
+        } else {
+            loadBing();
+        }
+    }
+
+    /**
+     * Loads Finn Årup Nielsen polarity database.
+     */
+    private void loadAfinn() {
+
+        BufferedReader br = null;
+
+        String line;
+        String cvsSplitBy = "\t";
+
+        try {
+
+            InputStreamReader is = FileSystem.getInputStreamReaderFromPath(
+                    getClass().
+                    getClassLoader()
+                    .getResource("afinn/afinn.txt").getFile());
+
+            br = new BufferedReader(is);
             while ((line = br.readLine()) != null) {
                 // use comma as separator
-        	String[] parsedLine = line.split(cvsSplitBy);
-                weights.put(parsedLine[0],Integer.parseInt(parsedLine[1]));
- 
+                String[] parsedLine = line.split(cvsSplitBy);
+                weights.put(parsedLine[0], Integer.parseInt(parsedLine[1]));
+
             }
- 
-	} catch (FileNotFoundException e) {
-            e.printStackTrace();
-	} catch (IOException e) {
-            e.printStackTrace();
-	} finally {
+
+        } catch (FileNotFoundException e) {
+            throw new AnnotationException(this, "Can't read the AFINN database.", e);
+        } catch (IOException e) {
+            throw new AnnotationException(this, "Can't read the AFINN database.", e);
+        } finally {
             if (br != null) {
-		try {
+                try {
                     br.close();
-		} catch (IOException e) {
-                     // don't care
-		}
+                } catch (IOException e) {
+                    // don't care
+                }
             }
-	}
+        }
+    }
+
+    /**
+     * Loads Liu Bing's polarity database.
+     */
+    private void loadBing() {
+
+        BufferedReader br = null;
+        String line;
+
+        try {
+
+            InputStreamReader is = FileSystem.getInputStreamReaderFromPath(
+                    getClass().
+                    getClassLoader()
+                    .getResource("bingliu/positive-words.txt").getFile());
+
+            br = new BufferedReader(is);
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith(";")) {
+                    weights.put(line, 1);
+                }
+
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new AnnotationException(this, "Can't read Bing's positive words database.", e);
+        } catch (IOException e) {
+            throw new AnnotationException(this, "Can't read Bing's positive words database.", e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    // don't care
+                }
+            }
+        }
+
+        try {
+
+            InputStreamReader is = FileSystem.getInputStreamReaderFromPath(
+                    getClass().
+                    getClassLoader()
+                    .getResource("bingliu/negative-words.txt").getFile());
+
+            br = new BufferedReader(is);
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith(";")) {
+                    weights.put(line, -1);
+                }
+
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new AnnotationException(this,
+                    "Can't read Bing's negative words database.", e);
+        } catch (IOException e) {
+            throw new AnnotationException(this,
+                    "Can't read Bing's negative words database.", e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    // don't care
+                }
+            }
+        }
     }
 
     /**
      * Annotates the n-grams with their document intensity. The gram document
-     * intensity is calculated as the mean intensity of the phrases where
-     * the gram appears, where the intensity of a sentence is the sum of the
+     * intensity is calculated as the mean intensity of the phrases where the
+     * gram appears, where the intensity of a sentence is the sum of the
      * intensity of all its words.
-     * 
-     * @param component 
+     *
+     * @param component
      */
     @Override
-    public void annotate(Blackboard blackboard,DocumentComponent component) {
-        
+    public void annotate(Blackboard blackboard, DocumentComponent component) {
+
         // skip non-english components
         if (!component.getLanguage().getLanguage().equals("en")) {
             return;
         }
-        
+
         loadDefinitions();
-        
+
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        
+
         for (Sentence s : sentences) {
-            
-            if (s.getGrams().isEmpty())
+
+            if (s.getGrams().isEmpty()) {
                 continue;
-            
-            int accumulator = 0;
-            for (Token t : s.getTokens()) {
-                
-                if (weights.containsKey(t.getText()))
-                    accumulator+= weights.get(t.getText());
             }
-            
-            if (mode == Mode.AVERAGE) {
-            
-                for (Gram g : s.getGrams())
-                {
-                    if (!g.hasFeature(INTENSITY_COUNTER)) {
-                        g.putFeature(INTENSITY, Math.abs(accumulator));
-                        g.putFeature(INTENSITY_COUNTER,1);
+
+            double intensity = 0;
+            int markedWords = 0;
+            for (Token t : s.getTokens()) {
+                if (weights.containsKey(t.getText())) {
+                    intensity += weights.get(t.getText());
+                    markedWords++;
+                }
+            }
+
+            // set the polarity of the sentence to +1 if the overall
+            // sentiment is positive, to -1
+            // otherwise
+            int polarity = intensity > 0 ? 1
+                    : intensity < 0 ? -1
+                            : 0;
+
+            if (dataset == Dataset.BING) {
+
+                for (Gram gram : s.getGrams()) {
+                    Keyphrase k = (Keyphrase) gram;
+                    if (!k.hasFeature(POLARITY_COUNTER)) {
+                        k.putFeature(POLARITY, polarity);
+                        k.putFeature(POLARITY_COUNTER, 1);
                     } else {
-                        double counter = g.getFeature(INTENSITY_COUNTER);
+                        double counter = k.getFeature(POLARITY_COUNTER);
+                        double avg_prev = k.getFeature(POLARITY);
 
-                        // recursively increment the average
-                        double avg = Math.abs(accumulator) + 
-                                (g.getFeature(INTENSITY) *
-                                counter);
+                        double avg = avg_prev
+                                + ((polarity - avg_prev)
+                                / ++counter);
 
-                        avg = avg / ++counter;
-                        g.putFeature(INTENSITY,avg);
-                        g.putFeature(INTENSITY_COUNTER,counter);
+                        k.putFeature(POLARITY, avg);
+                        k.putFeature(POLARITY_COUNTER, counter);
                     }
                 }
-            } else { // (mode == Mode.SUM)
-                for (Gram g : s.getGrams())
-                {
-                    if (!g.hasFeature(INTENSITY_COUNTER)) {
-                        g.putFeature(INTENSITY, Math.abs(accumulator));
-                        g.putFeature(INTENSITY_COUNTER,1);
+            } else { // (dataset == Dataset.AFINN)
+
+                for (Gram gram : s.getGrams()) {
+                    Keyphrase k = (Keyphrase) gram;
+                    if (!k.hasFeature(POLARITY_COUNTER)) {
+                        k.putFeature(POLARITY, polarity);
+                        k.putFeature(POLARITY_COUNTER, 1);
                     } else {
-                        // increment the intensity
-                        double avg = Math.abs(accumulator) + g.getFeature(INTENSITY);
-                        g.putFeature(INTENSITY,avg);
+                        double counter = k.getFeature(POLARITY_COUNTER);
+                        double avg_prev = k.getFeature(POLARITY);
+
+                        double avg = avg_prev
+                                + ((polarity - avg_prev)
+                                / ++counter);
+
+                        k.putFeature(POLARITY, avg);
+                        k.putFeature(POLARITY_COUNTER, counter);
+                    }
+
+                    intensity = Math.abs(intensity);
+
+                    double sentenceAverageIntensity
+                            = markedWords > 0
+                                    ? intensity / (markedWords * 5)
+                                    : 0;
+
+                    if (!k.hasFeature(INTENSITY_COUNTER)) {
+                        k.putFeature(INTENSITY_AVG, sentenceAverageIntensity);
+                        k.putFeature(INTENSITY_SUM, sentenceAverageIntensity);
+                        k.putFeature(INTENSITY_COUNTER, 1);
+                    } else {
+                        double counter = k.getFeature(INTENSITY_COUNTER);
+                        double avg_prev_ia = k.getFeature(INTENSITY_AVG);
+
+                        ++counter;
+
+                        double avg_ia = avg_prev_ia
+                                + ((sentenceAverageIntensity - avg_prev_ia)
+                                / counter);
+
+                        double avg_prev_is = k.getFeature(INTENSITY_SUM);
+
+                        double avg_is = avg_prev_is
+                                + ((intensity - avg_prev_is)
+                                / counter);
+
+                        k.putFeature(INTENSITY_AVG, avg_ia);
+                        k.putFeature(INTENSITY_SUM, avg_is);
+                        k.putFeature(INTENSITY_COUNTER, counter);
                     }
                 }
             }
         }
     }
-    
+
 }

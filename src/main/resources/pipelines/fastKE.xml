@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--      
+  	Copyright (C) 2015 Artificial Intelligence
+  	Laboratory @ University of Udine.
+  
+  	This file is part of the Distiller-CORE library.
+  
+  	Licensed under the Apache License, Version 2.0 (the "License");
+  	you may not use this file except in compliance with the License.
+  	You may obtain a copy of the License at
+ 
+  	     http://www.apache.org/licenses/LICENSE-2.0
+ 
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+-->
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation ="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd" xmlns:aop="http://www.springframework.org/schema/aop">
+    
+    <!-- As utility, some locales -->   
+    <bean id="english" class="java.util.Locale">
+        <constructor-arg value="en" type="java.lang.String"/>
+    </bean>
+    <bean id="italian" class="java.util.Locale">
+        <constructor-arg value="it" type="java.lang.String"/>
+    </bean>
+    
+    
+    <!-- Language detectors -->  
+    <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
+    
+    <!-- Annotators -->  
+    <bean id="openNLP" 
+          class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
+        <!-- Example of local models path -->
+        <!--
+        <property name="modelPaths">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="en-sent" value="/opt/drest/models/en-sent.bin"/>
+                <entry key="en-token" value="/opt/drest/models/en-token.bin"/>
+                <entry key="en-pos-maxent" value="/opt/drest/models/en-pos-maxent.bin"/>
+                <entry key="it-sent" value="/opt/drest/models/it/it-sent.bin"/>
+                <entry key="it-token" value="/opt/drest/models/it/it-token.bin"/>
+                <entry key="it-pos-maxent" value="/opt/drest/models/it/it-pos-maxent.bin"/>
+              </map>
+        </property>
+        -->        
+    </bean>
+      
+    <!-- italian and english wikipedia annotator by the University of Pisa -->
+    <!-- get your key for free writing to tagme [at] di [dot] unipi [dot] it -->
+    <!-- <bean id="tagme" 
+    class="it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator" >
+  <property name="apiKey" value="BaMa2015abg0jRST342G"/>
+</bean>
+<bean id="tagmegram" 
+    class="it.uniud.ailab.dcore.annotation.annotators.TagMeGramAnnotator" /> -->
+    <!-- annotator for statistical features of grams -->
+    <bean id="statistical" 
+          class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
+    <!-- emotional intensity annotator -->
+    <bean id="syuzhet" 
+          class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
+    <!-- filter that keeps only the most important  grams (i.e. with the highest
+    calculated keyphraseness  -->
+    <bean id="skylineGramFilter" 
+          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
+    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
+        <property name="cut" value="5"/>
+    </bean> 
+    <!-- annotator that infers concept that can't be found in the document -->
+    <!-- Please insert ** your own ** user agent in the appropriate field -->
+    <bean id="wikipediaInference" 
+          class="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator" >
+        <!-- <property name="userAgent" value="Please insert your own user agent here"/> -->
+    </bean>
+    <!-- filter for keeping only the best related concepts -->
+    <bean id="relatedFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleAnnotationFilterAnnotator" >
+        <property name="range" value="10"/>
+        <property name="annotation" >
+            <util:constant 
+                static-field="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator.RELATED"/>
+        </property>
+    </bean>
+    <!-- filter for keeping only the best hypernyms -->
+    <bean id="hypernymFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleAnnotationFilterAnnotator" >
+        <property name="range" value="10"/>
+        <property name="annotation">
+            <util:constant 
+                static-field="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator.HYPERNYMS"/>
+        </property>
+    </bean>
+    
+    <!-- N-gram generators -->
+    <bean id="nGramGenerator"
+          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
+        <!-- Example of local POS pattern paths -->
+        <!--
+        <property name="posDatabasePaths">
+            <map key-type="java.util.Locale" value-type="java.lang.String">
+                <entry key-ref="english" value="/opt/drest/posPatterns/en-penn.json"/>
+                <entry key-ref="italian" value="/opt/drest/posPatterns/it-tanl.json"/>
+            </map>
+        </property>
+        -->
+    </bean>
+    
+    <bean id="tfidf"
+          class="it.uniud.ailab.dcore.annotation.annotators.RawTdidfAnnotator"/>
+
+    
+    <bean id="simpleStopword"
+          class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
+        <!-- Example of local stopword file paths -->
+        <!--
+        <property name="stopwordsPath">
+            <map key-type="java.util.Locale" value-type="java.lang.String">
+                <entry key-ref="english" value="/opt/drest/stopwords/generic.txt"/>
+                <entry key-ref="italian" value="/opt/drest/stopwords/generic.txt"/>
+            </map>
+        </property>
+        -->
+    </bean>
+    
+    <bean id="stemmer"
+          class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
+    
+    
+    <!-- Evaluators -->
+    <bean id="linearEvaluator"
+          class="it.uniud.ailab.dcore.annotation.annotators.LinearEvaluatorAnnotator">
+        <property name="weights">
+            <map key-type="java.lang.String" value-type="java.lang.Double">
+                <entry value="0.15">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.DEPTH"/>
+                    </key>
+                </entry>
+                <entry value="0.25">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.HEIGHT"/>
+                    </key>                     
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.LIFESPAN"/>
+                    </key> 
+                </entry>
+                <entry value="0.1">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator.FREQUENCY_SENTENCE"/>
+                    </key>
+                </entry>
+                <!--<entry value="0.05">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator."/>
+                    </key>                     
+                </entry>-->
+                <entry value="0.3">
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.GenericNGramGeneratorAnnotator.NOUNVALUE"/>
+                    </key>
+                </entry>
+                <entry value="0.1" >
+                    <key>
+                        <util:constant 
+                            static-field="it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIFLAG"/>
+                    </key>
+                </entry>
+            </map>              
+        </property>
+    </bean>
+    
+    <bean id="printer"
+              class="it.uniud.ailab.dcore.io.GramPrinter"/>
+    
+    <bean id="defaultPipeline"
+          class="it.uniud.ailab.dcore.Pipeline">
+        <property name="stages">
+            <list>
+                <!-- split the document -->
+                <ref bean="openNLP"/>
+                <ref bean="stemmer" />
+                <!-- annotate the tokens -->
+                <!--<ref bean="tagme"/>-->
+                <!-- generate the n-grams -->
+                <ref bean="nGramGenerator"/>
+                <!-- annotate the n-grmas -->
+                <ref bean="simpleStopword" />
+                <ref bean="statistical" />
+                <!--<ref bean="tfidf" />-->
+                <!--<ref bean="tagmegram" />-->
+                <ref bean="syuzhet" />
+                <!-- evaluate the keyphraseness -->
+                <ref bean="linearEvaluator"/>
+                <!-- infer concepts -->
+                <!--<ref bean="wikipediaInference" />-->
+                <!-- filter the non-interesting output -->
+                <!-- <ref bean="skylineGramFilter"/>-->
+                <!--<ref bean="hypernymFilter"/>
+                <ref bean="relatedFilter"/>-->
+                <ref bean="printer" />
+            </list>
+        </property>        
+    </bean> 
+    
+    <!-- The main object, the Distiller, that receives the beans defined above -->
+    <bean id="distiller" class="it.uniud.ailab.dcore.Distiller">
+        <property name="languageDetector" ref="cybozu"/>
+        <property name="pipelines">
+            <map key-type="java.util.Locale" 
+                 value-type="it.uniud.ailab.dcore.annotation.Pipeline">
+                <entry
+                    key-ref="english" 
+                    value-ref="defaultPipeline">
+                </entry>
+                <entry
+                    key-ref="italian" 
+                    value-ref="defaultPipeline">
+                </entry>
+            </map>
+        </property>
+    </bean>
+   
+</beans>

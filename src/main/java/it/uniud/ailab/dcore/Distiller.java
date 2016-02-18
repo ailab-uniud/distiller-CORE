@@ -1,33 +1,34 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
- * 
- * 	This file is part of the Distiller-CORE library.
- * 
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore;
 
-import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.*;
+import it.uniud.ailab.dcore.DistilledOutput.DetectedGram;
+import it.uniud.ailab.dcore.DistilledOutput.InferredConcept;
+import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
+import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
+import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIURI;
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.persistence.Gram;
-import it.uniud.ailab.dcore.DistilledOutput.*;
-import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
-import it.uniud.ailab.dcore.annotation.Pipeline;
-import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
-import it.uniud.ailab.dcore.annotation.Annotator;
-import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
-import static it.uniud.ailab.dcore.utils.AnnotatorUtils.getAnnotatorSimpleName;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
+import static it.uniud.ailab.dcore.utils.StageUtils.getStageName;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -138,6 +139,13 @@ public class Distiller {
         this.verbose = verbose;
     }
 
+    /**
+     * Gets the verbose mode of the Distiller.
+     * @return TRUE if the Distillation is set to VERBOSE mode.
+     */
+    public boolean  getVerbose() {
+        return verbose;
+    }
     
     
     /**
@@ -174,14 +182,14 @@ public class Distiller {
                     + blackboard.getStructure().getLanguage().getLanguage());
         }
 
-        for (Annotator annotator : pipeline.getAnnotators()) {
+        for (Stage stage : pipeline.getStages()) {
             
             if (verbose) {
                 System.out.println(String.format("Running %s...",
-                        getAnnotatorSimpleName(annotator)));
+                        getStageName(stage)));
             }
             
-            annotator.annotate(blackboard, blackboard.getStructure());
+            stage.run(blackboard);
         }
         
         if (verbose) {
@@ -212,23 +220,24 @@ public class Distiller {
                 getLanguage().getLanguage());
 
         // Copy the grams, sorted by descending score
-        output.initializeGrams(blackboard.getGrams().size());
+        output.initializeGrams(blackboard.getKeyphrases().size());
         
-        Collection<Gram> grams = blackboard.getGrams();
-        Map<Gram, Double> scoredGrams = new HashMap<>();
+        Collection<Gram> grams = blackboard.getKeyphrases();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
         for (Gram g : grams) {
-            scoredGrams.put(g, g.getFeature(GenericEvaluatorAnnotator.SCORE));
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
-        List<Map.Entry<Gram, Double>> sortedGrams
+        List<Map.Entry<Keyphrase, Double>> sortedGrams
                 = scoredGrams.entrySet().stream().sorted(
                         Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toList());
 
         for (int i = 0; i < output.getGrams().length; i++) {
             DetectedGram gram = output.getGrams()[i];
-            Gram originalGram = sortedGrams.get(i).getKey();
+            Keyphrase originalGram = sortedGrams.get(i).getKey();
             gram.setSurface(originalGram.getSurface());
             gram.setKeyphraseness(originalGram.getFeature(
                     it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));

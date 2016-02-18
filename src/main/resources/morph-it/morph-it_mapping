@@ -1,0 +1,81 @@
+## Note: lines beginning with '#' are comments
+## Mapping from the morph-it lexicon to ciapetti's tagset for 
+## Apache OpenNLP. File is in *TAB* separated value format.
+
+## Note that these tags are all prefixes of the actual tags used by
+## Morph-it and the OpenNLP PoS tagger.
+
+## First column: morph-it tag
+## Second column: OpenNLP tag
+## Third column: explanation 
+
+ABL	SA	abbreviation
+ADJ	A	adjective
+ADV	B	adverb
+ART-F	R	article
+ART-M	R	article
+ARTPRE-F	R	article
+ARTPRE-M	EA	articled preposition
+ASP	EA	articled preposition
+AUX	VM	aspectual verb (to modal verb)
+CAU	VA	auxiliary verb
+CE	VM	causative verb to (modal verb)
+CON	C	conjunction
+DET-DEMO	DD	demonstrative determiner
+DET-INDEF	DI	intdefinite determiner
+DET-NUM-CARD	D	determiner
+DET-POSS	D	determiner
+DET-WH	D	determiner
+INT	I	interjection
+MOD	VM	modal verb
+NOUN-F	S	noun
+NOUN-M	S	noun
+NPR	SP	proper noun
+PON	F	punctuation mark
+PRE	EA	articled preposition
+PRO-DEMO-F-P	PD	demostrative pronoun
+PRO-DEMO-F-S	PD	demostrative pronoun
+PRO-DEMO-M-P	PD	demostrative pronoun
+PRO-DEMO-M-S	PD	demostrative pronoun
+PRO-INDEF-F-P	PI	indefinite pronoun
+PRO-INDEF-F-S	PI	indefinite pronoun
+PRO-INDEF-M-P	PI	indefinite pronoun
+PRO-INDEF-M-S	PI	indefinite pronoun
+PRO-NUM	P	pronoun, (numeral in morphit
+PRO-PERS-1-F-P	PE	personal pronoun
+PRO-PERS-1-F-S	PE	personal pronoun
+PRO-PERS-1-M-P	PE	personal pronoun
+PRO-PERS-1-M-S	PE	personal pronoun
+PRO-PERS-2-F-P	PE	personal pronoun
+PRO-PERS-2-F-S	PE	personal pronoun
+PRO-PERS-2-M-P	PE	personal pronoun
+PRO-PERS-2-M-S	PE	personal pronoun
+PRO-PERS-3-F-P	PE	personal pronoun
+PRO-PERS-3-F-S	PE	personal pronoun
+PRO-PERS-3-M-P	PE	personal pronoun
+PRO-PERS-3-M-S	PE	personal pronoun
+PRO-PERS-CLI-1-F-P	PC	clitic pronoun
+PRO-PERS-CLI-1-F-S	PC	clitic pronoun
+PRO-PERS-CLI-1-M-P	PC	clitic pronoun
+PRO-PERS-CLI-1-M-S	PC	clitic pronoun
+PRO-PERS-CLI-2-F-P	PC	clitic pronoun
+PRO-PERS-CLI-2-F-S	PC	clitic pronoun
+PRO-PERS-CLI-2-M-P	PC	clitic pronoun
+PRO-PERS-CLI-2-M-S	PC	clitic pronoun
+PRO-PERS-CLI-3-F-P	PC	clitic pronoun
+PRO-PERS-CLI-3-F-S	PC	clitic pronoun
+PRO-PERS-CLI-3-M-P	PC	clitic pronoun
+PRO-PERS-CLI-3-M-S	PC	clitic pronoun
+PRO-PERS-CLI-COM	PC	clitic pronoun
+PRO-POSS-F-P	PP	possessive pronoun
+PRO-POSS-F-S	PP	possessive pronoun
+PRO-POSS-M-P	PP	possessive pronoun
+PRO-POSS-M-S	PP	possessive pronoun
+PRO-WH-F-P	P	pronoun, wh element in morphit
+PRO-WH-F-S	P	pronoun, wh element in morphit
+PRO-WH-M-P	P	pronoun, wh element in morphit
+PRO-WH-M-S	P	pronoun, wh element in morphit
+SENT	FS	sentence delimiter
+SMI	XE	smile
+SYM	XX	symbol
+VER	V	verb

@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
@@ -21,13 +23,12 @@ import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotat
 import static it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.annotations.InferenceAnnotation;
-import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
 import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIURI;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.utils.WikipediaUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -158,10 +159,10 @@ public class WikipediaInferenceAnnotator implements Annotator {
         // Retrieve the grams with a "wikiflag", i.e. the one which
         // text is the same as a Wikipedia page title 
         // for example, "Software Engineering". 
-        List<Gram> wikiGrams = new LinkedList<>();
-        blackboard.getGrams().stream().filter((g) -> 
-                (g.hasFeature(WIKIFLAG))).forEach((g) -> {
-            wikiGrams.add(g);
+        List<Keyphrase> wikiGrams = new LinkedList<>();
+        blackboard.getKeyphrases().stream().filter((g) -> 
+                (((Keyphrase)g).hasFeature(WIKIFLAG))).forEach((g) -> {
+            wikiGrams.add(((Keyphrase)g));
         });
 
         // Build the related and hypernyms lists, by getting the related links
@@ -193,14 +194,14 @@ public class WikipediaInferenceAnnotator implements Annotator {
      * 
      * @param grams the grams to analyze.
      */
-    private void findHyperymsAndRelated(List<Gram> grams) {
+    private void findHyperymsAndRelated(List<Keyphrase> grams) {
         
         HttpURLConnection con = null;
         BufferedReader reader = null;
 
         // We may pipe several article titles in one query, but for some awkward reason,
         // the API won't give us the full category list of the requested terms, nor the full definition
-        for (Gram currentGram : grams) {
+        for (Keyphrase currentGram : grams) {
 
             // this will contain the categories (i.e. our hypernyms)s
             ArrayList<String> wikiCategories = new ArrayList<>();

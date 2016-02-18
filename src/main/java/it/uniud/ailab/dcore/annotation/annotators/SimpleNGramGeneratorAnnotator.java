@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
@@ -33,10 +35,10 @@ import org.json.simple.parser.ParseException;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
-import java.io.InputStream;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.InputStreamReader;
 import java.util.Map;
 
@@ -225,23 +227,26 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
                         if (nounValue > 0) {
 
                             // the identifier is the stem of the words
-                            String identifier = lastReadBuffers[size].get(0).getText();
+                            String identifier = lastReadBuffers[size].get(0).getStem();
                             for (int k = 1; k < lastReadBuffers[size].size(); k++) {
                                 identifier = identifier + " "
                                         + lastReadBuffers[size].get(k).getStem();
                             }
 
                             identifier = identifier.toLowerCase();
+                            int startIndex
+                                    = startIndexes[i - (lastReadBuffers[size].size() - 1)];
+                            int endIndex = endIndexes[i];
 
-                            Gram g = new Gram(
+                            Keyphrase g = new Keyphrase(
                                     identifier,
                                     lastReadBuffers[size],
                                     sentenceText.substring(
-                                            startIndexes[i - (lastReadBuffers[size].size() - 1)],
-                                            endIndexes[i]));
+                                            startIndex,
+                                            endIndex));
 
                             g.putFeature(new FeatureAnnotation(
-                                    NOUNVALUE, ((float) nounValue) / g.getTokens().size()));
+                                    NOUNVALUE, ((float) nounValue) / (float) g.getTokens().size()));
                             blackboard.addGram(component, g);
                         }
                     }
@@ -293,20 +298,9 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
     private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
 
-        InputStreamReader is;
+        InputStreamReader is
+                = FileSystem.getInputStreamReaderFromPath(posDatabasePaths.get(lang));
 
-        // running from command-line and loading inside the JAR
-        if (posDatabasePaths.get(lang).contains("!")) {
-            is = new InputStreamReader(
-                    getClass().getResourceAsStream(
-                    posDatabasePaths.get(lang).substring(
-                            posDatabasePaths.get(lang).lastIndexOf("!") + 1)));
-        } else {
-            // normal operation
-            is = new FileReader(posDatabasePaths.get(lang));
-        }
-
-        
         BufferedReader reader = new BufferedReader(is);
         Object obj = (new JSONParser()).parse(reader);
         JSONObject fileblock = (JSONObject) obj;

@@ -1,25 +1,27 @@
 /*
- *  Copyright (C) 2015 Artificial Intelligence
- *  Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.eval.kp;
 
-import opennlp.tools.stemmer.*;
 import it.uniud.ailab.dcore.DistilledOutput;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.eval.Evaluator;
+import it.uniud.ailab.dcore.eval.GenericDataset;
 import java.util.Map;
 
 /**
@@ -27,39 +29,16 @@ import java.util.Map;
  *
  * @author Marco Basaldella
  */
-public abstract class KeyphraseEvaluator extends Evaluator {
+public class KeyphraseEvaluator15 extends Evaluator {
 
     /**
-     * The input documents.
-     */
-    private Map<String, String> inputDocuments;
-    /**
-     * The keyphrases for the input documents.
-     */
-    private Map<String, String[]> goldKeyphrases;
-
-    /**
-     * An abstract evaluator for the Keyphrase Extraction task.
+     * An evaluator for the Keyphrase Extraction task.
      *
-     * @param goldStandardPath the directory of the gold standard.
+     * @param goldStandard the gold standard to evaluate.
      */
-    public KeyphraseEvaluator(String goldStandardPath) {
-        super(goldStandardPath);
+    public KeyphraseEvaluator15(GenericDataset goldStandard) {
+        super(goldStandard);
     }
-
-    /**
-     * Loads the input documents and returns them.
-     *
-     * @return the input documents.
-     */
-    public abstract Map<String, String> loadInputDocuments();
-
-    /**
-     * Loads the gold standard keyphrases and returns them.
-     *
-     * @return the gold standard keyphrases.
-     */
-    public abstract Map<String, String[]> loadGoldKeyphrases();
 
     /**
      * Evaluate the keyphrases using the given dataset and settings.
@@ -70,19 +49,22 @@ public abstract class KeyphraseEvaluator extends Evaluator {
     @Override
     public Map<String, Double> evaluate(Distiller pipeline) {
 
-        inputDocuments = loadInputDocuments();
-        goldKeyphrases = loadGoldKeyphrases();
+        if (!goldStandard.isLoaded()) {
+            goldStandard.load();
+        }
+
         int docIndex = 0;
         double precision = 0;
         double recall = 0;
         double fmeasure = 0;
 
-        for (Map.Entry<String, String> documentEntry : inputDocuments.entrySet()) {
+        for (Map.Entry<String, String> documentEntry
+                : goldStandard.getTestSet().entrySet()) {
 
             String document = documentEntry.getValue().replace("\\n", " ");
 
             System.out.println("Evaluating document " + ++docIndex
-                    + " of " + inputDocuments.size() + "...");
+                    + " of " + goldStandard.getTestSet().size() + "...");
 
             System.out.println("Document identifier: " + documentEntry.getKey());
             System.out.println("Document's first 40 chars: "
@@ -95,19 +77,12 @@ public abstract class KeyphraseEvaluator extends Evaluator {
                 kps[i] = output.getGrams()[i].getSurface();
             }
 
-            PorterStemmer stemmer = new PorterStemmer();
-            for (int i = 0; i < kps.length; i++) {
-                String[] tokens = kps[i].split(" ");
-                for (int j = 0; j < tokens.length; j++) {
-                    tokens[j] = stemmer.stem(tokens[j]);
-                }
-                kps[i] = String.join(" ", tokens);
-            }
-
             double docPrecision = computePrecision(
-                    kps, goldKeyphrases.get(documentEntry.getKey()));
+                    kps,
+                    goldStandard.getTestAnswers().get(documentEntry.getKey()));
             double docRecall = computeRecall(
-                    kps, goldKeyphrases.get(documentEntry.getKey()));
+                    kps,
+                    goldStandard.getTestAnswers().get(documentEntry.getKey()));
             double docFMeasure = computeFMeasure(docPrecision, docRecall);
 
             System.out.println("Precision   : " + docPrecision);
@@ -119,9 +94,9 @@ public abstract class KeyphraseEvaluator extends Evaluator {
             fmeasure = fmeasure + docFMeasure;
         }
 
-        precision = precision / inputDocuments.size();
-        recall = recall / inputDocuments.size();
-        fmeasure = fmeasure / inputDocuments.size();
+        precision = precision / goldStandard.getTestSet().size();
+        recall = recall / goldStandard.getTestSet().size();
+        fmeasure = fmeasure / goldStandard.getTestSet().size();
 
         System.out.println();
         System.out.println("*** EVALUATION COMPLETE ***");
@@ -138,7 +113,8 @@ public abstract class KeyphraseEvaluator extends Evaluator {
         double matches = 0;
         for (int i = 0; i < kps.length; i++) {
             for (int j = 0; j < goldKeyphrase.length; j++) {
-                if (kps[i].toLowerCase().equals(goldKeyphrase[j])) {
+                if (goldStandard.compare(
+                        kps[i].toLowerCase(), goldKeyphrase[j]) == 0) {
                     matches++;
                 }
             }
@@ -151,7 +127,8 @@ public abstract class KeyphraseEvaluator extends Evaluator {
         double matches = 0;
         for (int i = 0; i < kps.length; i++) {
             for (int j = 0; j < goldKeyphrase.length; j++) {
-                if (kps[i].toLowerCase().equals(goldKeyphrase[j])) {
+                if (goldStandard.compare(
+                        kps[i].toLowerCase(), goldKeyphrase[j]) == 0) {
                     matches++;
                 }
             }

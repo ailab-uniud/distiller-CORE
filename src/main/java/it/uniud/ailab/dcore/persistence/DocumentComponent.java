@@ -1,25 +1,31 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.persistence;
 
+import edu.stanford.nlp.dcoref.CorefChain;
 import it.uniud.ailab.dcore.annotation.Annotable;
-import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An abstract conceptual unit of the document. This can be a sentence, a
@@ -29,6 +35,12 @@ import java.util.Locale;
  *
  * @author Marco Basaldella
  * @author Dario De Nart
+ * 
+ * Add a map containing the coreference graph, indixed by anaphors
+ * (I insert the map here in respect to the composite pattern, this is a 
+ * feature not a component of the document, like sentences, ngrams and so on)
+ * 
+ * @modify Giorgia Chiaradia
  */
 public abstract class DocumentComponent extends Annotable {
 
@@ -40,12 +52,12 @@ public abstract class DocumentComponent extends Annotable {
      *
      * @param text the text of the component
      * @param language the language of the component
+     * @param identifier the unique identifier for the component
      */
     public DocumentComponent(String text, Locale language, String identifier) {
         super(identifier);
         this.text = text;
         this.language = language;
-
     }
 
     // <editor-fold desc="getters and setters">
@@ -106,7 +118,7 @@ public abstract class DocumentComponent extends Annotable {
      * concept unit has no children.
      */
     public abstract List<DocumentComponent> getComponents();
-
+    
     /**
      * Adds a gram to the component.
      *

@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.io;
 
@@ -47,17 +49,21 @@ public class CsvPrinter extends GenericSheetPrinter {
     /**
      * Default field delimiter.
      */
-    private static final char DEFAULT_DELIMITER = ',';
+    public static final char DEFAULT_DELIMITER = ',';
     /**
      * Default print headers option.
      */
-    private static final boolean DEFAULT_HEADERS = true;
+    public static final boolean DEFAULT_HEADERS = true;
+    /**
+     * Default allow duplicates options.
+     */
+    public static final boolean DEFAULT_DUPLICATES = false;
 
     /**
      * Instantiates the {@code CsvPrinter} with the default options.
      */
     public CsvPrinter() {
-        this(DEFAULT_DELIMITER, DEFAULT_HEADERS);
+        this(DEFAULT_DELIMITER, DEFAULT_HEADERS,DEFAULT_DUPLICATES);
     }
 
     /**
@@ -66,17 +72,7 @@ public class CsvPrinter extends GenericSheetPrinter {
      * @param delimiter delimiter of the records in a row
      */
     public CsvPrinter(char delimiter) {
-        this(delimiter, DEFAULT_HEADERS);
-    }
-
-    /**
-     * Instantiates the {@code CsvPrinter} with the default delimiter options.
-     *
-     * @param printHeaders true if the printer should write the headers of the
-     * table; false otherwise.
-     */
-    public CsvPrinter(boolean printHeaders) {
-        this(DEFAULT_DELIMITER, printHeaders);
+        this(delimiter, DEFAULT_HEADERS,DEFAULT_DUPLICATES);
     }
 
     /**
@@ -85,8 +81,11 @@ public class CsvPrinter extends GenericSheetPrinter {
      * @param delimiter delimiter of the records in a row
      * @param printHeaders true if the printer should write the headers of the
      * table; false otherwise.
+     * @param allowDuplicates true if lines with the same ID are allowed;
+     * false otherwise.
      */
-    public CsvPrinter(char delimiter, boolean printHeaders) {
+    public CsvPrinter(char delimiter, boolean printHeaders,boolean allowDuplicates) {
+        super(allowDuplicates);
         this.delimiter = delimiter;
         this.printHeaders = printHeaders;
     }
@@ -121,7 +120,8 @@ public class CsvPrinter extends GenericSheetPrinter {
      * 
      * @param fileName the path where to write.
      */
-    private void writeFile(String fileName) {
+    @Override
+    public void writeFile(String fileName) {
 
         try {
             CSVWriter writer

@@ -1,18 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
@@ -23,6 +25,7 @@ import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
@@ -125,34 +128,34 @@ public class StatisticalAnnotator implements Annotator {
             List<String> surfaces = new ArrayList<>();
 
             for (Gram g : s.getGrams()) {
-
-                if (g.hasFeature(FREQUENCY)) {
-                    g.putFeature(FREQUENCY, g.getFeature(FREQUENCY) + 1);
+                Keyphrase k = (Keyphrase)g;
+                if (k.hasFeature(FREQUENCY)) {
+                    k.putFeature(FREQUENCY, k.getFeature(FREQUENCY) + 1);
                 } else {
-                    g.putFeature(FREQUENCY, 1);
+                    k.putFeature(FREQUENCY, 1);
                 }
 
-                if (!surfaces.contains(g.getSurface())) {
+                if (!surfaces.contains(k.getSurface())) {
 
-                    surfaces.add(g.getSurface());
+                    surfaces.add(k.getSurface());
 
                     double depth = (count / size);
-                    g.putFeature(DEPTH, depth);
+                    k.putFeature(DEPTH, depth);
 
                     // check if it's the first appaerance
                     // if not, set the height 1 - depth
-                    if (!g.hasFeature(HEIGHT)) {
-                        g.putFeature(HEIGHT, 1 - depth);
+                    if (!k.hasFeature(HEIGHT)) {
+                        k.putFeature(HEIGHT, 1 - depth);
                     }
 
-                    g.putFeature(LIFESPAN, g.getFeature(DEPTH) + g.getFeature(HEIGHT) - 1);
+                    k.putFeature(LIFESPAN, k.getFeature(DEPTH) + k.getFeature(HEIGHT) - 1);
 
                     double increment = 1.0 / sentences.size();
 
-                    if (g.hasFeature(FREQUENCY_SENTENCE)) {
-                        g.putFeature(FREQUENCY_SENTENCE, g.getFeature(FREQUENCY_SENTENCE) + increment);
+                    if (k.hasFeature(FREQUENCY_SENTENCE)) {
+                        k.putFeature(FREQUENCY_SENTENCE, k.getFeature(FREQUENCY_SENTENCE) + increment);
                     } else {
-                        g.putFeature(FREQUENCY_SENTENCE, increment);
+                        k.putFeature(FREQUENCY_SENTENCE, increment);
                     }
 
                 }

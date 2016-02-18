@@ -1,20 +1,20 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
- * 	Laboratory @ University of Udine.
- * 
- * 	This file is part of the Distiller-CORE library.
- * 
- * 	Licensed under the Apache License, Version 2.0 (the "License");
- * 	you may not use this file except in compliance with the License.
- * 	You may obtain a copy of the License at
+ * Copyright (C) 2015 Artificial Intelligence
+ * Laboratory @ University of Udine.
  *
- * 	     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package it.uniud.ailab.dcore;
 
@@ -25,6 +25,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
@@ -60,9 +61,11 @@ public class Blackboard {
     private DocumentComponent document;
 
     /**
-     * Container for the n-grams of the document.
-     */
-    private Map<String, Gram> gramContainer;
+     * Container for the n-grams of the document. Every n-gram is part of a 
+     * specific list identifying the type of n-gram. The types of n-grams are
+     * the key for searching in the main n-gram list.
+     */  
+    private Map<String, Map<String, Gram>> generalNGramsContainer;
 
     /**
      * Document-wide annotations. This space can be used to add annotations that
@@ -70,6 +73,7 @@ public class Blackboard {
      * tagset used by a POS-tagger, or the overall sentiment.
      */
     private List<Annotation> annotations;
+   
 
     /**
      * Instantiates an empty blackboard.
@@ -88,7 +92,7 @@ public class Blackboard {
     public final void createDocument(String rawText, String documentId) {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText, documentId);
-        this.gramContainer = new HashMap<>();
+        this.generalNGramsContainer = new HashMap<>();
         this.annotations = new ArrayList<>();
     }
 
@@ -101,7 +105,7 @@ public class Blackboard {
     public final void createDocument(String rawText) {
         this.rawText = rawText;
         this.document = new DocumentComposite(rawText, DEFAULT_DOCUMENT_ID);
-        this.gramContainer = new HashMap<>();
+        this.generalNGramsContainer = new HashMap<>();
         this.annotations = new ArrayList<>();
     }
 
@@ -136,14 +140,18 @@ public class Blackboard {
      */
     public void addGram(DocumentComponent unit, Gram newGram) {
 
-        Gram gram = gramContainer.get(newGram.getIdentifier());
+        Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
+        if(grams == null){
+            grams = new HashMap<>();
+        }
+        Gram gram = grams.get(newGram.getIdentifier());
 
         // Deep clone the object instead of referencing the found one.
         // this way, we're free to modify it by adding annotations without
         // modifying the old object.
         if (gram == null) {
             Gram cloned = (new Cloner()).deepClone(newGram);
-            gramContainer.put(cloned.getIdentifier(), cloned);
+            grams.put(cloned.getIdentifier(), cloned);
             gram = cloned;
         } else {
             // add the surface of the new gram
@@ -152,15 +160,46 @@ public class Blackboard {
 
         gram.addAppaerance(unit);
         unit.addGram(gram);
+        generalNGramsContainer.put(newGram.getType(), grams);
+    }
+    
+    public void addGram(Gram newGram) {
+
+        Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
+        if(grams == null){
+            grams = new HashMap<>();
+        }
+        Gram gram = grams.get(newGram.getIdentifier());
+
+        // Deep clone the object instead of referencing the found one.
+        // this way, we're free to modify it by adding annotations without
+        // modifying the old object.
+        if (gram == null) {
+            Gram cloned = (new Cloner()).deepClone(newGram);
+            grams.put(cloned.getIdentifier(), cloned);
+        } else {
+            // add the surface of the new gram
+            gram.addSurfaces(newGram.getSurfaces(), newGram.getTokenLists());
+        }
+        
+        generalNGramsContainer.put(newGram.getType(), grams);
+    }
+    
+      
+    public Map<String, Gram> getGramsByType(String gramType){
+        return generalNGramsContainer.get(gramType);
     }
 
     /**
      * Retrieves the grams found in the document.
      *
-     * @return a collection of {@link it.uniud.ailab.dcore.persistence.Gram}s.
+     * @return a collection of {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
      */
-    public List<Gram> getGrams() {
-        return new ArrayList(gramContainer.values());
+    @Deprecated
+    public List<Gram> getKeyphrases() {
+        
+        Map<String,Gram> kps = generalNGramsContainer.get(Keyphrase.KEYPHRASE);        
+        return kps != null ? new ArrayList(kps.values()) : new ArrayList();
     }
 
     /**
@@ -169,8 +208,10 @@ public class Blackboard {
      *
      * @param g the gram to remove.
      */
-    public void removeGram(Gram g) {
-        gramContainer.remove(g.getIdentifier());
+    @Deprecated
+    public void removeKeyphrase(Keyphrase g) {
+        generalNGramsContainer.get(Keyphrase.KEYPHRASE)
+                .remove(g.getIdentifier());
         
         for (Sentence s : DocumentUtils.getSentences(document)) {
             s.removeGram(g);
