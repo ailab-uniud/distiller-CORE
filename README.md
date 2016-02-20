@@ -10,20 +10,26 @@ The architecture of the framework and its usage is described in "Introducing Dis
 
 ## Build and use the Distiller ##
 
-Distiller, by now, is distibuted as a Netbeans project. You can open it in your favourite IDE or compile it yourself (we won't provide a guide, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)). A download link for the standalone .jar is coming soon. When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central or another Maven repository, to make it easier to use it in your projects.
+Inside the Wiki we have some guides on downloading, building and using Distiller. 
+
+Distiller, by now, is distibuted in source code form only. You can open it in your favourite IDE or compile it yourself, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)).  When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central or another Maven repository, to make it easier to use it in your projects.
+
+
 
 ## Acknowledgements ##
 
 The "dirty work" in the library is handled mainly by three libraries:
 - [Shuyo Nakatani's Language Detection Library for Java](https://github.com/shuyo/language-detection/);
 - [Apache OpenNLP](https://opennlp.apache.org/);
+- [Stanford CoreNLP](http://nlp.stanford.edu)
 - [The Tartarus Snowball Stemmer](http://snowball.tartarus.org/).
 
 ## Citing ##
 
 If you use Distiller, please cite this paper:
 
-```@inproceedings{basaldellaintroducing,
+```tex
+@inproceedings{basaldellaintroducing,
   title={Introducing Distiller: a unifying framework for Knowledge Extraction},
   author={Basaldella, Marco and De Nart, Dario and Tasso, Carlo},
   year={2015},
