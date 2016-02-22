@@ -8,28 +8,30 @@ The default Distiller pipeline works on keyphrase extraction; anyways, since the
 
 The architecture of the framework and its usage is described in "Introducing Distiller: a unifying framework for Knowledge Extraction" , 1st AI*IA Workshop on Intelligent Techniques At Libraries and Archives, 2015 [(download link)](http://ceur-ws.org/Vol-1509/ITALIA2015_paper_4.pdf).
 
-## Build and use the Distiller ##
+## How to build and use the Distiller ##
 
 Inside the Wiki we have some guides on downloading, building and using Distiller. 
 
-Distiller, by now, is distibuted in source code form only. You can open it in your favourite IDE or compile it yourself, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)).  When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central or another Maven repository, to make it easier to use it in your projects.
-
-
+Distiller, by now, is distibuted in source code form only. You can open it in your favourite IDE or compile it yourself, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)). When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central or another Maven repository, to make it easier to use it in your projects.
 
 ## Acknowledgements ##
 
 The "dirty work" in the library is handled mainly by three libraries:
 - [Shuyo Nakatani's Language Detection Library for Java](https://github.com/shuyo/language-detection/);
 - [Apache OpenNLP](https://opennlp.apache.org/);
-- [Stanford CoreNLP](http://nlp.stanford.edu)
+- [Stanford CoreNLP](http://nlp.stanford.edu);
 - [The Tartarus Snowball Stemmer](http://snowball.tartarus.org/).
+
+The Italian language implementation of the Distiller is made possible by:
+- [Andrea Ciapetti's OpenNLP models](https://github.com/aciapetti/opennlp-italian-models) for sentence splitting, tokenization and PoS tagging;
+- [Morph-it!](http://sslmitdev-online.sslmit.unibo.it/linguistics/morph-it.php) for lemmatization.
 
 ## Citing ##
 
 If you use Distiller, please cite this paper:
 
 ```tex
-@inproceedings{basaldellaintroducing,
+@inproceedings{distillerintroducing,
   title={Introducing Distiller: a unifying framework for Knowledge Extraction},
   author={Basaldella, Marco and De Nart, Dario and Tasso, Carlo},
   year={2015},
