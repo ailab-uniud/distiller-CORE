@@ -32,6 +32,10 @@
         <constructor-arg value="en" type="java.lang.String"/>
     </bean>
     
+    <bean id="arabic" class="java.util.Locale">
+        <constructor-arg value="ar" type="java.lang.String"/>
+    </bean>
+    
     <!-- Language detectors -->  
     <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
     
@@ -107,7 +111,7 @@
             <map key-type="java.util.Locale" 
                  value-type="it.uniud.ailab.dcore.annotation.Pipeline">
                 <entry
-                    key-ref="english" 
+                    key-ref="arabic" 
                     value-ref="defaultPipeline">
                 </entry>
             </map>
