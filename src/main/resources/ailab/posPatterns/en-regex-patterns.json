@@ -10,7 +10,7 @@
 					
 				 },
                                  {
-                                        "pattern":"((NN|NNS)[/])(IN[/])(NN|NNS)",
+                                        "pattern":"(JJ[/])?((NN|NNS)[/])+(IN[/])(NN|NNS)",
                                         "description":"Pattern for secodn level tagging selection: composition of nouns and prepositions"
                                  },
                                  {

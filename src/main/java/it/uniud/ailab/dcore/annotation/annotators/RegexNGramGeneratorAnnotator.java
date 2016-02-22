@@ -86,7 +86,7 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
     /**
      * The default maximum size of n-grams.
      */
-    private static final int DEFAULT_MAX_NGRAM_SIZE = 3;
+    private static final int DEFAULT_MAX_NGRAM_SIZE = 5;
 
     // </editor-fold>
     // <editor-fold desc="constructor">
@@ -292,9 +292,7 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
                         index = posTagString.indexOf("NN");
                     }            
         
-            } else {
-                break;
-            }
+            } 
         }
         
         return nounValue;
