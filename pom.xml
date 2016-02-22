@@ -165,6 +165,16 @@
             <version>0.6</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>5.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gpl.pierrick.brihaye.aramorph</groupId>
+            <artifactId>aramorph</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
