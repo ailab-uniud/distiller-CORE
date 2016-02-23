@@ -73,7 +73,7 @@ public class ArabicStanfordBootstrapper implements Annotator {
         if(am == null)
             am = new AraMorph();
         // read some text in the text variable
-        String text = component.getText();
+        String docText = component.getText();
 
         // create an empty Annotation just with the given text
         //Annotation document = new Annotation(text);
@@ -85,7 +85,7 @@ public class ArabicStanfordBootstrapper implements Annotator {
         // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
         //List<CoreMap> sentences = document.get(SentencesAnnotation.class);
         
-            List<List<HasWord>> sentences = MaxentTagger.tokenizeText(new StringReader(text), ArabicTokenizer.ArabicTokenizerFactory.newTokenizerFactory());
+            List<List<HasWord>> sentences = MaxentTagger.tokenizeText(new StringReader(docText), ArabicTokenizer.ArabicTokenizerFactory.newTokenizerFactory());
             for (List<HasWord> stanfordSentence : sentences) {
                 String stanfordSentenceTxt = "";
                 for(HasWord word: stanfordSentence)
