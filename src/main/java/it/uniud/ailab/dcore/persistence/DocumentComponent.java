@@ -45,6 +45,7 @@ import java.util.Set;
 public abstract class DocumentComponent extends Annotable {
 
     private final String text;
+    private String preprocessedText;
     private Locale language;
 
     /**
@@ -58,6 +59,7 @@ public abstract class DocumentComponent extends Annotable {
         super(identifier);
         this.text = text;
         this.language = language;
+        this.preprocessedText = text;
     }
 
     // <editor-fold desc="getters and setters">
@@ -153,4 +155,11 @@ public abstract class DocumentComponent extends Annotable {
         return text;
     }
 
+    public void setPreprocessedText(String ppText) {
+        this.preprocessedText = ppText;
+    }
+
+    public String getPreprocessedText(){
+        return preprocessedText;
+    }
 }

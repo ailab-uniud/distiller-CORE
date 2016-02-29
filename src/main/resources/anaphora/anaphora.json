@@ -1,0 +1,19 @@
+{ 
+	"anaphora":[
+			{ 
+				"anaphoricPP":[
+				 {
+					"pattern":"(\\s|^)(i|you|he|she|it|they|me|us)(\\s|$)",
+                                        "type":"1"
+                                        
+				 },
+                                 {
+                                     
+                                        "pattern":"(\\s|^)((mine|my|his)|(your|it|her|their|our)[s])(\\s|$)",
+                                        "type":"2"
+                                 }
+				]
+			}
+                ]
+}
+				 

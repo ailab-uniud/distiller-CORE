@@ -115,6 +115,7 @@ public class CoreferenceResolverAnnotator implements Annotator {
             //for every reference to anaphor
             for (Reference ref : ment.getReferences()) {
                 if (ref.getType().equals("PRONOMINAL")) { //if is a pronoun
+//                    if(!Pattern.matches("(\\s|^)(his|His|her|Her|its|their|hisself|herself|itself)(\\s|$)",ref.getIdentifier()){}
                     numberOfRef++; //increment # of reference for that anaphor
                 } else {
                     //if is proper name or nominal, create a string of the 
@@ -201,6 +202,12 @@ public class CoreferenceResolverAnnotator implements Annotator {
                 if (score > 0) {//if n-gram is an anaphor
                     //normalize score for NOR by total # of phrases 
                     k.putFeature(NUMBER_OF_REFERENCE, (score / numberOfPhrases));
+
+                    k.putFeature(StatisticalAnnotator.FREQUENCY,
+                            k.getFeature(StatisticalAnnotator.FREQUENCY) + score);
+                    k.putFeature(StatisticalAnnotator.FREQUENCY_SENTENCE, 
+                            k.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE) + score/sentences.size());
+                    
                 } else {
                     k.putFeature(NUMBER_OF_REFERENCE, 0.0);
                 }
