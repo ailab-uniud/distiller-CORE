@@ -71,9 +71,12 @@
           class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
         
     <!-- N-gram generators -->
-    <bean id="nGramGenerator"
+    <!-- bean id="nGramGenerator"
           class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
         <property name="maxGramSize" value="5" />
+    </bean -->
+    <bean id="nGramGenerator"
+          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" > 
     </bean>
     
     <bean id="tfidf"
@@ -99,12 +102,12 @@
                 <!-- generate the n-grams -->
                 <ref bean="nGramGenerator"/> 
                 <!-- annotate the n-grams -->
-                <ref bean="simpleStopword" />
+                <!--<ref bean="simpleStopword" />-->
                 <ref bean="statistical" />
-                <ref bean="tfidf" />
+                <!--<ref bean="tfidf" />
                 <ref bean="syuzhet" />
                 <ref bean="chunkingNer"/>
-                <ref bean="coreferenceResolver"/>
+                <ref bean="coreferenceResolver"/>>-->
                 <!--<ref bean="dpm"/>-->
                 <ref bean="printer"/>
             </list>

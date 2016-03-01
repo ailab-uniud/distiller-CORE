@@ -108,6 +108,9 @@ public class SimpleNGramGeneratorAnnotator implements GenericNGramGeneratorAnnot
         posDatabasePaths.put(new Locale("pt"),
                 getClass().getClassLoader().
                 getResource("ailab/posPatterns/pt-flore.json").getFile());
+        posDatabasePaths.put(Locale.forLanguageTag("ar"),
+                getClass().getClassLoader().
+                getResource("ailab/posPatterns/ar-stanford.json").getFile());
     }
     // </editor-fold>
 

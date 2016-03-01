@@ -21,8 +21,11 @@ package it.uniud.ailab.dcore.io;
 import com.opencsv.CSVWriter;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.utils.Either;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -138,7 +141,7 @@ public class CsvPrinter extends GenericSheetPrinter {
 
         try {
             CSVWriter writer
-                    = new CSVWriter(new FileWriter(fileName),
+                    = new CSVWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"),//new FileWriter(fileName),
                             delimiter, CSVWriter.DEFAULT_QUOTE_CHARACTER);
 
             writer.writeNext(getHeaders().
