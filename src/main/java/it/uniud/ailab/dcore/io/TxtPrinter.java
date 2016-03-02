@@ -18,15 +18,12 @@
  */
 package it.uniud.ailab.dcore.io;
 
-import com.opencsv.CSVWriter;
 import it.uniud.ailab.dcore.Blackboard;
-import it.uniud.ailab.dcore.utils.Either;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,12 +64,9 @@ public class TxtPrinter {
                 file.createNewFile();
             }
 
-            // get the content in bytes
-            byte[] contentInBytes = toPrint.getBytes();
-
-            fop.write(contentInBytes);
-            fop.flush();
-            fop.close();
+            Writer out = new OutputStreamWriter(fop, "UTF8");
+            out.write(toPrint);
+            out.close();
 
         } catch (IOException ex) {
             Logger.getLogger(TxtPrinter.class.getName()).log(Level.SEVERE,

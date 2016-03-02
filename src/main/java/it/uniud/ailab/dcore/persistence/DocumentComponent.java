@@ -18,14 +18,9 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
-import edu.stanford.nlp.dcoref.CorefChain;
 import it.uniud.ailab.dcore.annotation.Annotable;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * An abstract conceptual unit of the document. This can be a sentence, a

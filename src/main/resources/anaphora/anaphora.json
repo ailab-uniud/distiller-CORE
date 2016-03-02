@@ -4,13 +4,30 @@
 				"anaphoricPP":[
 				 {
 					"pattern":"(\\s|^)(i|you|he|she|it|they|me|us)(\\s|$)",
-                                        "type":"1"
+                                        "type":"1",
+                                        "description":"all the personal pronouns, use as subject or direct objects"
                                         
 				 },
                                  {
                                      
-                                        "pattern":"(\\s|^)((mine|my|his)|(your|it|her|their|our)[s])(\\s|$)",
-                                        "type":"2"
+                                        "pattern":"(\\s|^)((mine|my|his|whose)|(your|it|her|their|our)[s]?)(\\s|$)",
+                                        "type":"2",
+                                        "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
+                                 },
+                                 {
+                                        "pattern":"(\\s|^)((my|your|it|his|her|their|our)[self|selves])(\\s|$)",
+                                        "type":"3",
+                                        "description":"all the reflexive pronouns"
+                                 },
+                                 {
+                                        "pattern":"(\\s|^)(who|whom|what|which|that)(\\s|$)",
+                                        "type":"4",
+                                        "description":"all the relative pronouns"
+                                 },
+                                 {
+                                        "pattern":"(\\s|^)(this|these|those)(\\s|$)",
+                                        "type":"5",
+                                        "description":"all the demonstrative pronouns"
                                  }
 				]
 			}

@@ -18,9 +18,10 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
-import edu.stanford.nlp.hcoref.data.CorefChain;
-import edu.stanford.nlp.hcoref.data.Dictionaries;
+import edu.stanford.nlp.dcoref.CorefChain;
+import edu.stanford.nlp.dcoref.CorefChain.CorefMention;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations;
+import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -58,7 +59,7 @@ import org.json.simple.parser.ParseException;
  *
  * @author Giorgia Chiaradia
  */
-public class StanfordPreprocessingAnnotator implements Annotator {
+public class StanfordPreprocessingAnnotatorOld implements Annotator {
 
     /**
      * The Stanford NLP pipeline. The field is marked static to be optimized for
@@ -80,7 +81,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
     private Map<String, Integer> validPosPatterns;
     private Annotation document;
 
-    public StanfordPreprocessingAnnotator() {
+    public StanfordPreprocessingAnnotatorOld() {
         validPosPatterns = new HashMap<>();
         posDatabasePaths = new HashMap<>();
         posDatabasePaths.put(Locale.ENGLISH,
@@ -101,39 +102,66 @@ public class StanfordPreprocessingAnnotator implements Annotator {
         try {
             loadDatabase(component.getLanguage());
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StanfordPreprocessingAnnotatorOld.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        if (pipeline == null) {
+            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
+            //NER, parsing, and coreference resolution 
+            Properties props = new Properties();
+            props.put("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");
+            pipeline = new StanfordCoreNLP(props);
+
+        }
+
+        // read some text in the text variable
         String text = component.getText();
         text = text.replaceAll("\\[.*?\\]", "");
-        
+        // create an empty Annotation just with the given text
         document = new Annotation(text);
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");
-        pipeline = new StanfordCoreNLP(props);
+
         // run all Annotators on this text
         pipeline.annotate(document);
-       
-        for (CorefChain cc : document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
-            CorefChain.CorefMention cm = cc.getRepresentativeMention();
-            
-            Collection<Set<CorefChain.CorefMention>> mentionMap
-                    = cc.getMentionMap().values();
+        
 
+        //prepare the map for coreference graph of document
+        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
+                = new HashMap<>();
+
+        for (CorefChain corefChain : 
+                document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
+
+            //get the representative mention, that is the word recall in other sentences
+            CorefChain.CorefMention cm = corefChain.getRepresentativeMention();
+
+            //eliminate auto-references
+            if (corefChain.getMentionMap().size() <= 1) {
+                continue;
+            }
+
+            //get map of the references to the corefchain obj
+            Collection<Set<CorefChain.CorefMention>> mentionMap
+                    = corefChain.getMentionMap().values();
             for (Set<CorefChain.CorefMention> mentions : mentionMap) {
-                if (!mentions.isEmpty()) {
-                    for (CorefChain.CorefMention reference : mentions) {
-                        
-                            if(reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan))
-                                continue;
-                            
-                            substituteAnaphor(reference, cm.mentionSpan);
+
+                for (CorefChain.CorefMention reference : mentions) {
+                    //eliminate self-references
+                    if (reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)) {
+                        continue;
+                    }
+                    if (reference.mentionType == Dictionaries.MentionType.PRONOMINAL) {
+
+                        //check type of reference and substituete with the exact antecedent
+                        substituteAnaphor(reference, cm.mentionSpan);
                     }
                 }
+
             }
         }
-        
+
+        System.out.println("new text -----------------------------------------");
         String newText = makePreprocessedText();
+
+        System.out.println(newText);
         component.setPreprocessedText(newText);
     }
 
@@ -170,6 +198,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
     }
 
     private void substituteAnaphorByType(CoreLabel token, String mention, Integer type) {
+
         switch (type) {
             case 1: //personal pronouns (I, you, he,..., him, them,...)
                 token.setWord(mention);
@@ -177,17 +206,8 @@ public class StanfordPreprocessingAnnotator implements Annotator {
             case 2: //possessive pronouns (its, his, ...)
                 token.setWord(mention + "'s");
                 break;
-            case 3: //reflexive pronouns (myself,...)
-                token.setWord(mention);
-                break;
-            case 4: //relative pronouns (who,which, ...)
-                token.setWord(mention);
-                break;
-            case 5: //demonstrative pronouns (this, ...)
-                token.setWord(mention);
-                break;
         }
-        
+
     }
 
     private void loadDatabase(Locale lang) throws IOException, ParseException {
