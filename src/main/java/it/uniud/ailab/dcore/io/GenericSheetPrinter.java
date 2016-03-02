@@ -45,9 +45,20 @@ public abstract class GenericSheetPrinter {
     private List<String> headers;
     private List<Map<String, Either<String, Number>>> rows;
     private List<Either<String, Number>> headerTypes;
+
+    /**
+     * If the printer should allow rows with duplicate IDs or not.
+     */
     private final boolean allowDuplicates;
 
+    /**
+     * Add a column with the original text when printing {@link
+     * it.uniud.ailab.dcore.annotation.Annotable} objects.
+     */
+    private boolean printOriginalText;
+
     private final String ID_COLUMN = "ID";
+    private final String TEXT_COLUMN = "Text";
 
     /**
      * Generates a generic sheet printer specifying whether it should allow
@@ -58,7 +69,19 @@ public abstract class GenericSheetPrinter {
      */
     protected GenericSheetPrinter(boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
+        this.printOriginalText = false;
         init();
+    }
+
+    /**
+     * Add a column with the original text when printing {@link
+     * it.uniud.ailab.dcore.annotation.Annotable} objects.
+     *
+     * @param printOriginalText set the value to true to print the original text
+     * of Annotable objects.
+     */
+    public void setPrintOriginalText(boolean printOriginalText) {
+        this.printOriginalText = printOriginalText;
     }
 
     /**
@@ -192,6 +215,15 @@ public abstract class GenericSheetPrinter {
                 }
 
             }
+        }
+
+        if (printOriginalText) {
+            if (!headers.contains(TEXT_COLUMN)) {
+                headers.add(TEXT_COLUMN);
+                headerTypes.add(new Left<>(TEXT_COLUMN));
+            }
+
+            row.put(TEXT_COLUMN, new Left<>(rowId));
         }
 
         // add the row

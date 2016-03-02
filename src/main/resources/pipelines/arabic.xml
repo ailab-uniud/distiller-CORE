@@ -87,7 +87,9 @@
     </bean>
     
     <bean id="printer"
-          class="it.uniud.ailab.dcore.io.GramPrinter"/>
+          class="it.uniud.ailab.dcore.io.GramPrinter">
+        <property name="printOriginalText" value="true" />
+    </bean>
     
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">

@@ -58,6 +58,13 @@ public abstract class Annotable {
     }
     
     /**
+     * Get the original text of the annotable object.
+     * 
+     * @return the original text of the object.
+     */
+    public abstract String getText();
+    
+    /**
      * Adds an annotation to the object. If there's an annotation with the same
      * identifier, it will be overwritten.
      * 

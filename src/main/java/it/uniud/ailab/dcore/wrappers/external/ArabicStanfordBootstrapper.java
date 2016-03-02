@@ -64,11 +64,11 @@ public class ArabicStanfordBootstrapper implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         if (tagger == null) {
-            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
-            tagger = new MaxentTagger(getClass().getClassLoader().getResource("pipelines/arabic.tagger").getFile());
-            /*Properties props = new Properties();
-            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
-            pipeline = new StanfordCoreNLP(props);*/
+
+            tagger = new MaxentTagger(
+                    getClass().getClassLoader().
+                    getResource("stanford/arabic.tagger").getFile());
+
         }
         if (am == null) {
             am = new AraMorph();
@@ -76,47 +76,36 @@ public class ArabicStanfordBootstrapper implements Annotator {
         // read some text in the text variable
         String docText = component.getText();
 
-        // create an empty Annotation just with the given text
-        //Annotation document = new Annotation(text);
-        // run all Annotators on this text
-        //pipeline.annotate(document);
-        // these are all the sentences in this document
-        // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
-        //List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-        List<List<HasWord>> sentences = MaxentTagger.tokenizeText(new StringReader(docText), ArabicTokenizer.ArabicTokenizerFactory.newTokenizerFactory());
+        List<List<HasWord>> sentences = MaxentTagger.tokenizeText(
+                new StringReader(docText),
+                ArabicTokenizer.ArabicTokenizerFactory.newTokenizerFactory());        
+        
         for (List<HasWord> stanfordSentence : sentences) {
             String stanfordSentenceTxt = "";
             for (HasWord word : stanfordSentence) {
                 stanfordSentenceTxt += word.toString() + " ";
             }
-            Sentence distilledSentence = new Sentence(stanfordSentenceTxt, new Locale("ar"), stanfordSentenceTxt);
+            Sentence distilledSentence = new Sentence(stanfordSentenceTxt, 
+                    new Locale("ar"), stanfordSentenceTxt);
             //System.out.println("xxx " + distilledSentence.toString());
             //distilledSentence.setLanguage(new Locale("ar"));//Locale.ENGLISH);
-            // traversing the words in the current sentence
-            // a CoreLabel is a CoreMap with additional token-specific methods
+            
             List<TaggedWord> tagedStanfordSentence = tagger.tagSentence(stanfordSentence);
             for (TaggedWord token : tagedStanfordSentence/*.get(TokensAnnotation.class)*/) {
 
                 // this is the text of the token
-                String word = token.word();//toString();//get(TextAnnotation.class);
+                String word = token.word();
                 Token t = new Token(word);
 
                 // this is the POS tag of the token                
-                t.setPoS(token.tag());//(PartOfSpeechAnnotation.class));
-                //System.out.println(t.getText() + " : " + t.getPoS());
+                t.setPoS(token.tag());
                 if (am.analyzeToken(word)) {
                     t.setStem(((Solution) am.getWordSolutions(word).iterator().next()).getLemma());
                 } else {
                     t.setStem(word);
                 }
-                //System.out.println(t.getStem()); 
-                // this is the Stem
-                //t.setStem(token.get(LemmaAnnotation.class));
-
-                // this is the NER label of the token
-                //String ne = token.get(NamedEntityTagAnnotation.class);
-                //t.addAnnotation(
-                //  new org.uniud.dcore.persistence.Annotation("StanfordNER",word,ne));
+                
+                
                 distilledSentence.addToken(t);
             }
 

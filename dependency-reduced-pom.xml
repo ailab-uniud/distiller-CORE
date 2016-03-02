@@ -34,7 +34,7 @@
               <artifactId>aramorph</artifactId>
               <version>1.2.1</version>
               <packaging>jar</packaging>
-              <file>${basedir}/lib/ArabicAnalyzer.jar</file>
+              <file>${basedir}/lib/AraMorph.jar</file>
             </configuration>
           </execution>
         </executions>

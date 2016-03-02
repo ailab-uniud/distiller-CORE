@@ -22,10 +22,8 @@ import com.opencsv.CSVWriter;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.utils.Either;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -66,7 +64,7 @@ public class CsvPrinter extends GenericSheetPrinter {
      * Instantiates the {@code CsvPrinter} with the default options.
      */
     public CsvPrinter() {
-        this(DEFAULT_DELIMITER, DEFAULT_HEADERS,DEFAULT_DUPLICATES);
+        this(DEFAULT_DELIMITER, DEFAULT_HEADERS, DEFAULT_DUPLICATES);
     }
 
     /**
@@ -75,7 +73,7 @@ public class CsvPrinter extends GenericSheetPrinter {
      * @param delimiter delimiter of the records in a row
      */
     public CsvPrinter(char delimiter) {
-        this(delimiter, DEFAULT_HEADERS,DEFAULT_DUPLICATES);
+        this(delimiter, DEFAULT_HEADERS, DEFAULT_DUPLICATES);
     }
 
     /**
@@ -84,10 +82,10 @@ public class CsvPrinter extends GenericSheetPrinter {
      * @param delimiter delimiter of the records in a row
      * @param printHeaders true if the printer should write the headers of the
      * table; false otherwise.
-     * @param allowDuplicates true if lines with the same ID are allowed;
-     * false otherwise.
+     * @param allowDuplicates true if lines with the same ID are allowed; false
+     * otherwise.
      */
-    public CsvPrinter(char delimiter, boolean printHeaders,boolean allowDuplicates) {
+    public CsvPrinter(char delimiter, boolean printHeaders, boolean allowDuplicates) {
         super(allowDuplicates);
         this.delimiter = delimiter;
         this.printHeaders = printHeaders;
@@ -133,7 +131,7 @@ public class CsvPrinter extends GenericSheetPrinter {
 
     /**
      * Writes the annotations contained in the printer on the specified file.
-     * 
+     *
      * @param fileName the path where to write.
      */
     @Override
@@ -144,8 +142,10 @@ public class CsvPrinter extends GenericSheetPrinter {
                     = new CSVWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"),//new FileWriter(fileName),
                             delimiter, CSVWriter.DEFAULT_QUOTE_CHARACTER);
 
-            writer.writeNext(getHeaders().
-                    toArray(new String[getHeaders().size()]), false);
+            if (printHeaders) {
+                writer.writeNext(getHeaders().
+                        toArray(new String[getHeaders().size()]), false);
+            }
 
             // build the rows            
             for (Map<String, Either<String, Number>> row : this.getRows()) {

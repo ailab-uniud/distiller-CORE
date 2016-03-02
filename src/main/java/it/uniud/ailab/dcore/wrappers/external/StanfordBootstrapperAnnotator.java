@@ -18,8 +18,8 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import edu.stanford.nlp.hcoref.data.CorefChain;
 import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
+import edu.stanford.nlp.hcoref.data.CorefChain;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;

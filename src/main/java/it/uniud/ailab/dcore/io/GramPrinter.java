@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package it.uniud.ailab.dcore.io;
 
 import it.uniud.ailab.dcore.Blackboard;
@@ -27,6 +26,8 @@ import it.uniud.ailab.dcore.Blackboard;
  * @author Marco Basaldella
  */
 public class GramPrinter implements FileWriterStage {
+    
+    private boolean printOriginalText;
 
     @Override
     public String getFileSuffix() {
@@ -36,6 +37,18 @@ public class GramPrinter implements FileWriterStage {
     @Override
     public void writeFile(String file, Blackboard b) {
         CsvPrinter printer = new CsvPrinter();
+        printer.setPrintOriginalText(printOriginalText);
         printer.writeGrams(file, b);
+    }
+
+    /**
+     * Add a column with the original text when printing the {@link
+     * it.uniud.ailab.dcore.persistence.Gram}.
+     *
+     * @param printOriginalText set the value to true to print the original text
+     * of Annotable objects.
+     */
+    public void setPrintOriginalText(boolean printOriginalText) {
+        this.printOriginalText = printOriginalText;
     }
 }

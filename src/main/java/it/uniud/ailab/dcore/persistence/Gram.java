@@ -168,6 +168,16 @@ public abstract class Gram extends Annotable {
     }
     
     /**
+     * See {@code getSurface()}.
+     * 
+     * @return the original text of the gram.
+     */
+    @Override
+    public String getText() {
+        return getSurface();
+    }
+    
+    /**
      * Adds an appearance of the gram; in other words, adds the component in
      * which the gram appears to the list of the appearances.
      *
