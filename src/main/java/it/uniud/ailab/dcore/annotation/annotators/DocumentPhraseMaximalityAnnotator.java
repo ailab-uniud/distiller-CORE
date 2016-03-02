@@ -31,18 +31,20 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Annotates grams with the Maximality feature. Maximality gives a hint of
- * how much an n-gram is a concept of its own right ngrams with low
- * maximality tend to appear in the text just as subsets of longer phrases,
- * therefore are less interesting. Maximality is explained in detail in the
+ * Annotates grams with the Document Phrase Maximality  (DPM) feature. DPM gives 
+ * a hint of how much an n-gram is a concept of its own right. Ngrams with low
+ * maximality tend to appear in the text just as subsets of longer ngrams,
+ * therefore are less interesting. DPM is explained in detail in the
  * following paper http://ceur-ws.org/Vol-1384/paper2.pdf
  * 
- * WARNING : this annotator requires some other annotator to compute the 
- * frequency of n-grams in the blackboard.
+ * WARNING : this annotator requires the 
+ * {@link it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator} to
+ * be run previously in the pipeline.
  * 
  * @author Dario De Nart
+ * @author Marco Basaldella
  */
-public class PhraseMaximalityAnnotator implements Annotator {
+public class DocumentPhraseMaximalityAnnotator implements Annotator {
 
     /**
      * The phrase maximality in the document
@@ -96,10 +98,10 @@ public class PhraseMaximalityAnnotator implements Annotator {
                      // now we have a HashSet stuffed up with the superterms
                      // i.e. the n-grams that contain the current n-gram
                      Double maximality = 0.0;
-                     for(Keyphrase g2: superterms){
+                     for(Keyphrase superterm: superterms){
                          maximality = Math.max(
-                                 g2.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)/
-                                         k.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE)
+                                 superterm.getFeature(StatisticalAnnotator.FREQUENCY)/
+                                         k.getFeature(StatisticalAnnotator.FREQUENCY)
                                  , maximality);
                      }
                      k.putFeature(MAXIMALITY, 1.0-maximality);
