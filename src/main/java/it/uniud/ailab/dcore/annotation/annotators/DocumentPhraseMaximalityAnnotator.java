@@ -21,26 +21,26 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Annotates grams with the Document Phrase Maximality  (DPM) feature. DPM gives 
+ * Annotates grams with the Document Phrase Maximality (DPM) feature. DPM gives
  * a hint of how much an n-gram is a concept of its own right. Ngrams with low
  * maximality tend to appear in the text just as subsets of longer ngrams,
- * therefore are less interesting. DPM is explained in detail in the
- * following paper http://ceur-ws.org/Vol-1384/paper2.pdf
- * 
- * WARNING : this annotator requires the 
- * {@link it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator} to
- * be run previously in the pipeline.
- * 
+ * therefore are less interesting. DPM is explained in detail in the following
+ * paper http://ceur-ws.org/Vol-1384/paper2.pdf
+ *
+ * WARNING : this annotator requires the
+ * {@link it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator} to be
+ * run previously in the pipeline.
+ *
  * @author Dario De Nart
  * @author Marco Basaldella
  */
@@ -53,61 +53,55 @@ public class DocumentPhraseMaximalityAnnotator implements Annotator {
 
     /**
      * Annotates grams with the Maximality feature. Maximality gives a hint of
-     * how much an n-gram is a concept of its own right ngrams with low
+     * how much an n-gram is a concept of its own right. ngrams with low
      * maximality tend to appear in the text just as subsets of longer phrases,
-     * therefore are less interesting. Maximality is explained in detail in the
-     * following paper http://ceur-ws.org/Vol-1384/paper2.pdf
-     * 
-     * WARNING : this annotator requires some other annotator to compute the 
-     * frequency of n-grams in the blackboard.
+     * therefore are less interesting. For more information, please read the
+     * <a href="http://ceur-ws.org/Vol-1384/paper2.pdf">original paper</a>.
      *
-     * @param component the component to annotate. Only the n-grams contained in
-     * such component will be annotated. Warning: Maximality is a document-wide
-     * feature, even if just a section will be passed and annotated, the
-     * maximality indexes will be evaluated document-wise
+     * Please note that this annotator requires some other annotator to compute
+     * the frequency of n-grams in the blackboard.
      *
+     * @param blackboard the blackboard to annotate
+     * @param component this parameter will be ignored, since maximality is a
+     * document-wise feature.
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-        HashMap<String, Keyphrase> surfaces = new HashMap<>();
-        HashMap<Keyphrase, String> gram2surface = new HashMap<>();
+        Map<String, Keyphrase> surfaces = new HashMap<>();
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        for (Gram g:blackboard.getKeyphrases()){
-            Keyphrase k = (Keyphrase)g;
+
+        Collection<Keyphrase> allKPs
+                = blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);
+
+        for (Keyphrase k : allKPs) {
             String stemmedSurface = "";
-            for (Token t: g.getTokens()){
-                stemmedSurface += t.getStem() + " ";
+            for (Token t : k.getTokens()) {
+                stemmedSurface += t.getStem() + "§";
             }
-            surfaces.put(stemmedSurface.trim(), k);
-            gram2surface.put(k, stemmedSurface.trim());
+            surfaces.put("§" + stemmedSurface, k);
+
         }
-        
-        for (Sentence s : sentences) {
-            
-            for (Gram g : s.getGrams()) {
-                Keyphrase k = (Keyphrase)g;
-                // annotate grams only once 
-                 if (!k.hasFeature(MAXIMALITY)){
-                     HashSet<Keyphrase> superterms = new HashSet<>();
-                     String surface = gram2surface.get(k);
-                     for(String candidate: surfaces.keySet()){
-                         if(candidate.contains(surface)){
-                             superterms.add(surfaces.get(candidate));
-                         }
-                     }
-                     // now we have a HashSet stuffed up with the superterms
-                     // i.e. the n-grams that contain the current n-gram
-                     Double maximality = 0.0;
-                     for(Keyphrase superterm: superterms){
-                         maximality = Math.max(
-                                 superterm.getFeature(StatisticalAnnotator.FREQUENCY)/
-                                         k.getFeature(StatisticalAnnotator.FREQUENCY)
-                                 , maximality);
-                     }
-                     k.putFeature(MAXIMALITY, 1.0-maximality);
-                 }
-                
+
+        for (Keyphrase k : allKPs) {
+            String stemmedSurface = "";
+            for (Token t : k.getTokens()) {
+                stemmedSurface += t.getStem() + "§";
             }
+            stemmedSurface = "§" + stemmedSurface;
+            Double maximality = 0.0;
+            for (Map.Entry<String, Keyphrase> surface : surfaces.entrySet()) {
+
+                if (!surface.getKey().equals(stemmedSurface)
+                        && (surface.getKey().contains(stemmedSurface))) {
+
+                    double step
+                            = surface.getValue().getFeature(StatisticalAnnotator.FREQUENCY)
+                            / k.getFeature(StatisticalAnnotator.FREQUENCY);
+
+                    maximality = Math.max(step, maximality);
+                }
+            }
+            k.putFeature(MAXIMALITY, 1.0 - maximality);
         }
     }
 

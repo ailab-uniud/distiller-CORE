@@ -39,6 +39,9 @@
     <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
     
     <!-- Annotators -->  
+    <bean id="stanford" 
+          class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator"/>    
+    
     <bean id="openNLP" 
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
         <!-- Example of local models path -->
@@ -55,53 +58,13 @@
         </property>
         -->        
     </bean>
-      
-    <!-- italian and english wikipedia annotator by the University of Pisa -->
-    <!-- get your key for free writing to tagme [at] di [dot] unipi [dot] it -->
-    <!-- <bean id="tagme" 
-    class="it.uniud.ailab.dcore.annotation.annotators.TagMeTokenAnnotator" >
-  <property name="apiKey" value="BaMa2015abg0jRST342G"/>
-</bean>
-<bean id="tagmegram" 
-    class="it.uniud.ailab.dcore.annotation.annotators.TagMeGramAnnotator" /> -->
-    <!-- annotator for statistical features of grams -->
-    <bean id="statistical" 
-          class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
-    <!-- emotional intensity annotator -->
-    <bean id="syuzhet" 
-          class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
-    <!-- filter that keeps only the most important  grams (i.e. with the highest
-    calculated keyphraseness  -->
-    <bean id="skylineGramFilter" 
-          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
-    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
-        <property name="cut" value="5"/>
-    </bean> 
-    <!-- annotator that infers concept that can't be found in the document -->
-    <!-- Please insert ** your own ** user agent in the appropriate field -->
-    <bean id="wikipediaInference" 
-          class="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator" >
-        <!-- <property name="userAgent" value="Please insert your own user agent here"/> -->
-    </bean>
-    <!-- filter for keeping only the best related concepts -->
-    <bean id="relatedFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleAnnotationFilterAnnotator" >
-        <property name="range" value="10"/>
-        <property name="annotation" >
-            <util:constant 
-                static-field="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator.RELATED"/>
-        </property>
-    </bean>
-    <!-- filter for keeping only the best hypernyms -->
-    <bean id="hypernymFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleAnnotationFilterAnnotator" >
-        <property name="range" value="10"/>
-        <property name="annotation">
-            <util:constant 
-                static-field="it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator.HYPERNYMS"/>
-        </property>
-    </bean>
     
+    <bean id="stemmer"
+          class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
+    
+            
     <!-- N-gram generators -->
-    <bean id="nGramGenerator"
+    <bean id="simpleNGramGenerator"
           class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
         <!-- Example of local POS pattern paths -->
         <!--
@@ -114,9 +77,17 @@
         -->
     </bean>
     
-    <bean id="tfidf"
-          class="it.uniud.ailab.dcore.annotation.annotators.RawTdidfAnnotator"/>
-
+    <bean id="regexNGramGenerator"
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
+        <!-- Example of local POS pattern paths -->
+        <!--
+        <property name="posDatabasePaths">
+            <map key-type="java.util.Locale" value-type="java.lang.String">
+                <entry key-ref="english" value="/opt/drest/posPatterns/en-regex.json"/>
+            </map>
+        </property>
+        -->
+    </bean>
     
     <bean id="simpleStopword"
           class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
@@ -131,9 +102,21 @@
         -->
     </bean>
     
-    <bean id="stemmer"
-          class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
     
+    <!-- annotator for statistical features of grams -->
+    <bean id="statistical" 
+          class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
+    
+    <bean id="dpm"
+          class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
+    
+    <!-- filters that keeps only the most important  grams (i.e. with the highest
+    calculated keyphraseness  -->
+    <bean id="skylineGramFilter" 
+          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
+    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
+        <property name="cut" value="5"/>
+    </bean> 
     
     <!-- Evaluators -->
     <bean id="linearEvaluator"
@@ -187,33 +170,25 @@
     </bean>
     
     <bean id="printer"
-              class="it.uniud.ailab.dcore.io.GramPrinter"/>
+          class="it.uniud.ailab.dcore.io.GramPrinter"/>
     
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
                 <!-- split the document -->
-                <ref bean="openNLP"/>
+                <ref bean="stanford"/>
                 <ref bean="stemmer" />
-                <!-- annotate the tokens -->
-                <!--<ref bean="tagme"/>-->
                 <!-- generate the n-grams -->
-                <ref bean="nGramGenerator"/>
+                <ref bean="regexNGramGenerator"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
-                <!--<ref bean="tfidf" />-->
-                <!--<ref bean="tagmegram" />-->
-                <ref bean="syuzhet" />
+                <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
                 <ref bean="linearEvaluator"/>
-                <!-- infer concepts -->
-                <!--<ref bean="wikipediaInference" />-->
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
-                <!--<ref bean="hypernymFilter"/>
-                <ref bean="relatedFilter"/>-->
                 <ref bean="printer" />
             </list>
         </property>        

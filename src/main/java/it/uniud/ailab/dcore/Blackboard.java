@@ -29,6 +29,7 @@ import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
  * @author Dario De Nart
  */
 public class Blackboard {
+
     /**
      * The default document identifier.
      */
@@ -61,10 +63,10 @@ public class Blackboard {
     private DocumentComponent document;
 
     /**
-     * Container for the n-grams of the document. Every n-gram is part of a 
+     * Container for the n-grams of the document. Every n-gram is part of a
      * specific list identifying the type of n-gram. The types of n-grams are
      * the key for searching in the main n-gram list.
-     */  
+     */
     private Map<String, Map<String, Gram>> generalNGramsContainer;
 
     /**
@@ -73,7 +75,6 @@ public class Blackboard {
      * tagset used by a POS-tagger, or the overall sentiment.
      */
     private List<Annotation> annotations;
-   
 
     /**
      * Instantiates an empty blackboard.
@@ -141,7 +142,7 @@ public class Blackboard {
     public void addGram(DocumentComponent unit, Gram newGram) {
 
         Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
-        if(grams == null){
+        if (grams == null) {
             grams = new HashMap<>();
         }
         Gram gram = grams.get(newGram.getIdentifier());
@@ -162,11 +163,11 @@ public class Blackboard {
         unit.addGram(gram);
         generalNGramsContainer.put(newGram.getType(), grams);
     }
-    
+
     public void addGram(Gram newGram) {
 
         Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
-        if(grams == null){
+        if (grams == null) {
             grams = new HashMap<>();
         }
         Gram gram = grams.get(newGram.getIdentifier());
@@ -181,24 +182,28 @@ public class Blackboard {
             // add the surface of the new gram
             gram.addSurfaces(newGram.getSurfaces(), newGram.getTokenLists());
         }
-        
+
         generalNGramsContainer.put(newGram.getType(), grams);
     }
-    
-      
-    public Map<String, Gram> getGramsByType(String gramType){
+
+    public Map<String, Gram> getGramsByType(String gramType) {
         return generalNGramsContainer.get(gramType);
+    }
+
+    public <T> Collection<T> getGramsByGenericType(String gramType) {
+        return (Collection<T>)generalNGramsContainer.get(gramType).values();
     }
 
     /**
      * Retrieves the grams found in the document.
      *
-     * @return a collection of {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
+     * @return a collection of
+     * {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
      */
     @Deprecated
     public List<Gram> getKeyphrases() {
-        
-        Map<String,Gram> kps = generalNGramsContainer.get(Keyphrase.KEYPHRASE);        
+
+        Map<String, Gram> kps = generalNGramsContainer.get(Keyphrase.KEYPHRASE);
         return kps != null ? new ArrayList(kps.values()) : new ArrayList();
     }
 
@@ -212,7 +217,7 @@ public class Blackboard {
     public void removeKeyphrase(Keyphrase g) {
         generalNGramsContainer.get(Keyphrase.KEYPHRASE)
                 .remove(g.getIdentifier());
-        
+
         for (Sentence s : DocumentUtils.getSentences(document)) {
             s.removeGram(g);
         }
