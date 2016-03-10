@@ -36,6 +36,7 @@ import it.uniud.ailab.dcore.persistence.Token;
 import gpl.pierrick.brihaye.aramorph.AraMorph;
 import gpl.pierrick.brihaye.aramorph.Solution;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
 
 /**
  * A bootstrapper annotator for the English language developed using the
@@ -85,6 +86,10 @@ public class ArabicStanfordBootstrapper implements Annotator {
             for (HasWord word : stanfordSentence) {
                 stanfordSentenceTxt += word.toString() + " ";
             }
+            stanfordSentenceTxt = ArabicDocProcessing.purifyDoc(stanfordSentenceTxt);
+            if(stanfordSentenceTxt==null || stanfordSentenceTxt.length()==0)
+                continue;
+            System.out.println("hhhhhgggggggggggggggggg"+stanfordSentenceTxt);
             Sentence distilledSentence = new Sentence(stanfordSentenceTxt, 
                     new Locale("ar"), stanfordSentenceTxt);
             //System.out.println("xxx " + distilledSentence.toString());
@@ -95,6 +100,9 @@ public class ArabicStanfordBootstrapper implements Annotator {
 
                 // this is the text of the token
                 String word = token.word();
+                word = ArabicDocProcessing.purifyDoc(word);
+                if(word==null || word.length()==0)
+                    continue;
                 Token t = new Token(word);
 
                 // this is the POS tag of the token                
@@ -108,7 +116,8 @@ public class ArabicStanfordBootstrapper implements Annotator {
                 
                 distilledSentence.addToken(t);
             }
-
+            if(distilledSentence.getTokens().size()==0)
+                continue;
             ((DocumentComposite) component).addComponent(distilledSentence);
 
         }

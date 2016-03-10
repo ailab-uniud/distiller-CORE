@@ -30,7 +30,9 @@ import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.utils.Pair;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -133,7 +135,15 @@ public class Launcher {
      * @param args the command-line parameters.
      */
     public static void main(String[] args) {
-
+        PrintStream out=null;
+        try{
+            out = new PrintStream(new FileOutputStream("c:\\output\\Console.txt"), true, "UTF-8");
+            System.setOut(out);
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+        
         CommandLineParser parser = new DefaultParser();
 
         createOptions();
@@ -165,6 +175,13 @@ public class Launcher {
                     + "Please contact the developers of the framwork to get "
                     + "additional help.");
             return;
+        }
+        out.close();
+        ProcessBuilder pb = new ProcessBuilder("Notepad.exe", "c:\\output\\Console.txt");
+        try {
+            pb.start();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

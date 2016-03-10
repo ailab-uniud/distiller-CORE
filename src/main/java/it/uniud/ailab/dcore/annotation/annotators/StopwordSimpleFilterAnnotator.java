@@ -76,6 +76,9 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
         stopwordsPath.put(new Locale("pt"),
                 getClass().getClassLoader().
                 getResource("ailab/stopwords/pt-antolli.txt").getFile());
+        stopwordsPath.put(new Locale("ar"),
+                getClass().getClassLoader().
+                getResource("ailab/stopwords/generic.txt").getFile());
     }
 
     /**

@@ -24,16 +24,12 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
-import it.uniud.ailab.dcore.persistence.Mention;
-import it.uniud.ailab.dcore.persistence.Mention.Reference;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
-import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
 import java.util.List;
-import java.util.Map;
-import org.tartarus.snowball.SnowballStemmer;
+import java.util.Vector;
 
 /**
  * Implementation of Porter's Stemmer algorithm. 
@@ -74,6 +70,19 @@ public class AramorphStemmerAnnotator implements Annotator {
         
         //for every sentence
         for (Sentence sentence : sentences) {
+            /*Vector badTokens = new Vector();
+            for(int i=0; i<sentence.getTokens().size();i++){
+                String tokenText = sentence.getTokens().get(i).getText();
+                tokenText = ArabicDocProcessing.purifyDoc(tokenText);
+                if(tokenText==null || tokenText.length()==0){
+                    badTokens.add(i);
+                    continue;
+                }
+                sentence.getTokens().add(i, new Token(tokenText));
+                sentence.getTokens().remove(i+1);
+            }
+            for(int i=0; i<badTokens.size(); i++)
+                sentence.getTokens().remove(badTokens.elementAt(i));*/
             //for every token
             for (Token t : sentence.getTokens()) {
                 //set the stem form to the token
