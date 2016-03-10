@@ -223,7 +223,7 @@ public abstract class GenericSheetPrinter {
                 headerTypes.add(new Left<>(TEXT_COLUMN));
             }
 
-            row.put(TEXT_COLUMN, new Left<>(rowId));
+            row.put(TEXT_COLUMN, new Left<>(annotable.getText()));
         }
 
         // add the row
