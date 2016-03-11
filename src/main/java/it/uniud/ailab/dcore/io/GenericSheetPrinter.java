@@ -219,32 +219,27 @@ public abstract class GenericSheetPrinter {
     }
 
     /**
-     * Loads all the n-grams in the sheet.
+     * Loads all the keyphrases in the given blackboard to the sheet. 
      *
      * @param b the component to analyze.
      */
-    public void loadGrams(Blackboard b) {
+    public void loadKeyphrases(Blackboard b) {
 
-        init();
-        Collection<Gram> grams = b.getKeyphrases();
-        for (Gram g : b.getKeyphrases()) {
-            Keyphrase k = (Keyphrase) g;
-            addRow(k);
-        }
+        loadGrams(b,Keyphrase.KEYPHRASE);
     }
 
     /**
-     * Loads all the n-grams in the sheet.
+     * Loads all the n-grams in the given blackboard to the sheet.
      *
-     * @param c the component to analyze.
+     * @param b the component to analyze.
+     * @param gramIdentifier the identifier for the gram to print
      */
-    public void loadGrams(DocumentComponent c) {
+    public void loadGrams(Blackboard b, String gramIdentifier) {
 
         init();
-
-        for (Gram g : c.getGrams()) {
-            Keyphrase k = (Keyphrase) g;
-            addRow(k);
+        Collection<Gram> grams = b.getGramsByGenericType(gramIdentifier);
+        for (Gram g : grams) {
+            addRow(g);
         }
     }
 
@@ -275,17 +270,17 @@ public abstract class GenericSheetPrinter {
 
     /**
      * Adds to all rows a field with the specified value.
-     * 
+     *
      * @param key the name of the column to add.
      * @param value the value of the field to add.
      */
     public void addToAll(String key, String value) {
         headers.add(key);
         headerTypes.add(new Left<>(key));
-        for (Map<String, Either<String, Number>> row: rows) {
+        for (Map<String, Either<String, Number>> row : rows) {
             row.put(key, new Left<>(value));
         }
-        
+
     }
 
     /**

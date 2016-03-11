@@ -68,7 +68,6 @@ public class DocumentPhraseMaximalityAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         Map<String, Keyphrase> surfaces = new HashMap<>();
-        List<Sentence> sentences = DocumentUtils.getSentences(component);
 
         Collection<Keyphrase> allKPs
                 = blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);

@@ -99,7 +99,7 @@ public class CsvPrinter extends GenericSheetPrinter {
      */
     public void writeGrams(String fileName, Blackboard b) {
 
-        this.loadGrams(b);
+        this.loadKeyphrases(b);
         writeFile(fileName);
     }
 
