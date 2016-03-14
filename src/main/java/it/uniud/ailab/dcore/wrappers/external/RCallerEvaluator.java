@@ -25,35 +25,63 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
-import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
-import it.uniud.ailab.dcore.utils.Either;
 import it.uniud.ailab.dcore.utils.FileSystem;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
+ * This class allows the Disitller to evaluate the odds that an n-gram is a
+ * keyphrase by using a pre-trained machine learning model by calling a
+ * <a href="https://www.r-project.org/">R</a> process instance. The model should
+ * have been trained beforehand <i>outside</i> the Distiller.
  *
  * @author Marco Basaldella
  */
 public class RCallerEvaluator implements Annotator {
 
-    private String modelPath;
+    /**
+     * See {@link #setModelPath(java.lang.String)
+     */
+    private String modelPath = "models/keyphrase-extraction/glm.model";
 
+    /**
+     * See {@link #setModelParameters(java.lang.String) }.
+     */
     private String modelParameters;
+
+    /**
+     * Sets the path to a RFIle containing the machine learning model to be used
+     * with R's <i>predict</i> function to calculate the probability that a
+     * candidate ngram is an actual keyphrase. The path can point both to a
+     * packaged file or to an external model. The model itself should be saved
+     * as a variable called <i>model</i> inside the RData file.
+     *
+     * @param modelPath the path to the RData file containing the model.
+     */
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
+    }
+
+    /**
+     * The parameters to be used with R's <i>predict</i> function.
+     *
+     * @param modelParameters a string containing the parameters for R's
+     * <i>predict</i> function.
+     */
+    public void setModelParameters(String modelParameters) {
+        this.modelParameters = modelParameters;
+    }
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         Collection<Keyphrase> keyphrases
                 = blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);
-
-        RPrinter rPrinter = new RPrinter();
-        rPrinter.loadKeyphrases(blackboard);
-
-        rPrinter.writeFile(null);
 
         // Step 1: generate the candidates file
         FileSystem.createDirectoryIfNotExists(
@@ -67,23 +95,33 @@ public class RCallerEvaluator implements Annotator {
         candidatePrinter.loadKeyphrases(blackboard);
         candidatePrinter.writeFile(candidatePath);
 
-        // Step 2: move the models to the tmp path
-        // TODO: implement step 2
+        // Step 2: move the models to the Distiller's temporary folder
+        String tmpModelPath
+                = FileSystem.getDistillerTmpPath().
+                concat(FileSystem.getSeparator()).
+                concat("model.RData");
+
+        try {
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(
+                    FileSystem.getInputStreamFromPath(
+                            getClass().getClassLoader().
+                            getResource(modelPath).getFile()),
+                    new File(tmpModelPath)
+            );
+
+        } catch (IOException ex) {
+            Logger.getLogger(RCallerEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AnnotationException(this,
+                    "Error while copying model file to temporary directory");
+        }
+
         // Step 3: predict with R
         RCaller caller = new RCaller();
         Globals.detect_current_rscript();
         caller.setRscriptExecutable(Globals.Rscript_current);
 
-        String modelPath = getClass().
-                getClassLoader().
-                getResource("models/keyphrase-extraction/glm.model").
-                toString();
-
-        modelPath = modelPath.substring(5);
-        System.out.println(modelPath);
-
         RCode rCode = new RCode();
-        rCode.addRCode("load(\"" + modelPath + "\")");
+        rCode.addRCode("load(\"" + tmpModelPath + "\")");
         rCode.addRCode("predictions <- read.csv(\""
                 + candidatePath
                 + "\",stringsAsFactors = FALSE)");
@@ -95,6 +133,7 @@ public class RCallerEvaluator implements Annotator {
         String[] idChecks = caller.getParser().getAsStringArray("ID");
         double[] predictions = caller.getParser().getAsDoubleArray("score");
 
+        // Step 4: collect predictions and store them in the KP object.
         int kpCounter = 0;
         for (Keyphrase kp : keyphrases) {
             // coherence check: if for some reason we are getting the
@@ -106,78 +145,8 @@ public class RCallerEvaluator implements Annotator {
             kp.putFeature(
                     it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE,
                     predictions[kpCounter]);
-            
+
             kpCounter++;
         }
-
     }
-
-    private static class RPrinter extends GenericSheetPrinter {
-
-        private String colNames = "";
-
-        private String[] rows;
-
-        public RPrinter() {
-            super(false);
-        }
-
-        @Override
-        public void writeFile(String fileName) {
-
-            // Write the column names
-            colNames = "c(";
-
-            String[] headers = getHeaders().toArray(new String[getHeaders().size()]);
-            for (int i = 0; i < headers.length; i++) {
-                headers[i] = "\"" + headers[i] + "\"";
-            }
-
-            colNames = colNames + String.join(",",
-                    headers);
-
-            colNames = colNames + ")";
-
-            rows = new String[getRows().size()];
-            int currentRow = 0;
-
-            for (Map<String, Either<String, Number>> row : getRows()) {
-                String rowString = "list(";
-                String[] rowArray = new String[getHeaders().size()];
-
-                for (int i = 0; i < getHeaders().size(); i++) {
-                    String header = getHeaders().get(i);
-                    Either<String, Number> cell = row.get(header);
-
-                    if (cell == null) {
-                        if (getHeaderTypes().get(i).isLeft()) {
-                            rowArray[i] = "";
-                        } else {
-                            rowArray[i] = "0";
-                        }
-                    } else if (cell.isLeft()) { // the value is a string
-                        rowArray[i] = "\"" + cell.getLeft() + "\"";
-                    } else { // the value is a number
-                        rowArray[i]
-                                = // if there's no decimal part in the numeric
-                                // value, avoid printing ".0"
-                                cell.getRight().doubleValue()
-                                == Math.floor(cell.getRight().doubleValue())
-                                        ? String.format(
-                                                Locale.US, "%d",
-                                                cell.getRight().intValue())
-                                        : String.format(
-                                                Locale.US, "%f",
-                                                cell.getRight().doubleValue());
-                    }
-                }
-
-                rowString = rowString + String.join(",", rowArray) + ")";
-                rows[currentRow++] = rowString;
-
-            } // for (Map<String, Either<String, Number>> row : getRows())
-        }
-
-    }
-
 }
