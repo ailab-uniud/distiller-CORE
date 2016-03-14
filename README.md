@@ -10,9 +10,11 @@ The architecture of the framework and its usage is described in "Introducing Dis
 
 ## How to build and use the Distiller ##
 
-Inside the Wiki we have some guides on downloading, building and using Distiller. 
+Inside the Wiki we have some guides on [downloading, building and using Distiller](https://github.com/ailab-uniud/distiller-CORE/wiki/How-to-build-Distiller). 
 
 Distiller, by now, is distibuted in source code form only. You can open it in your favourite IDE or compile it yourself, since it's [just a simple Maven project](http://maven.apache.org/archives/maven-1.x/start/quick-start.html)). When we'll reach a stable enough codebase, we'll also publish Distiller to Maven Central or another Maven repository, to make it easier to use it in your projects.
+
+Please note that to use some features of Distiller you should install also [R](https://www.r-project.org/).
 
 ## Acknowledgements ##
 
@@ -20,6 +22,7 @@ The "dirty work" in the library is handled mainly by three libraries:
 - [Shuyo Nakatani's Language Detection Library for Java](https://github.com/shuyo/language-detection/);
 - [Apache OpenNLP](https://opennlp.apache.org/);
 - [Stanford CoreNLP](http://nlp.stanford.edu);
+- [R](https://www.r-project.org/) and the [R-caller library](https://github.com/jbytecode/rcaller);
 - [The Tartarus Snowball Stemmer](http://snowball.tartarus.org/).
 
 The Italian language implementation of the Distiller is made possible by:
@@ -40,6 +43,10 @@ If you use Distiller, please cite this paper:
   year={2015}
 }
 ```
+
+## License ##
+
+This program is free software; you can redistribuite it and/or modify it under the terms of the GNU/General Pubblic License as published the Free software Foundation; either version 2 of the License, or (at your opinion) any later version.
 
 ## References ##
 
