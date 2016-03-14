@@ -24,10 +24,12 @@ import com.github.rcaller.util.Globals;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
+import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.utils.Either;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -53,46 +55,59 @@ public class RCallerEvaluator implements Annotator {
 
         rPrinter.writeFile(null);
 
-        int kpCounter = 0;
-        String colNames = rPrinter.colNames;
+        // Step 1: generate the candidates file
+        FileSystem.createDirectoryIfNotExists(
+                FileSystem.getDistillerTmpPath());
 
+        String candidatePath = FileSystem.getDistillerTmpPath().
+                concat(FileSystem.getSeparator()).
+                concat("candidates.csv");
+
+        CsvPrinter candidatePrinter = new CsvPrinter();
+        candidatePrinter.loadKeyphrases(blackboard);
+        candidatePrinter.writeFile(candidatePath);
+
+        // Step 2: move the models to the tmp path
+        // TODO: implement step 2
+        // Step 3: predict with R
+        RCaller caller = new RCaller();
+        Globals.detect_current_rscript();
+        caller.setRscriptExecutable(Globals.Rscript_current);
+
+        String modelPath = getClass().
+                getClassLoader().
+                getResource("models/keyphrase-extraction/glm.model").
+                toString();
+
+        modelPath = modelPath.substring(5);
+        System.out.println(modelPath);
+
+        RCode rCode = new RCode();
+        rCode.addRCode("load(\"" + modelPath + "\")");
+        rCode.addRCode("predictions <- read.csv(\""
+                + candidatePath
+                + "\",stringsAsFactors = FALSE)");
+        rCode.addRCode("predictions$score <- predict(model,newdata = predictions, type=\"response\")");
+
+        caller.setRCode(rCode);
+        caller.runAndReturnResult("predictions");
+
+        String[] idChecks = caller.getParser().getAsStringArray("ID");
+        double[] predictions = caller.getParser().getAsDoubleArray("score");
+
+        int kpCounter = 0;
         for (Keyphrase kp : keyphrases) {
             // coherence check: if for some reason we are getting the
             // wrong KP from the printer, shut down everything.
-            // Position 5 comes from the fact the the output of the printer
-            // should be 'list("identifier",... )' where identifier is
-            // the identifier of the KP.
-            if (rPrinter.rows[kpCounter].indexOf(kp.getIdentifier()) != 6) {
+            if (!kp.getIdentifier().equals(idChecks[kpCounter])) {
                 throw new AnnotationException(
                         this, "ERROR: non-matching keyphrase in R code printer");
             }
-
-            String kpString = rPrinter.rows[kpCounter];
+            kp.putFeature(
+                    it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE,
+                    predictions[kpCounter]);
+            
             kpCounter++;
-
-            RCaller caller = new RCaller();
-            Globals.detect_current_rscript();
-            caller.setRscriptExecutable(Globals.Rscript_current);
-
-            String modelPath = getClass().
-                    getClassLoader().
-                    getResource("models/keyphrase-extraction/glm.model").toString();
-            
-            modelPath = modelPath.substring(5);
-            System.out.println(modelPath);
-            
-            
-            RCode rCode = new RCode();
-            rCode.addRCode("load(\"" + modelPath +"\")");
-            rCode.addRCode("colNames=" + colNames);
-            rCode.addRCode("df=data.frame(" + kpString + ")");
-            rCode.addRCode("colnames(df)=colNames");
-            rCode.addRCode("prediction=predict(model,newdata=df,type=\"response\")");
-
-            caller.setRCode(rCode);
-            caller.runAndReturnResult("prediction");
-
-            System.out.println(caller.getParser().getAsFloatArray("prediction")[0]);
         }
 
     }

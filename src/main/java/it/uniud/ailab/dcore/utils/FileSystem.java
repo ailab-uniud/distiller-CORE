@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -32,12 +33,12 @@ import java.io.InputStreamReader;
 public class FileSystem {
 
     /**
-     * Get an {@link java.io.InputStreamReader} from the provided path, 
-     * where the path can  point both to the underlying OS' file system or to 
-     * a file contained inside a JAR file.
+     * Get an {@link java.io.InputStreamReader} from the provided path, where
+     * the path can point both to the underlying OS' file system or to a file
+     * contained inside a JAR file.
      *
      * @param path the path which needs to be converted to an InputStream
-     * @return the resulting {@link java.io.InputStreamReader} 
+     * @return the resulting {@link java.io.InputStreamReader}
      * @throws FileNotFoundException if the file does not exists
      */
     public static InputStreamReader getInputStreamReaderFromPath(String path)
@@ -59,9 +60,9 @@ public class FileSystem {
     }
 
     /**
-     * Get an {@link java.io.InputStream} from the provided path, 
-     * where the path can  point both to the underlying OS' file system or to 
-     * a file contained inside a JAR file.
+     * Get an {@link java.io.InputStream} from the provided path, where the path
+     * can point both to the underlying OS' file system or to a file contained
+     * inside a JAR file.
      *
      * @param path the path which needs to be converted to an InputStream
      * @return the resulting {@link java.io.InputStream}
@@ -90,20 +91,47 @@ public class FileSystem {
      * variable.
      *
      * @return the temporary directory path.
-     * @see <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213/">
+     * @see
+     * <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213/">
      * Why are there both TMP and TEMP environment variables, and which one is
      * right?</a>
      */
     public static String getTmpPath() {
         return System.getProperty("java.io.tmpdir");
     }
-    
+
     /**
-     * Get the separator for the underlying OS. 
-     * 
+     * Get the separator for the underlying OS.
+     *
      * @return the path separator for the underlying OS.
      */
     public static String getSeparator() {
         return java.io.File.separator;
+    }
+
+    /**
+     * Creates an empty directory in the specified path. If the directory
+     * already exists, nothing is performed.
+     * 
+     * @param directoryPath the path where the new directory will be created
+     */
+    public static void createDirectoryIfNotExists(String directoryPath) {
+        File newDir = new File(directoryPath);
+
+        // if the directory does not exist, create it
+        if (!newDir.exists()) {
+            newDir.mkdir();
+        }
+    }
+    
+    /**
+     * Get the path where the Distiller puts temporary files. NOTE: you should
+     * check if the directory exists before trying to put something inside.
+     * 
+     * @return the path of the temporary folder of the Distiller.
+     */
+    public static String getDistillerTmpPath() {
+        return getTmpPath().concat(getSeparator()).concat("distiller-tmp");
+        
     }
 }
