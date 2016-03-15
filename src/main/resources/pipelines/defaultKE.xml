@@ -122,7 +122,6 @@
     <bean id="mlEvaluator"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
         <!-- Config for logistic regression -->
-        <!-- NOTE: this model DOES NOT USE the dpm feature -->
         <!--
         <property name="modelPath" value="models/keyphrase-extraction/glm.model"/>
         <property name="modelParameters" value="type=&quot;response&quot;"/>

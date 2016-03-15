@@ -41,7 +41,7 @@ public class StanfordKE {
     public static void main(String[] args) throws IOException {
         Distiller d = DistillerFactory.getStanfordCode();
         
-        File f = new File("C:\\Users\\Giorgia Chiaradia\\Desktop\\distiller-stanford\\testi\\loren.txt");
+        File f = new File(args[0]);
         
         String document = String.join(
                         " ",
@@ -56,7 +56,7 @@ public class StanfordKE {
         BlackboardUtils.printInference(b);
         
         CsvPrinter printer = new CsvPrinter();
-        printer.writeGrams("C:\\Users\\Giorgia Chiaradia\\Desktop\\distiller-stanford\\risultati",b);
+        printer.writeGrams(args[1],b);
         
     }
 }
