@@ -121,12 +121,32 @@
     <!-- Evaluators -->
     <bean id="mlEvaluator"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
+        <!-- Config for logistic regression -->
+        <!-- NOTE: this model DOES NOT USE the dpm feature -->
+        <!--
+        <property name="modelPath" value="models/keyphrase-extraction/glm.model"/>
+        <property name="modelParameters" value="type=&quot;response&quot;"/>
+        -->
+        
+        <!-- Config for neural network -->
+        <!--
+        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelParameters" value="type=&quot;raw&quot;"/>
+        <property name="requires" value="nnet" />
+        -->
+    </bean>
+    
+    <bean id="mlEvaluatorNnet"
+              class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
+        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelParameters" value="type=&quot;raw&quot;"/>
+        <property name="requires" value="nnet" />
     </bean>
     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.GramPrinter"/>
     
-    <bean id="defaultPipeline"
+    <bean id="englishPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
@@ -135,6 +155,28 @@
                 <ref bean="stemmer" />
                 <!-- generate the n-grams -->
                 <ref bean="regexNGramGenerator"/>
+                <!-- annotate the n-grmas -->
+                <ref bean="simpleStopword" />
+                <ref bean="statistical" />
+                <ref bean="dpm"/>
+                <!-- evaluate the keyphraseness -->
+                <ref bean="mlEvaluatorNnet"/> 
+                <!-- filter the non-interesting output -->
+                <!-- <ref bean="skylineGramFilter"/>-->
+                <ref bean="printer" />
+            </list>
+        </property>        
+    </bean> 
+    
+    <bean id="italianPipeline"
+          class="it.uniud.ailab.dcore.Pipeline">
+        <property name="stages">
+            <list>
+                <!-- split the document -->
+                <ref bean="openNLP"/>
+                <ref bean="stemmer" />
+                <!-- generate the n-grams -->
+                <ref bean="simpleNGramGenerator"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
@@ -156,11 +198,11 @@
                  value-type="it.uniud.ailab.dcore.annotation.Pipeline">
                 <entry
                     key-ref="english" 
-                    value-ref="defaultPipeline">
+                    value-ref="englishPipeline">
                 </entry>
                 <entry
                     key-ref="italian" 
-                    value-ref="defaultPipeline">
+                    value-ref="italianPipeline">
                 </entry>
             </map>
         </property>

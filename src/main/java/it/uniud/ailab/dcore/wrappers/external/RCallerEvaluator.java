@@ -52,14 +52,20 @@ public class RCallerEvaluator implements Annotator {
     /**
      * See {@link #setModelParameters(java.lang.String) }.
      */
-    private String modelParameters;
+    private String modelParameters = "type=\"response\"";
+
+    /**
+     * See {@link #setRequires(java.lang.String) }.
+     */
+    private String requires = "";
 
     /**
      * Sets the path to a RFIle containing the machine learning model to be used
      * with R's <i>predict</i> function to calculate the probability that a
      * candidate ngram is an actual keyphrase. The path can point both to a
      * packaged file or to an external model. The model itself should be saved
-     * as a variable called <i>model</i> inside the RData file.
+     * as a variable called <i>model</i> inside the RData file. The default
+     * value points to an embedded logistic regression model.
      *
      * @param modelPath the path to the RData file containing the model.
      */
@@ -68,13 +74,24 @@ public class RCallerEvaluator implements Annotator {
     }
 
     /**
-     * The parameters to be used with R's <i>predict</i> function.
+     * The parameters to be used with R's <i>predict</i> function. The default
+     * value adds the parameters for the default logistic regression model.
      *
      * @param modelParameters a string containing the parameters for R's
      * <i>predict</i> function.
      */
     public void setModelParameters(String modelParameters) {
         this.modelParameters = modelParameters;
+    }
+
+    /**
+     * The packages required by R to run the predict command, separated by a
+     * comma.
+     *
+     * @param requires packages required by R, separated by comma.
+     */
+    public void setRequires(String requires) {
+        this.requires = requires;
     }
 
     @Override
@@ -113,6 +130,10 @@ public class RCallerEvaluator implements Annotator {
             Logger.getLogger(RCallerEvaluator.class.getName()).log(Level.SEVERE, null, ex);
             throw new AnnotationException(this,
                     "Error while copying model file to temporary directory");
+        } catch (NullPointerException ex) {
+            // The model required is not packaged in the JAR: just use
+            // the provided path
+            tmpModelPath = modelPath;
         }
 
         // Step 3: predict with R
@@ -121,11 +142,28 @@ public class RCallerEvaluator implements Annotator {
         caller.setRscriptExecutable(Globals.Rscript_current);
 
         RCode rCode = new RCode();
+
+        // load packages (if any)
+        if (requires != null && !requires.isEmpty()) {
+            String[] packageNames = requires.split(",");
+            for (String packageName : packageNames) {
+                rCode.addRCode("require(\"" + packageName + "\")");
+            }
+        }
+
         rCode.addRCode("load(\"" + tmpModelPath + "\")");
         rCode.addRCode("predictions <- read.csv(\""
                 + candidatePath
                 + "\",stringsAsFactors = FALSE)");
-        rCode.addRCode("predictions$score <- predict(model,newdata = predictions, type=\"response\")");
+
+        String prediction = "predictions$score <- predict(model,newdata = predictions";
+
+        if (modelParameters != null && !modelParameters.isEmpty()) {
+            prediction = prediction.concat(",").concat(modelParameters);
+        }
+        prediction = prediction.concat(")");
+
+        rCode.addRCode(prediction);
 
         caller.setRCode(rCode);
         caller.runAndReturnResult("predictions");
