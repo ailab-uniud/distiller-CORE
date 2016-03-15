@@ -27,40 +27,41 @@ import it.uniud.ailab.dcore.Stage;
  * @author Marco Basaldella
  */
 public interface FileWriterStage extends Stage {
-    
+
     /**
-     * To avoid confusion, each different {@link it.uniud.ailab.dcore.io.FileWriterStage}
-     * should write files using a different suffix, defining such suffix using
-     * this method return value.
-     * 
+     * To avoid confusion, each different
+     * {@link it.uniud.ailab.dcore.io.FileWriterStage} should write files using
+     * a different suffix, defining such suffix using this method return value.
+     *
      * @return the suffix of the file to write.
      */
     public abstract String getFileSuffix();
-    
+
     /**
-     * Writes informations from the {@link it.uniud.ailab.dcore.Blackboard} in 
-     * a file, which path is specified as parameter. 
-     * 
+     * Writes informations from the {@link it.uniud.ailab.dcore.Blackboard} in a
+     * file, which path is specified as parameter.
+     *
      * @param file the path of the file to write.
      * @param b the Blackboard to read.
      */
     public abstract void writeFile(String file, Blackboard b);
-    
+
     /**
-     * This method allows the {@link it.uniud.ailab.dcore.Pipeline}
-     * to run the Stage. This default implementation allows the concrete 
+     * This method allows the {@link it.uniud.ailab.dcore.Pipeline} to run the
+     * Stage. This default implementation allows the concrete
      * {@link it.uniud.ailab.dcore.io.FileWriterStage}s to ignore the overlying
      * pipeline.
-     * 
+     *
      * @param b the Blackboard to read.
      */
     @Override
     default void run(Blackboard b) {
         writeFile(
-                IOBlackboard.getOutputPathPrefix()
-                + "." +
-                getFileSuffix(),
-                b);        
+                IOBlackboard.getOutputPathPrefix().
+                concat(".").
+                concat(getFileSuffix()).
+                concat(".csv"),
+                b);
     }
-    
+
 }
