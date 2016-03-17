@@ -21,7 +21,6 @@ package it.uniud.ailab.dcore.annotation.annotators;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This annotator removes all the non-relevant grams from the blackboard, 
+ * This annotator removes all the non-relevant keyphrases from the blackboard, 
  * keeping only the best N.
  * 
  * @author Marco Basaldella
@@ -56,12 +55,13 @@ public class SimpleCutFilterAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         
         // get the grams and order them by score
-        Collection<Gram> grams = blackboard.getKeyphrases();
+        Collection<Keyphrase> grams = 
+                blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
-        for (Gram g : grams) {
-            Keyphrase k = (Keyphrase)g;
-            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
+        for (Keyphrase k : grams) {
+            scoredGrams.put(k, 
+                    k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
         List<Map.Entry<Keyphrase, Double>> gramsToTrash
@@ -72,14 +72,13 @@ public class SimpleCutFilterAnnotator implements Annotator {
         // now the have the gram ordered by score. 
         // we keep the best n grams (where n = cut) and remove the others.
         
-        // keep the first 5%
         for (int i = 0; i < cut; i++) {
             gramsToTrash.remove(0);
         }
         
         // now remove the remaining grams from the blackboard.        
         for (Map.Entry<Keyphrase, Double> e : gramsToTrash) 
-            blackboard.removeKeyphrase(e.getKey());        
+            blackboard.removeGram(Keyphrase.KEYPHRASE,e.getKey());        
     }
     
 }

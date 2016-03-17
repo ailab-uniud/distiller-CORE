@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rits.cloning.Cloner;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,6 +117,7 @@ public class Blackboard {
      * @return the {@link it.uniud.ailab.dcore.persistence.DocumentComponent}
      * root object.
      */
+    @JsonIgnore
     public DocumentComponent getStructure() {
         return document;
     }
@@ -185,6 +187,10 @@ public class Blackboard {
 
         generalNGramsContainer.put(newGram.getType(), grams);
     }
+    
+    public Map<String,Map<String,Gram>> getGrams() {
+        return generalNGramsContainer;
+    }
 
     public Map<String, Gram> getGramsByType(String gramType) {
         return generalNGramsContainer.get(gramType);
@@ -201,6 +207,7 @@ public class Blackboard {
      * {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
      */
     @Deprecated
+    @JsonIgnore
     public List<Gram> getKeyphrases() {
 
         Map<String, Gram> kps = generalNGramsContainer.get(Keyphrase.KEYPHRASE);
@@ -216,6 +223,22 @@ public class Blackboard {
     @Deprecated
     public void removeKeyphrase(Keyphrase g) {
         generalNGramsContainer.get(Keyphrase.KEYPHRASE)
+                .remove(g.getIdentifier());
+
+        for (Sentence s : DocumentUtils.getSentences(document)) {
+            s.removeGram(g);
+        }
+    }
+    
+    /**
+     * Removes a gram from the document because it's no more relevant, or
+     * useful, or for whatever reason an annotator thinks so.
+     *
+     * @param type the type of the gram to remove
+     * @param g the gram to remove.
+     */
+    public void removeGram(String type,Gram g) {
+        generalNGramsContainer.get(type)
                 .remove(g.getIdentifier());
 
         for (Sentence s : DocumentUtils.getSentences(document)) {
