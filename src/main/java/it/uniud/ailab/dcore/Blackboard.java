@@ -204,10 +204,14 @@ public class Blackboard {
      * 
      * @param <T> the type of the grams to achieve
      * @param gramType the identifier of the gram type
-     * @return a collection with all the grams with match type and identifier
+     * @return a collection with all the grams with match type and identifier,
+     * null if there is no match.
      */
-    public <T> Collection<T> getGramsByType(String gramType) {
-        return (Collection<T>)generalNGramsContainer.get(gramType).values();
+    public <T> Collection<T> getGramsByType(String gramType) {        
+        return 
+                generalNGramsContainer.containsKey(gramType) ?
+                (Collection<T>)generalNGramsContainer.get(gramType).values() :
+                null;
     }
 
     /**

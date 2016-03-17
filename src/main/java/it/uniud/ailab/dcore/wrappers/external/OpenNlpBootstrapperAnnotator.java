@@ -41,8 +41,11 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A bootstrapper annotator for the English language developed using the Apache
@@ -151,7 +154,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         if (databasePaths.entrySet().isEmpty()) {
             setDefaultModels();
         }
-        
+
         // Download the models (if necessary)
         prepareModels();
     }
@@ -189,6 +192,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      *
      */
     private static void prepareModels() {
+        
 
         Map<String, String> correctPaths = new HashMap<>();
 
@@ -203,14 +207,22 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 // if we're dealing with a local file, then
                 // we don't care and continue.
                 if (isLocalFile(url)) {
-                    //LOG.log(Level.INFO, "Using {0} as local path...", e.getValue());
+                    Logger.getLogger(OpenNlpBootstrapperAnnotator.class.getName()).
+                            log(Level.INFO, "Using {0} as local path...",e.getValue());
                     continue;
                 }
 
                 // Download the new file and put it in a local folder
-                String newFileName = "OpenNLPmodels/"
-                        + url.getPath().substring(url.getPath().lastIndexOf("/") + 1,
-                                url.getPath().length());
+                String newFileName
+                        = FileSystem.getDistillerTmpPath()
+                        .concat(FileSystem.getSeparator())
+                        .concat("OpenNLPmodels")
+                        .concat(FileSystem.getSeparator())
+                        .concat(
+                                url.getPath().substring(url.getPath()
+                                        .lastIndexOf("/") + 1,
+                                        url.getPath().length())
+                        );
                 ;
 
                 // Check if the file already exists (i.e. we have probably
@@ -223,9 +235,12 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                     continue;
                 }
 
-                //LOG.log(Level.INFO, "Starting to download {0}", url.toString());
+                                
+                Logger.getLogger(OpenNlpBootstrapperAnnotator.class.getName()).
+                            log(Level.INFO, "Downloading model from {0}...",e.getValue());
                 FileUtils.copyURLToFile(url, f);
-                //LOG.log(Level.INFO, "OpenNLP database saved in {0}", f.getCanonicalPath());
+                Logger.getLogger(OpenNlpBootstrapperAnnotator.class.getName()).
+                        log(Level.INFO, "OpenNLP database saved in {0}", f.getCanonicalPath());
 
                 correctPaths.put(entryKey, f.getAbsolutePath());
 
@@ -234,8 +249,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
             } catch (IOException ex) {
                 //LOG.log(Level.SEVERE, "Savefile error", ex);
                 throw new AnnotationException(
-                        new OpenNlpBootstrapperAnnotator()
-                        , "Failed to download " + e.getValue(), ex);
+                        new OpenNlpBootstrapperAnnotator(), "Failed to download " + e.getValue(), ex);
             } finally {
 
                 // if something went wrong, put the default value.
@@ -411,15 +425,15 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
 
     /**
      * Utility offered to other elements of the pipeline for text tokenizing.
-     * 
+     *
      * @param text the text to tokenize
      * @param language the language of the input text
      * @return an array containing the tokenized text.
      */
-    public static String[] tokenizeText(String text,String language) {
-        
+    public static String[] tokenizeText(String text, String language) {
+
         setup();
-        
+
         // Split the text into sentences
         SentenceModel sentModel = getSentenceModel(language + "-sent");
 
@@ -432,19 +446,19 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         // Iterate through sentences and produce the distilled objects, 
         // i.e. a sentence object with pos-tagged and stemmed tokens.
         List<String> tokenizedText = new ArrayList<>();
-        
+
         for (String sentenceString : sentences) {
 
             // Tokenize the sentence
             Tokenizer tokenizer = new TokenizerME(tokenModel);
             String tokens[] = tokenizer.tokenize(sentenceString);
-            for (String token : tokens)
+            for (String token : tokens) {
                 tokenizedText.add(token);
+            }
         }
         return tokenizedText.toArray(new String[tokenizedText.size()]);
     }
-    
-    
+
     //</editor-fold>
     // <editor-fold desc="utilities">
     private static boolean isLocalFile(URL url) {
