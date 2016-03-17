@@ -67,7 +67,7 @@ public class DocumentPhraseMaximalityAnnotator implements Annotator {
         Map<String, Keyphrase> surfaces = new HashMap<>();
 
         Collection<Keyphrase> allKPs
-                = blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);
+                = blackboard.getGramsByType(Keyphrase.KEYPHRASE);
 
         for (Keyphrase k : allKPs) {
             String stemmedSurface = "";

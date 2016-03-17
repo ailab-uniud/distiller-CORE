@@ -56,7 +56,7 @@ public class SimpleCutFilterAnnotator implements Annotator {
         
         // get the grams and order them by score
         Collection<Keyphrase> grams = 
-                blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);
+                blackboard.getGramsByType(Keyphrase.KEYPHRASE);
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
         for (Keyphrase k : grams) {

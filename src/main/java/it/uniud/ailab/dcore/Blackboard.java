@@ -188,20 +188,30 @@ public class Blackboard {
         generalNGramsContainer.put(newGram.getType(), grams);
     }
     
+    /**
+     * Get the all the different kind of grams found in the document. This
+     * grams are divided by type, stored in a Map using their identifier as 
+     * key.
+     * 
+     * @return all the maps found in the document.
+     */
     public Map<String,Map<String,Gram>> getGrams() {
         return generalNGramsContainer;
     }
 
-    public Map<String, Gram> getGramsByType(String gramType) {
-        return generalNGramsContainer.get(gramType);
-    }
-
-    public <T> Collection<T> getGramsByGenericType(String gramType) {
+    /**
+     * Get all the grams of a given type found in the blackboard.
+     * 
+     * @param <T> the type of the grams to achieve
+     * @param gramType the identifier of the gram type
+     * @return a collection with all the grams with match type and identifier
+     */
+    public <T> Collection<T> getGramsByType(String gramType) {
         return (Collection<T>)generalNGramsContainer.get(gramType).values();
     }
 
     /**
-     * Retrieves the grams found in the document.
+     * Retrieves the keyphrases found in the document.
      *
      * @return a collection of
      * {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
@@ -215,19 +225,14 @@ public class Blackboard {
     }
 
     /**
-     * Removes a gram from the document because it's no more relevant, or
+     * Removes a keyphrase from the document because it's no more relevant, or
      * useful, or for whatever reason an annotator thinks so.
      *
      * @param g the gram to remove.
      */
     @Deprecated
     public void removeKeyphrase(Keyphrase g) {
-        generalNGramsContainer.get(Keyphrase.KEYPHRASE)
-                .remove(g.getIdentifier());
-
-        for (Sentence s : DocumentUtils.getSentences(document)) {
-            s.removeGram(g);
-        }
+        removeGram(Keyphrase.KEYPHRASE,g);
     }
     
     /**
@@ -276,8 +281,22 @@ public class Blackboard {
                 collect(Collectors.toList());
     }
 
+    /**
+     * Remove an annotation from the blackboard.
+     * 
+     * @param ann the annotation to remove.
+     */
     public void removeAnnotation(Annotation ann) {
         annotations.remove(ann);
+    }
+    
+    /**
+     * Get the language of the document root.
+     * 
+     * @return the language of the document root.
+     */
+    public String getDocumentLanguage() {
+        return getStructure().getLanguage().getLanguage();
     }
 
 }
