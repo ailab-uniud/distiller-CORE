@@ -10,7 +10,7 @@
 				 },
                                  {
                                      
-                                        "pattern":"(\\s|^)((mine|my|his|whose)|(your|it|her|their|our)[s]?)(\\s|$)",
+                                        "pattern":"(\\s|^)((mine|my|its|his|whose)|(your|her|their|our)[s]?)(\\s|$)",
                                         "type":"2",
                                         "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
                                  },

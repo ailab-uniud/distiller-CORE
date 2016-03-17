@@ -77,6 +77,12 @@ public class Blackboard {
     private List<Annotation> annotations;
 
     /**
+     * Lines of text which compose the document. This list is used to create section
+     * and preprocessing text to annotate it with anaphors.
+     */
+    private List<String> textLines = new ArrayList<>();
+    
+    /**
      * Instantiates an empty blackboard.
      */
     public Blackboard() {
@@ -128,6 +134,24 @@ public class Blackboard {
     public String getText() {
         return rawText;
     }
+    
+    /**
+     * Gets the list of lines (i.e. unprocessed) of the document.
+     *
+     * @return the original document string divided by lines.
+     */
+    public List<String> getTextLines() {
+        return textLines;
+    }
+    
+    /**
+     * Sets the list of lines (i.e. unprocessed) of the document.
+     * @param lines the lines of text (divided by \n space) 
+     */
+    public void setTextLines(List<String> lines) {
+        this.textLines = lines;
+    }
+
 
     /**
      * Adds a Gram in the Gram Container, merging grams with the same

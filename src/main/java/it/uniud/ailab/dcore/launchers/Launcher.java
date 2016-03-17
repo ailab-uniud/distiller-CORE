@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.apache.commons.cli.CommandLine;
@@ -119,6 +120,11 @@ public class Launcher {
      * Verbose mode flag.
      */
     private static boolean verbose = false;
+    
+    /**
+     * Preprocess mode. Use this only if you want to preprocess text using sections.
+     */
+    private static boolean preprocess;
 
     /**
      * The dataset that will be used to perform evaluation or training.
@@ -254,6 +260,10 @@ public class Launcher {
         if (cmd.hasOption("v")) {
             verbose = true;
         }
+        
+        if(cmd.hasOption("p")){
+            preprocess = true;
+        }
 
         if (cmd.hasOption("l")) {
             language = new Locale(cmd.getOptionValue("l"));
@@ -356,6 +366,12 @@ public class Launcher {
         options.addOption(Option.builder("v")
                 .longOpt("verbose")
                 .desc("Print details while extracting")
+                .hasArg(false)
+                .build());
+        
+        options.addOption(Option.builder("p")
+                .longOpt("preprocess")
+                .desc("Preprocess text using sections")
                 .hasArg(false)
                 .build());
 
@@ -562,7 +578,13 @@ public class Launcher {
                 + FileSystem.getSeparator()
                 + fileName);
 
-        distiller.distill(document);
+        List<String> docLines = new ArrayList<>();
+        if(preprocess){
+            docLines = loadDocumentAsList(filePath);
+            distiller.distill(document,docLines);
+        } else {
+            distiller.distill(document);
+        }
 
     }
 
@@ -623,6 +645,68 @@ public class Launcher {
         return document;
     }
 
+    /**
+     * Load the document dividing text into lines and collect them in a list, 
+     * trying different charsets. The charset tried, are, in
+     * order:
+     * <ul>
+     * <li>UTF-16;</li>
+     * <li>UTF-8;</li>
+     * <li>US-ASCII.</li>
+     * </ul>
+     *
+     * @param filePath the path of the document
+     * @return the text of the document
+     * @throws IOException if the charset is not supported
+     */
+    private static List<String> loadDocumentAsList(File filePath) throws IOException {
+
+        
+        List<String> lines = new ArrayList<>();
+
+        IOException exception = null;
+        // try different charsets. if none is recognized, throw the
+        // exception detected when reading.
+        try {
+            
+            lines = Files.readAllLines(
+                    filePath.toPath(), StandardCharsets.UTF_8);
+
+        } catch (java.nio.charset.MalformedInputException e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            try {
+                exception = null;
+                
+                lines = Files.readAllLines(
+                    filePath.toPath(), StandardCharsets.UTF_16);
+
+            } catch (java.nio.charset.MalformedInputException e) {
+                exception = e;
+            }
+        }
+
+        if (exception != null) {
+            try {
+                exception = null;
+                
+                lines = Files.readAllLines(
+                    filePath.toPath(), StandardCharsets.US_ASCII);
+
+            } catch (java.nio.charset.MalformedInputException e) {
+                exception = e;
+            }
+        }
+
+        // no charset has been recognized
+        if (exception != null) {
+            throw exception;
+        }
+        return lines;
+    }
+    
     /**
      * Distill the content of a directory.
      *

@@ -65,8 +65,6 @@ public class StanfordPreprocessingAnnotator implements Annotator {
      * re-use, so that subsequent calls of annotate() don't have to reload
      * definitions every time, even for different instances of the annotator.
      */
-    private static StanfordCoreNLP pipeline = null;
-
     /**
      * The languages that the n-gram generator will process and their POS
      * pattern database paths.
@@ -78,7 +76,8 @@ public class StanfordPreprocessingAnnotator implements Annotator {
      * pattern.
      */
     private Map<String, Integer> validPosPatterns;
-    private Annotation document;
+    private String txt;
+    private List<String> lines;
 
     public StanfordPreprocessingAnnotator() {
         validPosPatterns = new HashMap<>();
@@ -103,41 +102,101 @@ public class StanfordPreprocessingAnnotator implements Annotator {
         } catch (IOException | ParseException ex) {
             Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        String text = component.getText();
-        text = text.replaceAll("\\[.*?\\]", "");
-        
-        document = new Annotation(text);
+
+        lines = blackboard.getTextLines();
+
+        int i = 0;
+        txt = "";
+        boolean inSect = true;
+        String section = "";
+
+        while (i < lines.size()) {
+            String currentLine = lines.get(i);
+            String nextLine = "";
+
+            if (currentLine.matches("^ABSTRACT$|^Abstract$")) { //if line contains only capital letters
+                
+                String preProSection = analyzeSection(section);
+                txt = txt + preProSection ;
+                section = "";
+                
+                txt = txt + "\n" + currentLine + ".\n";
+                i++;
+                inSect = false;
+       
+
+            } else if (currentLine.matches("([0-9\\.]+|[0-9]+\\.+)[\\s(A-Z|a-z):?]+")) {
+                
+                String preProSection = analyzeSection(section);
+                txt = txt + preProSection ;
+                section = "";
+                
+                if (i + 1 < lines.size()
+                        && lines.get(i + 1).matches("^[A-Z]+$|[A-Z]+")) { //and the prevoius one too
+                    nextLine = lines.get(i + 1);
+                    txt = txt + "\n" + currentLine + " " + nextLine + ".\n";
+                    i = i + 2;
+
+                } else if (i + 1 < lines.size()
+                        && lines.get(i + 1).matches("([0-9\\.]+|[0-9]+\\.+)[\\s(A-Z|a-z):?]+")) {
+                    nextLine = lines.get(i + 1);
+                    txt = txt + "\n" + currentLine + ".\n";
+                    txt = txt + "\n" + nextLine + ".\n";
+                    i = i + 2;
+                } else {
+                    txt = txt + "\n" + currentLine + ".\n";
+                    i++;
+                }
+                inSect = false;
+            } else {
+                inSect = true;
+            }
+            
+            if(inSect){
+                section = section + currentLine + " ";
+                
+                i++;
+                
+            } 
+            
+
+        }
+
+        component.setPreprocessedText(txt);
+    }
+
+    private String analyzeSection(String section) {
+        Annotation document = new Annotation(section);
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");
-        pipeline = new StanfordCoreNLP(props);
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,dcoref");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         // run all Annotators on this text
         pipeline.annotate(document);
-       
+
         for (CorefChain cc : document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
             CorefChain.CorefMention cm = cc.getRepresentativeMention();
-            
+
             Collection<Set<CorefChain.CorefMention>> mentionMap
                     = cc.getMentionMap().values();
 
             for (Set<CorefChain.CorefMention> mentions : mentionMap) {
                 if (!mentions.isEmpty()) {
                     for (CorefChain.CorefMention reference : mentions) {
-                        
-                            if(reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan))
-                                continue;
-                            
-                            substituteAnaphor(reference, cm.mentionSpan);
+
+                        if (reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)) {
+                            continue;
+                        }
+
+                        substituteAnaphor(reference, cm.mentionSpan, document);
                     }
                 }
             }
         }
-        
-        String newText = makePreprocessedText();
-        component.setPreprocessedText(newText);
+        String preprocessedSection = makePreprocessedText(document);
+        return preprocessedSection;
     }
 
-    private void substituteAnaphor(CorefChain.CorefMention reference, String mention) {
+    private void substituteAnaphor(CorefChain.CorefMention reference, String mention, Annotation document) {
 
         String anaphor = reference.mentionSpan.toLowerCase();
         Integer type = 0;
@@ -148,7 +207,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
             }
         }
 
-        if(type > 0){//is a pronominal anaphor
+        if (type > 0) {//is a pronominal anaphor
             //get the list of tokens which form the sentence in which the anaphor appear
             List<CoreLabel> tokens = document.get(SentencesAnnotation.class)
                     .get(reference.sentNum - 1).get(TokensAnnotation.class);
@@ -187,7 +246,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
                 token.setWord(mention);
                 break;
         }
-        
+
     }
 
     private void loadDatabase(Locale lang) throws IOException, ParseException {
@@ -221,7 +280,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
         }
     }
 
-    private String makePreprocessedText() {
+    private String makePreprocessedText(Annotation document) {
         String newText = "";
         List<CoreMap> sentences = document.get(SentencesAnnotation.class);
         for (CoreMap s : sentences) {
@@ -237,7 +296,18 @@ public class StanfordPreprocessingAnnotator implements Annotator {
 
             }
             newText = newText + " " + sentence;
+
         }
+
         return newText;
     }
+
+    private String createSection(int startS, int endS) {
+        String s = "";
+        for (int i = startS; i <= endS; i++) {
+            s = s + lines.get(i) + " ";
+        }
+        return s;
+    }
+
 }

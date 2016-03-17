@@ -147,6 +147,58 @@ public class Distiller {
         return verbose;
     }
     
+    /**
+     * Perform the extraction of keyphrases of a specified string, and returns
+     * the blackboard filled with document and annotations.
+     *
+     * @param text the text to distill.
+     * @return the blackboard filled with the processed text
+     */
+    public Blackboard distillToBlackboard(String text, List<String> textLines) {
+
+        blackboard = new Blackboard();
+        blackboard.createDocument(text);
+        blackboard.setTextLines(textLines);
+
+        if (documentLocale == null) // if no language has been set, automatically detect it.
+        {
+            if (languageDetector != null) {
+                languageDetector.annotate(blackboard, blackboard.getStructure());
+            } else // but if there's no language and no language detector, 
+            // throw an exception.
+            {
+                throw new DistillerException(
+                        "I can't decide the language of the document: no language is specified and no language detector is set.");
+            }
+        } else // set the pre-determined language
+        {
+            blackboard.getStructure().setLanguage(documentLocale);
+        }
+
+        Pipeline pipeline = pipelines.get(blackboard.getStructure().getLanguage());
+
+        if (pipeline == null) {
+            throw new DistillerException("No pipeline for the language "
+                    + blackboard.getStructure().getLanguage().getLanguage());
+        }
+
+        for (Stage stage : pipeline.getStages()) {
+            
+            if (verbose) {
+                System.out.println(String.format("Running %s...",
+                        getStageName(stage)));
+            }
+            
+            stage.run(blackboard);
+        }
+        
+        if (verbose) {
+            System.out.println("Extraction complete!");
+            System.out.println();
+        }
+
+        return blackboard;
+    }
     
     /**
      * Perform the extraction of keyphrases of a specified string, and returns
@@ -215,6 +267,87 @@ public class Distiller {
         output.setOriginalText(text);
 
         distillToBlackboard(text);
+
+        output.setDetectedLanguage(blackboard.getStructure().
+                getLanguage().getLanguage());
+
+        // Copy the grams, sorted by descending score
+        output.initializeGrams(blackboard.getKeyphrases().size());
+        
+        Collection<Gram> grams = blackboard.getKeyphrases();
+        Map<Keyphrase, Double> scoredGrams = new HashMap<>();
+
+        for (Gram g : grams) {
+            Keyphrase k = (Keyphrase)g;
+            scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
+        }
+
+        List<Map.Entry<Keyphrase, Double>> sortedGrams
+                = scoredGrams.entrySet().stream().sorted(
+                        Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < output.getGrams().length; i++) {
+            DetectedGram gram = output.getGrams()[i];
+            Keyphrase originalGram = sortedGrams.get(i).getKey();
+            gram.setSurface(originalGram.getSurface());
+            gram.setKeyphraseness(originalGram.getFeature(
+                    it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE));
+
+            UriAnnotation wikiAnn = (UriAnnotation) originalGram.getAnnotation(WIKIURI);
+            if (wikiAnn != null) {
+                gram.setConceptName(wikiAnn.getSurface());
+                gram.setConceptPath(wikiAnn.getUri().toASCIIString());
+            }
+        }
+
+        output.initializeRelatedConcepts(blackboard.getAnnotations(
+                WikipediaInferenceAnnotator.RELATED).size());
+
+        for (int i = 0; i < output.getRelatedConcepts().length; i++) {
+            InferredConcept related = output.getRelatedConcepts()[i];
+            InferenceAnnotation originalRelatedConcept
+                    = (InferenceAnnotation) blackboard.getAnnotations(
+                            WikipediaInferenceAnnotator.RELATED).get(i);
+
+            related.setConcept(originalRelatedConcept.getConcept());
+            related.setConceptPath(originalRelatedConcept.getUri().toASCIIString());
+            related.setScore(originalRelatedConcept.getScore());
+        }
+
+        output.initializeHypernyms(blackboard.getAnnotations(
+                WikipediaInferenceAnnotator.HYPERNYMS).size());
+
+        for (int i = 0; i < output.getHypernyms().length; i++) {
+            InferredConcept hypernym = output.getHypernyms()[i];
+            InferenceAnnotation originalHypernym = (InferenceAnnotation) blackboard.getAnnotations(
+                    WikipediaInferenceAnnotator.HYPERNYMS).get(i);
+
+            hypernym.setConcept(originalHypernym.getConcept());
+            hypernym.setConceptPath(originalHypernym.getUri().toASCIIString());
+            hypernym.setScore(originalHypernym.getScore());
+        }
+
+        output.setExtractionCompleted(true);
+
+        return output;
+    }
+    
+    /**
+     * Perform the extraction of keyphrases of a specified string, and returns a
+     * developer-friendly object that allows quick access to the extracted
+     * information.
+     *
+     * @param text the text to extract
+     * @return the distilled output
+     */
+    public DistilledOutput distill(String text, List<String> textLines) {
+
+        DistilledOutput output = new DistilledOutput();
+
+        output.setOriginalText(text);
+
+        distillToBlackboard(text,textLines);
 
         output.setDetectedLanguage(blackboard.getStructure().
                 getLanguage().getLanguage());
