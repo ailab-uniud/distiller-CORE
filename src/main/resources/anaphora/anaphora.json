@@ -3,7 +3,7 @@
 			{ 
 				"anaphoricPP":[
 				 {
-					"pattern":"(\\s|^)(i|you|he|she|it|they|me|us)(\\s|$)",
+					"pattern":"(\\s|^)(you|he|she|it|they|me|us)(\\s|$)",
                                         "type":"1",
                                         "description":"all the personal pronouns, use as subject or direct objects"
                                         
@@ -15,7 +15,7 @@
                                         "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
                                  },
                                  {
-                                        "pattern":"(\\s|^)((my|your|it|his|her|their|our)[self|selves])(\\s|$)",
+                                        "pattern":"(\\s|^)((my|your|it|his|her|their|our)(self|selves))(\\s|$)",
                                         "type":"3",
                                         "description":"all the reflexive pronouns"
                                  },

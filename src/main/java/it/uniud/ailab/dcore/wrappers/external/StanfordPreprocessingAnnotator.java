@@ -237,7 +237,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
                 token.setWord(mention + "'s");
                 break;
             case 3: //reflexive pronouns (myself,...)
-                token.setWord(mention);
+                token.setWord(mention + " self");
                 break;
             case 4: //relative pronouns (who,which, ...)
                 token.setWord(mention);
