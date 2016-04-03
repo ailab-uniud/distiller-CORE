@@ -120,9 +120,10 @@ public class Launcher {
      * Verbose mode flag.
      */
     private static boolean verbose = false;
-    
+
     /**
-     * Preprocess mode. Use this only if you want to preprocess text using sections.
+     * Preprocess mode. Use this only if you want to preprocess text using
+     * sections.
      */
     private static boolean preprocess;
 
@@ -260,10 +261,6 @@ public class Launcher {
         if (cmd.hasOption("v")) {
             verbose = true;
         }
-        
-        if(cmd.hasOption("p")){
-            preprocess = true;
-        }
 
         if (cmd.hasOption("l")) {
             language = new Locale(cmd.getOptionValue("l"));
@@ -368,12 +365,6 @@ public class Launcher {
                 .desc("Print details while extracting")
                 .hasArg(false)
                 .build());
-        
-        options.addOption(Option.builder("p")
-                .longOpt("preprocess")
-                .desc("Preprocess text using sections")
-                .hasArg(false)
-                .build());
 
         options.addOption(Option.builder("l")
                 .longOpt("language")
@@ -424,6 +415,7 @@ public class Launcher {
             case TRAINING_GENERATION:
                 generateTrainingSet();
                 break;
+
             default:
                 try {
                     if (inputPath.isFile()) {
@@ -572,19 +564,13 @@ public class Launcher {
         String fileName = filePath.toPath().getFileName().toString();
 
         IOBlackboard.setCurrentDocument(filePath.getAbsolutePath());
-        String document = loadDocument(filePath);
 
+        String document = loadDocument(filePath);
+        List<String> docLines = loadDocumentAsList(filePath);
         IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
                 + FileSystem.getSeparator()
                 + fileName);
-
-        List<String> docLines = new ArrayList<>();
-        if(preprocess){
-            docLines = loadDocumentAsList(filePath);
-            distiller.distill(document,docLines);
-        } else {
-            distiller.distill(document);
-        }
+        distiller.distill(document, docLines);
 
     }
 
@@ -646,9 +632,8 @@ public class Launcher {
     }
 
     /**
-     * Load the document dividing text into lines and collect them in a list, 
-     * trying different charsets. The charset tried, are, in
-     * order:
+     * Load the document dividing text into lines and collect them in a list,
+     * trying different charsets. The charset tried, are, in order:
      * <ul>
      * <li>UTF-16;</li>
      * <li>UTF-8;</li>
@@ -661,14 +646,13 @@ public class Launcher {
      */
     private static List<String> loadDocumentAsList(File filePath) throws IOException {
 
-        
         List<String> lines = new ArrayList<>();
 
         IOException exception = null;
         // try different charsets. if none is recognized, throw the
         // exception detected when reading.
         try {
-            
+
             lines = Files.readAllLines(
                     filePath.toPath(), StandardCharsets.UTF_8);
 
@@ -679,9 +663,9 @@ public class Launcher {
         if (exception != null) {
             try {
                 exception = null;
-                
+
                 lines = Files.readAllLines(
-                    filePath.toPath(), StandardCharsets.UTF_16);
+                        filePath.toPath(), StandardCharsets.UTF_16);
 
             } catch (java.nio.charset.MalformedInputException e) {
                 exception = e;
@@ -691,9 +675,9 @@ public class Launcher {
         if (exception != null) {
             try {
                 exception = null;
-                
+
                 lines = Files.readAllLines(
-                    filePath.toPath(), StandardCharsets.US_ASCII);
+                        filePath.toPath(), StandardCharsets.US_ASCII);
 
             } catch (java.nio.charset.MalformedInputException e) {
                 exception = e;
@@ -706,7 +690,7 @@ public class Launcher {
         }
         return lines;
     }
-    
+
     /**
      * Distill the content of a directory.
      *

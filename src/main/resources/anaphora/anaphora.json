@@ -3,29 +3,29 @@
 			{ 
 				"anaphoricPP":[
 				 {
-					"pattern":"(\\s|^)(you|he|she|it|they|me|us)(\\s|$)",
+					"pattern":"(\\b)(he|she|it|they)(\\b)",
                                         "type":"1",
                                         "description":"all the personal pronouns, use as subject or direct objects"
                                         
 				 },
                                  {
                                      
-                                        "pattern":"(\\s|^)((mine|my|its|his|whose)|(your|her|their|our)[s]?)(\\s|$)",
+                                        "pattern":"(\b)((its|his|whose)|(her|their)[s]?)(\b)",
                                         "type":"2",
                                         "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
                                  },
                                  {
-                                        "pattern":"(\\s|^)((my|your|it|his|her|their|our)(self|selves))(\\s|$)",
+                                        "pattern":"(\\b)((it|his|her|their)(self|selves))(\\b)",
                                         "type":"3",
                                         "description":"all the reflexive pronouns"
                                  },
                                  {
-                                        "pattern":"(\\s|^)(who|whom|what|which|that)(\\s|$)",
+                                        "pattern":"(\\b)(who|whom|what|which|that)(\\b)",
                                         "type":"4",
                                         "description":"all the relative pronouns"
                                  },
                                  {
-                                        "pattern":"(\\s|^)(this|these|those)(\\s|$)",
+                                        "pattern":"(\\b)(this|these|those)(\\b)",
                                         "type":"5",
                                         "description":"all the demonstrative pronouns"
                                  }

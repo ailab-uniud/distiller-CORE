@@ -18,7 +18,6 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-
 import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
 import edu.stanford.nlp.hcoref.data.CorefChain;
 import edu.stanford.nlp.hcoref.data.Dictionaries;
@@ -40,7 +39,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,15 +62,13 @@ import org.json.simple.parser.ParseException;
  *
  * @author Giorgia Chiaradia
  */
-public class StanfordPreprocessingAnnotator implements Annotator {
+public class StanfordPreprocessingBySectionAnnotator implements Annotator {
 
-     /**
+    /**
      * The Stanford NLP pipeline. The field is marked static to be optimized for
      * re-use, so that subsequent calls of annotate() don't have to reload
      * definitions every time, even for different instances of the annotator.
      */
-    private static StanfordCoreNLP pipeline = null;
-
     /**
      * The languages that the n-gram generator will process and their POS
      * pattern database paths.
@@ -84,15 +80,17 @@ public class StanfordPreprocessingAnnotator implements Annotator {
      * pattern.
      */
     private Map<String, Integer> validPosPatterns;
-    private Annotation document;
-    private Logger logger;
+    private String txt;
+    private List<String> lines;
+    private BufferedWriter bf;
 
-    public StanfordPreprocessingAnnotator() {
+    public StanfordPreprocessingBySectionAnnotator() {
         validPosPatterns = new HashMap<>();
         posDatabasePaths = new HashMap<>();
         posDatabasePaths.put(Locale.ENGLISH,
                 getClass().getClassLoader().
                 getResource("anaphora/anaphora.json").getFile());
+
     }
 
     /**
@@ -105,98 +103,138 @@ public class StanfordPreprocessingAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
-        
-        logger = Logger.getLogger(StanfordPreprocessingAnnotator.class.getName());
-        
         try {
             loadDatabase(component.getLanguage());
         } catch (IOException | ParseException ex) {
             Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        FileHandler fileHandler = null;        
         try {
-            fileHandler = new FileHandler(IOBlackboard.getCurrentDocument()+".log", true);
+            bf = new BufferedWriter(new FileWriter(IOBlackboard.getCurrentDocument() + ".log"));
         } catch (IOException ex) {
-            Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        logger.addHandler(fileHandler);
-        
-        if (pipeline == null) {
-            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
-            //NER, parsing, and coreference resolution 
-            Properties props = new Properties();
-            props.put("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");
-            pipeline = new StanfordCoreNLP(props);
+        lines = blackboard.getTextLines();
 
-        }
+        int i = 0;
+        txt = "";
+        boolean inSect = true;
+        String section = "";
 
-        // read some text in the text variable
-        String text = component.getText();
-        text = text.replaceAll("\\[.*?\\]", "");
-        // create an empty Annotation just with the given text
-        document = new Annotation(text);
+        while (i < lines.size()) {
+            String currentLine = lines.get(i);
+            String nextLine = "";
 
-        // run all Annotators on this text
-        pipeline.annotate(document);
-        
+            if (currentLine.matches("^ABSTRACT$|^Abstract$")) { //if line contains only capital letters
 
-        //prepare the map for coreference graph of document
-        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
-                = new HashMap<>();
+                String preProSection = analyzeSection(section);
+                txt = txt + preProSection;
+                section = "";
 
-        for (CorefChain corefChain : 
-                document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
+                txt = txt + "\n" + currentLine + ".\n";
+                i++;
+                inSect = false;
 
-            //get the representative mention, that is the word recall in other sentences
-            CorefChain.CorefMention cm = corefChain.getRepresentativeMention();
+            } else if (currentLine.matches("([0-9\\.]+|[0-9]+\\.+)[\\s(A-Z|a-z):?]+")) {
 
-            //eliminate auto-references
-            if (corefChain.getMentionMap().size() <= 1 || cm.mentionType == Dictionaries.MentionType.PRONOMINAL) {
-                continue;
-            }
+                String preProSection = analyzeSection(section);
+                txt = txt + preProSection;
+                section = "";
 
-            //get map of the references to the corefchain obj
-            Collection<Set<CorefChain.CorefMention>> mentionMap
-                    = corefChain.getMentionMap().values();
-            for (Set<CorefChain.CorefMention> mentions : mentionMap) {
+                if (i + 1 < lines.size()
+                        && lines.get(i + 1).matches("^[A-Z]+$|[A-Z]+")) { //and the prevoius one too
+                    nextLine = lines.get(i + 1);
+                    txt = txt + "\n" + currentLine + " " + nextLine + ".\n";
+                    i = i + 2;
 
-                for (CorefChain.CorefMention reference : mentions) {
-                    //eliminate self-references
-                    if (reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan) 
-                            || Math.abs(reference.sentNum - cm.sentNum) >= 5) {
-                        continue;
-                    }
-                    if (reference.mentionType == Dictionaries.MentionType.PRONOMINAL && !reference.mentionSpan.matches("\\W")) {
-
-                        //check type of reference and substituete with the exact antecedent
-                        substituteAnaphor(reference, cm.mentionSpan);
-                    }
+                } else if (i + 1 < lines.size()
+                        && lines.get(i + 1).matches("([0-9\\.]+|[0-9]+\\.+)[\\s(A-Z|a-z):?]+")) {
+                    nextLine = lines.get(i + 1);
+                    txt = txt + "\n" + currentLine + ".\n";
+                    txt = txt + "\n" + nextLine + ".\n";
+                    i = i + 2;
+                } else {
+                    txt = txt + "\n" + currentLine + ".\n";
+                    i++;
                 }
+                inSect = false;
+            } else {
+                inSect = true;
+            }
 
+            if (inSect) {
+                section = section + currentLine + " ";
+
+                i++;
+
+            }
+            if (i == lines.size() - 1) {
+                txt = txt + section;
             }
         }
 
-        String newText = makePreprocessedText();
-        component.setPreprocessedText(newText);
-      
+        component.setPreprocessedText(txt);
+        try {
+            bf.close();
+        } catch (IOException ex) {
+            Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void substituteAnaphor(CorefChain.CorefMention reference, String mention) {
+    private String analyzeSection(String section) {
+        section = section.replaceAll("\\[.*?\\]", "");
+        Annotation document = new Annotation(section);
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,dcoref");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        // run all Annotators on this text
+        pipeline.annotate(document);
+
+        for (CorefChain cc : document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
+            CorefChain.CorefMention cm = cc.getRepresentativeMention();
+
+            Collection<Set<CorefChain.CorefMention>> mentionMap
+                    = cc.getMentionMap().values();
+            if (cm.mentionType == Dictionaries.MentionType.PRONOMINAL) {
+                continue;
+            }
+            for (Set<CorefChain.CorefMention> mentions : mentionMap) {
+                if (!mentions.isEmpty()) {
+                    for (CorefChain.CorefMention reference : mentions) {
+
+                        if (reference.mentionSpan.equalsIgnoreCase(cm.mentionSpan)
+                                || Math.abs(reference.sentNum - cm.sentNum) >= 5) {
+                            continue;
+                        }
+                        if (reference.mentionType == Dictionaries.MentionType.PRONOMINAL && !reference.mentionSpan.matches("\\W")) {
+
+                            //check type of reference and substituete with the exact antecedent
+                            substituteAnaphor(reference, cm.mentionSpan, document);
+                        }
+                    }
+                }
+            }
+        }
+        String preprocessedSection = makePreprocessedText(document);
+        return preprocessedSection;
+    }
+
+    private void substituteAnaphor(CorefChain.CorefMention reference, String mention, Annotation document) {
 
         String anaphor = reference.mentionSpan.toLowerCase();
         Integer type = 0;
         for (String ptn : validPosPatterns.keySet()) {
             if (anaphor.matches(ptn)) {
                 type = validPosPatterns.get(ptn);
-                logger.info(ptn + " for " + anaphor + " - type " + type);
-                
+                try {
+                    bf.write(ptn + " for " + anaphor + " - type " + type);
+                } catch (IOException ex) {
+                    Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 
-        if(type > 0){//is a pronominal anaphor
+        if (type > 0) {//is a pronominal anaphor
             //get the list of tokens which form the sentence in which the anaphor appear
             List<CoreLabel> tokens = document.get(SentencesAnnotation.class)
                     .get(reference.sentNum - 1).get(TokensAnnotation.class);
@@ -269,7 +307,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
         }
     }
 
-    private String makePreprocessedText() {
+    private String makePreprocessedText(Annotation document) {
         String newText = "";
         List<CoreMap> sentences = document.get(SentencesAnnotation.class);
         for (CoreMap s : sentences) {
@@ -280,13 +318,38 @@ public class StanfordPreprocessingAnnotator implements Annotator {
                 if (!token.word().equalsIgnoreCase(token.originalText())
                         && !token.originalText().matches("\\W")) {
 
-                    sentence = sentence.replaceFirst("(\\b)" + token.originalText() + "(\\b)", " " + token.word() + " ");
+                    try {
+                        bf.write("-----------------" + "\n" + sentence);
+                    } catch (IOException ex) {
+                        Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        sentence = sentence.replaceFirst("(\\b)" + token.originalText() + "(\\b)", " " + token.word() + " ");
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+
+                    try {
+                        bf.write("\n" + sentence + "-----------------");
+                    } catch (IOException ex) {
+                        Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
 
             }
             newText = newText + " " + sentence;
+
         }
+
         return newText;
+    }
+
+    private String createSection(int startS, int endS) {
+        String s = "";
+        for (int i = startS; i <= endS; i++) {
+            s = s + lines.get(i) + " ";
+        }
+        return s;
     }
 
 }

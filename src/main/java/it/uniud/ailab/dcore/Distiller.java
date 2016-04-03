@@ -149,9 +149,12 @@ public class Distiller {
     
     /**
      * Perform the extraction of keyphrases of a specified string, and returns
-     * the blackboard filled with document and annotations.
+     * the blackboard filled with document and annotations. It set also the lines
+     * that compose the document in order to distill using sections instead of entire 
+     * document.
      *
      * @param text the text to distill.
+     * @param textLines the lines composing the text.
      * @return the blackboard filled with the processed text
      */
     public Blackboard distillToBlackboard(String text, List<String> textLines) {
@@ -339,6 +342,7 @@ public class Distiller {
      * information.
      *
      * @param text the text to extract
+     * @param textLines lines which compose the document.
      * @return the distilled output
      */
     public DistilledOutput distill(String text, List<String> textLines) {
