@@ -15,7 +15,7 @@
                                         "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
                                  },
                                  {
-                                        "pattern":"(\\b)((it|his|her)self)|(themselves)(\\b)",
+                                        "pattern":"(\\b)((it|his|her)self|themselves)(\\b)",
                                         "type":"3",
                                         "description":"all the reflexive pronouns"
                                  },
