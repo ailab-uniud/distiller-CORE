@@ -96,7 +96,7 @@
                 <ref bean="syuzhet" />
                 <ref bean="chunkingNer"/>
                 
-                <ref bean="printer"/>
+                
             </list>
         </property>        
     </bean> 

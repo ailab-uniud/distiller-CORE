@@ -10,12 +10,12 @@
 				 },
                                  {
                                      
-                                        "pattern":"(\b)((its|his|whose)|(her|their)[s]?)(\b)",
+                                        "pattern":"(\\b)((its|his|whose)|(her|their)s?)(\\b)",
                                         "type":"2",
                                         "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
                                  },
                                  {
-                                        "pattern":"(\\b)((it|his|her|their)(self|selves))(\\b)",
+                                        "pattern":"(\\b)((it|his|her)self)|(themselves)(\\b)",
                                         "type":"3",
                                         "description":"all the reflexive pronouns"
                                  },
