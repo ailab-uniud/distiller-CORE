@@ -39,7 +39,7 @@
           class="it.uniud.ailab.dcore.wrappers.external.StanfordPreprocessingAnnotator"/>
     <bean id="preprocessBySection"
           class="it.uniud.ailab.dcore.wrappers.external.StanfordPreprocessingBySectionAnnotator"/>
-   
+     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.PreprocessedTextPrinter"/>
     
@@ -49,7 +49,6 @@
             <list>
                 <!-- process the document -->
                 <ref bean="preprocessBySection"/>
-                
                 <ref bean="printer"/>
             </list>
         </property>        

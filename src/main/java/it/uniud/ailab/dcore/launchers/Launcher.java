@@ -122,12 +122,6 @@ public class Launcher {
     private static boolean verbose = false;
 
     /**
-     * Preprocess mode. Use this only if you want to preprocess text using
-     * sections.
-     */
-    private static boolean preprocess;
-
-    /**
      * The dataset that will be used to perform evaluation or training.
      */
     private static String dataset = "";

@@ -54,7 +54,7 @@
     <bean id="coreferenceResolver" 
           class="it.uniud.ailab.dcore.annotation.annotators.CoreferenceResolverAnnotator"/>
     <bean id="dpm" 
-          class="it.uniud.ailab.dcore.annotation.annotators.PhraseMaximalityAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
           class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
@@ -90,11 +90,12 @@
                 <!-- annotate the n-grams -->
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
+                <ref bean="coreferenceResolver"/>
                 <ref bean="dpm"/>
                 <ref bean="tfidf" />
                 <ref bean="syuzhet" />
                 <ref bean="chunkingNer"/>
-                <ref bean="coreferenceResolver"/>
+                
                 <ref bean="printer"/>
             </list>
         </property>        

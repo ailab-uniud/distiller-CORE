@@ -247,7 +247,7 @@ public class SemEval2010 extends GenericDataset {
      */
     @Override
     public String getTrainingFolder() {
-        return datasetPath + "/train";
+        return datasetPath + FileSystem.getSeparator()+ "train";
     }
 
     /**
@@ -256,7 +256,7 @@ public class SemEval2010 extends GenericDataset {
      */
     @Override
     public String getTestFolder() {
-        return datasetPath + "/test";
+        return datasetPath + FileSystem.getSeparator()+ "test";
     }
 
 }

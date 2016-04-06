@@ -31,5 +31,5 @@ public interface Stage {
      * @param b the blackboard where the stage reads/writes.
      */
     public abstract void run(Blackboard b);
-    
+        
 }

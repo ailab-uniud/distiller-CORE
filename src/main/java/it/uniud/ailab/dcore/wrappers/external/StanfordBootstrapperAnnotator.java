@@ -18,8 +18,8 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
 import edu.stanford.nlp.hcoref.data.CorefChain;
+import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -44,6 +44,8 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -85,44 +87,43 @@ public class StanfordBootstrapperAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
+        if (pipeline == null) {
+            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
+            //NER, parsing, and coreference resolution 
+            Properties props = new Properties();
+            props.put("annotators", "tokenize, ssplit, pos, parse, lemma, ner, dcoref");
+            pipeline = new StanfordCoreNLP(props);
+
+        }
+
         // read some text in the text variable
         String text = component.getText();
 
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(text);
 
-        if (pipeline == null) {
-            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
-            //NER, parsing, and coreference resolution 
-            Properties props = new Properties();
-            props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");
-            pipeline = new StanfordCoreNLP(props);
-            pipeline.annotate(document);
-
-        }
         // run all Annotators on this text
         pipeline.annotate(document);
 
         //get the graph for coreference resolution
-       
+        Map<Integer, CorefChain> graph
+                = document.get(CorefCoreAnnotations.CorefChainAnnotation.class);
 
-        for (CorefChain corefChain : 
-                document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
+        //prepare the map for coreference graph of document
+        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
+                = new HashMap<>();
+
+        for (CorefChain corefChain : graph.values()) {
 
             //get the representative mention, that is the word recall in other sentences
             CorefChain.CorefMention cm = corefChain.getRepresentativeMention();
-
-            //eliminate auto-references
-            if (corefChain.getMentionMap().size() <= 1) {
-                continue;
-            }
 
             //get the stemmed form of the references, so the comparison with 
             //grams will be easier
             List<CoreLabel> tks = document.get(SentencesAnnotation.class)
                     .get(cm.sentNum - 1).get(TokensAnnotation.class);
-            
             //list of tokens which compose the anaphor
+
             List<Token> anaphorsTokens = new ArrayList<>();
             for (int i = cm.startIndex - 1; i < cm.endIndex - 1; i++) {
                 CoreLabel current = tks.get(i);
@@ -171,7 +172,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             //assign to the document a new corenference obj
             //containing the anaphor and its mentions 
             blackboard.addGram(mention);
-        }
+        }        
 
         // these are all the sentences in this document
         // a CoreMap is essentially a Map that uses class objects as keys and 

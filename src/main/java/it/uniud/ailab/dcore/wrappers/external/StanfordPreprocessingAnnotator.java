@@ -86,6 +86,7 @@ public class StanfordPreprocessingAnnotator implements Annotator {
     private Map<String, Integer> validPosPatterns;
     private Annotation document;
     private Logger logger;
+    private BufferedWriter bf;
 
     public StanfordPreprocessingAnnotator() {
         validPosPatterns = new HashMap<>();
@@ -104,9 +105,6 @@ public class StanfordPreprocessingAnnotator implements Annotator {
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-
-        
-        logger = Logger.getLogger(StanfordPreprocessingAnnotator.class.getName());
         
         try {
             loadDatabase(component.getLanguage());
@@ -114,21 +112,17 @@ public class StanfordPreprocessingAnnotator implements Annotator {
             Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        FileHandler fileHandler = null;        
         try {
-            fileHandler = new FileHandler(IOBlackboard.getCurrentDocument()+".log", true);
+            bf = new BufferedWriter(new FileWriter(IOBlackboard.getCurrentDocument() + ".log"));
         } catch (IOException ex) {
             Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        logger.addHandler(fileHandler);
         
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
             //NER, parsing, and coreference resolution 
             Properties props = new Properties();
-            props.put("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");
+            props.put("annotators", "tokenize,ssplit,pos,lemma,ner,parse,dcoref");
             pipeline = new StanfordCoreNLP(props);
 
         }
@@ -181,7 +175,11 @@ public class StanfordPreprocessingAnnotator implements Annotator {
 
         String newText = makePreprocessedText();
         component.setPreprocessedText(newText);
-      
+        try {
+            bf.close();
+        } catch (IOException ex) {
+            Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void substituteAnaphor(CorefChain.CorefMention reference, String mention) {
@@ -191,8 +189,11 @@ public class StanfordPreprocessingAnnotator implements Annotator {
         for (String ptn : validPosPatterns.keySet()) {
             if (anaphor.matches(ptn)) {
                 type = validPosPatterns.get(ptn);
-                logger.info(ptn + " for " + anaphor + " - type " + type);
-                
+                try {
+                    bf.write(ptn + " for " + anaphor + " - type " + type);
+                } catch (IOException ex) {
+                    Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 
@@ -280,7 +281,22 @@ public class StanfordPreprocessingAnnotator implements Annotator {
                 if (!token.word().equalsIgnoreCase(token.originalText())
                         && !token.originalText().matches("\\W")) {
 
-                    sentence = sentence.replaceFirst("(\\b)" + token.originalText() + "(\\b)", " " + token.word() + " ");
+                    try {
+                        bf.write("-----------------" + "\n" + sentence);
+                    } catch (IOException ex) {
+                        Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        sentence = sentence.replaceFirst("(\\b)" + token.originalText() + "(\\b)", " " + token.word() + " ");
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+
+                    try {
+                        bf.write("\n" + sentence + "-----------------");
+                    } catch (IOException ex) {
+                        Logger.getLogger(StanfordPreprocessingAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
 
             }

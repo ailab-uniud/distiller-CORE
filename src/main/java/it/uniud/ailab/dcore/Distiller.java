@@ -26,6 +26,7 @@ import it.uniud.ailab.dcore.annotation.annotations.UriAnnotation;
 import it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator;
 import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotator.WIKIURI;
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
+import it.uniud.ailab.dcore.io.PreprocessedTextPrinter;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import static it.uniud.ailab.dcore.utils.StageUtils.getStageName;
@@ -33,7 +34,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Required;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * The information extractor object. This is the class that runs the different
  * annotation pipelines.
- * 
+ *
  * @author Marco Basaldella
  * @author Dario De Nart
  */
@@ -70,10 +70,10 @@ public class Distiller {
      * The Object that will contain the text all its annotations.
      */
     private Blackboard blackboard;
-    
+
     /**
-     * The verbose mode flag. If the flag is set to true, Distiller will
-     * print information on the work he's doing on stdout. Default is false.
+     * The verbose mode flag. If the flag is set to true, Distiller will print
+     * information on the work he's doing on stdout. Default is false.
      */
     private boolean verbose = false;
 
@@ -122,7 +122,7 @@ public class Distiller {
 
     /**
      * Gets the blackboard.
-     * 
+     *
      * @return the blackboard.
      */
     public Blackboard getBlackboard() {
@@ -131,7 +131,7 @@ public class Distiller {
 
     /**
      * Sets the verbose mode of the Distiller.
-     * 
+     *
      * @param verbose true to display information of the distillation process;
      * false for silent distillation.
      */
@@ -141,17 +141,18 @@ public class Distiller {
 
     /**
      * Gets the verbose mode of the Distiller.
+     *
      * @return TRUE if the Distillation is set to VERBOSE mode.
      */
-    public boolean  getVerbose() {
+    public boolean getVerbose() {
         return verbose;
     }
-    
+
     /**
      * Perform the extraction of keyphrases of a specified string, and returns
-     * the blackboard filled with document and annotations. It set also the lines
-     * that compose the document in order to distill using sections instead of entire 
-     * document.
+     * the blackboard filled with document and annotations. It set also the
+     * lines that compose the document in order to distill using sections
+     * instead of entire document.
      *
      * @param text the text to distill.
      * @param textLines the lines composing the text.
@@ -186,15 +187,15 @@ public class Distiller {
         }
 
         for (Stage stage : pipeline.getStages()) {
-            
+
             if (verbose) {
                 System.out.println(String.format("Running %s...",
                         getStageName(stage)));
             }
-            
+
             stage.run(blackboard);
         }
-        
+
         if (verbose) {
             System.out.println("Extraction complete!");
             System.out.println();
@@ -202,7 +203,7 @@ public class Distiller {
 
         return blackboard;
     }
-    
+
     /**
      * Perform the extraction of keyphrases of a specified string, and returns
      * the blackboard filled with document and annotations.
@@ -238,15 +239,16 @@ public class Distiller {
         }
 
         for (Stage stage : pipeline.getStages()) {
-            
+
             if (verbose) {
                 System.out.println(String.format("Running %s...",
                         getStageName(stage)));
             }
-            
+
             stage.run(blackboard);
+
         }
-        
+
         if (verbose) {
             System.out.println("Extraction complete!");
             System.out.println();
@@ -276,12 +278,12 @@ public class Distiller {
 
         // Copy the grams, sorted by descending score
         output.initializeGrams(blackboard.getKeyphrases().size());
-        
+
         Collection<Gram> grams = blackboard.getKeyphrases();
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
         for (Gram g : grams) {
-            Keyphrase k = (Keyphrase)g;
+            Keyphrase k = (Keyphrase) g;
             scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
@@ -335,7 +337,7 @@ public class Distiller {
 
         return output;
     }
-    
+
     /**
      * Perform the extraction of keyphrases of a specified string, and returns a
      * developer-friendly object that allows quick access to the extracted
@@ -351,19 +353,19 @@ public class Distiller {
 
         output.setOriginalText(text);
 
-        distillToBlackboard(text,textLines);
+        distillToBlackboard(text, textLines);
 
         output.setDetectedLanguage(blackboard.getStructure().
                 getLanguage().getLanguage());
 
         // Copy the grams, sorted by descending score
         output.initializeGrams(blackboard.getKeyphrases().size());
-        
+
         Collection<Gram> grams = blackboard.getKeyphrases();
         Map<Keyphrase, Double> scoredGrams = new HashMap<>();
 
         for (Gram g : grams) {
-            Keyphrase k = (Keyphrase)g;
+            Keyphrase k = (Keyphrase) g;
             scoredGrams.put(k, k.getFeature(GenericEvaluatorAnnotator.SCORE));
         }
 
