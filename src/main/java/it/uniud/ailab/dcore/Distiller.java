@@ -28,6 +28,7 @@ import static it.uniud.ailab.dcore.annotation.annotators.GenericWikipediaAnnotat
 import it.uniud.ailab.dcore.annotation.annotators.WikipediaInferenceAnnotator;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
+import it.uniud.ailab.dcore.utils.FileSystem;
 import static it.uniud.ailab.dcore.utils.StageUtils.getStageName;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,6 +77,13 @@ public class Distiller {
      * print information on the work he's doing on stdout. Default is false.
      */
     private boolean verbose = false;
+    
+    /**
+     * Create the distiller object and performs simple setup tasks.
+     */
+    public Distiller() {
+        FileSystem.createDirectoryIfNotExists(FileSystem.getDistillerTmpPath());
+    }
 
     /**
      * Sets the language detector.
