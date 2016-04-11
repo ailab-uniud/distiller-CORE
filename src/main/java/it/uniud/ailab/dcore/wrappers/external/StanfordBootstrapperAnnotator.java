@@ -108,16 +108,12 @@ public class StanfordBootstrapperAnnotator implements Annotator {
         //get the graph for coreference resolution
         Map<Integer, CorefChain> graph
                 = document.get(CorefCoreAnnotations.CorefChainAnnotation.class);
-
-        //prepare the map for coreference graph of document
-        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
-                = new HashMap<>();
-
+                
         for (CorefChain corefChain : graph.values()) {
 
             //get the representative mention, that is the word recall in other sentences
             CorefChain.CorefMention cm = corefChain.getRepresentativeMention();
-
+            
             //get the stemmed form of the references, so the comparison with 
             //grams will be easier
             List<CoreLabel> tks = document.get(SentencesAnnotation.class)

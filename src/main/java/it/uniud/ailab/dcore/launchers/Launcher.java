@@ -496,10 +496,15 @@ public class Launcher {
                     "Unknown dataset:" + dataset);
         }
 
+        IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
+                + FileSystem.getSeparator()
+                            );
+         
         KeyphraseTrainingSetGenerator trainingGenerator
                 = new KeyphraseTrainingSetGenerator(kpDataset);
 
         IOBlackboard.setDocumentsFolder(kpDataset.getTrainingFolder());
+        
 
         List<Pair<String, GenericSheetPrinter>> trainingDocuments
                 = trainingGenerator.generateTrainingSet(distiller);
@@ -512,6 +517,7 @@ public class Launcher {
             trainingSet.addPrinter(p);
 
         }
+       
 
         String filePath = outputPath.getAbsolutePath()
                 + FileSystem.getSeparator()
