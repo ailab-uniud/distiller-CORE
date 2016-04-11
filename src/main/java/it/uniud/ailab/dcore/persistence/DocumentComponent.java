@@ -105,7 +105,7 @@ public abstract class DocumentComponent extends Annotable {
      */
     public boolean hasComponents() {
         List<DocumentComponent> comps = getComponents();
-        return !(comps == null);
+        return (comps != null) && (comps.size() > 0);
     }
 
     // </editor-fold>

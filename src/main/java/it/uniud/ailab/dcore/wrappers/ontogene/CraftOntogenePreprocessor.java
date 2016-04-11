@@ -21,12 +21,11 @@ package it.uniud.ailab.dcore.wrappers.ontogene;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.annotators.GenericPreprocessor;
+import it.uniud.ailab.dcore.annotation.annotators.GenericStructureAnnotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
+import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.utils.FileSystem;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.logging.Level;
@@ -34,8 +33,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -58,11 +55,21 @@ import org.xml.sax.SAXException;
  * @author Marco Basaldella
  * @see text_import/file_import.py in python-ontogene
  */
-public class CraftOntogenePreprocessor extends GenericPreprocessor {
+public class CraftOntogenePreprocessor extends GenericPreprocessor
+        implements GenericStructureAnnotator {
 
     // a handy class-wide XPath instance to avoid reinstantiation in 
     // the recursive methods
     private XPath xpath;
+
+    // the title of the document
+    private String titleString;
+
+    // the abstract of the document
+    private String abstractString;
+
+    // the body of the document
+    private String bodyString;
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -72,6 +79,30 @@ public class CraftOntogenePreprocessor extends GenericPreprocessor {
         // Apply the same principles as the python-ontogene
         // To look at the original python code, look at  text_import/file_import.py
         applyPreprocess(blackboard, NXMLToArticle(blackboard.getText()));
+
+        DocumentComposite titleComponent = new DocumentComposite(
+                titleString,
+                SECTION_TITLE
+        );
+        
+        DocumentComposite abstractComponent = new DocumentComposite(
+                abstractString,
+                SECTION_ABSTRACT
+        );
+        
+        DocumentComposite bodyComponent = new DocumentComposite(
+                bodyString,
+                SECTION_PREFIX + "body"
+        );
+        
+        ((DocumentComposite) blackboard.getStructure()).
+                addComponent(titleComponent);
+        
+        ((DocumentComposite) blackboard.getStructure()).
+                addComponent(abstractComponent);
+        
+        ((DocumentComposite) blackboard.getStructure()).
+                addComponent(bodyComponent);
 
     }
 
@@ -121,7 +152,7 @@ public class CraftOntogenePreprocessor extends GenericPreprocessor {
             Document transformedDocument = db.parse(
                     new InputSource(new StringReader(stringWriter.toString())));
 
-            String titleString = xpath.evaluate(
+            titleString = xpath.evaluate(
                     ".//title",
                     transformedDocument);
 
@@ -131,19 +162,19 @@ public class CraftOntogenePreprocessor extends GenericPreprocessor {
                     ".//abstract", transformedDocument,
                     XPathConstants.NODE);
 
-            String abstractString = NXMLRecursiveDescent(abstractNode);
+            abstractString = NXMLRecursiveDescent(abstractNode);
 
             Node bodyNode = (Node) xpath.evaluate(
                     ".//body", transformedDocument,
                     XPathConstants.NODE);
 
-            String bodyString = NXMLRecursiveDescent(bodyNode);
+            bodyString = NXMLRecursiveDescent(bodyNode);
 
             // assemble the document
-            cleanedText = titleString + "\n\n";
-            cleanedText += "Abstract" + "\n\n" + abstractString + "\n\n";
+            titleString = titleString + "\n\n";
+            abstractString = "Abstract" + "\n\n" + abstractString + "\n\n";
 
-            cleanedText += bodyString;
+            cleanedText = titleString + abstractString + bodyString;
 
         } catch (ParserConfigurationException | SAXException | IOException |
                 TransformerException | XPathExpressionException ex) {
