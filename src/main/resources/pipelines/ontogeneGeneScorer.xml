@@ -45,6 +45,9 @@
     <bean id="stanford" 
           class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator"/>
     
+    <bean id="sentenceIndex" 
+          class="it.uniud.ailab.dcore.annotation.annotators.SentenceIndexAnnotator"  />
+    
     <bean id="stemmer"
           class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
     
@@ -107,9 +110,10 @@
         <property name="stages">
             <list>
                 <ref bean="preprocessor" />
-                <ref bean="tsvanalyzer"/>
                 <ref bean="cybozu" />
                 <ref bean="stanford" />
+                <ref bean="sentenceIndex" />
+                <ref bean="tsvanalyzer"/>
                 <ref bean="stemmer" />
                 <!-- generate the n-grams -->
                 <ref bean="NGramGenerator"/>

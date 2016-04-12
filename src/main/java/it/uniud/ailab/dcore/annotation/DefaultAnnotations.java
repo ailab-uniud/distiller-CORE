@@ -27,7 +27,9 @@ package it.uniud.ailab.dcore.annotation;
  */
 public class DefaultAnnotations {
     
-    public static final String SENTENCE_INDEX = "SentenceIndex";
+    public static final String START_INDEX = "StartPosition";
+    
+    public static final String END_INDEX = "EndPosition";
     
     public static final String SENTENCE_COUNT = "SentenceCount";
     
