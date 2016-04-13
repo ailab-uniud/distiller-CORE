@@ -62,7 +62,6 @@
           class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
     </bean>
     
-    
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
           class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
@@ -115,8 +114,6 @@
                 <ref bean="sentenceIndex" />
                 <ref bean="tsvanalyzer"/>
                 <ref bean="stemmer" />
-                <!-- generate the n-grams -->
-                <ref bean="NGramGenerator"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />

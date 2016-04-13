@@ -131,7 +131,7 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                                     "Ontogene Tokenization mismatch");
                         }
 
-                        if (prevT.getText().contains(term.getLeft())) {
+                        if (lcs(prevT.getText(),term.getLeft()) > 0) {
                             Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
                                     log(Level.INFO,
                                             "Tokenization mismatch: " + prevT.getText()
@@ -251,4 +251,49 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
         return terms;
     }
 
+    
+    /**
+     * Finds the length of the longest common substring between the 
+     * input strings.
+     * 
+     * @param first the first input string
+     * @param second the second input string
+     * @return the length of the L.C.S.
+     * @see <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring#Java"/>
+     */
+    private static int lcs(String first, String second) {
+    if (first == null || second == null || first.length() == 0 || second.length() == 0) {
+        return 0;
+    }
+        
+    int maxLen = 0;
+    int fl = first.length();
+    int sl = second.length();
+    int[][] table = new int[fl+1][sl+1];
+   
+    for(int s=0; s <= sl; s++)
+      table[0][s] = 0;
+    for(int f=0; f <= fl; f++)
+      table[f][0] = 0;
+
+
+
+ 
+    for (int i = 1; i <= fl; i++) {
+        for (int j = 1; j <= sl; j++) {
+            if (first.charAt(i-1) == second.charAt(j-1)) {
+                if (i == 1 || j == 1) {
+                    table[i][j] = 1;
+                }
+                else {
+                    table[i][j] = table[i - 1][j - 1] + 1;
+                }
+                if (table[i][j] > maxLen) {
+                    maxLen = table[i][j];
+                }
+            }
+        }
+    }
+    return maxLen;
+}
 }
