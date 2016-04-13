@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rits.cloning.Cloner;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,6 +123,7 @@ public class Blackboard {
      * @return the {@link it.uniud.ailab.dcore.persistence.DocumentComponent}
      * root object.
      */
+    @JsonIgnore
     public DocumentComponent getStructure() {
         return document;
     }
@@ -209,22 +211,41 @@ public class Blackboard {
 
         generalNGramsContainer.put(newGram.getType(), grams);
     }
-
-    public Map<String, Gram> getGramsByType(String gramType) {
-        return generalNGramsContainer.get(gramType);
-    }
-
-    public <T> Collection<T> getGramsByGenericType(String gramType) {
-        return (Collection<T>)generalNGramsContainer.get(gramType).values();
+    
+    /**
+     * Get the all the different kind of grams found in the document. This
+     * grams are divided by type, stored in a Map using their identifier as 
+     * key.
+     * 
+     * @return all the maps found in the document.
+     */
+    public Map<String,Map<String,Gram>> getGrams() {
+        return generalNGramsContainer;
     }
 
     /**
-     * Retrieves the grams found in the document.
+     * Get all the grams of a given type found in the blackboard.
+     * 
+     * @param <T> the type of the grams to achieve
+     * @param gramType the identifier of the gram type
+     * @return a collection with all the grams with match type and identifier,
+     * null if there is no match.
+     */
+    public <T> Collection<T> getGramsByType(String gramType) {        
+        return 
+                generalNGramsContainer.containsKey(gramType) ?
+                (Collection<T>)generalNGramsContainer.get(gramType).values() :
+                null;
+    }
+
+    /**
+     * Retrieves the keyphrases found in the document.
      *
      * @return a collection of
      * {@link it.uniud.ailab.dcore.persistence.Keyphrase}s.
      */
     @Deprecated
+    @JsonIgnore
     public List<Gram> getKeyphrases() {
 
         Map<String, Gram> kps = generalNGramsContainer.get(Keyphrase.KEYPHRASE);
@@ -232,14 +253,25 @@ public class Blackboard {
     }
 
     /**
-     * Removes a gram from the document because it's no more relevant, or
+     * Removes a keyphrase from the document because it's no more relevant, or
      * useful, or for whatever reason an annotator thinks so.
      *
      * @param g the gram to remove.
      */
     @Deprecated
     public void removeKeyphrase(Keyphrase g) {
-        generalNGramsContainer.get(Keyphrase.KEYPHRASE)
+        removeGram(Keyphrase.KEYPHRASE,g);
+    }
+    
+    /**
+     * Removes a gram from the document because it's no more relevant, or
+     * useful, or for whatever reason an annotator thinks so.
+     *
+     * @param type the type of the gram to remove
+     * @param g the gram to remove.
+     */
+    public void removeGram(String type,Gram g) {
+        generalNGramsContainer.get(type)
                 .remove(g.getIdentifier());
 
         for (Sentence s : DocumentUtils.getSentences(document)) {
@@ -277,8 +309,22 @@ public class Blackboard {
                 collect(Collectors.toList());
     }
 
+    /**
+     * Remove an annotation from the blackboard.
+     * 
+     * @param ann the annotation to remove.
+     */
     public void removeAnnotation(Annotation ann) {
         annotations.remove(ann);
+    }
+    
+    /**
+     * Get the language of the document root.
+     * 
+     * @return the language of the document root.
+     */
+    public String getDocumentLanguage() {
+        return getStructure().getLanguage().getLanguage();
     }
 
 }

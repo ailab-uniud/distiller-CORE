@@ -29,6 +29,7 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.tartarus.snowball.SnowballStemmer;
@@ -87,10 +88,9 @@ public class PorterStemmerAnnotator implements Annotator {
 
         //annotate mention n-grams with stem only if anaphora resolutions is 
         //used in the pipeline 
-        Map<String, Gram> mentions = blackboard.getGramsByType(Mention.MENTION);
+        Collection<Mention> mentions = blackboard.getGramsByType(Mention.MENTION);
         if (mentions != null) {
-            for (Gram g : mentions.values()) {
-                Mention m = (Mention) g;
+            for (Mention m : mentions) {
                 for (Token t : m.getAnaphorToken()) {
                     stemmer.setCurrent(t.getText());
                     if (stemmer.stem()) {

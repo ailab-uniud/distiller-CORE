@@ -237,7 +237,7 @@ public abstract class GenericSheetPrinter {
     public void loadGrams(Blackboard b, String gramIdentifier) {
 
         init();
-        Collection<Gram> grams = b.getGramsByGenericType(gramIdentifier);
+        Collection<Gram> grams = b.getGramsByType(gramIdentifier);
         for (Gram g : grams) {
             addRow(g);
         }

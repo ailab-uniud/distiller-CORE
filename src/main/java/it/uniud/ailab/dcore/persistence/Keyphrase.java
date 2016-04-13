@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.utils.ListUtils;
@@ -31,6 +32,7 @@ import java.util.List;
  * @author Dario De Nart
  * @author Marco Basaldella
  */
+//@JsonIgnoreProperties({"surfaces,tokenLists,appaerances,features"})
 public class Keyphrase extends Gram {
 
     /**
@@ -125,6 +127,7 @@ public class Keyphrase extends Gram {
      * @return all the possible lists of tokens that form the gram.
      */
     @Override
+    @JsonIgnore
     public List<List<Token>> getTokenLists() {
         return tokenLists;
     }
@@ -148,6 +151,7 @@ public class Keyphrase extends Gram {
      * @return all the surfaces of the gram.
      */
     @Override
+    @JsonIgnore
     public List<String> getSurfaces() {
         return surfaces;
     }
@@ -228,6 +232,7 @@ public class Keyphrase extends Gram {
      *
      * @return all the features associated with the gram.
      */
+    @JsonIgnore
     public FeatureAnnotation[] getFeatures() {
         
         List<FeatureAnnotation> features = new ArrayList<>();

@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.utils.ListUtils;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.List;
  * @author Marco Basaldella
  * @author Giorgia Chiaradia
  */
+//@JsonIgnoreProperties({"surfaces,tokenLists,appaerances"})
 public abstract class Gram extends Annotable {
     
     /**
@@ -138,6 +140,7 @@ public abstract class Gram extends Annotable {
      * 
      * @return all the possible lists of tokens that form the gram.
      */
+    @JsonIgnore
     public List<List<Token>> getTokenLists() {
         return tokenLists;
     }
@@ -159,6 +162,7 @@ public abstract class Gram extends Annotable {
      * 
      * @return all the surfaces of the gram.
      */
+    @JsonIgnore
     public List<String> getSurfaces() {
         return surfaces;
     }
@@ -178,6 +182,7 @@ public abstract class Gram extends Annotable {
      *
      * @return all the components in which the gram appears.
      */
+    @JsonIgnore
     public List<DocumentComponent> getAppaerances() {
         return appareances;
     }

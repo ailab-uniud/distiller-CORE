@@ -98,7 +98,7 @@ public class RCallerEvaluator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         Collection<Keyphrase> keyphrases
-                = blackboard.getGramsByGenericType(Keyphrase.KEYPHRASE);
+                = blackboard.getGramsByType(Keyphrase.KEYPHRASE);
 
         // Step 1: generate the candidates file
         FileSystem.createDirectoryIfNotExists(

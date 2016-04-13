@@ -31,6 +31,7 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -101,7 +102,7 @@ public class CoreferenceResolverAnnotator implements Annotator {
         Map<String, Double> pronominalAnaphoraCounter = new HashMap<>();
 
         //get the map of grams which type is mention 
-        Map<String, Gram> mentions = blackboard.getGramsByType(Mention.MENTION);
+        Collection<Mention> mentions = blackboard.getGramsByType(Mention.MENTION);
 
         //preprocess the metion grams so to distiguish the ones that are 
         //pronominal and count them, from the ones that are proper name or 
@@ -109,9 +110,8 @@ public class CoreferenceResolverAnnotator implements Annotator {
         //up with the stemmed or lemmatize version of the gram, so to facilitate
         //the comparison with the candidate keyphrases.
         if (!mentions.isEmpty()) {
-            for (String anaphor : mentions.keySet()) { //for every anaphor...
+            for (Mention ment: mentions) {//for every anaphor...
                 double numberOfRef = 0; //set number of reference primarly to zero
-                Mention ment = (Mention) mentions.get(anaphor); // assuring the gram 
                 //is a mention
                 //for every reference to anaphor
                 for (Reference ref : ment.getReferences()) {
