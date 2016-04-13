@@ -109,134 +109,145 @@ public class CoreferenceResolverAnnotator implements Annotator {
         //nominal references. All the data structure for mentions will be full
         //up with the stemmed or lemmatize version of the gram, so to facilitate
         //the comparison with the candidate keyphrases.
-        for (Mention ment: mentions) {//for every anaphor...
-            double numberOfRef = 0; //set number of reference primarly to zero
-            for (Reference ref : ment.getReferences()) {
-                if (ref.getType().equals("PRONOMINAL")) { //if is a pronoun
-                    numberOfRef++; //increment # of reference for that anaphor
-                } else {
-                    //if is proper name or nominal, create a string of the 
-                    //stemmed form of the reference
-                    StringBuilder strBuilder = new StringBuilder();
-                    for (Token t : ref.getTokens()) {
-                        if (t.getStem() == null) {
-                            strBuilder.append(t.getLemma());
-                        } else {
-                            strBuilder.append(t.getStem());
-                        }
-                        strBuilder.append(" ");
-                    }
-                    String rootedRef = strBuilder.toString().trim();
-
-                    //add the non pronominal reference(stemmed) to the global list 
-                    notPronominalAnaphora.add(rootedRef);
-                }
-            }
-
-            //create a stemmed string for the anaphor n-gram
-            String rootedAnaphor = "";
-            for (Token t : ment.getAnaphorToken()) {
-                if (t.getStem() == null) {
-                    rootedAnaphor += t.getLemma() + " ";
-                } else {
-                    rootedAnaphor += t.getStem() + " ";
-                }
-            }
-            rootedAnaphor = rootedAnaphor.trim();
-
-            //add the total # of references for the current anaphor to the map
-            pronominalAnaphoraCounter.put(rootedAnaphor, numberOfRef);
-        }
-
-        //for each sentence in the document
-        for (Sentence s : sentences) {
-            double score = 0; //initialize variable for NOR feature score
-
-            //for each candidate keyphrase control if the anaphor is present 
-            //in the n gram or vice-versa
-            for (Gram g : s.getGrams()) {
-                //assuming the gram is really a keyphrase
-                Keyphrase k = (Keyphrase) g;
-
-                //create a stemmed form for the entire keyphrase
-                String key = "";
-                for (Token t : k.getTokens()) {
-                    if (t.getStem() == null) {
-                        key += t.getLemma() + " ";
+        if (!mentions.isEmpty()) {
+            for (Mention ment: mentions) {//for every anaphor...
+                double numberOfRef = 0; //set number of reference primarly to zero
+                //is a mention
+                //for every reference to anaphor
+                for (Reference ref : ment.getReferences()) {
+                    if (ref.getType().equals("PRONOMINAL")) { //if is a pronoun
+//                    if(!Pattern.matches("(\\s|^)(his|His|her|Her|its|their|hisself|herself|itself)(\\s|$)",ref.getIdentifier()){}
+                        numberOfRef++; //increment # of reference for that anaphor
                     } else {
-                        key += t.getStem() + " ";
-                    }
-                }
-                key = key.trim();
-
-                //iterate on all the anaphors
-                for (String anaphor : pronominalAnaphoraCounter.keySet()) {
-                    //check if the anaphor contains or not the keyphrase
-                    //and vice-versa
-                    String escapedKey = Pattern.quote(key.toLowerCase());
-                    String escapedAnaphor = Pattern.quote(anaphor.toLowerCase());
-                    try {
-
-                        if (anaphor.toLowerCase()
-                                .matches(".*\\b" + escapedKey + "\\b.*")
-                                || key.toLowerCase()
-                                .matches(".*\\b" + escapedAnaphor + "\\b.*")) {
-                            double score1 = score;
-                            double score2 = pronominalAnaphoraCounter.get(anaphor);
-                            score = Math.max(score1, score2); //get the maximal score 
+                        //if is proper name or nominal, create a string of the 
+                        //stemmed form of the reference
+                        StringBuilder strBuilder = new StringBuilder();
+                        for (Token t : ref.getTokens()) {
+                            if (t.getStem() == null) {
+                                strBuilder.append(t.getLemma());
+                            } else {
+                                strBuilder.append(t.getStem());
+                            }
+                            strBuilder.append(" ");
                         }
-                    } catch (java.util.regex.PatternSyntaxException e) {
-                        Logger.logMsg(Logger.WARNING,
-                                "Error while matching pattern: \"" + key
-                                + "\" with anaphor: \"" + anaphor + "\"");
-                        Logger.logMsg(Logger.WARNING,
-                                "Escaped pattern: \"" + escapedKey
-                                + "\" ; escaped anaphor: \"" + escapedAnaphor + "\"");
+                        String rootedRef = strBuilder.toString().trim();
+
+                        //add the non pronominal reference(stemmed) to the global list 
+                        notPronominalAnaphora.add(rootedRef);
                     }
-
                 }
 
-                if (score > 0) {//if n-gram is an anaphor
-                    //normalize score for NOR by total # of phrases 
-                    k.putFeature(NUMBER_OF_REFERENCE, (score / numberOfPhrases));
-                } else {
-                    k.putFeature(NUMBER_OF_REFERENCE, 0.0);
+                //create a stemmed string for the anaphor n-gram
+                String rootedAnaphor = "";
+                for (Token t : ment.getAnaphorToken()) {
+                    if (t.getStem() == null) {
+                        rootedAnaphor += t.getLemma() + " ";
+                    } else {
+                        rootedAnaphor += t.getStem() + " ";
+                    }
                 }
+                rootedAnaphor = rootedAnaphor.trim();
 
-                double inAnaphoraScore = 0; //initialize inAnaphora score to zero
-                //get the term frequency 
-                double gramFreq = k.getFeature(StatisticalAnnotator.FREQUENCY);
+                //add the total # of references for the current anaphor to the map
+                pronominalAnaphoraCounter.put(rootedAnaphor, numberOfRef);
+            }
 
-                //for each reference to the current anaphor
-                for (String reference : notPronominalAnaphora) {
-                    //check if an candidate is or not present in a reference
+            //for each sentence in the document
+            for (Sentence s : sentences) {
+                double score = 0; //initialize variable for NOR feature score
 
-                    String escapedKey = Pattern.quote(key.toLowerCase());
-                    try {
+                //for each candidate keyphrase control if the anaphor is present 
+                //in the n gram or vice-versa
+                for (Gram g : s.getGrams()) {
+                    //assuming the gram is really a keyphrase
+                    Keyphrase k = (Keyphrase) g;
 
-                        if (reference.toLowerCase()
-                                .matches(".*\\b" + escapedKey + "\\b.*")) {
-                            inAnaphoraScore++;//if it is increment inAnaphora score
+                    //create a stemmed form for the entire keyphrase
+                    String key = "";
+                    for (Token t : k.getTokens()) {
+                        if (t.getStem() == null) {
+                            key += t.getLemma() + " ";
+                        } else {
+                            key += t.getStem() + " ";
                         }
-                    } catch (java.util.regex.PatternSyntaxException e) {
-                        Logger.logMsg(Logger.WARNING,
-                                "Error while matching pattern: \""
-                                + key.toLowerCase() + "\"");
-                        Logger.logMsg(Logger.WARNING,
-                                "Escaped pattern: \"" + escapedKey
-                                + "\"");
+                    }
+                    key = key.trim();
+
+                    //iterate on all the anaphors
+                    for (String anaphor : pronominalAnaphoraCounter.keySet()) {
+                        //check if the anaphor contains or not the keyphrase
+                        //and vice-versa
+                        String escapedKey = Pattern.quote(key.toLowerCase());
+                        String escapedAnaphor = Pattern.quote(anaphor.toLowerCase());
+                        try {
+
+                            if (anaphor.toLowerCase()
+                                    .matches(".*\\b" + escapedKey + "\\b.*")
+                                    || key.toLowerCase()
+                                    .matches(".*\\b" + escapedAnaphor + "\\b.*")) {
+                                double score1 = score;
+                                double score2 = pronominalAnaphoraCounter.get(anaphor);
+                                score = Math.max(score1, score2); //get the maximal score 
+                            }
+                        } catch (java.util.regex.PatternSyntaxException e) {
+                            Logger.logMsg(Logger.WARNING,
+                                    "Error while matching pattern: \"" + key
+                                    + "\" with anaphor: \"" + anaphor + "\"");
+                            Logger.logMsg(Logger.WARNING,
+                                    "Escaped pattern: \"" + escapedKey
+                                    + "\" ; escaped anaphor: \"" + escapedAnaphor + "\"");
+                        }
+
                     }
 
-                }
+                    if (score > 0) {//if n-gram is an anaphor
+                        //normalize score for NOR by total # of phrases 
+                        k.putFeature(NUMBER_OF_REFERENCE, (score / numberOfPhrases));
 
-                //assuring there aren't repetition or self references 
-                if (inAnaphoraScore >= gramFreq) {
-                    inAnaphoraScore = 0;
-                }
+                        k.putFeature(StatisticalAnnotator.FREQUENCY,
+                                k.getFeature(StatisticalAnnotator.FREQUENCY) + score);
+                        k.putFeature(StatisticalAnnotator.FREQUENCY_SENTENCE,
+                                k.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE) + score / sentences.size());
 
-                //set the InAnaphora feature for the candidate, normalizing the 
-                //score to the candidate frequency
-                k.putFeature(IN_ANAPHORA, inAnaphoraScore / gramFreq);
+                    } else {
+                        k.putFeature(NUMBER_OF_REFERENCE, 0.0);
+                    }
+
+                    double inAnaphoraScore = 0; //initialize inAnaphora score to zero
+                    //get the term frequency 
+                    double gramFreq = k.getFeature(StatisticalAnnotator.FREQUENCY);
+
+                    //for each reference to the current anaphor
+                    for (String reference : notPronominalAnaphora) {
+                        //check if an candidate is or not present in a reference
+
+                        String escapedKey = Pattern.quote(key.toLowerCase());
+                        try {
+
+                            if (reference.toLowerCase()
+                                    .matches(".*\\b" + escapedKey + "\\b.*")) {
+                                inAnaphoraScore++;//if it is increment inAnaphora score
+                            }
+                        } catch (java.util.regex.PatternSyntaxException e) {
+                            Logger.logMsg(Logger.WARNING,
+                                    "Error while matching pattern: \""
+                                    + key.toLowerCase() + "\"");
+                            Logger.logMsg(Logger.WARNING,
+                                    "Escaped pattern: \"" + escapedKey
+                                    + "\"");
+                        }
+
+                    }
+
+                    //assuring there aren't repetition or self references 
+                    if (inAnaphoraScore >= gramFreq) {
+                        inAnaphoraScore = 0;
+                    }
+
+                    //set the InAnaphora feature for the candidate, normalizing the 
+                    //score to the candidate frequency
+                    k.putFeature(IN_ANAPHORA, inAnaphoraScore / gramFreq);
+                }
             }
         }
     }

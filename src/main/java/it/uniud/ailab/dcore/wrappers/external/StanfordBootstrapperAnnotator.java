@@ -18,8 +18,8 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import edu.stanford.nlp.dcoref.CorefChain;
-import edu.stanford.nlp.dcoref.CorefCoreAnnotations;
+import edu.stanford.nlp.hcoref.data.CorefChain;
+import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -108,21 +108,12 @@ public class StanfordBootstrapperAnnotator implements Annotator {
         //get the graph for coreference resolution
         Map<Integer, CorefChain> graph
                 = document.get(CorefCoreAnnotations.CorefChainAnnotation.class);
-
-        //prepare the map for coreference graph of document
-        Map<String, Collection<Set<CorefChain.CorefMention>>> coreferenceGraph
-                = new HashMap<>();
-
+                
         for (CorefChain corefChain : graph.values()) {
 
             //get the representative mention, that is the word recall in other sentences
             CorefChain.CorefMention cm = corefChain.getRepresentativeMention();
-
-            //eliminate auto-references
-            if (corefChain.getMentionMap().size() <= 1) {
-                continue;
-            }
-
+            
             //get the stemmed form of the references, so the comparison with 
             //grams will be easier
             List<CoreLabel> tks = document.get(SentencesAnnotation.class)
@@ -177,7 +168,7 @@ public class StanfordBootstrapperAnnotator implements Annotator {
             //assign to the document a new corenference obj
             //containing the anaphor and its mentions 
             blackboard.addGram(mention);
-        }
+        }        
 
         // these are all the sentences in this document
         // a CoreMap is essentially a Map that uses class objects as keys and 

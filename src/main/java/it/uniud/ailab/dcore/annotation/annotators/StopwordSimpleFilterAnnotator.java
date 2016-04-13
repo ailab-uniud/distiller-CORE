@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.json.simple.parser.ParseException;
 
@@ -106,7 +107,9 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
         for (Gram g : blackboard.getKeyphrases()) {
             Keyphrase k = (Keyphrase)g;
             if (stopwords.contains(k.getSurface()) ||
-                    stopwords.contains(k.getTokens().get(0).getText()))
+                    stopwords.contains(k.getTokens().get(0).getText()) ||
+                    !k.getSurface().matches("^[a-zA-Z0-9\\s]*$"))
+                
                 blackboard.removeKeyphrase(k);
         }
         

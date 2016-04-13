@@ -16,20 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package it.uniud.ailab.dcore;
+
+package it.uniud.ailab.dcore.io;
+
+import it.uniud.ailab.dcore.Blackboard;
 
 /**
- * A stage of the pipeline.
- * 
+ * Pipeline stage that prints the annotations of the sentences.
+ *
  * @author Marco Basaldella
  */
-public interface Stage {
-    
-    /**
-     * The pipeline stage runs analyzing the Blackboard given as parameter.
-     * 
-     * @param b the blackboard where the stage reads/writes.
-     */
-    public abstract void run(Blackboard b);
-        
+public class PreprocessedTextPrinter implements FileWriterStage {
+
+    @Override
+    public String getFileSuffix() {
+        return "preprocessed";
+    }
+
+    @Override
+    public void writeFile(String file, Blackboard b) {
+        TxtPrinter printer = new TxtPrinter();
+        printer.writePreprocessedText(file, b);
+    }
 }

@@ -40,7 +40,7 @@
     
     <!-- Annotators -->  
     <bean id="stanford" 
-          class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator"/>    
+          class="it.uniud.ailab.dcore.wrappers.external.StanfordBootstrapperAnnotator"/>    
     
     <bean id="openNLP" 
           class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
@@ -159,7 +159,7 @@
                 <ref bean="statistical" />
                 <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
-                <ref bean="mlEvaluatorNnet"/> 
+                <!--<ref bean="mlEvaluatorNnet"/> -->
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
                 <ref bean="printer" />

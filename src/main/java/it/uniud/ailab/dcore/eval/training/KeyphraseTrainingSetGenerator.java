@@ -25,6 +25,7 @@ import it.uniud.ailab.dcore.eval.TrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.io.IOBlackboard;
+import it.uniud.ailab.dcore.launchers.Launcher;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.utils.FileSystem;
@@ -100,18 +101,17 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
             String[] answers
                     = workingAnswers.
                     get(documentEntry.getKey());
-            
+
             IOBlackboard.setCurrentDocument(
-                    IOBlackboard.getDocumentsFolder() +
-                    FileSystem.getSeparator() +
-                    documentEntry.getKey());
+                    IOBlackboard.getDocumentsFolder()
+                    + FileSystem.getSeparator()
+                    + documentEntry.getKey());
 
             Blackboard b = pipeline.distillToBlackboard(document);
 
             Collection<Gram> candidates
                     = b.getKeyphrases();
-            
-            
+
             for (Gram gram : candidates) {
                 Keyphrase candidate = (Keyphrase) gram;
                 candidate.putFeature(goldStandard.getIdentifier(), 0);
@@ -128,8 +128,17 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
 
             CsvPrinter printer = new CsvPrinter();
             printer.loadKeyphrases(b);
-            printer.addToAll("DocID",documentEntry.getKey());
+            printer.addToAll("DocID", documentEntry.getKey());
             outputFiles.add(new Pair<>(documentEntry.getKey(), printer));
+
+            GenericSheetPrinter trainingSet = new CsvPrinter(CsvPrinter.DEFAULT_DELIMITER, true, true);
+
+            trainingSet.addPrinter(printer);
+
+            String filePath = IOBlackboard.getOutputPathPrefix() +documentEntry.getKey()+".semeval";
+            trainingSet.writeFile(filePath);
+            System.out.println(
+                    "Saved training file in " + filePath);
         }
         return outputFiles;
     }
