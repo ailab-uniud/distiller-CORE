@@ -101,7 +101,10 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
             List<Token> candidateTokens = new ArrayList<>();
 
+            Token prevT = null;
+
             while (tokenIterator.hasNext() && candidateTokens.isEmpty()) {
+
                 Token t = tokenIterator.next();
                 double tokenPosition
                         = ((ScoredAnnotation) t.getAnnotation(DefaultAnnotations.START_INDEX))
@@ -109,9 +112,41 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                 int step = t.getText().length();
                 sentenceText = sentenceText.substring(step);
 
-                if (tokenPosition == term.getRight()) {
+                if (tokenPosition >= term.getRight()) {
 
-                    double tokenEnd = -1;
+                    // it may happen that  there are some tokenization
+                    // mismatches, e.g. words with an hyphen:
+                    // take "foo-bar" as an example
+                    // ontogene may tokenize "foo" and "bar" as two separate tokens,
+                    // while Distiller's tokenizer may choose "foo-bar" 
+                    // as a single token.
+                    if (tokenPosition > term.getRight()) {
+
+                        if (prevT == null) {
+                            Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
+                                    log(Level.SEVERE,
+                                            "Tokenization mismatch: " + t.getText()
+                                            + " tokenized by OntoGene as " + term.getLeft());
+                            throw new AnnotationException(this,
+                                    "Ontogene Tokenization mismatch");
+                        }
+
+                        if (prevT.getText().contains(term.getLeft())) {
+                            Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
+                                    log(Level.INFO,
+                                            "Tokenization mismatch: " + prevT.getText()
+                                            + " tokenized by OntoGene as " + term.getLeft());
+                        } else {
+                            Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
+                                    log(Level.SEVERE,
+                                            "Tokenization mismatch: " + prevT.getText()
+                                            + " tokenized by OntoGene as " + term.getLeft());
+                            throw new AnnotationException(this,
+                                    "Ontogene Tokenization mismatch");
+                        }
+                    }
+
+                    double tokenEnd;
 
                     do {
                         tokenEnd
@@ -127,10 +162,12 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                         }
                     } while (tokenEnd < term.getLeft().length() + term.getRight());
                 } // if
+
+                prevT = t;
             } // while
-            
-            if (candidateTokens.size() == 0) {
-                throw new AnnotationException(this, 
+
+            if (candidateTokens.isEmpty()) {
+                throw new AnnotationException(this,
                         "Can't find tokens for the term " + term.getLeft());
             }
 

@@ -172,7 +172,7 @@ public class CraftOntogenePreprocessor extends GenericPreprocessor
 
             // assemble the document
             titleString = titleString + "\n\n";
-            abstractString = "Abstract" + "\n\n" + abstractString + "\n\n";
+            abstractString = "Abstract" + "\n\n" + abstractString; // + "\n\n";
 
             cleanedText = titleString + abstractString + bodyString;
 
