@@ -30,7 +30,7 @@ public class PreprocessedTextPrinter implements FileWriterStage {
 
     @Override
     public String getFileSuffix() {
-        return "preprocessed";
+        return "";
     }
 
     @Override

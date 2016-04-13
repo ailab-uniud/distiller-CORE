@@ -135,7 +135,8 @@ public class StanfordPreprocessingBySectionAnnotator implements Annotator {
                 i++;
                 inSect = false;
 
-            } else if (currentLine.matches("([0-9\\.]+|[0-9]+\\.+)[\\s(A-Z|a-z):?]+")) {
+            } else if (currentLine.matches("([0-9\\.]+|[0-9]+\\.+)(\\s[A-Z]+[a-z]*:?)+(\\s[A-Za-z]+:?)*")
+                    || currentLine.matches("([0-9\\.]+|[0-9]+\\.+)(\\s[A-Z]+:?)+")) {
 
                 String preProSection = analyzeSection(section);
                 txt = txt + preProSection;
@@ -148,7 +149,7 @@ public class StanfordPreprocessingBySectionAnnotator implements Annotator {
                     i = i + 2;
 
                 } else if (i + 1 < lines.size()
-                        && lines.get(i + 1).matches("([0-9\\.]+|[0-9]+\\.+)[\\s(A-Z|a-z):?]+")) {
+                        && lines.get(i + 1).matches("([0-9\\.]+|[0-9]+\\.+)(\\s[A-Z]+[a-z]*:?)+(\\s[A-Za-z]+:?)*")) {
                     nextLine = lines.get(i + 1);
                     txt = txt + "\n" + currentLine + ".\n";
                     txt = txt + "\n" + nextLine + ".\n";
