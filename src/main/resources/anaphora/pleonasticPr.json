@@ -25,7 +25,7 @@
 
     },
     "cognVerb": {
-        "pattern": ".*(recommend|think|believe|know|anticipate|assume|expect|show|observe)\\/VB[A-Z]?(\\.|that|\\w+\\/JJto).*",
+        "pattern": ".*(recommend|think|believe|know|anticipate|assume|expect|show|observe|see)\\/VB[A-Z]?(\\.|(from\\/IN.*)?that|\\w+\\/JJto).*",
         "description": "to check sentences like:it is recommended that"
     },
     "partVerbA": {
