@@ -1,0 +1,48 @@
+{
+    "structureMC1": {
+        "pattern": "\\w+\\/MD(not\\/RB)?((be|have)\\/VB(be\\/VBN)?).*",
+        "description": "to check sentences like:it is necessary to/that"
+    },
+    "structureMC2": {
+        "pattern": "(be|have)\\/(VBZ|VBD)(not\\/RB)?(be\\/VBN)?.*",
+        "description": "to check sentences like:it is necessary to/that"
+    },
+    "structureMC3": {
+        "pattern": "(not\\/RB)?be\\/VB.*",
+        "description": "to check sentences like:it is necessary to/that"
+    },
+    "structureMC4": {
+        "pattern": "(be|have)\\/(VBZ|VBD)(not\\/RB)?(be\\/VBN)?that.*",
+        "description": "to check sentences like:it is necessary to/that"
+    },
+    "structureMC5": {
+        "pattern": "\\w+\\/MD(not\\/RB)?((be|have)\\/VB(be\\/VBN)?)that.*",
+        "description": "to check sentences like:it is necessary to/that"
+    },
+    "modalAdj": {
+        "pattern": ".*\\w+\\/JJ((((for\\/IN)(\\w+\\/[A-Z]+))?to\\/TO\\w+\\/VB.*)|(that|as)\\/IN.*)",
+        "description": "to check sentences like:it is necessary to/that"
+
+    },
+    "cognVerb": {
+        "pattern": ".*(recommend|think|believe|know|anticipate|assume|expect|show|observe)\\/VB[A-Z]?(\\.|that|\\w+\\/JJto).*",
+        "description": "to check sentences like:it is recommended that"
+    },
+    "partVerbA": {
+        "pattern": "\\w+\\/MD(not\\/RB)?(seem|appear|mean|follow)\\/VB(\\w+\\/(JJ|VBG))?(to\\/TO|that).*",
+        "description": "It seems/appears/means/follows (that|to|the) S"
+    },
+    "partVerbB": {
+        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD)(not\\/RB)?(\\w+\\/(JJ|VBG))?(to\\/TO|that|the).*",
+        "description": "It seems/appears/means/follows (that|to|the) S"
+    },
+    "partVerb2A": {
+        "pattern": "(make|find|believe)",
+        "description": "all the relative pronouns"
+    },
+    "partVerb2B": {
+        "pattern": ".*\\w+\\/(JJ|VBG)(for\\/IN)?(\\w+\\/[A-Z]+)*to\\/TO\\w+\\/VB.*",
+        "description": "all the relative pronouns"
+    }
+
+}

@@ -39,7 +39,10 @@
           class="it.uniud.ailab.dcore.wrappers.external.StanfordPreprocessingAnnotator"/>
     <bean id="preprocessBySection"
           class="it.uniud.ailab.dcore.wrappers.external.StanfordPreprocessingBySectionAnnotator"/>
-     
+    <bean id="preprocessByAiLab"
+          class="it.uniud.ailab.dcore.wrappers.external.AiLabPreprocessingAnnotator">
+        <property name="onlyPronouns" value="false" />
+    </bean>     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.PreprocessedTextPrinter"/>
     
@@ -48,7 +51,7 @@
         <property name="stages">
             <list>
                 <!-- process the document -->
-                <ref bean="preprocessBySection"/>
+                <ref bean="preprocessByAiLab"/>
                 <ref bean="printer"/>
             </list>
         </property>        

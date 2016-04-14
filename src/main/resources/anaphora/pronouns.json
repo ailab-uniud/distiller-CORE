@@ -1,0 +1,17 @@
+{
+    "it": {
+        "pattern": "(It|it|Its|its|itself|Itself)"
+    },
+    "he": {
+        "pattern": "(He|he|Him|him|his|His|himself|Himself)"
+    },
+    "she": {
+        "pattern": "(She|she|Her|her|Herself|herself)"
+    },
+    "they": {
+        "pattern": "(They|they|them|Them|their|Their|themselves|Themselves)"
+    }
+    
+    
+
+}
