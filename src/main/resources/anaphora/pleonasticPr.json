@@ -29,11 +29,11 @@
         "description": "to check sentences like:it is recommended that"
     },
     "partVerbA": {
-        "pattern": "\\w+\\/MD(not\\/RB)?(seem|appear|mean|follow)\\/VB(\\w+\\/(JJ|VBG))?(to\\/TO|that).*",
+        "pattern": "\\w+\\/MD(not\\/RB)?(seem|appear|mean|follow)\\/VB(\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerbB": {
-        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD)(not\\/RB)?(\\w+\\/(JJ|VBG))?(to\\/TO|that|the).*",
+        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD)(not\\/RB)?(\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerb2A": {
