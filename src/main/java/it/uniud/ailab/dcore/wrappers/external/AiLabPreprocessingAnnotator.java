@@ -320,12 +320,12 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
         int i = 0;
         for (CoreMap sentence : sentences) {
-            
+
             String sentStr = sentence.toString();
             System.out.println(sentStr);
             SemanticGraph sentTree = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
-            substitutePRPrs(sentStr, sentTree, i-1);
+            substitutePRPrs(sentStr, sentTree, i - 1);
             if (!onlyPronouns) {
                 substituteDemonstrativePrs(sentStr, sentTree);
             }
@@ -346,13 +346,13 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                         && !itNode.tag().matches("IN|DT")) {
                     int j = itNode.index() - 1;
                     IndexedWord previous = sentTree.getNodeByIndex(j);
-                    IndexedWord next = sentTree.getNodeByIndex(itNode.index()+1);
-                    
+                    IndexedWord next = sentTree.getNodeByIndex(itNode.index() + 1);
+
                     if (previous.word().matches(",")) {
                         previous.setWord("");
                         j--;
                         previous = sentTree.getNodeByIndex(j);
-                        
+
                     } else if (previous.word().matches("\\[|\\(|\\{")) {
                         continue;
                     }
@@ -361,26 +361,26 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                     while (j >= 1) {
                         IndexedWord node = sentTree.getNodeByIndex(j);
                         if (node.tag().matches("VB|VBP|VBZ|VBD|VBG|VBN")) {
-                            String relVb= "";
-                            System.out.println(sentTree.toString(SemanticGraph.OutputFormat.READABLE));
+                            String relVb = "";
+//                            System.out.println(sentTree.toString(SemanticGraph.OutputFormat.READABLE));
                             for (GrammaticalRelation rel : sentTree.relns(node)) {
-                                    if (rel.getShortName().matches("dep|acl")) {
-                                        relVb = rel.getShortName();
-                                        break;
-                                    }
+                                if (rel.getShortName().matches("dep|acl")) {
+                                    relVb = rel.getShortName();
+                                    break;
                                 }
+                            }
                             if (node.tag().matches("VBN") && relVb.matches("acl")) {
-                                
+
                                 expandThat = node.word() + " " + expandThat;
-                            } else if(node.tag().matches("VBG")){
-                                if((previous.tag().matches("NNP|NN") && !next.tag().matches("VBZ"))
-                                        || (previous.tag().matches("NNPS|NNS") && next.tag().matches("VBZ"))){
+                            } else if (node.tag().matches("VBG")) {
+                                if ((previous.tag().matches("NNP|NN") && !next.tag().matches("VBZ"))
+                                        || (previous.tag().matches("NNPS|NNS") && next.tag().matches("VBZ"))) {
                                     expandThat = node.word() + " " + expandThat;
                                 } else {
                                     existVb = true;
                                     break;
                                 }
-                            }else {
+                            } else {
                                 existVb = true;
                                 break;
                             }
@@ -456,9 +456,9 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 itNode.setWord(p.getProbableCandidate().word());
                 System.out.println("substutute: " + itNode.word());
             }
-            
+
         }
-        
+
     }
 
     private String preprocessedSentence(SemanticGraph tree) {
@@ -476,20 +476,20 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
     private void selectCandidates(Pronoun pronoun, IndexedWord dad, SemanticGraph tree, int j) {
         System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
-        
+
         IndexedWord node = pronoun.getNode();
         System.out.println("pr : " + node.word());
         String rel = null;
         String relPr = null;
-        
-        if(dad == null){
+
+        if (dad == null) {
             dad = node;
         }
         System.out.println("dad : " + dad.word());
         for (GrammaticalRelation r : tree.relns(dad)) {
-                rel = r.getShortName();
+            rel = r.getShortName();
 
-            }
+        }
         if (rel == null) {
             rel = GrammaticalRelation.ROOT.getShortName();
         }
@@ -504,43 +504,22 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         System.out.println("dad rel: " + rel);
 
         List<String> posSubs = new ArrayList<>();
-        if (rel.equals(GrammaticalRelation.ROOT.getShortName())
+        if (node.index() == 1) {
+            searchBack(posSubs, pronoun, j);
+        } else if (rel.equals(GrammaticalRelation.ROOT.getShortName())
                 && (!relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
                 && !relPr.equals(EnglishGrammaticalRelations.INDIRECT_OBJECT.getShortName()))) {
             //cerco tra i siblings se esite un nodo che ha figlio subj -> frase principale
             Collection<IndexedWord> siblings = tree.getSiblings(node);
-            for (IndexedWord s : siblings) {
-                Collection<IndexedWord> children = tree.descendants(s);
-
-                for (IndexedWord c : children) {
-                    String relC = "";
-                    
-                    if (c.index() < node.index() - 1) {
-                        for (GrammaticalRelation r : tree.relns(c)) {
-                            relC = r.getShortName();
-                        }
-
-                        if (relC.equals(EnglishGrammaticalRelations.NOMINAL_SUBJECT.getShortName())
-                                || relC.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName())
-                                || relC.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
-                                || relC.equals(EnglishGrammaticalRelations.AGENT.getShortName())) {
-                            System.out.println("children " + c.word());
-                            if (!c.word().equalsIgnoreCase(node.word())) {
-
-                                evaluateCandidate(c, relC, pronoun, tree, node.index(), false);
-
-                            }
-                        }
-                    }
-
-                }
-            }
+            searchInRoot(siblings, tree, pronoun, true);
             if (pronoun.getProbableCandidate().word() != null) {
                 posSubs.add(pronoun.getProbableCandidate().word());
             }
+            if (posSubs.isEmpty()) {
+                searchInRoot(siblings, tree, pronoun, false);
+            }
 
-        } else if (relPr.equals(EnglishGrammaticalRelations.INDIRECT_OBJECT.getShortName()) 
-//                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
+        } else if (relPr.equals(EnglishGrammaticalRelations.INDIRECT_OBJECT.getShortName()) //                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
                 //                || relPr.equals(EnglishGrammaticalRelations.NOUN_COMPOUND_MODIFIER.getShortName())
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
@@ -554,8 +533,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 posSubs.add(pronoun.getProbableCandidate().word());
             }
 
-        } else if (relPr.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName()) 
-//                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
+        } else if (relPr.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName()) //                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
                 //                || relPr.equals(EnglishGrammaticalRelations.NOUN_COMPOUND_MODIFIER.getShortName())
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
@@ -569,9 +547,13 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 posSubs.add(pronoun.getProbableCandidate().word());
             }
 
-        } else if (rel.equals(EnglishGrammaticalRelations.XCLAUSAL_COMPLEMENT.getShortName())
-                || rel.equals(EnglishGrammaticalRelations.CLAUSAL_COMPLEMENT.getShortName())
-                || rel.equals(EnglishGrammaticalRelations.ADJECTIVAL_COMPLEMENT.getShortName())) {
+        } else if ((rel.equals(EnglishGrammaticalRelations.XCLAUSAL_COMPLEMENT.getShortName())
+                    && !relPr.contains(EnglishGrammaticalRelations.SUBJECT.getShortName()))
+                || (rel.equals(EnglishGrammaticalRelations.CLAUSAL_COMPLEMENT.getShortName())
+                    && !relPr.contains(EnglishGrammaticalRelations.SUBJECT.getShortName()))
+                || rel.equals(EnglishGrammaticalRelations.ADJECTIVAL_COMPLEMENT.getShortName())
+//                || rel.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
+                ) {
             for (TypedDependency t : tree.typedDependencies()) {
                 if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod.*)\\b") && t.dep().index() < node.index() - 1) {
                     evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), true);
@@ -581,9 +563,8 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             if (pronoun.getProbableCandidate().word() != null) {
                 posSubs.add(pronoun.getProbableCandidate().word());
             }
-        } else if (
-//                rel.contains(EnglishGrammaticalRelations.MODIFIER.getShortName())
-//                || 
+        } else if ( //                rel.contains(EnglishGrammaticalRelations.MODIFIER.getShortName())
+                //                || 
                 relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName()) //                || relPr.contains(EnglishGrammaticalRelations.MODIFIER.getShortName())
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
@@ -630,14 +611,14 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 }
             }
         }
-        
+
         System.out.println("candidates pr: ");
-        
-        for( IndexedWord w : pronoun.getCandidates().keySet()){
+
+        for (IndexedWord w : pronoun.getCandidates().keySet()) {
             Double score = pronoun.getCandidates().get(w);
             System.out.println(w.word() + " - " + score);
         }
-        System.out.println("possubs pr: " + posSubs.toString());
+
         if (!posSubs.isEmpty() && pronoun.getProbableCandidate().word().toLowerCase().equals("that")) {
             posSubs.clear();
             IndexedWord prob = tree.getNodeByIndex(pronoun.getProbableCandidate().index() + 1);
@@ -648,36 +629,77 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                     wordProb = wordProb + w.word() + " ";
                 }
             }
-        } else if (!posSubs.isEmpty() && pronoun.getProbableCandidate().tag().matches("DT|PRP.*")) {
+        } else if (posSubs.isEmpty() || pronoun.getProbableCandidate().tag().matches("DT|PRP.*")) {
             posSubs.clear();
             pronoun.resetMax();
-            while ((posSubs.isEmpty() || pronoun.getProbableCandidate().tag().matches("DT|PRP.*")) && j >= 0) {
 
-                CoreMap sentPerv = document.get(CoreAnnotations.SentencesAnnotation.class).get(j);
-                SemanticGraph g = sentPerv.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
-                System.out.println("previus : " + sentPerv.toString());
-                for (TypedDependency t : g.typedDependencies()) {
-                    
-                    if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod:.*)\\b") //                            
-//                            && t.dep().toString().matches(".*\\/(NN.*|PRP.*)")
-                            ) {
-                        if (t.dep().toString().matches(".*\\/PRP.*")
-                                && !t.dep().word().equalsIgnoreCase(node.word())) {
-                            continue;
-                        }
-                        evaluateCandidate(t.dep(), t.reln().toString(), pronoun, g, g.size() - 1, false);
-                    }
-                }
-                if (pronoun.getProbableCandidate().word() != null) {
-                    posSubs.add(pronoun.getProbableCandidate().word());
-                }
-
-                j--;
-            }
+            searchBack(posSubs, pronoun, j);
 
         }
-        
-        System.out.println("candidates: " +posSubs.toString());
+
+        System.out.println("candidates: " + posSubs.toString());
+
+    }
+
+    private void searchBack(List<String> posSubs, Pronoun pronoun, int j) {
+        IndexedWord node = pronoun.getNode();
+        while ((posSubs.isEmpty() || pronoun.getProbableCandidate().tag().matches("DT|PRP.*")) && j >= 0) {
+
+            CoreMap sentPerv = document.get(CoreAnnotations.SentencesAnnotation.class).get(j);
+            SemanticGraph g = sentPerv.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+            System.out.println("previus : " + sentPerv.toString());
+            for (TypedDependency t : g.typedDependencies()) {
+
+                if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod:agent)\\b") //                            
+                        && t.dep().toString().matches(".*\\/(NN.*|PRP.*)")) {
+                    if (t.dep().toString().matches(".*\\/PRP.*")
+                            && !t.dep().word().equalsIgnoreCase(node.word())) {
+                        continue;
+                    }
+                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, g, g.size() - 1, false);
+                }
+            }
+            if (pronoun.getProbableCandidate().word() != null) {
+                posSubs.add(pronoun.getProbableCandidate().word());
+            }
+
+            j--;
+        }
+    }
+
+    private void searchInRoot(Collection<IndexedWord> siblings, SemanticGraph tree, Pronoun pronoun, boolean child) {
+        IndexedWord node = pronoun.getNode();
+        for (IndexedWord s : siblings) {
+            Collection<IndexedWord> children;
+            if (child) {
+                children = tree.getChildren(s);
+            } else {
+                children = tree.descendants(s);
+            }
+
+            for (IndexedWord c : children) {
+                String relC = "";
+
+                if (c.index() < node.index() - 1) {
+                    for (GrammaticalRelation r : tree.relns(c)) {
+                        relC = r.getShortName();
+                    }
+
+                    if (relC.equals(EnglishGrammaticalRelations.NOMINAL_SUBJECT.getShortName())
+                            || relC.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName())
+                            || relC.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
+                            || relC.equals(EnglishGrammaticalRelations.AGENT.getShortName())) {
+                        System.out.println("children " + c.word());
+                        if (!c.word().equalsIgnoreCase(node.word())) {
+
+                            evaluateCandidate(c, relC, pronoun, tree, node.index(), false);
+
+                        }
+                    }
+                }
+
+            }
+        }
 
     }
 
@@ -728,50 +750,85 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         double score = 0.0;
 
         if (numG == Num.PLURAL) {
-            if (c.tag().matches("NNPS|NNS") 
-                    || (c.tag().matches("PRP.*") && !c.word().equals(node.word()))
-                    || (c.word().toLowerCase().matches("these|those"))) {
+            if (c.tag().matches("NNPS|NNS")
+                    || (c.tag().matches("DT") && c.word().toLowerCase().matches("those|these"))) {
                 double index = ((double) c.index()) / ((double) indexM);
                 score = pronoun.scoreCandidate(1.0, relC, index, normal);
                 pronoun.addCandidate(getCandidate(c, tree, ""), score);
             }
 
-            if ((tree.getNodeByIndex(c.index() + 1).tag().equals("CC") 
-                    || tree.getNodeByIndex(c.index() + 1).word().matches(","))
-                    && tree.getNodeByIndex(c.index() + 2).tag().matches("NN.*")) {
+            int i = c.index();
+            if (tree.getNodeByIndex(i + 2).tag().matches("NN.*")
+                    && (tree.getNodeByIndex(i + 1).tag().equals("CC")
+                    || tree.getNodeByIndex(i + 1).word().matches(","))) {
+                String word = "";
+                while ((tree.getNodeByIndex(i + 1).tag().equals("CC")
+                        || tree.getNodeByIndex(i + 1).word().matches(","))
+                        && tree.getNodeByIndex(i + 2).tag().matches("NN.*")) {
+//
+//                    //                String relW2 = "";
+//                    //                for (IndexedWord s : tree.getSiblings(c)) {
+//                    //                    System.out.println("s : " + s.word());
+//                    //                    if(s.index() < c.index())
+//                    //                    for (GrammaticalRelation g : tree.relns(c)) {
+//                    //                        relW2 = g.getShortName();
+//                    //                        if (relC.equals(relW2) || relW2.matches("conj.*")) {
+//                    //                            word += " " + s.word();
+//                    //                            
+//                    //                           
+//                    //                        }
+//                    //                    }
+//                    //                }
+//                    IndexedWord s = tree.getNodeByIndex(i + 1);
+//                    IndexedWord s2 = tree.getNodeByIndex(i + 2);
+//                    word += s.word() + " " + s2.word() + " ";
+//                    score += pronoun.scoreCandidate(1.0, relC, i, normal);
+//                    i = i + 2;
+//                }
+//                IndexedWord w = new IndexedWord("", node.sentIndex(), node.index());
+//                w.setWord(c.word() + " " + word);
+//                System.out.println(w.word());
+//                w.setTag(c.tag());
+//                pronoun.addCandidate(w, score + 1.0);
+//            }
+                    String relW2 = "";
+                    for (GrammaticalRelation g : tree.relns(tree.getNodeByIndex(c.index() + 2))) {
+                        relW2 = g.getShortName();
+                        if (relC.equals(relW2)) {
+                            String w1 = tree.getNodeByIndex(c.index() + 1).word();
+                            String w2 = tree.getNodeByIndex(c.index() + 2).word();
 
-                String relW2 = "";
-                for (GrammaticalRelation g : tree.relns(tree.getNodeByIndex(c.index() + 2))) {
-                    relW2 = g.getShortName();
-                    if (relC.equals(relW2)) {
-                        String w1 = tree.getNodeByIndex(c.index() + 1).word();
-                        String w2 = tree.getNodeByIndex(c.index() + 2).word();
+                            
+                            word += " " + w1 + " " + w2;
+                            i=1+2;
+                            break;
+                        }
 
-                        IndexedWord w = new IndexedWord("", c.sentIndex(), c.index());
-                        w.setWord(c.word() + " " + w1 + " " + w2);
-                        System.out.println(w.word());
-                        w.setTag(c.tag());
-                        pronoun.addCandidate(w, score + 1.0);
-                        break;
                     }
-
                 }
-
+                
+                IndexedWord w = new IndexedWord("", node.sentIndex(), node.index());
+                w.setWord(c.word() + " " + word);
+                System.out.println(w.word());
+                w.setTag(c.tag());
+                pronoun.addCandidate(w, score + 1.0);
             }
 
-        } else if (numG == Num.SINGULAR
-                && c.tag().matches("NN|NNP") 
-                || (c.tag().matches("PRP.*") && !c.word().equals(node.word()))
-                || (c.word().toLowerCase().matches("this|that"))) {
-            Gender subG = genderUtil.findGender(c.word().toLowerCase());
+        } else if (numG == Num.SINGULAR) {
+            if (c.tag().matches("NN|NNP") || (c.tag().matches("DT") && c.word().toLowerCase().matches("this|that"))) {
+                Gender subG = genderUtil.findGender(c.word().toLowerCase());
 
-            double index = ((double) c.index()) / ((double) indexM);
-            if (subG == nodeG) {
-                score = pronoun.scoreCandidate(1.0, relC, index, normal);
-                pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel()), score);
-            } else if (subG == Gender.UNDEFINED || (nodeG == Gender.NEUTRAL && subG != nodeG)) {
-                score = pronoun.scoreCandidate(0.75, relC, index, normal);
-                pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel()), score);
+                double index = ((double) c.index()) / ((double) indexM);
+                if (subG == nodeG) {
+                    score = pronoun.scoreCandidate(1.0, relC, index, normal);
+                    pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel()), score);
+                } else if (subG == Gender.UNDEFINED || (nodeG == Gender.NEUTRAL && subG != nodeG)) {
+                    score = pronoun.scoreCandidate(0.75, relC, index, normal);
+                    pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel()), score);
+                } else {
+                    score = pronoun.scoreCandidate(0.3, relC, index, normal);
+                    pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel()), score);
+                }
             }
 
         }
@@ -782,11 +839,11 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
         IndexedWord w = new IndexedWord("", node.sentIndex(), node.index());
         String totalWord = "";
-        
+
         List<Integer> indexes = new ArrayList<>();
-        Map<Integer,IndexedWord> children = new HashMap<>();
-                
-        for(IndexedWord c : tree.descendants(node)){
+        Map<Integer, IndexedWord> children = new HashMap<>();
+
+        for (IndexedWord c : tree.descendants(node)) {
             indexes.add(c.index());
             children.put(c.index(), c);
         }
@@ -811,6 +868,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
     public boolean getOnlyPronouns() {
         return onlyPronouns;
+
     }
 
     /**
@@ -939,7 +997,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             return rel;
         }
 
-        private Map<IndexedWord,Double> getCandidates() {
+        private Map<IndexedWord, Double> getCandidates() {
             return candidates;
         }
 
