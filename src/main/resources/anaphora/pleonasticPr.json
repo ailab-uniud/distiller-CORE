@@ -20,7 +20,7 @@
         "description": "to check sentences like:it is necessary to/that"
     },
     "modalAdj": {
-        "pattern": ".*\\w+\\/JJ((((for\\/IN)(\\w+\\/[A-Z]+))?to\\/TO\\w+\\/VB.*)|(that|as)\\/IN.*)",
+        "pattern": ".*\\w+\\/(JJ|JJR)((((for\\/IN)(\\w+\\/[A-Z]+))?to\\/TO\\w+\\/VB.*)|(that|as)\\/IN.*)",
         "description": "to check sentences like:it is necessary to/that"
 
     },
@@ -29,11 +29,11 @@
         "description": "to check sentences like:it is recommended that"
     },
     "partVerbA": {
-        "pattern": "\\w+\\/MD(not\\/RB)?(seem|appear|mean|follow)\\/VB(\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
+        "pattern": "\\w+\\/MD(not\\/RB)?(seem|appear|mean|follow)\\/VB(for.*|\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerbB": {
-        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD)(not\\/RB)?(\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
+        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD|VB)(not\\/RB)?(for.*|\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerb2A": {
