@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--      
+  	Copyright (C) 2015 Artificial Intelligence
+  	Laboratory @ University of Udine.
+  
+  	This file is part of the Distiller-CORE library.
+  
+  	Licensed under the Apache License, Version 2.0 (the "License");
+  	you may not use this file except in compliance with the License.
+  	You may obtain a copy of the License at
+ 
+  	     http://www.apache.org/licenses/LICENSE-2.0
+ 
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+-->
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation ="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd" xmlns:aop="http://www.springframework.org/schema/aop">
+    
+    
+    <!-- As utility, some locales -->   
+    <bean id="english" class="java.util.Locale">
+        <constructor-arg value="en" type="java.lang.String"/>
+    </bean>
+    
+    <!-- Language detectors -->  
+    <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
+    
+    <!-- Annotators -->  
+    <bean id="preprocessor"
+          class="it.uniud.ailab.dcore.wrappers.ontogene.CraftOntogenePreprocessor"/>
+    
+    <bean id="tsvanalyzer"
+          class="it.uniud.ailab.dcore.wrappers.ontogene.OntogeneTsvAnalyzerAnnotator" />
+    
+    <bean id="stanford" 
+          class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator"/>
+    
+    <bean id="sentenceIndex" 
+          class="it.uniud.ailab.dcore.annotation.annotators.SentenceIndexAnnotator"  />
+    
+    <bean id="stemmer"
+          class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
+    
+            
+    <!-- N-gram generator -->    
+    <bean id="NGramGenerator"
+          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
+    </bean>
+    
+    <!-- Stopword filter -->
+    <bean id="simpleStopword"
+          class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
+    </bean>
+    
+    <bean id="regexFilter"
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexFilterAnnotator">
+        <property name="target">
+            <util:constant 
+                static-field="it.uniud.ailab.dcore.persistence.Keyphrase.KEYPHRASE"/>
+        </property>
+        <property name="filter" value="[0-9]+"/>
+    </bean>
+    
+    <!-- annotator for statistical features of grams -->
+    <bean id="statistical" 
+          class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
+    
+    <bean id="dpm"
+          class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
+    
+    <!-- filters that keeps only the most important  grams (i.e. with the highest
+    calculated keyphraseness  -->
+    <bean id="skylineGramFilter" 
+          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
+    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
+        <property name="cut" value="5"/>
+    </bean> 
+    
+    <!-- Evaluators -->
+    <bean id="mlEvaluator"
+          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
+        <!-- Config for logistic regression -->
+        <!--
+        <property name="modelPath" value="models/keyphrase-extraction/glm.model"/>
+        <property name="modelParameters" value="type=&quot;response&quot;"/>
+        -->
+        
+        <!-- Config for neural network -->
+        <!--
+        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelParameters" value="type=&quot;raw&quot;"/>
+        <property name="requires" value="nnet" />
+        -->
+    </bean>
+    
+    <bean id="mlEvaluatorNnet"
+          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
+        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelParameters" value="type=&quot;raw&quot;"/>
+        <property name="requires" value="nnet" />
+    </bean>
+    
+    <bean id="printer"
+          class="it.uniud.ailab.dcore.io.GramPrinter"/>
+    
+    <bean id="defaultPipeline"
+          class="it.uniud.ailab.dcore.Pipeline">
+        <property name="stages">
+            <list>
+                <!--<ref bean="preprocessor" />-->
+                <ref bean="cybozu" />
+                <ref bean="stanford" />
+                <ref bean="sentenceIndex" />
+                <ref bean="tsvanalyzer"/>
+                <ref bean="stemmer" />
+                <!-- annotate the n-grmas -->
+                <ref bean="simpleStopword" />
+                <ref bean="regexFilter" />
+                <ref bean="statistical" />
+                <ref bean="dpm"/>
+                <!-- evaluate the keyphraseness -->
+                <ref bean="mlEvaluatorNnet"/> 
+                
+                <ref bean="printer"/>
+            </list>
+        </property>        
+    </bean> 
+    
+    <!-- The main object, the Distiller, that receives the beans defined above -->
+    <bean id="distiller" class="it.uniud.ailab.dcore.Distiller">
+        <property name="languageDetector" ref="cybozu"/>
+        <property name="pipelines">
+            <map key-type="java.util.Locale" 
+                 value-type="it.uniud.ailab.dcore.annotation.Pipeline">
+                <entry
+                    key-ref="english" 
+                    value-ref="defaultPipeline">
+                </entry>
+            </map>
+        </property>
+    </bean>
+   
+</beans>

@@ -37,9 +37,12 @@ public class SentenceIndexAnnotator implements Annotator {
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
+        
+        String remainingText = blackboard.getText();
+        int processedText = 0;
 
         for (Sentence s : DocumentUtils.getSentences(component)) {
-            int startIndex = blackboard.getText().indexOf(s.getText());
+            int startIndex = processedText + remainingText.indexOf(s.getText());
             int endIndex = startIndex + s.getText().length();
 
             s.addAnnotation(
@@ -70,9 +73,12 @@ public class SentenceIndexAnnotator implements Annotator {
                         new FeatureAnnotation(
                                 DefaultAnnotations.END_INDEX, tokenPosition + t.getText().length()));
 
-            }
-
-        }
+            } // for (Token t : ... )
+            
+            processedText = endIndex;
+            remainingText = blackboard.getText().substring(processedText);
+            
+        } // for (Sentence s : ... )
 
     }
 

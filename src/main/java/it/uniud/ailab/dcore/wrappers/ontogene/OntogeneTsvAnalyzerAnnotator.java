@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -131,7 +130,7 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                                     "Ontogene Tokenization mismatch");
                         }
 
-                        if (lcs(prevT.getText(),term.getLeft()) > 0) {
+                        if (lcs(prevT.getText(), term.getLeft()) > 0) {
                             Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
                                     log(Level.INFO,
                                             "Tokenization mismatch: " + prevT.getText()
@@ -162,7 +161,6 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                         }
                     } while (tokenEnd < term.getLeft().length() + term.getRight());
                 } // if
-
                 prevT = t;
             } // while
 
@@ -180,9 +178,19 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
     private List<Pair<String, Integer>> loadFromTsv() {
         String tsvFileName = IOBlackboard.getCurrentDocument();
 
-        tsvFileName = tsvFileName.substring(tsvFileName.lastIndexOf('-') + 1);
-        tsvFileName = tsvFileName.substring(0, tsvFileName.lastIndexOf('.'));
-        tsvFileName = tsvFileName + ".tsv";
+        if (tsvFileName.endsWith("xml")) {
+
+            tsvFileName = tsvFileName.substring(tsvFileName.lastIndexOf('-') + 1);
+            tsvFileName = tsvFileName.substring(0, tsvFileName.lastIndexOf('.'));
+
+        } else {
+
+            tsvFileName = tsvFileName.substring(tsvFileName.lastIndexOf(FileSystem.getSeparator()) + 1);
+            tsvFileName = tsvFileName.substring(0, tsvFileName.lastIndexOf('.'));
+
+        }
+
+        tsvFileName += ".tsv";
 
         File f = new File(IOBlackboard.getDocumentsFolder());
         tsvFileName = f.getParent() + FileSystem.getSeparator()
@@ -251,49 +259,47 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
         return terms;
     }
 
-    
     /**
-     * Finds the length of the longest common substring between the 
-     * input strings.
-     * 
+     * Finds the length of the longest common substring between the input
+     * strings.
+     *
      * @param first the first input string
      * @param second the second input string
      * @return the length of the L.C.S.
-     * @see <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring#Java"/>
+     * @see
+     * <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring#Java"/>
      */
     private static int lcs(String first, String second) {
-    if (first == null || second == null || first.length() == 0 || second.length() == 0) {
-        return 0;
-    }
-        
-    int maxLen = 0;
-    int fl = first.length();
-    int sl = second.length();
-    int[][] table = new int[fl+1][sl+1];
-   
-    for(int s=0; s <= sl; s++)
-      table[0][s] = 0;
-    for(int f=0; f <= fl; f++)
-      table[f][0] = 0;
+        if (first == null || second == null || first.length() == 0 || second.length() == 0) {
+            return 0;
+        }
 
+        int maxLen = 0;
+        int fl = first.length();
+        int sl = second.length();
+        int[][] table = new int[fl + 1][sl + 1];
 
+        for (int s = 0; s <= sl; s++) {
+            table[0][s] = 0;
+        }
+        for (int f = 0; f <= fl; f++) {
+            table[f][0] = 0;
+        }
 
- 
-    for (int i = 1; i <= fl; i++) {
-        for (int j = 1; j <= sl; j++) {
-            if (first.charAt(i-1) == second.charAt(j-1)) {
-                if (i == 1 || j == 1) {
-                    table[i][j] = 1;
-                }
-                else {
-                    table[i][j] = table[i - 1][j - 1] + 1;
-                }
-                if (table[i][j] > maxLen) {
-                    maxLen = table[i][j];
+        for (int i = 1; i <= fl; i++) {
+            for (int j = 1; j <= sl; j++) {
+                if (first.charAt(i - 1) == second.charAt(j - 1)) {
+                    if (i == 1 || j == 1) {
+                        table[i][j] = 1;
+                    } else {
+                        table[i][j] = table[i - 1][j - 1] + 1;
+                    }
+                    if (table[i][j] > maxLen) {
+                        maxLen = table[i][j];
+                    }
                 }
             }
         }
+        return maxLen;
     }
-    return maxLen;
-}
 }

@@ -191,7 +191,7 @@ public class CraftOntogenePreprocessor extends GenericPreprocessor
         String retString = "";
         String newLine = "\n\n";
 
-        if (node.getChildNodes().getLength() == 0 &&
+        if (node.getNodeType() == Node.TEXT_NODE &&
                 node.getTextContent().length() > 0) {
             retString += node.getTextContent() + newLine;
         }
