@@ -145,6 +145,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             loadDatabasePleonastic();
             loadDatabasePronouns();
             getSectionedDoc(blackboard.getTextLines());
+
             String preprocText = parseDoc();
             preprocText = preprocText.replaceAll("-LRB-", "(");
             preprocText = preprocText.replaceAll("-RRB-", ")");
@@ -320,6 +321,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
     private String parseDoc() throws IOException {
 
         String preprocessedText = "";
+        txt = txt.replaceAll("``", "'");
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
             //NER, parsing, and coreference resolution 
@@ -430,10 +432,10 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                         itNode.setWord("; " + expandThat);
                         bf.write(" sub: " + itNode.word() + "\n");
                         System.out.println(" sub: " + itNode.word() + "\n");
-                    }  else {
-                    bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
-                            + " index: " + itNode.index() + "sub: not sub");
-                }
+                    } else {
+                        bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
+                                + " index: " + itNode.index() + "sub: not sub \n");
+                    }
 
                 }
             }
@@ -458,12 +460,19 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                             + " index: " + itNode.index());
                     System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
                             + " index: " + itNode.index());
-                    itNode.setWord(p.getProbableCandidate().word());
-                    bf.write(" sub: " + itNode.word() + "\n");
-                    System.out.println(" sub: " + itNode.word() + "\n");
+                    String sub = p.getProbableCandidate().word();
+                    if (sub != null) {
+                        itNode.setWord(sub);
+
+                        bf.write(" sub: " + itNode.word() + "\n");
+                        System.out.println(" sub: " + itNode.word() + "\n");
+                    } else {
+                        bf.write(" sub: not sub \n");
+                        System.out.println(" sub: not sub \n");
+                    }
                 } else {
                     bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
-                            + " index: " + itNode.index() + "sub: not sub");
+                            + " index: " + itNode.index() + "sub: not sub \n");
                 }
             }
         }
@@ -479,9 +488,16 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                         + " index: " + itNode.index());
                 System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
                         + " index: " + itNode.index());
-                itNode.setWord(p.getProbableCandidate().word());
-                bf.write(" sub: " + itNode.word() + "\n");
-                System.out.println(" sub: " + itNode.word() + "\n");
+                String sub = p.getProbableCandidate().word();
+                if (sub != null) {
+                    itNode.setWord(sub);
+
+                    bf.write(" sub: " + itNode.word() + "\n");
+                    System.out.println(" sub: " + itNode.word() + "\n");
+                } else {
+                    bf.write(" sub: not sub \n");
+                    System.out.println(" sub: not sub \n");
+                }
             }
         }
         if (sentStr.matches("(^|.*\\b)" + shePt + "\\b.*")) {
@@ -496,9 +512,16 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                         + " index: " + itNode.index());
                 System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
                         + " index: " + itNode.index());
-                itNode.setWord(p.getProbableCandidate().word());
-                bf.write(" sub: " + itNode.word() + "\n");
-                System.out.println(" sub: " + itNode.word() + "\n");
+                String sub = p.getProbableCandidate().word();
+                if (sub != null) {
+                    itNode.setWord(sub);
+
+                    bf.write(" sub: " + itNode.word() + "\n");
+                    System.out.println(" sub: " + itNode.word() + "\n");
+                } else {
+                    bf.write(" sub: not sub \n");
+                    System.out.println(" sub: not sub \n");
+                }
             }
         }
         if (sentStr.matches("(^|.*\\b)" + theyPt + "\\b.*")) {
@@ -513,9 +536,16 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                         + " index: " + itNode.index());
                 System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
                         + " index: " + itNode.index());
-                itNode.setWord(p.getProbableCandidate().word());
-                bf.write(" sub: " + itNode.word() + "\n");
-                System.out.println(" sub: " + itNode.word() + "\n");
+                String sub = p.getProbableCandidate().word();
+                if (sub != null) {
+                    itNode.setWord(sub);
+
+                    bf.write(" sub: " + itNode.word() + "\n");
+                    System.out.println(" sub: " + itNode.word() + "\n");
+                } else {
+                    bf.write(" sub: not sub \n");
+                    System.out.println(" sub: not sub \n");
+                }
             }
 
         }
@@ -537,7 +567,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
     private void selectCandidates(Pronoun pronoun, IndexedWord dad, SemanticGraph tree, int j) throws IOException {
 //        bf.write(tree.toString(SemanticGraph.OutputFormat.READABLE) + "\n");
-System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
+        System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
 
         IndexedWord node = pronoun.getNode();
         System.out.println("pr : " + node.word() + "\n");
@@ -590,8 +620,8 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
                 if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj)\\b") && t.dep().index() < node.index() - 1) {
-
-                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), false);
+                    double index = ((double) t.dep().index()) / ((double) node.index());
+                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, index, false);
                 }
 
             }
@@ -599,13 +629,13 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                 posSubs.add(pronoun.getProbableCandidate().word());
             }
 
-        } else if (relPr.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName()) //                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
+        } else if (relPr.matches(".*subjpass.*") //                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
                 //                || relPr.equals(EnglishGrammaticalRelations.NOUN_COMPOUND_MODIFIER.getShortName())
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
-                if (t.reln().toString().matches("\\b(csubj.*|nsubj.*)\\b") && t.dep().index() < node.index() - 1) {
-
-                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), false);
+                if (t.reln().toString().matches("\\b(csubj.*|nsubj.*|dobj|iobj|nmod.*|dep)\\b") && t.dep().index() < node.index() - 1) {
+                    double index = ((double) t.dep().index()) / ((double) node.index());
+                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, index, false);
                 }
 
             }
@@ -621,7 +651,8 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
                 if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod.*|dep)\\b") && t.dep().index() < node.index() - 1) {
-                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), true);
+                    double index = ((double) t.dep().index()) / ((double) node.index());
+                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, index, true);
                 }
 
             }
@@ -636,7 +667,8 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                 ) {
             for (TypedDependency t : tree.typedDependencies()) {
                 if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod.*|dep)\\b") && t.dep().index() < node.index() - 1) {
-                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), true);
+                    double index = ((double) t.dep().index()) / ((double) node.index());
+                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, index, true);
                 }
 
             }
@@ -648,8 +680,8 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                 && relPr.contains(EnglishGrammaticalRelations.SUBJECT.getShortName())) {
             for (TypedDependency t : tree.typedDependencies()) {
                 if (t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod.*|dep)\\b") && t.dep().index() < node.index() - 1) {
-
-                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), false);
+                    double index = ((double) t.dep().index()) / ((double) node.index());
+                    evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, index, false);
                 }
 
             }
@@ -665,8 +697,8 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                     for (TypedDependency t : tree.typedDependencies()) {
                         if (t.dep().index() < node.index() - 1
                                 && t.reln().toString().matches("\\b(nsubj.*|dobj|iobj|nmod.*|dep)\\b")) {
-
-                            evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, node.index(), false);
+                            double index = ((double) t.dep().index()) / ((double) node.index());
+                            evaluateCandidate(t.dep(), t.reln().toString(), pronoun, tree, index, false);
 
                         }
                     }
@@ -724,6 +756,7 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                             && !t.dep().word().equalsIgnoreCase(node.word())) {
                         continue;
                     }
+
                     evaluateCandidate(t.dep(), t.reln().toString(), pronoun, g, g.size() - 1, false);
                 }
             }
@@ -749,12 +782,12 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                 if (relC.equals(EnglishGrammaticalRelations.NOMINAL_SUBJECT.getShortName())
                         || relC.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName())
                         || relC.contains(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
-                                                    || relC.contains(EnglishGrammaticalRelations.MODIFIER.getShortName())
+                        || relC.contains(EnglishGrammaticalRelations.MODIFIER.getShortName())
                         || relC.matches(EnglishGrammaticalRelations.SEMANTIC_DEPENDENT.getShortName())) {
 //                    bf.write("children " + c.word() + "\n");
                     if (!c.word().equalsIgnoreCase(node.word())) {
-
-                        evaluateCandidate(c, relC, pronoun, tree, node.index(), false);
+                        double index = ((double) c.index()) / ((double) node.index());
+                        evaluateCandidate(c, relC, pronoun, tree, index, false);
 
                     }
                 }
@@ -804,7 +837,7 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
         return checked;
     }
 
-    private void evaluateCandidate(IndexedWord c, String relC, Pronoun pronoun, SemanticGraph tree, int indexM, boolean normal) throws IOException {
+    private void evaluateCandidate(IndexedWord c, String relC, Pronoun pronoun, SemanticGraph tree, double index, boolean normal) throws IOException {
         Gender nodeG = pronoun.getGender();
         Num numG = pronoun.getNumber();
         String nodeWord = pronoun.getNode().word();
@@ -813,7 +846,7 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
         if (numG == Num.PLURAL) {
             if (c.tag().matches("NNPS|NNS")
                     || (c.tag().matches("DT") && c.word().toLowerCase().matches("those|these"))) {
-                double index = ((double) c.index()) / ((double) indexM);
+
                 score = pronoun.scoreCandidate(1.0, relC, index, normal);
                 pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel(), nodeWord), score);
             }
@@ -837,13 +870,12 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
                     if (relC.equals(relW2)) {
                         String w1 = tree.getNodeByIndex(c.index() + 1).word();
                         String w2 = tree.getNodeByIndex(c.index() + 2).word();
-                        double index = ((double) c.index()) / ((double) indexM);
                         score = pronoun.scoreCandidate(1.0, relC, index, normal);
                         IndexedWord w = new IndexedWord("", c.sentIndex(), c.index());
                         w.setWord(c.word() + " " + w1 + " " + w2);
                         System.out.println(w.word());
                         w.setTag("NNS");
-                        pronoun.addCandidate(w, score + 0.2);
+                        pronoun.addCandidate(w, score + 0.3);
                         break;
                     }
 
@@ -861,7 +893,6 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
             if (c.tag().matches("NN|NNP") || (c.tag().matches("DT") && c.word().toLowerCase().matches("this|that"))) {
                 Gender subG = genderUtil.findGender(c.word().toLowerCase());
 
-                double index = ((double) c.index()) / ((double) indexM);
                 if (subG == nodeG) {
                     score = pronoun.scoreCandidate(1.0, relC, index, normal);
                     pronoun.addCandidate(getCandidate(c, tree, pronoun.getRel(), nodeWord), score);
@@ -897,17 +928,26 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
 
         List<Integer> indexes = getSortedIndexesList(tree.descendants(node));
 
+        int j = Collections.min(indexes);
         for (Integer i : indexes) {
             IndexedWord c = tree.getNodeByIndex(i);
-            if (c.tag().matches("JJ.*|NN.*|DT|VBG")
-                    || (i == node.index() + 1 && c.tag().matches("IN"))){
-                totalWord += " " + c.word();
+            if (c.tag().matches("JJ.*|NN.*|DT|VBG|.*\\p{Punct}.*|CD") 
+                    
+                    || (i == node.index() + 1 && c.word().matches("of|for"))) {
+                if ((i - j) <= 1) {
+                    totalWord += " " + c.word();
+                    j = i;
+                } else {
+                    break;
+                }
+
             }
         }
+        
 //        totalWord += " " + node.word();
-        if (relPr.equals("nmod:poss") && !prWord.matches(".*their.*")) {
-            totalWord += "'s";
-        }
+//        if (relPr.equals("nmod:poss") && !prWord.matches(".*their.*")) {
+//            totalWord += "'s";
+//        }
         w.setWord(totalWord);
         w.setTag(node.tag());
         return w;
@@ -1007,8 +1047,7 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
 
         public double scoreCandidate(double gen, String rel, double index, boolean comp) {
             double relSc;
-            if (rel.contains(EnglishGrammaticalRelations.SUBJECT.getShortName())
-//                    || rel.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName())
+            if (rel.contains(EnglishGrammaticalRelations.SUBJECT.getShortName()) //                    || rel.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName())
                     ) {
                 relSc = 4.0;
                 if (comp) {
@@ -1030,8 +1069,7 @@ System.out.println(tree.toString(SemanticGraph.OutputFormat.READABLE));
 
                     relSc = 5.0 - relSc;
                 }
-            } else if (rel.contains("dep")
-                    ) {
+            } else if (rel.contains("dep")) {
                 relSc = 2.0;
             } else {
                 relSc = 0.0;
