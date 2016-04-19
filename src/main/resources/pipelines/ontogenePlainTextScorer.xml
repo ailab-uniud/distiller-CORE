@@ -68,7 +68,12 @@
             <util:constant 
                 static-field="it.uniud.ailab.dcore.persistence.Keyphrase.KEYPHRASE"/>
         </property>
-        <property name="filter" value="[0-9]+"/>
+        <property name="filter" value="[0-9]+(.[0-9]+)?|.*&lt;.*|.*&gt;.*"/>
+    </bean>
+    
+    <bean id="CRAFTchecker"
+          class="it.uniud.ailab.dcore.wrappers.ontogene.KnowtatorEntityCheckerAnnotator">
+        <property name="inputDirectory" value="/usr/local/craft/craft-1.0/" />
     </bean>
     
     <!-- annotator for statistical features of grams -->
@@ -120,9 +125,9 @@
                 <!--<ref bean="preprocessor" />-->
                 <ref bean="cybozu" />
                 <ref bean="stanford" />
+                <ref bean="stemmer" />
                 <ref bean="sentenceIndex" />
                 <ref bean="tsvanalyzer"/>
-                <ref bean="stemmer" />
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
                 <ref bean="regexFilter" />
@@ -130,7 +135,7 @@
                 <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
                 <ref bean="mlEvaluatorNnet"/> 
-                
+                <ref bean="CRAFTchecker"/>
                 <ref bean="printer"/>
             </list>
         </property>        

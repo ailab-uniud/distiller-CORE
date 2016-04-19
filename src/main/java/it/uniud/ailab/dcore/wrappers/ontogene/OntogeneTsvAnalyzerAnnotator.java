@@ -176,19 +176,7 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
     }
 
     private List<Pair<String, Integer>> loadFromTsv() {
-        String tsvFileName = IOBlackboard.getCurrentDocument();
-
-        if (tsvFileName.endsWith("xml")) {
-
-            tsvFileName = tsvFileName.substring(tsvFileName.lastIndexOf('-') + 1);
-            tsvFileName = tsvFileName.substring(0, tsvFileName.lastIndexOf('.'));
-
-        } else {
-
-            tsvFileName = tsvFileName.substring(tsvFileName.lastIndexOf(FileSystem.getSeparator()) + 1);
-            tsvFileName = tsvFileName.substring(0, tsvFileName.lastIndexOf('.'));
-
-        }
+        String tsvFileName = OntogeneUtils.getCurrentDocumentID();
 
         tsvFileName += ".tsv";
 
