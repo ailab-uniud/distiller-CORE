@@ -72,6 +72,15 @@ public class StanfordFastBootstrapperAnnotator implements Annotator {
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
+        
+        // recursion: if the document has been splitted into sections, 
+        // annotate the sections and not the whole
+        if (component.hasComponents()) {
+            for (DocumentComponent c : component.getComponents()) {
+                annotate(blackboard,c);
+            }
+            return;
+        }
 
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 

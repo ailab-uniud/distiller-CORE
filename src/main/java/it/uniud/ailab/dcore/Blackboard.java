@@ -105,16 +105,25 @@ public class Blackboard {
     }
 
     /**
-     * Initializes the blackboard with a new document. This will destroy any
-     * information previously held by the blackboard.
+     * @param rawText the text of the new document
+     * @see Blackboard#createDocument(java.lang.String, java.lang.String)
      *
-     * @param rawText the text of the new document.
      */
     public final void createDocument(String rawText) {
-        this.rawText = rawText;
-        this.document = new DocumentComposite(rawText, DEFAULT_DOCUMENT_ID);
-        this.generalNGramsContainer = new HashMap<>();
-        this.annotations = new ArrayList<>();
+        createDocument(rawText, DEFAULT_DOCUMENT_ID);
+    }
+
+    /**
+     * Apply a text preprocessing to the blackboard, substituting the root 
+     * of the document with a new version. Note that this also removes
+     * all the annotations on the old document root, which will get
+     * replaced by the new one.
+     * 
+     * @param preprocessedText 
+     */
+    public final void applyPreprocess(String preprocessedText) {
+        this.document = new DocumentComposite(preprocessedText,
+                this.getStructure().getIdentifier());
     }
 
     /**
@@ -129,12 +138,28 @@ public class Blackboard {
     }
 
     /**
-     * Gets the raw text (i.e. unprocessed) of the document.
+     * Gets the text of the document. It may be identical to the result of
+     * {@link #getRawText()} method, if the text has not been 
+     * preprocessed, or different if some 
+     * {@link it.uniud.ailab.dcore.annotation.annotators.GenericPreprocessor 
+     * preprocessor} pre-processed the input text (e.g. removing XML tags, 
+     * or similar tasks}.
+     * 
      *
-     * @return the original document string.
+     * @return the input string.
      */
     public String getText() {
-        return rawText;
+        return getStructure().getText();
+    }
+    
+    /**
+     * Gets the raw text (i.e. unprocessed) of the document.
+     * 
+     * @return the original input string.
+     */
+    @JsonIgnore
+    public String getRawText() {
+        return rawText;        
     }
     
     /**
@@ -211,31 +236,29 @@ public class Blackboard {
 
         generalNGramsContainer.put(newGram.getType(), grams);
     }
-    
+
     /**
-     * Get the all the different kind of grams found in the document. This
-     * grams are divided by type, stored in a Map using their identifier as 
-     * key.
-     * 
+     * Get the all the different kind of grams found in the document. This grams
+     * are divided by type, stored in a Map using their identifier as key.
+     *
      * @return all the maps found in the document.
      */
-    public Map<String,Map<String,Gram>> getGrams() {
+    public Map<String, Map<String, Gram>> getGrams() {
         return generalNGramsContainer;
     }
 
     /**
      * Get all the grams of a given type found in the blackboard.
-     * 
+     *
      * @param <T> the type of the grams to achieve
      * @param gramType the identifier of the gram type
      * @return a collection with all the grams with match type and identifier,
      * null if there is no match.
      */
-    public <T> Collection<T> getGramsByType(String gramType) {        
-        return 
-                generalNGramsContainer.containsKey(gramType) ?
-                (Collection<T>)generalNGramsContainer.get(gramType).values() :
-                null;
+    public <T> Collection<T> getGramsByType(String gramType) {
+        return generalNGramsContainer.containsKey(gramType)
+                ? (Collection<T>) generalNGramsContainer.get(gramType).values()
+                : null;
     }
 
     /**
@@ -260,9 +283,9 @@ public class Blackboard {
      */
     @Deprecated
     public void removeKeyphrase(Keyphrase g) {
-        removeGram(Keyphrase.KEYPHRASE,g);
+        removeGram(Keyphrase.KEYPHRASE, g);
     }
-    
+
     /**
      * Removes a gram from the document because it's no more relevant, or
      * useful, or for whatever reason an annotator thinks so.
@@ -270,7 +293,7 @@ public class Blackboard {
      * @param type the type of the gram to remove
      * @param g the gram to remove.
      */
-    public void removeGram(String type,Gram g) {
+    public void removeGram(String type, Gram g) {
         generalNGramsContainer.get(type)
                 .remove(g.getIdentifier());
 
@@ -311,16 +334,16 @@ public class Blackboard {
 
     /**
      * Remove an annotation from the blackboard.
-     * 
+     *
      * @param ann the annotation to remove.
      */
     public void removeAnnotation(Annotation ann) {
         annotations.remove(ann);
     }
-    
+
     /**
      * Get the language of the document root.
-     * 
+     *
      * @return the language of the document root.
      */
     public String getDocumentLanguage() {

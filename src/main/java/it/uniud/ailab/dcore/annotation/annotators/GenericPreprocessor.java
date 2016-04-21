@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Artificial Intelligence
+ * Copyright (C) 2016 Artificial Intelligence
  * Laboratory @ University of Udine.
  *
  * This program is free software; you can redistribute it and/or
@@ -16,29 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package it.uniud.ailab.dcore.annotation;
+package it.uniud.ailab.dcore.annotation.annotators;
+
+import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.Annotator;
 
 /**
- * A set of default annotations. An annotator that produces an annotation
- * that is (conceptually equal to one) listed in this file should use the
- * constant defined there.
  *
  * @author Marco Basaldella
  */
-public class DefaultAnnotations {
+public abstract class GenericPreprocessor implements Annotator {
     
-    public static final String START_INDEX = "StartPosition";
     
-    public static final String END_INDEX = "EndPosition";
+    protected void applyPreprocess(Blackboard b, String proprocessedText) {
+        b.applyPreprocess(proprocessedText);
+    }
+
     
-    public static final String SENTENCE_COUNT = "SentenceCount";
-    
-    public static final String CHAR_COUNT = "CharCount";
-    
-    public static final String WORD_COUNT = "WordCount";
-    
-    public static final String PHRASES_COUNT = "PhrasesCount";
-    
-    public static final String IS_NER = "IsANer";
     
 }

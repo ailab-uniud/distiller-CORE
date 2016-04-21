@@ -91,7 +91,7 @@ public class SampleInference {
         times[0] = Instant.now();
         
         for (int i = 0; i < texts.length; i++) {
-            DistilledOutput output = d.distill(texts[i]);
+            d.distill(texts[i]);
             Blackboard b = d.getBlackboard();
             BlackboardUtils.printScores(b,true);
             BlackboardUtils.printInference(b);
