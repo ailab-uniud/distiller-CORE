@@ -18,8 +18,11 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import com.github.rcaller.rstuff.RCaller;
-import com.github.rcaller.rstuff.RCode;
+// Imports for RCaller 2.9+
+//import com.github.rcaller.rstuff.RCaller;
+//import com.github.rcaller.rstuff.RCode;
+import com.github.rcaller.rStuff.RCaller;
+import com.github.rcaller.rStuff.RCode;
 import com.github.rcaller.util.Globals;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;

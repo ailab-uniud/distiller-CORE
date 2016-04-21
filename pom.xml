@@ -138,15 +138,15 @@
             <classifier>models</classifier>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.6.1</version>
+            <groupId>com.github.jbytecode</groupId>
+            <artifactId>RCaller</artifactId>
+            <version>2.8</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.github.jbytecode</groupId>
-            <artifactId>RCaller</artifactId>
-            <version>2.9-SNAPSHOT</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.6.1</version>
             <type>jar</type>
         </dependency>
     </dependencies>
