@@ -20,6 +20,7 @@ package it.uniud.ailab.dcore;
 
 import it.uniud.ailab.dcore.annotation.annotators.*;
 import it.uniud.ailab.dcore.io.GramPrinter;
+import it.uniud.ailab.dcore.io.PreprocessedTextPrinter;
 import it.uniud.ailab.dcore.io.SentencePrinter;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.wrappers.external.*;
@@ -220,47 +221,48 @@ public class DistillerFactory {
         // build the pipeline
         Pipeline p = new Pipeline();
         // split the text
-        p.addStage(new StanfordBootstrapperAnnotator());
+        p.addStage(new StanfordPreprocessingBySectionAnnotator());
         // add wikipedia tags to tokens
 
         //annotate tokens with stemming
-        p.addStage(new PorterStemmerAnnotator());
-
-        // Uncomment the lines below to use the TagMe service
-        // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
-        // tagme.setApiKey("INSERT KEY HERE");        
-        // p.addStage(tagme);
-        // generate ngrams
-        p.addStage(new SimpleNGramGeneratorAnnotator());
-
-//        // remove stopwords
-        p.addStage(new StopwordSimpleFilterAnnotator());
+//        p.addStage(new PorterStemmerAnnotator());
 //
-//        // annotate ngrams
-        p.addStage(new StatisticalAnnotator());
-        p.addStage(new CoreferenceResolverAnnotator());
-        p.addStage(new ChunkingNerAnnotator());
-        // Uncomment to use TagMe
-        // p.addStage(new TagMeGramAnnotator());
-        // Uncomment to use the emotional intensity annotator.
-        // This way you'll see how different annotators lead to different
-        // keyphrases detection
-        // p.addStage(new SyuzhetAnnotator());
-        // evaluate ngram features        
-        LinearEvaluatorAnnotator evaluator = new LinearEvaluatorAnnotator();
-        evaluator.addWeight(StatisticalAnnotator.DEPTH, 0.15);
-        evaluator.addWeight(StatisticalAnnotator.HEIGHT, 0.25);
-        evaluator.addWeight(StatisticalAnnotator.LIFESPAN, 0.1);
-        evaluator.addWeight(StatisticalAnnotator.FREQUENCY_SENTENCE, 0.1);
-        evaluator.addWeight(GenericNGramGeneratorAnnotator.NOUNVALUE, 0.3);
-        evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
-        evaluator.addWeight(CoreferenceResolverAnnotator.NUMBER_OF_REFERENCE, 0.2);
-        evaluator.addWeight(CoreferenceResolverAnnotator.IN_ANAPHORA, 0.2);
-        evaluator.addWeight(ChunkingNerAnnotator.IS_NER, 0.2);
-
-        p.addStage(evaluator);
-
-        p.addStage(new GramPrinter());
+//        // Uncomment the lines below to use the TagMe service
+//        // TagMeTokenAnnotator tagme = new TagMeTokenAnnotator();        
+//        // tagme.setApiKey("INSERT KEY HERE");        
+//        // p.addStage(tagme);
+//        // generate ngrams
+//        p.addStage(new SimpleNGramGeneratorAnnotator());
+//
+////        // remove stopwords
+//        p.addStage(new StopwordSimpleFilterAnnotator());
+////
+////        // annotate ngrams
+//        p.addStage(new StatisticalAnnotator());
+//        p.addStage(new CoreferenceResolverAnnotator());
+//        p.addStage(new ChunkingNerAnnotator());
+//        // Uncomment to use TagMe
+//        // p.addStage(new TagMeGramAnnotator());
+//        // Uncomment to use the emotional intensity annotator.
+//        // This way you'll see how different annotators lead to different
+//        // keyphrases detection
+//        // p.addStage(new SyuzhetAnnotator());
+//        // evaluate ngram features        
+//        LinearEvaluatorAnnotator evaluator = new LinearEvaluatorAnnotator();
+//        evaluator.addWeight(StatisticalAnnotator.DEPTH, 0.15);
+//        evaluator.addWeight(StatisticalAnnotator.HEIGHT, 0.25);
+//        evaluator.addWeight(StatisticalAnnotator.LIFESPAN, 0.1);
+//        evaluator.addWeight(StatisticalAnnotator.FREQUENCY_SENTENCE, 0.1);
+//        evaluator.addWeight(GenericNGramGeneratorAnnotator.NOUNVALUE, 0.3);
+//        evaluator.addWeight(GenericWikipediaAnnotator.WIKIFLAG, 0.1);
+//        evaluator.addWeight(CoreferenceResolverAnnotator.NUMBER_OF_REFERENCE, 0.2);
+//        evaluator.addWeight(CoreferenceResolverAnnotator.IN_ANAPHORA, 0.2);
+//        evaluator.addWeight(ChunkingNerAnnotator.IS_NER, 0.2);
+//
+//        p.addStage(evaluator);
+//
+//        p.addStage(new GramPrinter());
+p.addStage(new PreprocessedTextPrinter());
 
         d.addPipeline(Locale.ENGLISH, p);
 

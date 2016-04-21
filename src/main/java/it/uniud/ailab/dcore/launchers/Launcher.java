@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.apache.commons.cli.CommandLine;
@@ -408,6 +409,7 @@ public class Launcher {
             case TRAINING_GENERATION:
                 generateTrainingSet();
                 break;
+
             default:
                 try {
                     if (inputPath.isFile()) {
@@ -494,10 +496,15 @@ public class Launcher {
                     "Unknown dataset:" + dataset);
         }
 
+        IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
+                + FileSystem.getSeparator()
+                            );
+         
         KeyphraseTrainingSetGenerator trainingGenerator
                 = new KeyphraseTrainingSetGenerator(kpDataset);
 
         IOBlackboard.setDocumentsFolder(kpDataset.getTrainingFolder());
+        
 
         List<Pair<String, GenericSheetPrinter>> trainingDocuments
                 = trainingGenerator.generateTrainingSet(distiller);
@@ -510,6 +517,7 @@ public class Launcher {
             trainingSet.addPrinter(p);
 
         }
+       
 
         String filePath = outputPath.getAbsolutePath()
                 + FileSystem.getSeparator()
@@ -556,13 +564,13 @@ public class Launcher {
         String fileName = filePath.toPath().getFileName().toString();
 
         IOBlackboard.setCurrentDocument(filePath.getAbsolutePath());
-        String document = loadDocument(filePath);
 
+        String document = loadDocument(filePath);
+        List<String> docLines = loadDocumentAsList(filePath);
         IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
                 + FileSystem.getSeparator()
                 + fileName);
-
-        distiller.distill(document);
+        distiller.distill(document, docLines);
 
     }
 
@@ -621,6 +629,66 @@ public class Launcher {
             throw exception;
         }
         return document;
+    }
+
+    /**
+     * Load the document dividing text into lines and collect them in a list,
+     * trying different charsets. The charset tried, are, in order:
+     * <ul>
+     * <li>UTF-16;</li>
+     * <li>UTF-8;</li>
+     * <li>US-ASCII.</li>
+     * </ul>
+     *
+     * @param filePath the path of the document
+     * @return the text of the document
+     * @throws IOException if the charset is not supported
+     */
+    private static List<String> loadDocumentAsList(File filePath) throws IOException {
+
+        List<String> lines = new ArrayList<>();
+
+        IOException exception = null;
+        // try different charsets. if none is recognized, throw the
+        // exception detected when reading.
+        try {
+
+            lines = Files.readAllLines(
+                    filePath.toPath(), StandardCharsets.UTF_8);
+
+        } catch (java.nio.charset.MalformedInputException e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            try {
+                exception = null;
+
+                lines = Files.readAllLines(
+                        filePath.toPath(), StandardCharsets.UTF_16);
+
+            } catch (java.nio.charset.MalformedInputException e) {
+                exception = e;
+            }
+        }
+
+        if (exception != null) {
+            try {
+                exception = null;
+
+                lines = Files.readAllLines(
+                        filePath.toPath(), StandardCharsets.US_ASCII);
+
+            } catch (java.nio.charset.MalformedInputException e) {
+                exception = e;
+            }
+        }
+
+        // no charset has been recognized
+        if (exception != null) {
+            throw exception;
+        }
+        return lines;
     }
 
     /**

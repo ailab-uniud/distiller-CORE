@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.json.simple.parser.ParseException;
 
@@ -53,16 +54,16 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
      */
     private Map<Locale, String> stopwordsPath;
 
-    private Set<String> stopwords;    
-    
+    private Set<String> stopwords;
+
     /**
-     * A stopword filter annotator, that removes Grams from the blackboard
-     * that start with forbidden words.
+     * A stopword filter annotator, that removes Grams from the blackboard that
+     * start with forbidden words.
      */
     public StopwordSimpleFilterAnnotator() {
         stopwordsPath = new HashMap<>();
         stopwords = new HashSet<>();
-        
+
         stopwordsPath.put(Locale.ENGLISH,
                 getClass().getClassLoader().
                 getResource("ailab/stopwords/en-tartarus-improved.txt").getFile());
@@ -102,14 +103,15 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
             Logger.getLogger(SimpleNGramGeneratorAnnotator.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
-        
+
         for (Gram g : blackboard.getKeyphrases()) {
-            Keyphrase k = (Keyphrase)g;
-            if (stopwords.contains(k.getSurface().toLowerCase()) ||
-                    stopwords.contains(k.getTokens().get(0).getText().toLowerCase()))
+            Keyphrase k = (Keyphrase) g;
+            if (stopwords.contains(k.getSurface().toLowerCase())
+                    || stopwords.contains(k.getTokens().get(0).getText().toLowerCase())) {
                 blackboard.removeKeyphrase(k);
+            }
         }
-        
+
     }
 
     /**
@@ -147,13 +149,14 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
 
         List<String> doc
                 = new BufferedReader(is).lines().collect(Collectors.toList());
-        
+
         for (String line : doc) {
             // don't process comments
             if (!line.startsWith("##")) {
                 String word = line.trim();
-                if (!word.isEmpty())
+                if (!word.isEmpty()) {
                     stopwords.add(word);
+                }
             }
         }
 

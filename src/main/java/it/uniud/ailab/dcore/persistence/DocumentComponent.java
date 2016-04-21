@@ -18,14 +18,9 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
-import edu.stanford.nlp.dcoref.CorefChain;
 import it.uniud.ailab.dcore.annotation.Annotable;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * An abstract conceptual unit of the document. This can be a sentence, a
@@ -45,6 +40,7 @@ import java.util.Set;
 public abstract class DocumentComponent extends Annotable {
 
     private final String text;
+    private String preprocessedText;
     private Locale language;
 
     /**
@@ -58,6 +54,7 @@ public abstract class DocumentComponent extends Annotable {
         super(identifier);
         this.text = text;
         this.language = language;
+        this.preprocessedText = text;
     }
 
     // <editor-fold desc="getters and setters">
@@ -153,4 +150,11 @@ public abstract class DocumentComponent extends Annotable {
         return text;
     }
 
+    public void setPreprocessedText(String ppText) {
+        this.preprocessedText = ppText;
+    }
+
+    public String getPreprocessedText(){
+        return preprocessedText;
+    }
 }

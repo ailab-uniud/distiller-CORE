@@ -1,0 +1,36 @@
+{ 
+	"anaphora":[
+			{ 
+				"anaphoricPP":[
+				 {
+					"pattern":"(\\b)(he|she|it|they)(\\b)",
+                                        "type":"1",
+                                        "description":"all the personal pronouns, use as subject or direct objects"
+                                        
+				 },
+                                 {
+                                     
+                                        "pattern":"(\\b)((its|his|whose)|(her|their)s?)(\\b)",
+                                        "type":"2",
+                                        "description":"all the possessive pronouns and the relative pronuoun whom, which behaves like a posssessive one"
+                                 },
+                                 {
+                                        "pattern":"(\\b)((it|his|her)self|themselves)(\\b)",
+                                        "type":"3",
+                                        "description":"all the reflexive pronouns"
+                                 },
+                                 {
+                                        "pattern":"(\\b)(who|whom|what|which|that)(\\b)",
+                                        "type":"4",
+                                        "description":"all the relative pronouns"
+                                 },
+                                 {
+                                        "pattern":"(\\b)(this|these|those)(\\b)",
+                                        "type":"5",
+                                        "description":"all the demonstrative pronouns"
+                                 }
+				]
+			}
+                ]
+}
+				 
