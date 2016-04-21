@@ -321,7 +321,9 @@ public class AiLabPreprocessingAnnotator implements Annotator {
     private String parseDoc() throws IOException {
 
         String preprocessedText = "";
-        txt = txt.replaceAll("``", "'");
+        txt = txt.replaceAll("\\b(\"|``)\\b", "'");
+        txt = txt.replaceAll("n\'t", " not ");
+        
         if (pipeline == null) {
             // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
             //NER, parsing, and coreference resolution 
@@ -348,7 +350,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 substituteDemonstrativePrs(sentStr, sentTree);
             }
 
-            preprocessedText += preprocessedSentence(sentTree);
+            preprocessedText += preprocessedSentence(sentTree, sentence.toString());
             i++;
 
         }
@@ -363,80 +365,82 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 if ((itNode.word().equalsIgnoreCase("that") || itNode.word().equalsIgnoreCase("which"))
                         && !itNode.tag().matches("IN|DT")) {
                     int j = itNode.index() - 1;
-                    IndexedWord previous = sentTree.getNodeByIndex(j);
-                    IndexedWord next = sentTree.getNodeByIndex(itNode.index() + 1);
+                    if (j > 0) {
+                        IndexedWord previous = sentTree.getNodeByIndex(j);
+                        IndexedWord next = sentTree.getNodeByIndex(itNode.index() + 1);
 
-                    if (previous.word().matches(",")) {
-                        previous.setWord("");
-                        j--;
-                        previous = sentTree.getNodeByIndex(j);
+                        if (previous.word().matches(",")) {
+                            previous.setWord("");
+                            j--;
+                            previous = sentTree.getNodeByIndex(j);
 
-                    } else if (previous.word().matches("\\[|\\(|\\{")) {
-                        continue;
-                    }
-                    boolean existVb = false;
-                    String expandThat = "";
-                    while (j >= 1) {
-                        IndexedWord node = sentTree.getNodeByIndex(j);
-                        if (node.tag().matches("VB|VBP|VBZ|VBD|VBG|VBN")) {
-                            String relVb = "";
+                        } else if (previous.word().matches("\\[|\\(|\\{")) {
+                            continue;
+                        }
+                        boolean existVb = false;
+                        String expandThat = "";
+                        while (j >= 1) {
+                            IndexedWord node = sentTree.getNodeByIndex(j);
+                            if (node.tag().matches("VB|VBP|VBZ|VBD|VBG|VBN")) {
+                                String relVb = "";
 //                            System.out.println(sentTree.toString(SemanticGraph.OutputFormat.READABLE));
-                            for (GrammaticalRelation rel : sentTree.relns(node)) {
-                                if (rel.getShortName().matches("dep|acl")) {
-                                    relVb = rel.getShortName();
+                                for (GrammaticalRelation rel : sentTree.relns(node)) {
+                                    if (rel.getShortName().matches("dep|acl")) {
+                                        relVb = rel.getShortName();
+                                        break;
+                                    }
+                                }
+                                if (node.tag().matches("VBN") && relVb.matches("acl")) {
+
+                                    expandThat = node.word() + " " + expandThat;
+                                } else if (node.tag().matches("VBG")) {
+                                    if ((previous.tag().matches("NNP|NN") && !next.tag().matches("VBZ"))
+                                            || (previous.tag().matches("NNPS|NNS") && next.tag().matches("VBZ"))) {
+                                        expandThat = node.word() + " " + expandThat;
+                                    } else {
+                                        existVb = true;
+                                        break;
+                                    }
+                                } else {
+                                    existVb = true;
                                     break;
                                 }
-                            }
-                            if (node.tag().matches("VBN") && relVb.matches("acl")) {
+                            } else if (node.tag().matches("TO|\\p{Punct}")) {
+                                existVb = false;
+                                break;
+                            } else if (node.tag().matches("IN") && j - 1 >= 1) {
+                                if (node.word().equalsIgnoreCase("of")) {
 
-                                expandThat = node.word() + " " + expandThat;
-                            } else if (node.tag().matches("VBG")) {
-                                if ((previous.tag().matches("NNP|NN") && !next.tag().matches("VBZ"))
-                                        || (previous.tag().matches("NNPS|NNS") && next.tag().matches("VBZ"))) {
                                     expandThat = node.word() + " " + expandThat;
                                 } else {
                                     existVb = true;
                                     break;
                                 }
-                            } else {
-                                existVb = true;
-                                break;
-                            }
-                        } else if (node.tag().matches("TO|\\p{Punct}")) {
-                            existVb = false;
-                            break;
-                        } else if (node.tag().matches("IN") && j - 1 >= 1) {
-                            if (node.word().equalsIgnoreCase("of")) {
 
-                                expandThat = node.word() + " " + expandThat;
-                            } else {
-                                existVb = true;
-                                break;
-                            }
-
-                        } else if (node.word().matches("\\]|\\)|\\}")) {
-                            while (j >= 1 && node.word().matches("\\[|\\(|\\{")) {
+                            } else if (node.word().matches("\\]|\\)|\\}")) {
+                                while (j >= 1 && node.word().matches("\\[|\\(|\\{")) {
+                                    j--;
+                                }
                                 j--;
+                            } else {
+                                expandThat = node.word() + " " + expandThat;
                             }
                             j--;
-                        } else {
-                            expandThat = node.word() + " " + expandThat;
                         }
-                        j--;
-                    }
-                    if (existVb) {
-                        bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
-                                + " index: " + itNode.index());
-                        System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
-                                + " index: " + itNode.index());
-                        itNode.setWord("; " + expandThat);
-                        bf.write(" sub: " + itNode.word() + "\n");
-                        System.out.println(" sub: " + itNode.word() + "\n");
-                    } else {
-                        bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
-                                + " index: " + itNode.index() + "sub: not sub \n");
-                    }
+                        if (existVb) {
+                            bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
+                                    + " index: " + itNode.index());
+                            System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
+                                    + " index: " + itNode.index());
+                            itNode.setWord("; " + expandThat);
+                            bf.write(" sub: " + itNode.word() + "\n");
+                            System.out.println(" sub: " + itNode.word() + "\n");
+                        } else {
+                            bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
+                                    + " index: " + itNode.index() + "sub: not sub \n");
+                        }
 
+                    }
                 }
             }
 
@@ -472,6 +476,8 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                     }
                 } else {
                     bf.write("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
+                            + " index: " + itNode.index() + "sub: not sub \n");
+                    System.out.println("pr: " + itNode.word() + " sentIdx: " + itNode.sentIndex()
                             + " index: " + itNode.index() + "sub: not sub \n");
                 }
             }
@@ -552,16 +558,20 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
     }
 
-    private String preprocessedSentence(SemanticGraph tree) {
+    private String preprocessedSentence(SemanticGraph tree, String sentence) {
         String preprocSent = "";
+        
+        System.out.println(tree.vertexListSorted().size());
         for (IndexedWord w : tree.vertexListSorted()) {
-            if (w.word().matches("\\p{Punct}|(L|R)(RB|SB)")) {
+            if(w.word() == null){
+                preprocSent = sentence;
+                break;
+            } else if (w.word().matches("\\p{Punct}|\\(|\\)|\\{|\\}|\\[|\\]")) {
                 preprocSent += w.word();
             } else {
                 preprocSent += " " + w.word();
             }
         }
-
         return preprocSent + "\n";
     }
 
@@ -600,9 +610,10 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             searchBack(posSubs, pronoun, j);
         } else if (rel.equals(GrammaticalRelation.ROOT.getShortName())
                 && (!relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
-                && !relPr.equals(EnglishGrammaticalRelations.INDIRECT_OBJECT.getShortName()))) {
+                || !relPr.equals(EnglishGrammaticalRelations.INDIRECT_OBJECT.getShortName()))) {
             //cerco tra i siblings se esite un nodo che ha figlio subj -> frase principale
             Collection<IndexedWord> siblings = tree.getSiblings(node);
+
             for (IndexedWord s : siblings) {
                 searchInRoot(tree.getChildren(s), tree, pronoun);
             }
@@ -613,6 +624,9 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             if (posSubs.isEmpty()) {
 
                 searchInRoot(tree.descendants(dad), tree, pronoun);
+                if (pronoun.getProbableCandidate().word() != null) {
+                    posSubs.add(pronoun.getProbableCandidate().word());
+                }
             }
 
         } else if (relPr.equals(EnglishGrammaticalRelations.INDIRECT_OBJECT.getShortName()) //                || relPr.equals(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
@@ -783,7 +797,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                         || relC.equals(EnglishGrammaticalRelations.NOMINAL_PASSIVE_SUBJECT.getShortName())
                         || relC.contains(EnglishGrammaticalRelations.DIRECT_OBJECT.getShortName())
                         || relC.contains(EnglishGrammaticalRelations.MODIFIER.getShortName())
-                        || relC.matches(EnglishGrammaticalRelations.SEMANTIC_DEPENDENT.getShortName())) {
+                        || relC.matches("\\bdep\\b")) {
 //                    bf.write("children " + c.word() + "\n");
                     if (!c.word().equalsIgnoreCase(node.word())) {
                         double index = ((double) c.index()) / ((double) node.index());
@@ -813,6 +827,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             }
         }
         itSent = itSent + ".";
+        System.out.println(itSent);
         //case of sentenceces with modal adjectives or cognitive verbs
         if (itSent.matches(structureMC1)
                 || itSent.matches(structureMC2)
@@ -931,8 +946,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         int j = Collections.min(indexes);
         for (Integer i : indexes) {
             IndexedWord c = tree.getNodeByIndex(i);
-            if (c.tag().matches("JJ.*|NN.*|DT|VBG|.*\\p{Punct}.*|CD") 
-                    
+            if (c.tag().matches("JJ.*|NN.*|DT|VBG|.*\\p{Punct}.*|CD")
                     || (i == node.index() + 1 && c.word().matches("of|for"))) {
                 if ((i - j) <= 1) {
                     totalWord += " " + c.word();
@@ -943,7 +957,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
             }
         }
-        
+
 //        totalWord += " " + node.word();
 //        if (relPr.equals("nmod:poss") && !prWord.matches(".*their.*")) {
 //            totalWord += "'s";

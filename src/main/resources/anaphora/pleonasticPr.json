@@ -20,12 +20,12 @@
         "description": "to check sentences like:it is necessary to/that"
     },
     "modalAdj": {
-        "pattern": ".*\\w+\\/(JJ|JJR)((((for\\/IN)(\\w+\\/[A-Z]+))?to\\/TO\\w+\\/VB.*)|(that|as)\\/IN.*)",
+        "pattern": ".*\\w+\\/(JJ|JJR|RBR)((((for\\/IN)(\\w+\\/[A-Z]+))?to\\/TO\\w+\\/VB.*)|(\\w+\\/VBG)?(that|as)\\/IN.*)",
         "description": "to check sentences like:it is necessary to/that"
 
     },
     "cognVerb": {
-        "pattern": ".*(recommend|think|believe|know|anticipate|assume|expect|show|observe|see)\\/VB[A-Z]?(\\.|(from\\/IN.*)?that|\\w+\\/JJto).*",
+        "pattern": ".*(recommend|think|believe|know|anticipate|assume|expect|show|observe|see|mention)\\/VB[A-Z]?(\\.|(from\\/IN.*)?(\\w+\\/(JJ|JJR|RBR))?that|\\w+\\/JJto).*",
         "description": "to check sentences like:it is recommended that"
     },
     "partVerbA": {
@@ -37,11 +37,11 @@
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerb2A": {
-        "pattern": "(make|find|believe)",
+        "pattern": "(make|find|believe|take)",
         "description": "all the relative pronouns"
     },
     "partVerb2B": {
-        "pattern": ".*\\w+\\/(JJ|VBG)(for\\/IN)?(\\w+\\/[A-Z]+)*to\\/TO\\w+\\/VB.*",
+        "pattern": ".*\\w+\\/(JJ|VBG|JJR|RBR)(for\\/IN)?(\\w+\\/[A-Z]+)*to\\/TO\\w+\\/VB.*",
         "description": "all the relative pronouns"
     }
 
