@@ -33,7 +33,7 @@
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerbB": {
-        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD|VB)(not\\/RB)?(for.*|\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
+        "pattern": "(seem|appear|mean|follow)\\/(VBZ|VBD|VB)((not\\/RB)|(\\w+\\/RB\\w+\\/RBR))?(for.*|\\w+\\/(JJ|VBG))?(to\\/TO|that|the|\\w+\\/WRB).*",
         "description": "It seems/appears/means/follows (that|to|the) S"
     },
     "partVerb2A": {

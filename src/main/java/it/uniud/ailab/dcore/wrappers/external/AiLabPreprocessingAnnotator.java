@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -324,14 +325,14 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         txt = txt.replaceAll("\\b(\"|``)\\b", "'");
         txt = txt.replaceAll("n\'t", " not ");
         
-        if (pipeline == null) {
-            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
-            //NER, parsing, and coreference resolution 
+//        if (pipeline == null) {
+//            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
+//            //NER, parsing, and coreference resolution 
             Properties props = new Properties();
             props.put("annotators", "tokenize, ssplit, pos, lemma, parse");
             pipeline = new StanfordCoreNLP(props);
-
-        }
+//
+//        }
         document = new Annotation(txt);
 
         // run all Annotators on this text
@@ -354,6 +355,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
             i++;
 
         }
+//        System.out.println(preprocessedText);
         return preprocessedText;
     }
 
@@ -365,7 +367,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
                 if ((itNode.word().equalsIgnoreCase("that") || itNode.word().equalsIgnoreCase("which"))
                         && !itNode.tag().matches("IN|DT")) {
                     int j = itNode.index() - 1;
-                    if (j > 0) {
+                    if (j > 1) {
                         IndexedWord previous = sentTree.getNodeByIndex(j);
                         IndexedWord next = sentTree.getNodeByIndex(itNode.index() + 1);
 
@@ -452,7 +454,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         if (sentStr.matches("(^|.*\\b)" + itPt + "\\b.*")) {
 
             List<IndexedWord> itNodes = sentTree.getAllNodesByWordPattern(itPt);
-            List<Integer> indexes = getSortedIndexesList(itNodes);
+            Set<Integer> indexes = getSortedIndexesList(itNodes);
             for (Integer idx : indexes) {
                 IndexedWord itNode = sentTree.getNodeByIndex(idx);
                 if (!checkPleonastic(sentTree, sentStr, itNode)) {
@@ -484,7 +486,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         }
         if (sentStr.matches("(^|.*\\b)" + hePt + "\\b.*")) {
             List<IndexedWord> itNodes = sentTree.getAllNodesByWordPattern(hePt);
-            List<Integer> indexes = getSortedIndexesList(itNodes);
+            Set<Integer> indexes = getSortedIndexesList(itNodes);
             for (Integer idx : indexes) {
                 IndexedWord itNode = sentTree.getNodeByIndex(idx);
                 Pronoun p = new Pronoun(itNode, Gender.MASCULINE, Num.SINGULAR);
@@ -508,7 +510,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         }
         if (sentStr.matches("(^|.*\\b)" + shePt + "\\b.*")) {
             List<IndexedWord> itNodes = sentTree.getAllNodesByWordPattern(shePt);
-            List<Integer> indexes = getSortedIndexesList(itNodes);
+            Set<Integer> indexes = getSortedIndexesList(itNodes);
             for (Integer idx : indexes) {
                 IndexedWord itNode = sentTree.getNodeByIndex(idx);
                 Pronoun p = new Pronoun(itNode, Gender.FEMININE, Num.SINGULAR);
@@ -532,7 +534,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         }
         if (sentStr.matches("(^|.*\\b)" + theyPt + "\\b.*")) {
             List<IndexedWord> itNodes = sentTree.getAllNodesByWordPattern(theyPt);
-            List<Integer> indexes = getSortedIndexesList(itNodes);
+            Set<Integer> indexes = getSortedIndexesList(itNodes);
             for (Integer idx : indexes) {
                 IndexedWord itNode = sentTree.getNodeByIndex(idx);
                 Pronoun p = new Pronoun(itNode, Gender.NEUTRAL, Num.PLURAL);
@@ -561,8 +563,9 @@ public class AiLabPreprocessingAnnotator implements Annotator {
     private String preprocessedSentence(SemanticGraph tree, String sentence) {
         String preprocSent = "";
         
-        System.out.println(tree.vertexListSorted().size());
-        for (IndexedWord w : tree.vertexListSorted()) {
+        Set<Integer> indexes = getSortedIndexesList(tree.descendants(tree.getFirstRoot()));
+        for (Integer i : indexes) {
+            IndexedWord w = tree.getNodeByIndex(i);
             if(w.word() == null){
                 preprocSent = sentence;
                 break;
@@ -841,11 +844,13 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         } else if (itSent.matches(partVbPtA)
                 || itSent.matches(partVbPtB)) {
             checked = true;
-        } else if (indexItNode - 1 > 0) {
+        } else if (indexItNode - 1 > 1) {
             IndexedWord pred = sentTree.getNodeByIndex(indexItNode - 1);
+            if(pred.tag().contains("VB")){
             if (pred.lemma().matches(partVbPt2A)
                     && itSent.matches(partVbPt2B)) {
                 checked = true;
+            }
             }
         }
 
@@ -924,13 +929,15 @@ public class AiLabPreprocessingAnnotator implements Annotator {
 
     }
 
-    private List<Integer> getSortedIndexesList(Collection<IndexedWord> nodes) {
+    private Set<Integer> getSortedIndexesList(Collection<IndexedWord> nodes) {
 
-        List<Integer> indexes = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
         for (IndexedWord node : nodes) {
-            indexes.add(node.index());
+            ids.add(node.index());
         }
-        Collections.sort(indexes);
+        Collections.sort(ids);
+        
+        Set<Integer> indexes = new LinkedHashSet<>(ids);
 
         return indexes;
 
@@ -941,7 +948,7 @@ public class AiLabPreprocessingAnnotator implements Annotator {
         IndexedWord w = new IndexedWord("", node.sentIndex(), node.index());
         String totalWord = "";
 
-        List<Integer> indexes = getSortedIndexesList(tree.descendants(node));
+        Set<Integer> indexes = getSortedIndexesList(tree.descendants(node));
 
         int j = Collections.min(indexes);
         for (Integer i : indexes) {
