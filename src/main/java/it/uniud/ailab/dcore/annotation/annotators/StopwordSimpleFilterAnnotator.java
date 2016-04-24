@@ -107,7 +107,8 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
         for (Gram g : blackboard.getKeyphrases()) {
             Keyphrase k = (Keyphrase) g;
             if (stopwords.contains(k.getSurface().toLowerCase())
-                    || stopwords.contains(k.getTokens().get(0).getText().toLowerCase())) {
+                    || stopwords.contains(k.getTokens().get(0).getText().toLowerCase())
+                    || !k.getSurface().matches("^[a-zA-Z0-9\\s]*$")) {
                 blackboard.removeKeyphrase(k);
             }
         }
