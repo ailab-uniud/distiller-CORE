@@ -96,4 +96,9 @@ public abstract class Annotable {
     public boolean hasAnnotation(String annotator) {
         return annotations.containsKey(annotator);
     }
+    
+    @Override
+    public String toString() {
+        return getIdentifier();
+    }
 }

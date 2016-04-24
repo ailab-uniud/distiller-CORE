@@ -67,4 +67,10 @@ public class Pair<L,R> {
     public R getRight() {
         return right;
     }
+    
+    @Override
+    public String toString() {
+        return "L: {" + getLeft().toString() + "}; "
+                + "R: {" + getRight().toString() + "}";
+    }
 }
