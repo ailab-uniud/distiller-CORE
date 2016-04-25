@@ -58,9 +58,9 @@ public interface FileWriterStage extends Stage {
     default void run(Blackboard b) {
         writeFile(
                 IOBlackboard.getOutputPathPrefix()
-//                .concat(".")
-//                .concat(getFileSuffix())
-//                .concat(".csv")
+                .concat(".")
+                .concat(getFileSuffix())
+                .concat(".csv")
                 ,
                 b);
     }

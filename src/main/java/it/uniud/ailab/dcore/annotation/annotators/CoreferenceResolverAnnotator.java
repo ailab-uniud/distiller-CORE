@@ -173,45 +173,45 @@ public class CoreferenceResolverAnnotator implements Annotator {
                     }
                     key = key.trim();
 
-                    //iterate on all the anaphors
-                    for (String anaphor : pronominalAnaphoraCounter.keySet()) {
-                        //check if the anaphor contains or not the keyphrase
-                        //and vice-versa
-                        String escapedKey = Pattern.quote(key.toLowerCase());
-                        String escapedAnaphor = Pattern.quote(anaphor.toLowerCase());
-                        try {
-
-                            if (anaphor.toLowerCase()
-                                    .matches(".*\\b" + escapedKey + "\\b.*")
-                                    || key.toLowerCase()
-                                    .matches(".*\\b" + escapedAnaphor + "\\b.*")) {
-                                double score1 = score;
-                                double score2 = pronominalAnaphoraCounter.get(anaphor);
-                                score = Math.max(score1, score2); //get the maximal score 
-                            }
-                        } catch (java.util.regex.PatternSyntaxException e) {
-                            Logger.logMsg(Logger.WARNING,
-                                    "Error while matching pattern: \"" + key
-                                    + "\" with anaphor: \"" + anaphor + "\"");
-                            Logger.logMsg(Logger.WARNING,
-                                    "Escaped pattern: \"" + escapedKey
-                                    + "\" ; escaped anaphor: \"" + escapedAnaphor + "\"");
-                        }
-
-                    }
-
-                    if (score > 0) {//if n-gram is an anaphor
-                        //normalize score for NOR by total # of phrases 
-                        k.putFeature(NUMBER_OF_REFERENCE, (score / numberOfPhrases));
-
-                        k.putFeature(StatisticalAnnotator.FREQUENCY,
-                                k.getFeature(StatisticalAnnotator.FREQUENCY) + score);
-                        k.putFeature(StatisticalAnnotator.FREQUENCY_SENTENCE,
-                                k.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE) + score / sentences.size());
-
-                    } else {
-                        k.putFeature(NUMBER_OF_REFERENCE, 0.0);
-                    }
+//                    //iterate on all the anaphors
+//                    for (String anaphor : pronominalAnaphoraCounter.keySet()) {
+//                        //check if the anaphor contains or not the keyphrase
+//                        //and vice-versa
+//                        String escapedKey = Pattern.quote(key.toLowerCase());
+//                        String escapedAnaphor = Pattern.quote(anaphor.toLowerCase());
+//                        try {
+//
+//                            if (anaphor.toLowerCase()
+//                                    .matches(".*\\b" + escapedKey + "\\b.*")
+//                                    || key.toLowerCase()
+//                                    .matches(".*\\b" + escapedAnaphor + "\\b.*")) {
+//                                double score1 = score;
+//                                double score2 = pronominalAnaphoraCounter.get(anaphor);
+//                                score = Math.max(score1, score2); //get the maximal score 
+//                            }
+//                        } catch (java.util.regex.PatternSyntaxException e) {
+//                            Logger.logMsg(Logger.WARNING,
+//                                    "Error while matching pattern: \"" + key
+//                                    + "\" with anaphor: \"" + anaphor + "\"");
+//                            Logger.logMsg(Logger.WARNING,
+//                                    "Escaped pattern: \"" + escapedKey
+//                                    + "\" ; escaped anaphor: \"" + escapedAnaphor + "\"");
+//                        }
+//
+//                    }
+//
+//                    if (score > 0) {//if n-gram is an anaphor
+//                        //normalize score for NOR by total # of phrases 
+//                        k.putFeature(NUMBER_OF_REFERENCE, (score / numberOfPhrases));
+//
+//                        k.putFeature(StatisticalAnnotator.FREQUENCY,
+//                                k.getFeature(StatisticalAnnotator.FREQUENCY) + score);
+//                        k.putFeature(StatisticalAnnotator.FREQUENCY_SENTENCE,
+//                                k.getFeature(StatisticalAnnotator.FREQUENCY_SENTENCE) + score / sentences.size());
+//
+//                    } else {
+//                        k.putFeature(NUMBER_OF_REFERENCE, 0.0);
+//                    }
 
                     double inAnaphoraScore = 0; //initialize inAnaphora score to zero
                     //get the term frequency 
