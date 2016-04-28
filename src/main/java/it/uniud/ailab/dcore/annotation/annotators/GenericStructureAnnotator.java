@@ -18,6 +18,8 @@
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
+import it.uniud.ailab.dcore.annotation.Annotator;
+
 /**
  * This almost-empty interface is used to promote the interchangeability 
  * between different annotators: every annotator that is used to detect sections
@@ -26,7 +28,7 @@ package it.uniud.ailab.dcore.annotation.annotators;
  
  * @author Marco Basaldella
  */
-public interface GenericStructureAnnotator {
+public abstract interface GenericStructureAnnotator extends Annotator{
     
     public static final String SECTION_TITLE = "Title";
     

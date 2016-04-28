@@ -26,6 +26,8 @@ import it.uniud.ailab.dcore.persistence.Token;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Annotates grams with the Document Phrase Maximality (DPM) feature. DPM gives
@@ -93,6 +95,14 @@ public class DocumentPhraseMaximalityAnnotator implements Annotator {
                     double step
                             = surface.getValue().getFeature(StatisticalAnnotator.FREQUENCY)
                             / k.getFeature(StatisticalAnnotator.FREQUENCY);
+                    
+                    if (step > 1) {
+                        Logger.getLogger(this.getClass().getName()).
+                                log(Level.WARNING, 
+                                        "DPM step {0}" +
+                                                "," + "kp: {1}, superterm: {2}", 
+                                        new Object[]{step, stemmedSurface, surface.getKey()});
+                    }
 
                     maximality = Math.max(step, maximality);
                 }

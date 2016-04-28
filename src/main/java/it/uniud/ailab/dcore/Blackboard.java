@@ -163,15 +163,6 @@ public class Blackboard {
     }
     
     /**
-     * Gets the list of lines (i.e. unprocessed) of the document.
-     *
-     * @return the original document string divided by lines.
-     */
-    public List<String> getTextLines() {
-        return textLines;
-    }
-    
-    /**
      * Sets the list of lines (i.e. unprocessed) of the document.
      * @param lines the lines of text (divided by \n space) 
      */

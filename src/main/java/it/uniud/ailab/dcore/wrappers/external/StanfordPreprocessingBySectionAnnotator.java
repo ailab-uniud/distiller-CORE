@@ -39,6 +39,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -114,7 +116,9 @@ public class StanfordPreprocessingBySectionAnnotator implements Annotator {
         } catch (IOException ex) {
             Logger.getLogger(StanfordPreprocessingBySectionAnnotator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        lines = blackboard.getTextLines();
+        
+        
+        lines = Arrays.asList(blackboard.getText().split("\n"));
 
         int i = 0;
         txt = "";

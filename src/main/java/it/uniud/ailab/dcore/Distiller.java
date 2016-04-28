@@ -166,7 +166,7 @@ public class Distiller {
      * @param textLines the lines composing the text.
      * @return the blackboard filled with the processed text
      */
-    public Blackboard distillToBlackboard(String text, List<String> textLines) {
+    /*public Blackboard distillToBlackboard(String text, List<String> textLines) {
 
         blackboard = new Blackboard();
         blackboard.createDocument(text);
@@ -210,7 +210,7 @@ public class Distiller {
         }
 
         return blackboard;
-    }
+    }*/
 
     /**
      * Perform the extraction of keyphrases of a specified string, and returns
@@ -219,7 +219,7 @@ public class Distiller {
      * @param text the text to distill.
      * @return the blackboard filled with the processed text
      */
-    public Blackboard distillToBlackboard(String text) {
+    public Blackboard distill(String text) {
 
         blackboard = new Blackboard();
         blackboard.createDocument(text);
@@ -265,6 +265,7 @@ public class Distiller {
         return blackboard;
     }
 
+    
     /**
      * Perform the extraction of keyphrases of a specified string, and returns a
      * developer-friendly object that allows quick access to the extracted
@@ -273,13 +274,13 @@ public class Distiller {
      * @param text the text to extract
      * @return the distilled output
      */
-    public DistilledOutput distill(String text) {
+    public DistilledOutput distillForEval(String text) {
 
         DistilledOutput output = new DistilledOutput();
 
         output.setOriginalText(text);
 
-        distillToBlackboard(text);
+        distill(text);
 
         output.setDetectedLanguage(blackboard.getStructure().
                 getLanguage().getLanguage());
@@ -354,7 +355,7 @@ public class Distiller {
      * @param text the text to extract
      * @param textLines lines which compose the document.
      * @return the distilled output
-     */
+     *
     public DistilledOutput distill(String text, List<String> textLines) {
 
         DistilledOutput output = new DistilledOutput();
@@ -426,5 +427,5 @@ public class Distiller {
         output.setExtractionCompleted(true);
 
         return output;
-    }
+    }*/
 }

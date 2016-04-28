@@ -565,12 +565,13 @@ public class Launcher {
 
         IOBlackboard.setCurrentDocument(filePath.getAbsolutePath());
 
+        
         String document = loadDocument(filePath);
-        List<String> docLines = loadDocumentAsList(filePath);
+        /*List<String> docLines = loadDocumentAsList(filePath);*/
         IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
                 + FileSystem.getSeparator()
                 + fileName);
-        distiller.distill(document, docLines);
+        distiller.distill(document);//, docLines);
 
     }
 
@@ -590,12 +591,13 @@ public class Launcher {
     private static String loadDocument(File filePath) throws IOException {
 
         String document = "";
+        String joinChar = "\n";
 
         IOException exception = null;
         // try different charsets. if none is recognized, throw the
         // exception detected when reading.
         try {
-            document = String.join(" ", Files.readAllLines(
+            document = String.join(joinChar, Files.readAllLines(
                     filePath.toPath(), StandardCharsets.UTF_8));
 
         } catch (java.nio.charset.MalformedInputException e) {
@@ -605,7 +607,7 @@ public class Launcher {
         if (exception != null) {
             try {
                 exception = null;
-                document = String.join(" ", Files.readAllLines(
+                document = String.join(joinChar, Files.readAllLines(
                         filePath.toPath(), StandardCharsets.UTF_16));
 
             } catch (java.nio.charset.MalformedInputException e) {
@@ -616,7 +618,7 @@ public class Launcher {
         if (exception != null) {
             try {
                 exception = null;
-                document = String.join(" ", Files.readAllLines(
+                document = String.join(joinChar, Files.readAllLines(
                         filePath.toPath(), StandardCharsets.US_ASCII));
 
             } catch (java.nio.charset.MalformedInputException e) {

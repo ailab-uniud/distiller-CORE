@@ -19,6 +19,7 @@
 
 package it.uniud.ailab.dcore.annotation.annotations;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.persistence.Token;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class TextAnnotation extends Annotation {
         return super.getStringAt(1);
     }    
     
-    
+    @JsonIgnore
     public Token[] getTokens() {
         return annotatedTokens;
     }

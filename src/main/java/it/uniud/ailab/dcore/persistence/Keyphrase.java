@@ -32,7 +32,6 @@ import java.util.List;
  * @author Dario De Nart
  * @author Marco Basaldella
  */
-//@JsonIgnoreProperties({"surfaces,tokenLists,appaerances,features"})
 public class Keyphrase extends Gram {
 
     /**

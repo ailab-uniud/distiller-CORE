@@ -41,4 +41,8 @@ public class DefaultAnnotations {
     
     public static final String IS_NER = "IsANer";
     
+    public static final String IN_TITLE = "InTitle";
+    
+    public static final String IN_ABSTRACT = "InAbstract";
+    
 }

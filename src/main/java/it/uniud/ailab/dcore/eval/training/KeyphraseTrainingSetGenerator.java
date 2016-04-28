@@ -107,7 +107,7 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
                     + FileSystem.getSeparator()
                     + documentEntry.getKey());
 
-            Blackboard b = pipeline.distillToBlackboard(document);
+            Blackboard b = pipeline.distill(document);
 
             Collection<Gram> candidates
                     = b.getKeyphrases();

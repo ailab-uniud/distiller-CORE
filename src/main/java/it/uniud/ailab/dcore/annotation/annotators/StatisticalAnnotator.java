@@ -28,6 +28,7 @@ import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.utils.KeyphraseUtils;
 import java.util.ArrayList;
 
 /**
@@ -57,7 +58,7 @@ public class StatisticalAnnotator implements Annotator {
     public static final String DEPTH = "Depth";
 
     /**
-     * Document depth of a gram, defined as ( index of sentence of first
+     * Document height of a gram, defined as 1 - ( index of sentence of first
      * occurrence / total # of sentences ).
      */
     public static final String HEIGHT = "Height";
@@ -117,22 +118,22 @@ public class StatisticalAnnotator implements Annotator {
                     new FeatureAnnotation(
                             DefaultAnnotations.WORD_COUNT,
                             s.getTokens().size()));
-            
+
             s.addAnnotation(
                     new FeatureAnnotation(
                             DefaultAnnotations.CHAR_COUNT,
                             s.getText().length()));
-            
+
             //buffer to avoid writing some annotations more than once
             // every sentence
             List<String> surfaces = new ArrayList<>();
 
             for (Gram g : s.getGrams()) {
-                Keyphrase k = (Keyphrase)g;
-                if (k.hasFeature(FREQUENCY)) {
-                    k.putFeature(FREQUENCY, k.getFeature(FREQUENCY) + 1);
-                } else {
-                    k.putFeature(FREQUENCY, 1);
+                Keyphrase k = (Keyphrase) g;
+                if (!k.hasFeature(FREQUENCY)) {
+                    k.putFeature(FREQUENCY,
+                            KeyphraseUtils.
+                                    getTextAppearancesCount(blackboard, k,true));
                 }
 
                 if (!surfaces.contains(k.getSurface())) {

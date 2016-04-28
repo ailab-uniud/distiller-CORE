@@ -33,6 +33,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
+import java.util.ArrayList;
 
 /**
  * A bootstrapper annotator for the English language developed using the
@@ -72,24 +73,17 @@ public class StanfordFastBootstrapperAnnotator implements Annotator {
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-        
+
         // recursion: if the document has been splitted into sections, 
         // annotate the sections and not the whole
         if (component.hasComponents()) {
             for (DocumentComponent c : component.getComponents()) {
-                annotate(blackboard,c);
+                annotate(blackboard, c);
             }
             return;
         }
 
-        if (pipeline == null) {
-            // creates a StanfordCoreNLP object, with POS tagging, lemmatization, 
-            //NER, parsing, and coreference resolution 
-            Properties props = new Properties();
-            props.put("annotators", "tokenize, ssplit, pos, lemma");
-            pipeline = new StanfordCoreNLP(props);
-
-        }
+        setupPipeline();
 
         // read some text in the text variable
         String text = component.getText();
@@ -135,4 +129,48 @@ public class StanfordFastBootstrapperAnnotator implements Annotator {
         }
     }
 
+    private static void setupPipeline() {
+        if (pipeline == null) {
+            // creates a StanfordCoreNLP object, with POS tagging, lemmatization,
+            //NER, parsing, and coreference resolution
+            Properties props = new Properties();
+            props.put("annotators", "tokenize, ssplit, pos, lemma");
+            pipeline = new StanfordCoreNLP(props);
+        }
+    }
+
+    /**
+     * Utility offered to other elements of the pipeline for text tokenizing.
+     *
+     * @param text the text to tokenize
+     * @return an array containing the tokenized text.
+     */
+    public static String[] tokenizeText(String text) {
+
+        List<String> tokenizedText = new ArrayList<>();
+
+        // create an empty Annotation just with the given text
+        Annotation document = new Annotation(text);
+
+        // run all Annotators on this text
+        pipeline.annotate(document);
+
+        // these are all the sentences in this document
+        // a CoreMap is essentially a Map that uses class objects as keys and 
+        //has values with custom types
+        List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+
+        for (CoreMap stanfordSentence : sentences) {            // traversing the words in the current sentence
+            // for each token in the text, we create a new token annotate it 
+            // with the word representing it, its pos tag and its lemma
+            for (CoreLabel token : stanfordSentence.get(TokensAnnotation.class)) {
+
+                tokenizedText.add(token.originalText());
+
+            }
+
+        }
+
+        return tokenizedText.toArray(new String[tokenizedText.size()]);
+    }
 }

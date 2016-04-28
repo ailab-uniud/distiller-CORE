@@ -31,30 +31,29 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- * Implementation of Porter's Stemmer algorithm. 
- * This annotator annotates every token forming sentences with its stemming form.
- * Stemming process usually chops off the ends of words in the hope of obtaining
- * the base form of the word. It often includes the removal of derivational 
- * affixes. 
- * You can always annotate with stem also token of blackboard grams, just 
- * iterating on the list of grams selected by gram type.
- * 
+ * Implementation of Porter's Stemmer algorithm. This annotator annotates every
+ * token forming sentences with its stemming form. Stemming process usually
+ * chops off the ends of words in the hope of obtaining the base form of the
+ * word. It often includes the removal of derivational affixes. You can always
+ * annotate with stem also token of blackboard grams, just iterating on the list
+ * of grams selected by gram type.
+ *
  * @author Giorgia Chiaradia
  */
 public class PorterStemmerAnnotator implements Annotator {
 
     /**
-     * Annotate tokens from every sentence with a proper stem based on the 
-     * language of the document. 
-     * It also annotate the mentions token, so to facilitate comparisons during
-     * aanaphora resolution task. 
-     * 
+     * Annotate tokens from every sentence with a proper stem based on the
+     * language of the document. It also annotate the mentions token, so to
+     * facilitate comparisons during aanaphora resolution task.
+     *
      * @param blackboard
-     * @param component 
+     * @param component
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -83,7 +82,7 @@ public class PorterStemmerAnnotator implements Annotator {
                     t.setStem(t.getText());
                 }
             }
-            
+
         }
 
         //annotate mention n-grams with stem only if anaphora resolutions is 
@@ -112,6 +111,38 @@ public class PorterStemmerAnnotator implements Annotator {
                 }
             }
         }
+    }
+
+    /**
+     * Stems a generic a array of tokens.
+     * 
+     * @param tokens the word array
+     * @param language the language of the stemmer to use
+     * @return 
+     */
+    public static String[] stem(String[] tokens, Locale language) {
+
+        // Get the appropriate stemmer basing on document language
+        SnowballStemmer stemmer = SnowballStemmerSelector.
+                getStemmerForLanguage(language);
+
+        if (stemmer == null) {
+            throw new AnnotationException((new PorterStemmerAnnotator()),
+                    "Stemmer not available for the language "
+                    + language);
+        }
+
+        //for every token
+        for (int i = 0; i < tokens.length; i++) {
+            String t = tokens[i];
+            //set the stem form to the token
+            stemmer.setCurrent(t);
+            if (stemmer.stem()) {
+                tokens[i] = stemmer.getCurrent();
+            }
+        }
+
+        return tokens;
     }
 
 }

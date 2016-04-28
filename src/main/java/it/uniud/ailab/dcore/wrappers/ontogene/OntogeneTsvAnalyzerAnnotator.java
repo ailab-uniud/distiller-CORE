@@ -14,6 +14,7 @@ import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.utils.Pair;
+import it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.security.util.Debug;
 
 /*
  * Copyright (C) 2016 Artificial Intelligence
@@ -168,8 +170,16 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                 throw new AnnotationException(this,
                         "Can't find tokens for the term " + term.getLeft());
             }
-
-            Keyphrase kp = new Keyphrase(term.getLeft(), candidateTokens, term.getLeft());
+            
+            String id = "";
+            String[] tokens = StanfordFastBootstrapperAnnotator.tokenizeText(term.getLeft());
+            for (String t : tokens) {
+                id = id+= t + " ";
+            }
+            
+            id = id.trim().toLowerCase();
+            
+            Keyphrase kp = new Keyphrase(id, candidateTokens, term.getLeft());
             blackboard.addGram(currentSentence, kp);
         }
 

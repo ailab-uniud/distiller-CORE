@@ -74,7 +74,7 @@ public class KeyphraseEvaluatorAll extends Evaluator {
             System.out.println("Document's first 40 chars: "
                     + document.substring(0, 40) + "...");
 
-            DistilledOutput output = pipeline.distill(document);
+            DistilledOutput output = pipeline.distillForEval(document);
 
             String[] kps = new String[pipeline.getBlackboard().getKeyphrases().size()];
             for (int i = 0; i < kps.length; i++) {
