@@ -45,40 +45,9 @@
     <bean id="stanford" 
           class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator"/>    
     
-    <bean id="openNLP" 
-          class="it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator">
-        <!-- Example of local models path -->
-        <!--
-        <property name="modelPaths">
-            <map key-type="java.lang.String" value-type="java.lang.String">
-                <entry key="en-sent" value="/opt/drest/models/en-sent.bin"/>
-                <entry key="en-token" value="/opt/drest/models/en-token.bin"/>
-                <entry key="en-pos-maxent" value="/opt/drest/models/en-pos-maxent.bin"/>
-                <entry key="it-sent" value="/opt/drest/models/it/it-sent.bin"/>
-                <entry key="it-token" value="/opt/drest/models/it/it-token.bin"/>
-                <entry key="it-pos-maxent" value="/opt/drest/models/it/it-pos-maxent.bin"/>
-              </map>
-        </property>
-        -->        
-    </bean>
     
     <bean id="stemmer"
           class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
-    
-            
-    <!-- N-gram generators -->
-    <bean id="simpleNGramGenerator"
-          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
-        <!-- Example of local POS pattern paths -->
-        <!--
-        <property name="posDatabasePaths">
-            <map key-type="java.util.Locale" value-type="java.lang.String">
-                <entry key-ref="english" value="/opt/drest/posPatterns/en-penn.json"/>
-                <entry key-ref="italian" value="/opt/drest/posPatterns/it-tanl.json"/>
-            </map>
-        </property>
-        -->
-    </bean>
     
     <bean id="regexNGramGenerator"
           class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
@@ -112,6 +81,12 @@
     
     <bean id="section" 
           class="it.uniud.ailab.dcore.annotation.annotators.SectionPresenceAnnotator"/>
+    
+        
+    <bean id="tfidf"
+          class="it.uniud.ailab.dcore.annotation.annotators.CachedTfIdfAnnotator">
+        <property name="databasePath" value=""/>
+    </bean>
     
     <bean id="dpm"
           class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
@@ -165,31 +140,10 @@
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
                 <ref bean="section" />
+                <ref bean="tfidf"/>
                 <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
                 <!--<ref bean="mlEvaluatorNnet"/> -->
-                <!-- filter the non-interesting output -->
-                <!-- <ref bean="skylineGramFilter"/>-->
-                <ref bean="printer" />
-            </list>
-        </property>        
-    </bean> 
-    
-    <bean id="italianPipeline"
-          class="it.uniud.ailab.dcore.Pipeline">
-        <property name="stages">
-            <list>
-                <!-- split the document -->
-                <ref bean="openNLP"/>
-                <ref bean="stemmer" />
-                <!-- generate the n-grams -->
-                <ref bean="simpleNGramGenerator"/>
-                <!-- annotate the n-grmas -->
-                <ref bean="simpleStopword" />
-                <ref bean="statistical" />
-                <ref bean="dpm"/>
-                <!-- evaluate the keyphraseness -->
-                <ref bean="mlEvaluator"/>
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
                 <ref bean="printer" />
@@ -206,10 +160,6 @@
                 <entry
                     key-ref="english" 
                     value-ref="englishPipeline">
-                </entry>
-                <entry
-                    key-ref="italian" 
-                    value-ref="italianPipeline">
                 </entry>
             </map>
         </property>

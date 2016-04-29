@@ -19,30 +19,34 @@
 package it.uniud.ailab.dcore.annotation;
 
 /**
- * A set of default annotations. An annotator that produces an annotation
- * that is (conceptually equal to one) listed in this file should use the
- * constant defined there.
+ * A set of default annotations. An annotator that produces an annotation that
+ * is (conceptually equal to one) listed in this file should use the constant
+ * defined there.
  *
  * @author Marco Basaldella
  */
 public class DefaultAnnotations {
-    
+
     public static final String START_INDEX = "StartPosition";
-    
+
     public static final String END_INDEX = "EndPosition";
-    
+
     public static final String SENTENCE_COUNT = "SentenceCount";
-    
+
     public static final String CHAR_COUNT = "CharCount";
-    
+
     public static final String WORD_COUNT = "WordCount";
-    
+
     public static final String PHRASES_COUNT = "PhrasesCount";
-    
+
     public static final String IS_NER = "IsANer";
-    
+
     public static final String IN_TITLE = "InTitle";
-    
+
     public static final String IN_ABSTRACT = "InAbstract";
     
+    public static final String TF = "tf";
+
+    public static final String TFIDF = "tf-idf";
+
 }

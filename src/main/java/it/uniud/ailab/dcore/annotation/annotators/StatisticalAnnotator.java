@@ -103,6 +103,12 @@ public class StatisticalAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
         List<Sentence> sentences = DocumentUtils.getSentences(component);
+        
+        int totalTokens = 0;
+        for (Sentence s : sentences) {
+            totalTokens += s.getTokens().size();
+        }
+        
 
         int size = sentences.size();
         double count = 0;
@@ -131,9 +137,12 @@ public class StatisticalAnnotator implements Annotator {
             for (Gram g : s.getGrams()) {
                 Keyphrase k = (Keyphrase) g;
                 if (!k.hasFeature(FREQUENCY)) {
-                    k.putFeature(FREQUENCY,
-                            KeyphraseUtils.
-                                    getTextAppearancesCount(blackboard, k,true));
+                    
+                    double f = KeyphraseUtils.
+                                    getTextAppearancesCount(blackboard, k,true);
+                    
+                    k.putFeature(FREQUENCY,f);
+                    k.putFeature(DefaultAnnotations.TF,f/totalTokens);
                 }
 
                 if (!surfaces.contains(k.getSurface())) {
