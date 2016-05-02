@@ -83,13 +83,10 @@
     <bean id="dpm"
           class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
     
-    <!-- filters that keeps only the most important  grams (i.e. with the highest
-    calculated keyphraseness  -->
-    <bean id="skylineGramFilter" 
-          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
-    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
-        <property name="cut" value="5"/>
-    </bean> 
+    <bean id="tfidf"
+          class="it.uniud.ailab.dcore.annotation.annotators.CachedTfIdfAnnotator">
+        <property name="databasePath" value=""/>
+    </bean>
     
     <!-- Evaluators -->
     <bean id="mlEvaluator"
@@ -133,6 +130,7 @@
                 <ref bean="regexFilter" />
                 <ref bean="statistical" />
                 <ref bean="dpm"/>
+                <ref bean="tfidf"/>
                 <!-- evaluate the keyphraseness -->
                 <ref bean="mlEvaluatorNnet"/> 
                 <ref bean="CRAFTchecker"/>

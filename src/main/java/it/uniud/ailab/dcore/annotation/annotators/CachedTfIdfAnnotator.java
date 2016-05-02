@@ -26,7 +26,6 @@ import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
-import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
@@ -48,7 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
@@ -93,24 +91,6 @@ public class CachedTfIdfAnnotator implements Annotator {
         for (Sentence s : sentences) {
             for (Gram g : s.getGrams()) {
                 if (!g.hasAnnotation(DefaultAnnotations.TFIDF)) {
-
-                    String stemmedSurface = g.getSurface();
-
-                    String[] tokenizedSurface
-                            = OpenNlpBootstrapperAnnotator.
-                            tokenizeText(stemmedSurface,
-                                    component.getLanguage().getLanguage());
-
-                    SnowballStemmer stemmer = SnowballStemmerSelector.
-                            getStemmerForLanguage(component.getLanguage());
-
-                    for (int i = 0; i < tokenizedSurface.length; i++) {
-
-                        stemmer.setCurrent(tokenizedSurface[i]);
-                        if (stemmer.stem()) {
-                            tokenizedSurface[i] = stemmer.getCurrent();
-                        }
-                    }
 
                     double tf = ((FeatureAnnotation) g.getAnnotation(
                             DefaultAnnotations.TF)).getScore();
@@ -187,6 +167,13 @@ public class CachedTfIdfAnnotator implements Annotator {
 
         if (!documents.isEmpty()) {
             return;
+        }
+        
+        if (docPath.isEmpty()) {
+            System.out.println("You have not set a database path. "
+                    + "Using input document folder instead...");
+            
+            docPath = IOBlackboard.getDocumentsFolder();
         }
 
         System.out.println("Looking for tf-idf cache...");

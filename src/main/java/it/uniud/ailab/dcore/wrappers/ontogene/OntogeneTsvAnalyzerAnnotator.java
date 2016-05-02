@@ -20,11 +20,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.security.util.Debug;
 
 /*
  * Copyright (C) 2016 Artificial Intelligence
@@ -52,6 +53,9 @@ import sun.security.util.Debug;
  * @author Marco Basaldella
  */
 public class OntogeneTsvAnalyzerAnnotator implements Annotator {
+
+    Set<String> titleTerms = new HashSet<>();
+    Set<String> abstractTerms = new HashSet<>();
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -170,16 +174,23 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                 throw new AnnotationException(this,
                         "Can't find tokens for the term " + term.getLeft());
             }
-            
+
             String id = "";
             String[] tokens = StanfordFastBootstrapperAnnotator.tokenizeText(term.getLeft());
             for (String t : tokens) {
-                id = id+= t + " ";
+                id = id += t + " ";
             }
-            
+
             id = id.trim().toLowerCase();
-            
+
             Keyphrase kp = new Keyphrase(id, candidateTokens, term.getLeft());
+            
+            if (abstractTerms.contains(term.getLeft()))
+                kp.putFeature(DefaultAnnotations.IN_ABSTRACT,1);
+            if (titleTerms.contains(term.getLeft()))
+                kp.putFeature(DefaultAnnotations.IN_TITLE, 1);
+
+            
             blackboard.addGram(currentSentence, kp);
         }
 
@@ -235,6 +246,12 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                     if (curStart > prevStart) {
                         if (curEnd > prevEnd) {
                             terms.add(new Pair<>(currentWord, prevStart));
+                            if (nextLine[7].equals("abstract")) {
+                                abstractTerms.add(currentWord);
+                            } else if (nextLine[7].equals("title")) {
+                                titleTerms.add(currentWord);
+                            }
+
                             currentWord = nextLine[4];
                             prevStart = curStart;
                             prevEnd = curEnd;
