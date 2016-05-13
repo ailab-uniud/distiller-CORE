@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import opennlp.tools.stemmer.PorterStemmer;
 
 /**
- * Evaluator for the SemEval 2010 keyphrase extraction task.
+ * Loader for the SemEval 2010 keyphrase extraction task.
  *
  * @author Marco Basaldella
  */
@@ -58,7 +58,7 @@ public class SemEval2010 extends GenericDataset {
 
             for (File f : dir) {
                 String document = String.join(
-                        " ",
+                        "\n",
                         Files.readAllLines(
                                 f.toPath(), StandardCharsets.UTF_8));
 
@@ -134,7 +134,7 @@ public class SemEval2010 extends GenericDataset {
                 if (!f.getName().startsWith("train")) {
 
                     String document = String.join(
-                            " ",
+                            "\n",
                             Files.readAllLines(
                                     f.toPath(), StandardCharsets.UTF_8));
 

@@ -85,7 +85,7 @@
     
     <bean id="tfidf"
           class="it.uniud.ailab.dcore.annotation.annotators.CachedTfIdfAnnotator">
-        <property name="databasePath" value=""/>
+        <property name="databasePath" value="/home/red/ontogene/unprocessed"/>
     </bean>
     
     <!-- Evaluators -->
@@ -107,7 +107,7 @@
     
     <bean id="mlEvaluatorNnet"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelPath" value="models/keyphrase-extraction/ontogene.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>

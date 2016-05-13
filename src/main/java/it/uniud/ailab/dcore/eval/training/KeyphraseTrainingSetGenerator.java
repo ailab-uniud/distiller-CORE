@@ -89,14 +89,14 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
         for (Map.Entry<String, String> documentEntry
                 : workingSet.entrySet()) {
 
-            String document = documentEntry.getValue().replace("\\n", " ");
+            String document = documentEntry.getValue(); //.replace("\\n", " ");
 
             System.out.println("Evaluating document " + ++docIndex
                     + " of " + workingSet.size() + "...");
 
             System.out.println("Document identifier: " + documentEntry.getKey());
             System.out.println("Document's first 40 chars: "
-                    + document.substring(0, 40) + "...");
+                    + document.substring(0, 40).replace("\\n", " ") + "...");
 
             String[] answers
                     = workingAnswers.
@@ -119,9 +119,11 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
                 boolean found = false;
                 for (int i = 0; !found && i < answers.length; i++) {
                     String answer = answers[i];
-                    if (goldStandard.compare(gram.getSurface(), answer) == 0) {
-                        candidate.putFeature(goldStandard.getIdentifier(), 1);
-                        found = true;
+                    for (int j = 0; !found && j < gram.getSurfaces().size(); j++) {
+                        if (goldStandard.compare(gram.getSurfaces().get(j), answer) == 0) {
+                            candidate.putFeature(goldStandard.getIdentifier(), 1);
+                            found = true;
+                        }
                     }
                 }
             }
@@ -135,7 +137,7 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
 
             trainingSet.addPrinter(printer);
 
-            String filePath = IOBlackboard.getOutputPathPrefix() +documentEntry.getKey()+".semeval";
+            String filePath = IOBlackboard.getOutputPathPrefix() + documentEntry.getKey() + ".semeval";
             trainingSet.writeFile(filePath);
             System.out.println(
                     "Saved training file in " + filePath);

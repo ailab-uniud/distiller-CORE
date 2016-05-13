@@ -54,12 +54,28 @@
             
     <!-- N-gram generator -->    
     <bean id="NGramGenerator"
-          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" >
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
     </bean>
     
     <!-- Stopword filter -->
     <bean id="simpleStopword"
           class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
+    </bean>
+    
+    <bean id="regexFilter"
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexFilterAnnotator">
+        <property name="target">
+            <util:constant 
+                static-field="it.uniud.ailab.dcore.persistence.Keyphrase.KEYPHRASE"/>
+        </property>
+        <property name="filter" value="[0-9]+(.[0-9]+)?|.*&lt;.*|.*&gt;.*"/>
+    </bean>
+    
+    <!-- SET YOUR CRAFT FOLDER HERE! -->
+    
+    <bean id="CRAFTchecker"
+          class="it.uniud.ailab.dcore.wrappers.ontogene.KnowtatorEntityCheckerAnnotator">
+        <property name="inputDirectory" value="/usr/local/craft/craft-1.0/" />
     </bean>
     
     <!-- annotator for statistical features of grams -->
@@ -69,13 +85,10 @@
     <bean id="dpm"
           class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
     
-    <!-- filters that keeps only the most important  grams (i.e. with the highest
-    calculated keyphraseness  -->
-    <bean id="skylineGramFilter" 
-          class="it.uniud.ailab.dcore.annotation.annotators.SkylineGramFilterAnnotator"/>   
-    <bean id="cutGramFilter" class="it.uniud.ailab.dcore.annotation.annotators.SimpleCutFilterAnnotator" >
-        <property name="cut" value="5"/>
-    </bean> 
+    <bean id="tfidf"
+          class="it.uniud.ailab.dcore.annotation.annotators.CachedTfIdfAnnotator">
+        <property name="databasePath" value=""/>
+    </bean>
     
     <!-- Evaluators -->
     <bean id="mlEvaluator"
@@ -96,7 +109,7 @@
     
     <bean id="mlEvaluatorNnet"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelPath" value="models/keyphrase-extraction/ontogene.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
@@ -108,19 +121,21 @@
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
-                <ref bean="preprocessor" />
+                <!--<ref bean="preprocessor" />-->
                 <ref bean="cybozu" />
                 <ref bean="stanford" />
-                <ref bean="sentenceIndex" />
-                <ref bean="tsvanalyzer"/>
                 <ref bean="stemmer" />
+                <ref bean="sentenceIndex" />
+                <ref bean="NGramGenerator"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
+                <ref bean="regexFilter" />
                 <ref bean="statistical" />
                 <ref bean="dpm"/>
+                <ref bean="tfidf"/>
                 <!-- evaluate the keyphraseness -->
                 <ref bean="mlEvaluatorNnet"/> 
-                
+                <ref bean="CRAFTchecker"/>
                 <ref bean="printer"/>
             </list>
         </property>        

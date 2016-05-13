@@ -77,7 +77,7 @@ public class KnowtatorEntityCheckerAnnotator implements Annotator {
         Set<String> validTerms;
         try {
             validTerms = terms.get(
-                    OntogeneUtils.getCurrentDocumentPubmedID(inputDirectory));
+                    OntogeneUtils.getCurrentDocumentPMID(inputDirectory));
         } catch (IOException ex) {
             Logger.getLogger(KnowtatorEntityCheckerAnnotator.class.getName()).log(Level.SEVERE, null, ex);
             validTerms = null;

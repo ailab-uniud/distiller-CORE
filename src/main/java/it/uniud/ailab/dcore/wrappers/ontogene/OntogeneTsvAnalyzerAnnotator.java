@@ -54,8 +54,16 @@ import java.util.logging.Logger;
  */
 public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
-    Set<String> titleTerms = new HashSet<>();
-    Set<String> abstractTerms = new HashSet<>();
+    private boolean useOntoGeneIDs = true;
+
+    private Set<String> titleTerms = new HashSet<>();
+    private Set<String> abstractTerms = new HashSet<>();
+
+    public void setUseOntoGeneIDs(boolean useOntoGeneIDs) {
+        this.useOntoGeneIDs = useOntoGeneIDs;
+    }
+    
+    
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -171,26 +179,37 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
             } // while
 
             if (candidateTokens.isEmpty()) {
-                throw new AnnotationException(this,
-                        "Can't find tokens for the term " + term.getLeft());
+                Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
+                        log(Level.SEVERE, "Can't find tokens for the term " + term.getLeft());
+                continue;
             }
 
             String id = "";
-            String[] tokens = StanfordFastBootstrapperAnnotator.tokenizeText(term.getLeft());
-            for (String t : tokens) {
-                id = id += t + " ";
+
+            if (this.useOntoGeneIDs) {
+                String[] tokens = StanfordFastBootstrapperAnnotator.tokenizeText(term.getLeft());
+                for (String t : tokens) {
+                    id = id += t + " ";
+                }
+
+                id = id.trim().toLowerCase();
+            } else {
+                id = term.getLeft();
+            }
+            
+            Keyphrase kp = new Keyphrase(id, candidateTokens, term.getLeft());
+
+            if (abstractTerms.contains(term.getLeft())) {
+                kp.putFeature(DefaultAnnotations.IN_ABSTRACT, 1);
+            } else {
+                kp.putFeature(DefaultAnnotations.IN_ABSTRACT, 1);
+            }
+            if (titleTerms.contains(term.getLeft())) {
+                kp.putFeature(DefaultAnnotations.IN_TITLE, 1);
+            } else {
+                kp.putFeature(DefaultAnnotations.IN_TITLE, 1);
             }
 
-            id = id.trim().toLowerCase();
-
-            Keyphrase kp = new Keyphrase(id, candidateTokens, term.getLeft());
-            
-            if (abstractTerms.contains(term.getLeft()))
-                kp.putFeature(DefaultAnnotations.IN_ABSTRACT,1);
-            if (titleTerms.contains(term.getLeft()))
-                kp.putFeature(DefaultAnnotations.IN_TITLE, 1);
-
-            
             blackboard.addGram(currentSentence, kp);
         }
 

@@ -43,7 +43,9 @@ public class OntogeneUtils {
         } else {
 
             fileID = fileID.substring(fileID.lastIndexOf(FileSystem.getSeparator()) + 1);
-            fileID = fileID.substring(0, fileID.lastIndexOf('.'));
+            if (fileID.contains(".")) {
+                fileID = fileID.substring(0, fileID.lastIndexOf('.'));
+            }
 
         }
         return fileID;
@@ -53,12 +55,12 @@ public class OntogeneUtils {
      * Gets the current document's Pubmed ID.
      *
      * @param craftFolder the folder where the CRAFT corpus is located.
-     * @return the Pubmed ID of the current document, or null if it can't be 
+     * @return the Pubmed ID of the current document, or null if it can't be
      * located.
      * @throws java.io.FileNotFoundException if the mappings file cannot be
      * found
      */
-    public static String getCurrentDocumentPubmedID(String craftFolder)
+    public static String getCurrentDocumentPMID(String craftFolder)
             throws FileNotFoundException, IOException {
 
         if (!craftFolder.endsWith(FileSystem.getSeparator())) {
@@ -77,7 +79,7 @@ public class OntogeneUtils {
 
         String[] line;
         while ((line = reader.readNext()) != null) {
-            
+
             // skip comments
             if (line[0].startsWith("#")) {
                 continue;
@@ -87,7 +89,51 @@ public class OntogeneUtils {
                 return line[2];
             }
         }
-        
+
+        return null;
+    }
+
+    /**
+     * Gets the current document's Pubmed ID.
+     *
+     * @param craftFolder the folder where the CRAFT corpus is located.
+     * @param PMID the PMID to retrieve
+     * @return the Pubmed ID of the current document, or null if it can't be
+     * located.
+     * @throws java.io.FileNotFoundException if the mappings file cannot be
+     * found
+     */
+    public static String PMIDtoOntogeneFileID(String craftFolder, String PMID)
+            throws FileNotFoundException, IOException {
+
+        if (!craftFolder.endsWith(FileSystem.getSeparator())) {
+            craftFolder += FileSystem.getSeparator();
+        }
+
+        craftFolder += "articles" + FileSystem.getSeparator() + "ids"
+                + FileSystem.getSeparator();
+
+        CSVReader reader = new CSVReader(
+                new FileReader(craftFolder
+                        + FileSystem.getSeparator() + "craft-idmappings-release"),
+                '\t');
+
+        String[] line;
+        while ((line = reader.readNext()) != null) {
+
+            // skip comments
+            if (line[0].startsWith("#")) {
+                continue;
+            }
+
+            if (line[2].equals(PMID)) {
+                String ogID = line[0];
+                ogID = ogID.substring(0, ogID.lastIndexOf("."));
+                ogID = ogID.substring(ogID.lastIndexOf("-") + 1);
+                return ogID;
+            }
+        }
+
         return null;
     }
 

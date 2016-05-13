@@ -21,7 +21,7 @@ package it.uniud.ailab.dcore.launchers;
 import it.uniud.ailab.dcore.Distiller;
 import it.uniud.ailab.dcore.DistillerFactory;
 import it.uniud.ailab.dcore.eval.GenericDataset;
-import it.uniud.ailab.dcore.eval.datasets.SemEval2010;
+import it.uniud.ailab.dcore.eval.datasets.*;
 import it.uniud.ailab.dcore.eval.kp.KeyphraseEvaluatorAll;
 import it.uniud.ailab.dcore.eval.training.KeyphraseTrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
@@ -486,6 +486,9 @@ public class Launcher {
         switch (dataset) {
             case "semeval":
                 kpDataset = new SemEval2010(inputPath.getAbsolutePath());
+                break;
+            case "craft" :
+                kpDataset = new Craft(inputPath.getAbsolutePath());
                 break;
             default:
                 kpDataset = null;
