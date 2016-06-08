@@ -202,12 +202,12 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
             if (abstractTerms.contains(term.getLeft())) {
                 kp.putFeature(DefaultAnnotations.IN_ABSTRACT, 1);
             } else {
-                kp.putFeature(DefaultAnnotations.IN_ABSTRACT, 1);
+                kp.putFeature(DefaultAnnotations.IN_ABSTRACT, 0);
             }
             if (titleTerms.contains(term.getLeft())) {
                 kp.putFeature(DefaultAnnotations.IN_TITLE, 1);
             } else {
-                kp.putFeature(DefaultAnnotations.IN_TITLE, 1);
+                kp.putFeature(DefaultAnnotations.IN_TITLE, 0);
             }
 
             blackboard.addGram(currentSentence, kp);
