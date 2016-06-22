@@ -135,15 +135,6 @@ public class Launcher {
      * @param args the command-line parameters.
      */
     public static void main(String[] args) {
-        PrintStream out=null;
-        try{
-            out = new PrintStream(new FileOutputStream("c:\\output\\Console.txt"), true, "UTF-8");
-            System.setOut(out);
-        }
-        catch(Exception ex){
-            ex.printStackTrace();
-        }
-        
         CommandLineParser parser = new DefaultParser();
 
         createOptions();
@@ -175,14 +166,7 @@ public class Launcher {
                     + "Please contact the developers of the framwork to get "
                     + "additional help.");
             return;
-        }
-        out.close();
-        ProcessBuilder pb = new ProcessBuilder("Notepad.exe", "c:\\output\\Console.txt");
-        try {
-            pb.start();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        }        
     }
 
     /**
@@ -649,7 +633,7 @@ public class Launcher {
         // no charset has been recognized
         if (exception != null) {
             throw exception;
-        }
+        }        
         return document;
     }
 

@@ -57,76 +57,10 @@ public class AramorphStemmerAnnotator implements Annotator {
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         //annotate sentences
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-
-        // Get the appropriate stemmer basing on document language
-        /*SnowballStemmer stemmer = SnowballStemmerSelector.
-                getStemmerForLanguage(component.getLanguage());*/
-        AraMorph stemmer = new AraMorph();
-        if (stemmer == null) {
-            throw new AnnotationException(this,
-                    "Stemmer not available for the language "
-                    + component.getLanguage().getLanguage());
-        }
-        
         //for every sentence
-        for (Sentence sentence : sentences) {
-            /*Vector badTokens = new Vector();
-            for(int i=0; i<sentence.getTokens().size();i++){
-                String tokenText = sentence.getTokens().get(i).getText();
-                tokenText = ArabicDocProcessing.purifyDoc(tokenText);
-                if(tokenText==null || tokenText.length()==0){
-                    badTokens.add(i);
-                    continue;
-                }
-                sentence.getTokens().add(i, new Token(tokenText));
-                sentence.getTokens().remove(i+1);
-            }
-            for(int i=0; i<badTokens.size(); i++)
-                sentence.getTokens().remove(badTokens.elementAt(i));*/
+        for (Sentence sentence : sentences) 
             //for every token
-            for (Token t : sentence.getTokens()) {
-                //set the stem form to the token
-                /*stemmer.setCurrent(t.getText());
-                if (stemmer.stem()) {
-                    t.setStem(stemmer.getCurrent());
-                } else {
-                    t.setStem(t.getText());
-                }*/
-                if(stemmer.analyzeToken(t.getText()))
-                        t.setStem(((Solution)stemmer.getWordSolutions(t.getText()).iterator().next()).getLemma());
-                    else
-                        t.setStem(t.getText());
-            }
-            
-        }
-        /*    
-        //annotate mention n-grams with stem only if anaphora resolutions is 
-        //used in the pipeline 
-        Map<String, Gram> mentions = blackboard.getGramsByType(Mention.MENTION);
-        if (mentions != null) {
-            for (Gram g : mentions.values()) {
-                Mention m = (Mention) g;
-                for (Token t : m.getAnaphorToken()) {
-                    stemmer.setCurrent(t.getText());
-                    if (stemmer.stem()) {
-                        t.setStem(stemmer.getCurrent());
-                    } else {
-                        t.setStem(t.getText());
-                    }
-                }
-                //annotate tokens from references
-                for (Reference r : m.getReferences()) {
-                    for (Token t : r.getTokens()) {
-                        stemmer.setCurrent(t.getText());
-                        if (stemmer.stem()) {
-                            t.setStem(stemmer.getCurrent());
-                        } else {
-                            t.setStem(t.getText());
-                        }
-                    }
-                }
-            }
-        }*/
+            for (Token t : sentence.getTokens()) 
+                t.setStem(ArabicDocProcessing.lemmatizeDoc(t.getText()));
     }
-
 }

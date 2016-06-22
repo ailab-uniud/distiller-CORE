@@ -19,6 +19,7 @@
 =======
 # Include dependencies with do not live in Maven Central
 !lib/AraMorph.jar
+!lib/stanford-segmenter-3.6.0.jar
 
 >>>>>>> 451a2c3... Add AraMorph dependency to the repo
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml

@@ -41,9 +41,24 @@
                             <packaging>jar</packaging>
                             <file>${basedir}/lib/AraMorph.jar</file>
                         </configuration>
-                    </execution>
+                    </execution>                    
+                    <execution>
+                        <id>stanford-segmenter-jar</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>edu.stanford.nlp.international.arabic.process</groupId>
+                            <artifactId>stanford-segmenter</artifactId>
+                            <version>3.6.0</version>
+                            <packaging>jar</packaging>
+                            <file>${basedir}/lib/stanford-segmenter-3.6.0.jar</file>
+                        </configuration>
+                    </execution>                    
                 </executions>
             </plugin>
+            
             <!--- Uber-jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -145,40 +160,32 @@
             <artifactId>commons-io</artifactId>
             <version>2.2</version>
             <type>jar</type>
+        </dependency>        
+        <dependency>
+            <groupId>gpl.pierrick.brihaye.aramorph</groupId>
+            <artifactId>aramorph</artifactId>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
+            <groupId>edu.stanford.nlp.international.arabic.process</groupId>
+            <artifactId>stanford-segmenter</artifactId>
             <version>3.6.0</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
+            <artifactId>stanford-parser</artifactId>
             <version>3.6.0</version>
             <classifier>models</classifier>
         </dependency>
         <dependency>
-            <groupId>com.github.jbytecode</groupId>
-            <artifactId>RCaller</artifactId>
-            <version>3.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+            <version>1.7.21</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.6.1</version>
-            <type>jar</type>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.21</version>
         </dependency>
         <dependency>
             <groupId>com.github.vinhkhuc</groupId>
@@ -192,9 +199,9 @@
             <version>5.5.0</version>
         </dependency>
         <dependency>
-            <groupId>gpl.pierrick.brihaye.aramorph</groupId>
-            <artifactId>aramorph</artifactId>
-            <version>1.2.1</version>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.6.0</version>
         </dependency>
     </dependencies>
     <properties>

@@ -21,30 +21,24 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import edu.stanford.nlp.international.arabic.process.ArabicTokenizer;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import java.io.StringReader;
-import java.util.List;
 import java.util.Locale;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
-import gpl.pierrick.brihaye.aramorph.AraMorph;
-import gpl.pierrick.brihaye.aramorph.Solution;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * A bootstrapper annotator for the English language developed using the
+ * A bootstrapper annotator for the Arabic language developed using the
  * Stanford Core NLP library. The annotator splits the document, performs PoS
- * tagging and Named Entity Recognition. This annotator supports only the
- * English language.
+ * tagging. This annotator supports only the Arabic language.
  *
- * @author Marco Basaldella
+ * @author Muhammad Helmy
  */
 public class ArabicStanfordBootstrapper implements Annotator {
 
@@ -54,8 +48,6 @@ public class ArabicStanfordBootstrapper implements Annotator {
      * definitions every time, even for different instances of the annotator.
      */
     private static MaxentTagger tagger = null;
-    private static AraMorph am;
-
     /**
      * Annotate the document by splitting the document, performing PoS tagging
      * and Named Entity Recognition using the Stanford Core NLP tools.
@@ -71,57 +63,40 @@ public class ArabicStanfordBootstrapper implements Annotator {
                     getResource("stanford/arabic.tagger").getFile());
 
         }
-        if (am == null) {
-            am = new AraMorph();
-        }
+        ArabicDocProcessing.init();
         // read some text in the text variable
-        String docText = component.getText();
-
-        List<List<HasWord>> sentences = MaxentTagger.tokenizeText(
-                new StringReader(docText),
-                ArabicTokenizer.ArabicTokenizerFactory.newTokenizerFactory());        
-        
-        for (List<HasWord> stanfordSentence : sentences) {
-            String stanfordSentenceTxt = "";
-            for (HasWord word : stanfordSentence) {
-                stanfordSentenceTxt += word.toString() + " ";
-            }
-            stanfordSentenceTxt = ArabicDocProcessing.purifyDoc(stanfordSentenceTxt);
-            if(stanfordSentenceTxt==null || stanfordSentenceTxt.length()==0)
-                continue;
-            System.out.println("hhhhhgggggggggggggggggg"+stanfordSentenceTxt);
-            Sentence distilledSentence = new Sentence(stanfordSentenceTxt, 
-                    new Locale("ar"), stanfordSentenceTxt);
-            //System.out.println("xxx " + distilledSentence.toString());
-            //distilledSentence.setLanguage(new Locale("ar"));//Locale.ENGLISH);
-            
-            List<TaggedWord> tagedStanfordSentence = tagger.tagSentence(stanfordSentence);
-            for (TaggedWord token : tagedStanfordSentence/*.get(TokensAnnotation.class)*/) {
-
+        String docText = component.getText();        
+        docText = ArabicDocProcessing.normalizeAlefAndYa(ArabicDocProcessing.preProcess(docText));
+        try {
+            docText = ArabicDocProcessing.processText(ArabicDocProcessing.SEGMENT, docText);
+        } catch (Exception ex) {
+            Logger.getLogger(ArabicStanfordBootstrapper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String[] sentsTxts = docText.split("(!|\\?|\\.|:)");
+        for (int i=0; i<sentsTxts.length; i++) {
+            String txt = sentsTxts[i].trim();
+            if(txt==null || txt.length()==0)
+                continue;             
+            Sentence distilledSentence = new Sentence(txt, new Locale("ar"), "" + i);
+            String sentTaggedTxt = ArabicDocProcessing.POSTageText(txt).trim();
+            String[] sentTaggedWords = sentTaggedTxt.split(" ");
+            String[] sentWords = txt.split(" ");
+            int j=0;
+            for (String taggedWord : sentTaggedWords) {
+                taggedWord = taggedWord.trim();
                 // this is the text of the token
-                String word = token.word();
-                word = ArabicDocProcessing.purifyDoc(word);
+                String word = sentWords[j++];//taggedWord.substring(0, taggedWord.indexOf("/"));
                 if(word==null || word.length()==0)
                     continue;
                 Token t = new Token(word);
-
                 // this is the POS tag of the token                
-                t.setPoS(token.tag());
-                if (am.analyzeToken(word)) {
-                    t.setStem(((Solution) am.getWordSolutions(word).iterator().next()).getLemma());
-                } else {
-                    t.setStem(word);
-                }
-                
-                
+                t.setPoS(taggedWord.substring(taggedWord.indexOf("/") + 1));
                 distilledSentence.addToken(t);
-            }
+            }            
             if(distilledSentence.getTokens().size()==0)
-                continue;
+                continue;            
             ((DocumentComposite) component).addComponent(distilledSentence);
-
         }
-
     }
-
 }
+>>>>>>> 787cb30... Arabic Pipeline (Version 1.0) using RegEx NGramGenerator.

@@ -100,6 +100,9 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
         posDatabasePaths.put(Locale.ENGLISH,
                 getClass().getClassLoader().
                 getResource("ailab/posPatterns/en-regex-patterns.json").getFile());
+        posDatabasePaths.put(new Locale("ar"),
+                getClass().getClassLoader().
+                getResource("ailab/posPatterns/ar-regex-patterns.json").getFile());
     }
     // </editor-fold>
   
@@ -184,19 +187,16 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
             String sentenceText = component.getText();
             Sentence sent = (Sentence) component;
             List<Token> allWords = sent.getTokens();
-
             // build the token start and end substring indexes in the input string
             int startIndexes[] = new int[allWords.size()];
             int endIndexes[] = new int[allWords.size()];
 
             // track how much text we've already scanned
             int searchWordFrom = 0;
-
             for (int i = 0; i < allWords.size(); i++) {
                 startIndexes[i] = sentenceText.indexOf(
                         allWords.get(i).getText(), searchWordFrom);
                 endIndexes[i] = startIndexes[i] + allWords.get(i).getText().length();
-
                 searchWordFrom = endIndexes[i];
             }
 
@@ -237,9 +237,7 @@ public class RegexNGramGeneratorAnnotator implements GenericNGramGeneratorAnnota
                             identifier = identifier.toLowerCase();
                             int startIndex = 
                                     startIndexes[i - (lastReadBuffers[size].size() - 1)];
-                            int endIndex = endIndexes[i];
-                                    
-                            
+                            int endIndex = endIndexes[i];                            
                             Keyphrase g = new Keyphrase(
                                     identifier,
                                     lastReadBuffers[size],

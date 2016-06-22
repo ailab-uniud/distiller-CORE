@@ -1,0 +1,32 @@
+{ 
+	"languages":[
+			{ 
+				"language": "ar",
+				"patterns":[
+				 {
+					"pattern":"(NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS)",
+                                        "description":"Pattern for first level tagging selection composition of nouns"
+                                        
+					
+				 },
+                                 {
+                                        "pattern":"(NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)",
+                                        "description":"Pattern for secodn level tagging selection: composition of nouns, adjectives and prepositions"
+                                 },
+                                 {
+                                        "pattern":"(NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)",
+                                        "description":"Pattern for third level tagging selection: composition of nouns, adjectives and prepositions"
+                                 },
+                                 {
+                                        "pattern":"(NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)",
+                                        "description":"Pattern for fourth level tagging selection: composition of nouns, adjectives and prepositions"
+                                 },
+                                 {
+                                        "pattern":"(NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)[/](CC|CD|IN|MD|PDT|POS|RP|UH|WDT|WP|WP\\$|WRB|DT)?[/](NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS|JJ|JJR|JJS|DTJJ|DTJJR|DTJJS)",
+                                        "description":"Pattern for fifth level tagging selection: composition of nouns, adjectives and prepositions"
+                                 }
+				]
+			}
+                ]
+}
+				 

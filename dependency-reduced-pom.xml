@@ -37,6 +37,20 @@
               <file>${basedir}/lib/AraMorph.jar</file>
             </configuration>
           </execution>
+          <execution>
+            <id>stanford-segmenter-jar</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <groupId>edu.stanford.nlp.international.arabic.process</groupId>
+              <artifactId>stanford-segmenter</artifactId>
+              <version>3.6.0</version>
+              <packaging>jar</packaging>
+              <file>${basedir}/lib/stanford-segmenter-3.6.0.jar</file>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>

@@ -71,13 +71,13 @@
           class="it.uniud.ailab.dcore.annotation.annotators.SyuzhetAnnotator"/>
         
     <!-- N-gram generators -->
-    <!-- bean id="nGramGenerator"
+    <bean id="nGramGenerator"
           class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
         <property name="maxGramSize" value="5" />
-    </bean -->
-    <bean id="nGramGenerator"
-          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" > 
     </bean>
+    <!-- bean id="nGramGenerator"
+          class="it.uniud.ailab.dcore.annotation.annotators.SimpleNGramGeneratorAnnotator" > 
+    </bean -->
     
     <bean id="tfidf"
           class="it.uniud.ailab.dcore.annotation.annotators.RawTdidfAnnotator"/>
