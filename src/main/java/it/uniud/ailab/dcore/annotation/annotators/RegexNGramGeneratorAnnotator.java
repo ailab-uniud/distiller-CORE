@@ -28,7 +28,6 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;

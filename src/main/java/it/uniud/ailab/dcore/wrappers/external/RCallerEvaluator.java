@@ -18,11 +18,8 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-// Imports for RCaller 2.9+
 import com.github.rcaller.rstuff.RCaller;
 import com.github.rcaller.rstuff.RCode;
-//import com.github.rcaller.rStuff.RCaller;
-//import com.github.rcaller.rStuff.RCode;
 import com.github.rcaller.util.Globals;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
@@ -140,11 +137,10 @@ public class RCallerEvaluator implements Annotator {
         }
 
         // Step 3: predict with R
-        RCaller caller = new RCaller();
+        RCaller caller = RCaller.create();
         Globals.detect_current_rscript();
-        caller.setRscriptExecutable(Globals.Rscript_current);
 
-        RCode rCode = new RCode();
+        RCode rCode = RCode.create();
 
         // load packages (if any)
         if (requires != null && !requires.isEmpty()) {
@@ -180,8 +176,9 @@ public class RCallerEvaluator implements Annotator {
             // coherence check: if for some reason we are getting the
             // wrong KP from the printer, shut down everything.
             if (!kp.getIdentifier().equals(idChecks[kpCounter])) {
-                throw new AnnotationException(
-                        this, "ERROR: non-matching keyphrase in R code printer");
+                Logger.getLogger(RCallerEvaluator.class.getName()).log(Level.WARNING,
+                        "Non-matching keyphrase in R output file: {0}",
+                        kp.getIdentifier());
             }
             kp.putFeature(
                     it.uniud.ailab.dcore.annotation.annotators.GenericEvaluatorAnnotator.SCORE,

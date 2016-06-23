@@ -184,6 +184,9 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
         databasePaths.put("it-sent", "https://github.com/aciapetti/opennlp-italian-models/blob/master/models/it/it-sent.bin?raw=true");
         databasePaths.put("it-token", "https://github.com/aciapetti/opennlp-italian-models/blob/master/models/it/it-token.bin?raw=true");
         databasePaths.put("it-pos-maxent", "https://github.com/aciapetti/opennlp-italian-models/blob/master/models/it/it-pos-maxent.bin?raw=true");
+        databasePaths.put("ro-sent", "http://ailab.uniud.it/files/opennlp/ro-sent.bin");
+        databasePaths.put("ro-token", "http://ailab.uniud.it/files/opennlp/ro-token.bin");
+        databasePaths.put("ro-pos-maxent", "http://ailab.uniud.it/files/opennlp/ro-pos-maxent.bin");
     }
 
     /**

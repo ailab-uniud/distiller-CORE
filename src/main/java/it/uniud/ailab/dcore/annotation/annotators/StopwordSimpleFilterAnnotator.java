@@ -19,6 +19,7 @@
 package it.uniud.ailab.dcore.annotation.annotators;
 
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
@@ -36,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.json.simple.parser.ParseException;
 
@@ -66,7 +66,7 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
 
         stopwordsPath.put(Locale.ENGLISH,
                 getClass().getClassLoader().
-                getResource("ailab/stopwords/en-tartarus-improved.txt").getFile());
+                getResource("ailab/stopwords/generic.txt").getFile());
         stopwordsPath.put(Locale.ITALIAN,
                 getClass().getClassLoader().
                 getResource("ailab/stopwords/generic.txt").getFile());
@@ -102,12 +102,17 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
         } catch (IOException | ParseException ex) {
             Logger.getLogger(SimpleNGramGeneratorAnnotator.class.getName()).
                     log(Level.SEVERE, null, ex);
+            throw new AnnotationException(this,"Failed to load stopword file.",ex);
+        } catch (UnsupportedOperationException ex) {
+            Logger.getLogger(SimpleNGramGeneratorAnnotator.class.getName()).
+                    log(Level.SEVERE, "Warning: skipping stopwords filtering", ex);
+            return;
         }
 
         for (Gram g : blackboard.getKeyphrases()) {
             Keyphrase k = (Keyphrase) g;
-            if (stopwords.contains(k.getSurface().toLowerCase())
-                    || stopwords.contains(k.getTokens().get(0).getText().toLowerCase())) {
+            if (stopwords.contains(k.getSurface())
+                    || stopwords.contains(k.getTokens().get(0).getText())) {
                 blackboard.removeKeyphrase(k);
             }
         }
@@ -126,26 +131,26 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
      */
     private void loadDatabase(Locale lang) throws IOException, ParseException {
         // Get the POS pattern file and parse it.
-
+        
+        // If the language is not supported by the database, stop the execution.
+        if (stopwordsPath.get(lang) == null) {
+            throw new UnsupportedOperationException("Language " + lang.getLanguage()
+                    + " not available.");
+        }
+        
         InputStreamReader is;
-
         // running from command-line and loading inside the JAR
         if (stopwordsPath.get(lang).contains("!")) {
             is = new InputStreamReader(
                     getClass().getResourceAsStream(
                             stopwordsPath.get(lang).substring(
-                                    stopwordsPath.get(lang).lastIndexOf("!") + 1)),
+                            stopwordsPath.get(lang).lastIndexOf("!") + 1)),
                     StandardCharsets.UTF_8);
         } else {
             // normal operation
             is = new FileReader(stopwordsPath.get(lang));
         }
 
-        // If the language is not supported by the database, stop the execution.
-        if (is == null) {
-            throw new NullPointerException("Language " + lang.getLanguage()
-                    + " not available.");
-        }
 
         List<String> doc
                 = new BufferedReader(is).lines().collect(Collectors.toList());

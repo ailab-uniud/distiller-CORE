@@ -33,6 +33,9 @@
     <bean id="italian" class="java.util.Locale">
         <constructor-arg value="it" type="java.lang.String"/>
     </bean>
+    <bean id="romanian" class="java.util.Locale">
+        <constructor-arg value="ro" type="java.lang.String"/>
+    </bean>
     
     
     <!-- Language detectors -->  
@@ -172,7 +175,7 @@
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.GramPrinter"/>
     
-    <bean id="defaultPipeline"
+    <bean id="stanfordPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
@@ -180,7 +183,7 @@
                 <ref bean="stanford"/>
                 <ref bean="stemmer" />
                 <!-- generate the n-grams -->
-                <ref bean="regexNGramGenerator"/>
+                <ref bean="simpleNGramGenerator"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
@@ -192,7 +195,28 @@
                 <ref bean="printer" />
             </list>
         </property>        
-    </bean> 
+    </bean>
+    <bean id="openNlpPipeline"
+          class="it.uniud.ailab.dcore.Pipeline">
+        <property name="stages">
+            <list>
+                <!-- split the document -->
+                <ref bean="openNLP"/>
+                <ref bean="stemmer" />
+                <!-- generate the n-grams -->
+                <ref bean="simpleNGramGenerator"/>
+                <!-- annotate the n-grmas -->
+                <ref bean="simpleStopword" />
+                <ref bean="statistical" />
+                <ref bean="dpm"/>
+                <!-- evaluate the keyphraseness -->
+                <ref bean="linearEvaluator"/>
+                <!-- filter the non-interesting output -->
+                <!-- <ref bean="skylineGramFilter"/>-->
+                <ref bean="printer" />
+            </list>
+        </property>        
+    </bean>
     
     <!-- The main object, the Distiller, that receives the beans defined above -->
     <bean id="distiller" class="it.uniud.ailab.dcore.Distiller">
@@ -202,11 +226,15 @@
                  value-type="it.uniud.ailab.dcore.annotation.Pipeline">
                 <entry
                     key-ref="english" 
-                    value-ref="defaultPipeline">
+                    value-ref="stanfordPipeline">
                 </entry>
                 <entry
                     key-ref="italian" 
-                    value-ref="defaultPipeline">
+                    value-ref="openNlpPipeline">
+                </entry>
+                <entry
+                    key-ref="romanian" 
+                    value-ref="openNlpPipeline">
                 </entry>
             </map>
         </property>
