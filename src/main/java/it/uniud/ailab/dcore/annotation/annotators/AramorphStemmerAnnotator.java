@@ -18,10 +18,7 @@
  */
 package it.uniud.ailab.dcore.annotation.annotators;
 
-import gpl.pierrick.brihaye.aramorph.AraMorph;
-import gpl.pierrick.brihaye.aramorph.Solution;
 import it.uniud.ailab.dcore.Blackboard;
-import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -29,7 +26,6 @@ import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Implementation of Porter's Stemmer algorithm. 
