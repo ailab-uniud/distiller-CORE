@@ -28,8 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 public class ArabicDocProcessing {
 
     public final static int PREPROCESS = 1, SEGMENT = 2, PARSE = 3;
-    private static AraMorph am = new AraMorph();
-    private static ArabicSegmenter ar = null;
+    private static AraMorph araMorph = new AraMorph();
+    private static ArabicSegmenter segmenter = null;
+    private static MaxentTagger tagger = null;
     public static String generatedLemmas;
 
     public static void init() {
@@ -86,8 +87,8 @@ public class ArabicDocProcessing {
             String word = matcher.group();
             if (generatedLemmas.contains(" " + word + " ")) {
                 lemmatizedText += word + " ";
-            } else if (am.analyzeToken(word)) {
-                String lw = ((Solution) am.getWordSolutions(word).
+            } else if (araMorph.analyzeToken(word)) {
+                String lw = ((Solution) araMorph.getWordSolutions(word).
                         iterator().next()).getLemma();
                 if (lw == null || lw.length() < 1) {
                     lw = word;
@@ -111,23 +112,24 @@ public class ArabicDocProcessing {
             props.put("loadClassifier", ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabic-segmenter-atb+bn+arztrain.ser.gz").getFile());
             props.put("orthoOptions", "normArDigits,normArPunc,normAlif,removeDiacritics,removeTatweel,removeQuranChars,removeProMarker,removeMorphMarker,removeLengthening,atbEscaping,useUTF8Ellipsis");
 
-            if (ar == null) {
+            if (segmenter == null) {
 
-                ar = new ArabicSegmenter(props);
-                ar.loadSegmenter(ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabic-segmenter-atb+bn+arztrain.ser.gz").getFile(), props);
+                segmenter = new ArabicSegmenter(props);
+                segmenter.loadSegmenter(ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabic-segmenter-atb+bn+arztrain.ser.gz").getFile(), props);
             }
-            text = ar.segmentString(text);
-        } 
-        else if (process == PARSE) {
+            text = segmenter.segmentString(text);
+        } else if (process == PARSE) {
             LexicalizedParser.main(new String[]{ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabicFactored.ser.gz").getFile(), "-"});
         }
-        return text;       
+        return text;
     }
 
     public static String POSTageText(String segmentedText) {
         Properties props = new Properties();
         props.put("tokenizerOptions", "latexQuotes=false,asciiQuotes=false,unicodeQuotes=false");
-        MaxentTagger tagger = new MaxentTagger(ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabic.tagger").getFile(), props);
+        if (tagger == null) {
+            tagger = new MaxentTagger(ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabic.tagger").getFile(), props);
+        }
         String taggedText = tagger.tagString(segmentedText);//"";
 
         return taggedText;
