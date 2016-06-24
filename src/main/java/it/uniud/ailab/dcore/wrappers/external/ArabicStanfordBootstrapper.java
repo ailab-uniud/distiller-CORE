@@ -34,9 +34,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A bootstrapper annotator for the Arabic language developed using the
- * Stanford Core NLP library. The annotator splits the document, performs PoS
- * tagging. This annotator supports only the Arabic language.
+ * A bootstrapper annotator for the Arabic language developed using the Stanford
+ * Core NLP library. The annotator splits the document, performs PoS tagging.
+ * This annotator supports only the Arabic language.
  *
  * @author Muhammad Helmy
  */
@@ -48,6 +48,7 @@ public class ArabicStanfordBootstrapper implements Annotator {
      * definitions every time, even for different instances of the annotator.
      */
     private static MaxentTagger tagger = null;
+
     /**
      * Annotate the document by splitting the document, performing PoS tagging
      * and Named Entity Recognition using the Stanford Core NLP tools.
@@ -64,39 +65,47 @@ public class ArabicStanfordBootstrapper implements Annotator {
 
         }
         ArabicDocProcessing.init();
-        // read some text in the text variable
-        String docText = component.getText();        
+        String docText = component.getText();
         docText = ArabicDocProcessing.normalizeAlefAndYa(ArabicDocProcessing.preProcess(docText));
+
         try {
             docText = ArabicDocProcessing.processText(ArabicDocProcessing.SEGMENT, docText);
         } catch (Exception ex) {
-            Logger.getLogger(ArabicStanfordBootstrapper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArabicStanfordBootstrapper.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
+        
+        // apply the preprocess to the blackboard
+        blackboard.applyPreprocess(docText);
+        component = blackboard.getStructure();        
+        
         String[] sentsTxts = docText.split("(!|\\?|\\.|:)");
-        for (int i=0; i<sentsTxts.length; i++) {
+        for (int i = 0; i < sentsTxts.length; i++) {
             String txt = sentsTxts[i].trim();
-            if(txt==null || txt.length()==0)
-                continue;             
+            if (txt == null || txt.length() == 0) {
+                continue;
+            }
             Sentence distilledSentence = new Sentence(txt, new Locale("ar"), "" + i);
-            String sentTaggedTxt = ArabicDocProcessing.POSTageText(txt).trim();
+            String sentTaggedTxt = ArabicDocProcessing.PoSTagText(txt).trim();
             String[] sentTaggedWords = sentTaggedTxt.split(" ");
             String[] sentWords = txt.split(" ");
-            int j=0;
+            int j = 0;
             for (String taggedWord : sentTaggedWords) {
                 taggedWord = taggedWord.trim();
                 // this is the text of the token
-                String word = sentWords[j++];//taggedWord.substring(0, taggedWord.indexOf("/"));
-                if(word==null || word.length()==0)
+                String word = sentWords[j++];
+                if (word == null || word.length() == 0) {
                     continue;
+                }
                 Token t = new Token(word);
                 // this is the POS tag of the token                
                 t.setPoS(taggedWord.substring(taggedWord.indexOf("/") + 1));
                 distilledSentence.addToken(t);
-            }            
-            if(distilledSentence.getTokens().size()==0)
-                continue;            
+            }
+            if (distilledSentence.getTokens().isEmpty()) {
+                continue;
+            }
             ((DocumentComposite) component).addComponent(distilledSentence);
         }
     }
 }
->>>>>>> 787cb30... Arabic Pipeline (Version 1.0) using RegEx NGramGenerator.

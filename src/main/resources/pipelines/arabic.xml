@@ -62,7 +62,7 @@
     <bean id="coreferenceResolver" 
           class="it.uniud.ailab.dcore.annotation.annotators.CoreferenceResolverAnnotator"/>
     <bean id="dpm" 
-          class="it.uniud.ailab.dcore.annotation.annotators.PhraseMaximalityAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.annotators.DocumentPhraseMaximalityAnnotator"/>
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
           class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>

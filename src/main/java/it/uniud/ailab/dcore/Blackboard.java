@@ -124,6 +124,7 @@ public class Blackboard {
      */
     public final void applyPreprocess(String preprocessedText) {
         this.document = new DocumentComposite(preprocessedText,
+                this.getStructure().getLanguage(),
                 this.getStructure().getIdentifier());
     }
 

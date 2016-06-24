@@ -124,7 +124,7 @@ public class ArabicDocProcessing {
         return text;
     }
 
-    public static String POSTageText(String segmentedText) {
+    public static String PoSTagText(String segmentedText) {
         Properties props = new Properties();
         props.put("tokenizerOptions", "latexQuotes=false,asciiQuotes=false,unicodeQuotes=false");
         if (tagger == null) {
