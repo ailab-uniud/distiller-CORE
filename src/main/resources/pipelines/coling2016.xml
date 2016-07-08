@@ -91,10 +91,10 @@
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
                 <ref bean="coreferenceResolver"/>
-                <ref bean="dpm"/>
+                <!--<ref bean="dpm"/>-->
                 <ref bean="tfidf" />
-                <ref bean="syuzhet" />
-                <ref bean="chunkingNer"/>
+                <!--<ref bean="syuzhet" />-->
+                <!--<ref bean="chunkingNer"/>-->
                 
                 
             </list>
