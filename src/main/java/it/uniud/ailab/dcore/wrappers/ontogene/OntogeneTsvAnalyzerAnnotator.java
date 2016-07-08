@@ -6,6 +6,7 @@ import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.ScoredAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,21 +56,28 @@ import java.util.logging.Logger;
  */
 public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
+    public static final String START_INDEX = "StartIndex";
+    public static final String END_INDEX = "EndIndex";
+    public static final String DOCUMENT_ID = "PMID";
+
+    private String docId = null;
+
     private boolean useOntoGeneIDs = true;
 
     private Set<String> titleTerms = new HashSet<>();
     private Set<String> abstractTerms = new HashSet<>();
 
+    List<Pair<String, Integer>> terms = null;
+    List<Pair<Integer, Integer>> spans = null;
+
     public void setUseOntoGeneIDs(boolean useOntoGeneIDs) {
         this.useOntoGeneIDs = useOntoGeneIDs;
     }
-    
-    
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
-        List<Pair<String, Integer>> terms = loadFromTsv();
+        loadFromTsv();
 
         // suppose that the terms indice the TSV file are ordered, so iterate
         // through sentences using only one iterator for all terms to reduce
@@ -80,7 +89,10 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
         double sentenceStart = -1;
         double sentenceEnd = -1;
 
-        for (Pair<String, Integer> term : terms) {
+        Random rng = new Random();
+
+        for (int i = 0; i < terms.size(); i++) {
+            Pair<String, Integer> term = terms.get(i);
 
             // locate the correct sentence
             while (term.getRight() > sentenceEnd && sentenceIterator.hasNext()) {
@@ -196,8 +208,22 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
             } else {
                 id = term.getLeft();
             }
-            
-            Keyphrase kp = new Keyphrase(id, candidateTokens, term.getLeft());
+
+            Keyphrase kp = new Keyphrase(
+                    rng.nextInt() + "",
+                    candidateTokens, term.getLeft());
+
+            kp.addAnnotation(new TextAnnotation(
+                    DefaultAnnotations.SURFACE,
+                    term.getLeft()));
+
+            kp.putFeature(START_INDEX, spans.get(i).getLeft());
+            kp.putFeature(END_INDEX, spans.get(i).getRight());
+
+            kp.addAnnotation(
+                    new TextAnnotation(
+                            DOCUMENT_ID,
+                            docId));
 
             if (abstractTerms.contains(term.getLeft())) {
                 kp.putFeature(DefaultAnnotations.IN_ABSTRACT, 1);
@@ -215,9 +241,16 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
     }
 
-    private List<Pair<String, Integer>> loadFromTsv() {
-        String tsvFileName = OntogeneUtils.getCurrentDocumentID();
+    private void loadFromTsv() {
+        
+        // if using CRAFT 'ids'
+        //String tsvFileName = OntogeneUtils.getCurrentDocumentID();
 
+        // get the filename in the most secure and robust way (even if redundant)
+        String tsvFileName = new File(IOBlackboard.getCurrentDocument()).getName();
+        tsvFileName = tsvFileName.lastIndexOf('.') < 0 ? tsvFileName :
+                tsvFileName.substring(0,tsvFileName.indexOf('.'));
+        
         tsvFileName += ".tsv";
 
         File f = new File(IOBlackboard.getDocumentsFolder());
@@ -237,7 +270,8 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
         String[] nextLine;
 
-        List<Pair<String, Integer>> terms = new ArrayList<>();
+        List<Pair<String, Integer>> termsFound = new ArrayList<>();
+        List<Pair<Integer, Integer>> spansFound = new ArrayList<>();
 
         try {
 
@@ -247,6 +281,10 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
             while ((nextLine = reader.readNext()) != null) {
 
+                if (docId == null) {
+                    docId = nextLine[0];
+                }
+
                 int curStart = Integer.parseInt(nextLine[2]);
                 int curEnd = Integer.parseInt(nextLine[3]);
 
@@ -255,16 +293,20 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                     currentWord = nextLine[4];
                     prevStart = curStart;
                     prevEnd = curEnd;
-                } else {
-                    // if we've already matched a word,
-                    // check the indices: if we're expanding, substitute 
-                    // the word; if the indices stay the same, don't do
-                    // anything; if the FIRST index moves, save the word
-                    // and start a new match.
-
-                    if (curStart > prevStart) {
+                } else // if we've already matched a word,
+                // check the indices: if we're expanding, substitute 
+                // the word; if the indices stay the same, don't do
+                // anything; if the FIRST index moves, save the word
+                // and start a new match.
+                 if (curStart > prevStart) {
                         if (curEnd > prevEnd) {
-                            terms.add(new Pair<>(currentWord, prevStart));
+
+                            termsFound.add(new Pair<>(currentWord, prevStart));
+                            spansFound.add(new Pair<>(
+                                    prevStart,
+                                    prevEnd
+                            ));
+
                             if (nextLine[7].equals("abstract")) {
                                 abstractTerms.add(currentWord);
                             } else if (nextLine[7].equals("title")) {
@@ -276,13 +318,10 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                             prevEnd = curEnd;
                         }
 
-                    } else {
-                        if (curEnd > prevEnd) {
-                            currentWord = nextLine[4];
-                            prevEnd = curEnd;
-                        }
-                    } // else
-                } // if currentWord == null
+                    } else if (curEnd > prevEnd) {
+                        currentWord = nextLine[4];
+                        prevEnd = curEnd;
+                    } // else // if currentWord == null
             } // while
         } catch (IOException | NumberFormatException ex) {
             Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).log(
@@ -290,7 +329,9 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
             throw new AnnotationException(this, "Error while processing " + tsvFileName, ex);
         }
-        return terms;
+
+        terms = termsFound;
+        spans = spansFound;
     }
 
     /**

@@ -205,14 +205,14 @@
     <bean id="mlEvaluatorNnet"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
         <property name="modelPath" 
-                  value="models/keyphrase-extraction/ontogene.model"
+                  value="/home/red/ontogene/models/craftTrainedModel_nnet_4.1-notfyesidf.RData"
         />
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
     
     <bean id="printer"
-          class="it.uniud.ailab.dcore.io.GramPrinter"/>
+          class="it.uniud.ailab.dcore.io.OntoGeneTsvWriter"/>
     
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">

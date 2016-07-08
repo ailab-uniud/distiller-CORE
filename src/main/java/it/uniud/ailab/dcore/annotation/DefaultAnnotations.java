@@ -48,5 +48,7 @@ public class DefaultAnnotations {
     public static final String TF = "tf";
 
     public static final String TFIDF = "tf-idf";
+    
+    public static final String SURFACE = "Surface";
 
 }

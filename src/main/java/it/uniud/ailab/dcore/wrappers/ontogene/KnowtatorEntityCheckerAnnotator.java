@@ -22,6 +22,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.utils.FileSystem;
@@ -52,7 +53,7 @@ import org.xml.sax.SAXException;
 /**
  * Checks if a keyphrase appears in the CRAFT corpus by looking for it inside
  * the knowtator XML files.
- * 
+ *
  * @author Marco Basaldella
  */
 public class KnowtatorEntityCheckerAnnotator implements Annotator {
@@ -75,23 +76,24 @@ public class KnowtatorEntityCheckerAnnotator implements Annotator {
         }
 
         Set<String> validTerms;
-        try {
-            validTerms = terms.get(
-                    OntogeneUtils.getCurrentDocumentPMID(inputDirectory));
-        } catch (IOException ex) {
-            Logger.getLogger(KnowtatorEntityCheckerAnnotator.class.getName()).log(Level.SEVERE, null, ex);
-            validTerms = null;
-        }
+        // if using CRAFT 'ids'
+        //OntogeneUtils.getCurrentDocumentPMID(inputDirectory
         
+        String pmid = new File(IOBlackboard.getCurrentDocument()).getName();
+        pmid = pmid.lastIndexOf('.') < 0 ? pmid
+                : pmid.substring(0, pmid.indexOf('.'));
+
+        validTerms = terms.get(pmid);
+
         if (validTerms == null) {
             throw new AnnotationException(this,
-                        "Unable to determine the PMID of the current document.");
+                    "Unable to determine the PMID of the current document.");
         }
 
         Collection<Keyphrase> kps = blackboard.getGramsByType(Keyphrase.KEYPHRASE);
 
         for (Keyphrase k : kps) {
-            
+
             if (validTerms.contains(k.getSurface().toLowerCase(Locale.ENGLISH))) {
                 k.addAnnotation(
                         new FeatureAnnotation(CRAFT_TERM, 1));
@@ -107,8 +109,8 @@ public class KnowtatorEntityCheckerAnnotator implements Annotator {
     /**
      * This variable must point to the "knowtator-xml" directory inside the
      * CRAFT corpus folder.
-     * 
-     * @param inputDirectory the path of the "knowtator-xml" inside the CRAFT 
+     *
+     * @param inputDirectory the path of the "knowtator-xml" inside the CRAFT
      * corpus folder.
      */
     public void setInputDirectory(String inputDirectory) {
@@ -116,13 +118,13 @@ public class KnowtatorEntityCheckerAnnotator implements Annotator {
     }
 
     private static void load(String inputDir) throws RuntimeException {
-        
+
         if (!inputDir.endsWith(FileSystem.getSeparator())) {
-            inputDir  += FileSystem.getSeparator();
+            inputDir += FileSystem.getSeparator();
         }
-        
+
         inputDir += "knowtator-xml";
-        
+
         File rootDirectory = new File(inputDir);
 
         for (File directory : rootDirectory.listFiles()) {

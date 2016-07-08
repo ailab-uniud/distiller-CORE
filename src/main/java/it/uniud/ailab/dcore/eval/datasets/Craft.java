@@ -19,6 +19,7 @@
 package it.uniud.ailab.dcore.eval.datasets;
 
 import it.uniud.ailab.dcore.eval.GenericDataset;
+import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.wrappers.ontogene.KnowtatorEntityCheckerAnnotator;
 import it.uniud.ailab.dcore.wrappers.ontogene.OntogeneUtils;
@@ -49,19 +50,18 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Loader for the CRAFT corpus. 
- * 
- * The input directory should be strucured as
- * .
- * ├── tsv      the TSV files produced by OntoGene (for processing with OntoGene pipeline)
- * ├── txt      txt files from the CRAFT corpus
- * └── knowtator-xml      should contain one or more ontologies contained in the knowtator-xml folder of the CRAFT corpus
-
+ * Loader for the CRAFT corpus.
+ *
+ * The input directory should be strucured as . ├── tsv the TSV files produced
+ * by OntoGene (for processing with OntoGene pipeline) ├── txt txt files from
+ * the CRAFT corpus └── knowtator-xml should contain one or more ontologies
+ * contained in the knowtator-xml folder of the CRAFT corpus
+ *
  *
  * @author Marco Basaldella
  */
 public class Craft extends GenericDataset {
-    
+
     private Map<String, Set<String>> documentTermMap = new HashMap<>();
 
     public Craft(String goldStandardPath) {
@@ -89,21 +89,21 @@ public class Craft extends GenericDataset {
         Map<String, String> documents = new HashMap<>();
 
         try {
-            File[] dir = new File(datasetPath + 
-                    FileSystem.getSeparator() +
-                    "txt").listFiles();
+            File[] dir = new File(datasetPath
+                    + FileSystem.getSeparator()
+                    + "txt").listFiles();
             Arrays.sort(dir);
 
             for (File f : dir) {
 
                 String document = String.join(
-                            "\n",
-                            Files.readAllLines(
-                                    f.toPath(), StandardCharsets.UTF_8));
+                        "\n",
+                        Files.readAllLines(
+                                f.toPath(), StandardCharsets.UTF_8));
 
-                    String docName = f.getName().substring(0,f.getName().indexOf("."));
+                String docName = f.getName().substring(0, f.getName().indexOf("."));
 
-                    documents.put(docName, document);
+                documents.put(docName, document);
             }
         } catch (IOException ex) {
             Logger.getLogger(SemEval2010.class.getName()).log(Level.SEVERE, null, ex);
@@ -118,13 +118,13 @@ public class Craft extends GenericDataset {
         Map<String, String[]> keyphrases = new HashMap<>();
 
         String inputDir = datasetPath;
-        
+
         if (!inputDir.endsWith(FileSystem.getSeparator())) {
-            inputDir  += FileSystem.getSeparator();
+            inputDir += FileSystem.getSeparator();
         }
-        
+
         inputDir += "knowtator-xml";
-        
+
         File rootDirectory = new File(inputDir);
 
         for (File directory : rootDirectory.listFiles()) {
@@ -136,15 +136,15 @@ public class Craft extends GenericDataset {
                 throw new RuntimeException("Expecting only directories in the root folder");
             }
         }
-        
-        for (Map.Entry<String,Set<String>> documentTerms : documentTermMap.entrySet()) {
-            
+
+        for (Map.Entry<String, Set<String>> documentTerms : documentTermMap.entrySet()) {
+
             keyphrases.put(
-                documentTerms.getKey(),
+                    documentTerms.getKey(),
                     documentTerms.getValue().toArray(new String[0]));
-            
+
         }
-        
+
         return keyphrases;
     }
 
@@ -153,22 +153,22 @@ public class Craft extends GenericDataset {
         for (File f : directory.listFiles()) {
             String fileName = f.getName();
             fileName = fileName.substring(0, fileName.indexOf('.'));
-            
-            String ontogeneID = null;
-            try {
-                ontogeneID = OntogeneUtils.
-                        PMIDtoOntogeneFileID(datasetPath, fileName);
-            } catch (IOException ex) {
-                throw new RuntimeException("Unable to determine the correct "
-                        + "Ontogene ID of document " + fileName,ex);
+
+            String docID = fileName;
+
+//            try {
+//                docID = OntogeneUtils.
+//                        PMIDtoOntogeneFileID(datasetPath, fileName);
+//            } catch (IOException ex) {
+//                throw new RuntimeException("Unable to determine the correct "
+//                        + "Ontogene ID of document " + fileName,ex);
+//            }
+            if (!documentTermMap.containsKey(docID)) {
+                System.out.println("Adding document " + docID + "...");
+                documentTermMap.put(docID, new HashSet<String>());
             }
 
-            if (!documentTermMap.containsKey(ontogeneID)) {
-                System.out.println("Adding document " + ontogeneID + "...");
-                documentTermMap.put(ontogeneID, new HashSet<String>());
-            }
-
-            analyzeFile(f, ontogeneID);
+            analyzeFile(f, docID);
         }
     }
 
@@ -202,8 +202,8 @@ public class Craft extends GenericDataset {
     }
 
     /**
-     * Compares a <b>candidate</b> item with a <b>dataset provided</b> item. Please
-     * note that the the object to test <b>must</b> be passed as first
+     * Compares a <b>candidate</b> item with a <b>dataset provided</b> item.
+     * Please note that the the object to test <b>must</b> be passed as first
      * parameter, while the object to test against <b>must</b> be passed as
      * second parameter.
      *
@@ -215,25 +215,27 @@ public class Craft extends GenericDataset {
     @Override
     public int compare(String o1, String o2) {
         return o1.trim().toLowerCase().compareTo(o2.trim().toLowerCase());
-        
+
     }
 
     /**
-     * {@inheritDoc} 
-     * @return {@inheritDoc} 
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
      */
     @Override
     public String getTrainingFolder() {
-        return datasetPath + FileSystem.getSeparator()+ "train";
+        return datasetPath + FileSystem.getSeparator() + "train";
     }
 
     /**
-     * {@inheritDoc} 
-     * @return {@inheritDoc} 
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
      */
     @Override
     public String getTestFolder() {
-        return datasetPath + FileSystem.getSeparator()+ "test";
+        return datasetPath + FileSystem.getSeparator() + "test";
     }
 
 }
