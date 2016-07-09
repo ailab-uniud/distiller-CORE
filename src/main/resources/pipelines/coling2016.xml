@@ -93,7 +93,7 @@
                 <ref bean="coreferenceResolver"/>
                 <!--<ref bean="dpm"/>-->
                 <ref bean="tfidf" />
-                <!--<ref bean="syuzhet" />-->
+                <ref bean="syuzhet" />
                 <!--<ref bean="chunkingNer"/>-->
                 
                 
