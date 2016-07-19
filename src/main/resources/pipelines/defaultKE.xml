@@ -204,6 +204,7 @@
                 <ref bean="simpleNGramGenerator"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="statistical" />
+                <ref bean="simpleStopword" />
                 <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
                 <ref bean="mlEvaluator"/>
