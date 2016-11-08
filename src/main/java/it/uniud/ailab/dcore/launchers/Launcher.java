@@ -418,7 +418,7 @@ public class Launcher {
                         analyzeDir(inputPath);
                     }
                 } catch (IOException ioe) {
-                    System.err.println(ioe.getLocalizedMessage());
+                    System.err.print("Error while opening input path: ");
                     System.err.println(ioe.toString());
                 }
         }

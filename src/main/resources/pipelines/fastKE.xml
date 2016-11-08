@@ -37,6 +37,10 @@
         <constructor-arg value="ro" type="java.lang.String"/>
     </bean>
     
+    <bean id="portuguese" class="java.util.Locale">
+        <constructor-arg value="pt" type="java.lang.String"/>
+    </bean>
+    
     
     <!-- Language detectors -->  
     <bean id="cybozu" class="it.uniud.ailab.dcore.wrappers.external.CybozuLanguageDetectorAnnotator"/>
@@ -172,6 +176,15 @@
         </property>
     </bean>
     
+    <bean id="regexFilter"
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexFilterAnnotator">
+        <property name="target">
+            <util:constant 
+                static-field="it.uniud.ailab.dcore.persistence.Keyphrase.KEYPHRASE"/>
+        </property>
+        <property name="filter" value="[0-9]+(.[0-9]+)?|.*&lt;.*|.*&gt;.*"/>
+    </bean>
+    
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.GramPrinter"/>
     
@@ -205,6 +218,7 @@
                 <ref bean="stemmer" />
                 <!-- generate the n-grams -->
                 <ref bean="simpleNGramGenerator"/>
+                <ref bean="regexFilter"/>
                 <!-- annotate the n-grmas -->
                 <ref bean="simpleStopword" />
                 <ref bean="statistical" />
@@ -234,6 +248,10 @@
                 </entry>
                 <entry
                     key-ref="romanian" 
+                    value-ref="openNlpPipeline">
+                </entry>
+                <entry
+                    key-ref="portuguese" 
                     value-ref="openNlpPipeline">
                 </entry>
             </map>

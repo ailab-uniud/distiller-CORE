@@ -205,7 +205,7 @@
     <bean id="mlEvaluatorNnet"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
         <property name="modelPath" 
-                  value="/home/red/ontogene/models/craftTrainedModel_nnet_4.1-notfyesidf.RData"
+                  value="/home/red/ontogene/models/model.chebi.RData"
         />
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />

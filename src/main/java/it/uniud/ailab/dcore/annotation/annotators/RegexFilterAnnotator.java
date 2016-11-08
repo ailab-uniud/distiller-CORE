@@ -23,7 +23,10 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Filters out from the blackboard grams of a specific type (like Keyphrases)
@@ -32,14 +35,14 @@ import java.util.List;
  * @author Marco Basaldella
  */
 public class RegexFilterAnnotator implements Annotator {
-    
+
     private String filter;
-    
+
     private String target;
-    
+
     /**
      * The regular expression to match.
-     * 
+     *
      * @param filter the regular expression to match
      */
     public void setFilter(String filter) {
@@ -48,7 +51,7 @@ public class RegexFilterAnnotator implements Annotator {
 
     /**
      * The type of grams to filter.
-     * 
+     *
      * @param target the type of grams to filter.
      */
     public void setTarget(String target) {
@@ -57,17 +60,26 @@ public class RegexFilterAnnotator implements Annotator {
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-        
+
         List<Gram> gramsToRemove = new ArrayList<>();
-        
-        for (Object gramObj : blackboard.getGramsByType(target)) {
-            Gram g = (Gram)gramObj;
-            if (g.getSurface().matches(filter))
-                gramsToRemove.add(g);
-        }
-        
-        for (Gram g : gramsToRemove) {
-            blackboard.removeGram(target, g);
+
+        Collection<Object> gramColletion = blackboard.getGramsByType(target);
+        if (gramColletion == null) {
+            Logger.getLogger(RegexFilterAnnotator.class.getName()).
+                    log(Level.WARNING, "I can't run the filter because I "
+                            + "found no grams of type {0}.", target);
+        } else {
+
+            for (Object gramObj : gramColletion) {
+                Gram g = (Gram) gramObj;
+                if (g.getSurface().matches(filter)) {
+                    gramsToRemove.add(g);
+                }
+            }
+
+            for (Gram g : gramsToRemove) {
+                blackboard.removeGram(target, g);
+            }
         }
     }
 }

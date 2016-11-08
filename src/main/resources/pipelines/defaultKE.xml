@@ -37,6 +37,10 @@
         <constructor-arg value="ro" type="java.lang.String"/>
     </bean>
     
+    <bean id="portoguese" class="java.util.Locale">
+        <constructor-arg value="pt" type="java.lang.String"/>
+    </bean>
+    
     
     
     <!-- Language detectors -->  
@@ -231,6 +235,10 @@
                 </entry>
                 <entry
                     key-ref="romanian" 
+                    value-ref="romanianPipeline">
+                </entry>
+                <entry
+                    key-ref="portoguese" 
                     value-ref="romanianPipeline">
                 </entry>
             </map>
