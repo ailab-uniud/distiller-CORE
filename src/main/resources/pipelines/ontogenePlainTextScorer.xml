@@ -52,7 +52,7 @@
           class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/>
     
     <bean id="greek" 
-          class="it.uniud.ailab.dcore.annotation.annotators.GreekLetterAnnotator" />
+          class="it.uniud.ailab.dcore.annotation.annotators.GramGreekLetterAnnotator" />
     
     <bean id="gramshapes"
           class="it.uniud.ailab.dcore.annotation.annotators.GramShapeAnnotator"/>

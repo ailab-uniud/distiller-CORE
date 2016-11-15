@@ -25,6 +25,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import java.util.Locale;
 
 /**
  * Annotates the gram with a flag if contains a greek letter (in extended form,
@@ -32,35 +33,35 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
  *
  * @author Marco Basaldella
  */
-public class GreekLetterAnnotator implements Annotator {
+public class GramGreekLetterAnnotator implements Annotator {
 
     public static final String CONTAINS_GREEK = "ContainsGreek";
 
     private final String[] greek = new String[]{
-        "alpha",
-        "beta",
-        "gamma",
-        "delta",
-        "epsilon",
-        "zeta",
-        "eta",
-        "theta",
-        "iota",
-        "kappa",
-        "lambda",
-        "mu",
-        "nu",
-        "xi",
+        "alpha","α",
+        "beta","β",
+        "gamma","Γ","γ",
+        "delta","Δ","δ",
+        "epsilon","ε",
+        "zeta","ζ",
+        "eta","η",
+        "theta","θ",
+        "iota","ι",
+        "kappa","κ",
+        "lambda","Λ","λ",
+        "mu","μ",
+        "nu","ν",
+        "xi","Ξ","ξ",
         "omicron",
-        "pi",
-        "rho",
-        "sigma",
-        "tau",
-        "upsilon",
-        "phi",
-        "chi",
-        "psi",
-        "omega"
+        "pi","π",
+        "rho","ρ",
+        "sigma","σ","ς",
+        "tau","τ",
+        "upsilon","υ",
+        "phi","Φ","φ",
+        "chi","χ",
+        "psi","Ψ","ψ",
+        "omega","Ω","ω"
     };
 
     @Override
@@ -70,8 +71,16 @@ public class GreekLetterAnnotator implements Annotator {
                 if (!g.hasAnnotation(CONTAINS_GREEK)) {
 
                     boolean found = false;
+                    
+                    // Note the use of Locale.ENGLISH in the toLowerCase call.
+                    // This is to avoid problems when running the system
+                    // in non-western locale envirnoment.
+                    // For example, lowercase 'I' in turkish would be 'ı'.
+                    
+                    // Since this annotator is built to work with docu
+                    
                     for (int i = 0; i < greek.length & !found; i++) {
-                        found = g.getSurface().
+                        found = g.getSurface().toLowerCase(Locale.ENGLISH).
                                 matches(".*\\b" + greek[i] + "\\b.*");
                     }
 
