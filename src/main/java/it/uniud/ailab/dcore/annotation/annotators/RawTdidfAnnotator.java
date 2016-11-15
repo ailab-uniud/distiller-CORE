@@ -42,9 +42,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- * A simple and raw tf-idf calculator. It tokenizes each document using OpenNLP,
- * stems them with the Tartarus Stemmer, and marks each token with a leading and
- * trailing '§' mark.
+ * A simple and raw tf-idf calculator for n-grams. It tokenizes each document 
+ * using OpenNLP, stems them with the Tartarus Stemmer, and marks each token 
+ * with a leading and trailing '§' mark.
  *
  * Then, when the tf-idf value of a token is search
  *

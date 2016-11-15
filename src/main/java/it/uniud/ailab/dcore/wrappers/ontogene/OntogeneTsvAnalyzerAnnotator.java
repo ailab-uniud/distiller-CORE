@@ -5,6 +5,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
+import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.ScoredAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.io.IOBlackboard;
@@ -194,6 +195,15 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                 Logger.getLogger(OntogeneTsvAnalyzerAnnotator.class.getName()).
                         log(Level.SEVERE, "Can't find tokens for the term " + term.getLeft());
                 continue;
+            } 
+            
+            // Mark the tokens with the Data for NER training
+            candidateTokens.get(0).addAnnotation(
+                    new FeatureAnnotation("B_OG", 1.0));
+            
+            for (int k = 1 ; k < candidateTokens.size(); k++) {
+                candidateTokens.get(k).addAnnotation(
+                    new FeatureAnnotation("I_OG", 1.0));
             }
 
             String id = "";

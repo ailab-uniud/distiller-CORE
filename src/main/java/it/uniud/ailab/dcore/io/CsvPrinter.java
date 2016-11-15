@@ -89,6 +89,19 @@ public class CsvPrinter extends GenericSheetPrinter {
         this.delimiter = delimiter;
         this.printHeaders = printHeaders;
     }
+    
+    /**
+     * Write the annotations contained in the document tokens in the specified
+     * file.
+     *
+     * @param fileName the name of the file to write.
+     * @param b the blackboard to analyze.
+     */
+    public void writeTokens(String fileName, Blackboard b) {
+
+        this.loadTokens(b.getStructure());
+        writeFile(fileName);
+    }
 
     /**
      * Write the annotations contained in the document n-grams in the specified

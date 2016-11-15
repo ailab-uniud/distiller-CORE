@@ -195,7 +195,6 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
      *
      */
     private static void prepareModels() {
-        
 
         Map<String, String> correctPaths = new HashMap<>();
 
@@ -211,7 +210,7 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                 // we don't care and continue.
                 if (isLocalFile(url)) {
                     Logger.getLogger(OpenNlpBootstrapperAnnotator.class.getName()).
-                            log(Level.INFO, "Using {0} as local path...",e.getValue());
+                            log(Level.INFO, "Using {0} as local path...", e.getValue());
                     continue;
                 }
 
@@ -238,9 +237,8 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
                     continue;
                 }
 
-                                
                 Logger.getLogger(OpenNlpBootstrapperAnnotator.class.getName()).
-                            log(Level.INFO, "Downloading model from {0}...",e.getValue());
+                        log(Level.INFO, "Downloading model from {0}...", e.getValue());
                 FileUtils.copyURLToFile(url, f);
                 Logger.getLogger(OpenNlpBootstrapperAnnotator.class.getName()).
                         log(Level.INFO, "OpenNLP database saved in {0}", f.getCanonicalPath());
@@ -427,7 +425,25 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
     }
 
     /**
-     * Utility offered to other elements of the pipeline for text tokenizing.
+     * Utility offered to other elements of the pipeline for sentence splitting.
+     *
+     * @param text the text to split
+     * @param language the language of the input text
+     * @return an array containing the sentences detected in the input text.
+     */
+    public static String[] sentenceSplitText(String text, String language) {
+
+        setup();
+
+        // Split the text into sentences
+        SentenceModel sentModel = getSentenceModel(language + "-sent");
+
+        SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentModel);
+        return sentenceDetector.sentDetect(text);
+    }
+
+    /**
+     * Utility offered to other elements of the pipeline for text tokenization.
      *
      * @param text the text to tokenize
      * @param language the language of the input text
@@ -460,6 +476,23 @@ public class OpenNlpBootstrapperAnnotator implements Annotator {
             }
         }
         return tokenizedText.toArray(new String[tokenizedText.size()]);
+    }
+
+    /**
+     * Utility offered to other elements of the pipeline for text pos tagging.
+     *
+     * @param text the tokens to pos-tag
+     * @param language the language of the input text
+     * @return an array containing the pos-tagged tokens
+     */
+    public static String[] posTagText(String[] text, String language) {
+
+        setup();
+
+        POSModel POSModel = getPOSTaggerModel(language + "-pos-maxent");
+        // POS tag the tokens
+        POSTaggerME tagger = new POSTaggerME(POSModel);
+        return tagger.tag(text);
     }
 
     //</editor-fold>
