@@ -23,26 +23,26 @@ import it.uniud.ailab.dcore.annotation.Annotator;
 import static it.uniud.ailab.dcore.annotation.DefaultAnnotations.*;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
+import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 
 /**
- * Annotations over the shape of candidate gram.
+ * Annotations over the shape of candidate token.
  *
  * @author Marco Basaldella
  */
-public class GramShapeAnnotator implements Annotator {
+public class TokenShapeAnnotator implements Annotator {
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         for (Sentence s : DocumentUtils.getSentences(component)) {
-            for (Gram g : s.getGrams()) {
+            for (Token t : s.getTokens()) {
 
-                if (!g.hasAnnotation(UPPERCASE_COUNT)) {
+                if (!t.hasAnnotation(UPPERCASE_COUNT)) {
 
                     int count = 0;
-                    for (char c : g.getSurface().toCharArray()) {
+                    for (char c : t.getText().toCharArray()) {
                         if (Character.isUpperCase(c)) {
                             count++;
                         }
@@ -50,77 +50,64 @@ public class GramShapeAnnotator implements Annotator {
 
                     FeatureAnnotation f = new FeatureAnnotation(
                             UPPERCASE_COUNT, count);
-                    g.addAnnotation(f);
+                    t.addAnnotation(f);
 
-                    int allUpper = count == g.getSurface().length() ? 1 : 0;
+                    int allUpper = count == t.getText().length() ? 1 : 0;
                     FeatureAnnotation f1 = new FeatureAnnotation(
                             ALL_UPPERCASE, allUpper);
-                    g.addAnnotation(f1);
+                    t.addAnnotation(f1);
 
                     int insideCapt = 
-                            g.getSurface().matches(
+                            t.getText().matches(
                             ".*[a-z0-9][A-Z].*") ? 1 : 0;
                             
 
                     FeatureAnnotation f2 = new FeatureAnnotation(
                             INSIDE_CAPITALIZATION, insideCapt);
-                    g.addAnnotation(f2);
+                    t.addAnnotation(f2);
                 }
 
-                if (!g.hasAnnotation(LOWERCASE_COUNT)) {
+                if (!t.hasAnnotation(LOWERCASE_COUNT)) {
 
                     int count = 0;
-                    for (char c : g.getSurface().toCharArray()) {
+                    for (char c : t.getText().toCharArray()) {
                         if (Character.isLowerCase(c)) {
                             count++;
                         }
                     }
 
                     FeatureAnnotation f = new FeatureAnnotation(LOWERCASE_COUNT, count);
-                    g.addAnnotation(f);
+                    t.addAnnotation(f);
 
-                    int allLower = count == g.getSurface().length() ? 1 : 0;
+                    int allLower = count == t.getText().length() ? 1 : 0;
                     FeatureAnnotation f1 = new FeatureAnnotation(ALL_LOWERCASE, allLower);
-                    g.addAnnotation(f1);
+                    t.addAnnotation(f1);
                 }
 
-                if (!g.hasAnnotation(DIGITS_COUNT)) {
+                if (!t.hasAnnotation(DIGITS_COUNT)) {
 
                     int count = 0;
 
-                    for (char c : g.getSurface().toCharArray()) {
+                    for (char c : t.getText().toCharArray()) {
                         if (Character.isDigit(c)) {
                             count++;
                         }
                     }
 
                     FeatureAnnotation f = new FeatureAnnotation(DIGITS_COUNT, count);
-                    g.addAnnotation(f);
+                    t.addAnnotation(f);
                 }
 
-                if (!g.hasAnnotation(CHAR_COUNT)) {
+                if (!t.hasAnnotation(CHAR_COUNT)) {
 
-                    FeatureAnnotation f = new FeatureAnnotation(CHAR_COUNT, g.getSurface().length());
-                    g.addAnnotation(f);
+                    FeatureAnnotation f = new FeatureAnnotation(CHAR_COUNT, t.getText().length());
+                    t.addAnnotation(f);
                 }
 
-                if (!g.hasAnnotation(SPACE_COUNT)) {
+                if (!t.hasAnnotation(SYMBOLS_COUNT)) {
 
                     int count = 0;
-                    for (char c : g.getSurface().toCharArray()) {
-                        if (Character.isSpaceChar(c)) {
-                            count++;
-                        }
-                    }
-
-                    FeatureAnnotation f = new FeatureAnnotation(SPACE_COUNT, count);
-                    g.addAnnotation(f);
-                }
-
-                if (!g.hasAnnotation(SYMBOLS_COUNT)) {
-
-                    int count = 0;
-                    for (char c : g.getSurface().toCharArray()) {
+                    for (char c : t.getText().toCharArray()) {
                         if (!Character.isSpaceChar(c)
                                 && !Character.isLetterOrDigit(c)) {
                             count++;
@@ -128,32 +115,32 @@ public class GramShapeAnnotator implements Annotator {
                     }
 
                     FeatureAnnotation f = new FeatureAnnotation(SYMBOLS_COUNT, count);
-                    g.addAnnotation(f);
+                    t.addAnnotation(f);
                 }
 
-                if (!g.hasAnnotation(DASH_COUNT)) {
+                if (!t.hasAnnotation(DASH_COUNT)) {
                     int count = 0;
-                    for (char c : g.getSurface().toCharArray()) {
+                    for (char c : t.getText().toCharArray()) {
                         if (c == '-') {
                             count++;
                         }
                     }
 
                     FeatureAnnotation f = new FeatureAnnotation(DASH_COUNT, count);
-                    g.addAnnotation(f);
+                    t.addAnnotation(f);
                 }
 
-                if (!g.hasAnnotation(END_NUMBER)) {
+                if (!t.hasAnnotation(END_NUMBER)) {
 
                     int endNumber
                             = Character.isDigit(
-                                    g.getSurface().charAt(
-                                            g.getSurface().length() - 1))
+                                    t.getText().charAt(
+                                            t.getText().length() - 1))
                                     ? 1
                                     : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(END_NUMBER, endNumber);
-                    g.addAnnotation(f);
+                    t.addAnnotation(f);
                 }
 
             }

@@ -44,11 +44,39 @@ public class DefaultAnnotations {
     public static final String IN_TITLE = "InTitle";
 
     public static final String IN_ABSTRACT = "InAbstract";
-    
+
     public static final String TF = "tf";
 
+    public static final String IDF = "idf";
+
     public static final String TFIDF = "tf-idf";
-    
+
     public static final String SURFACE = "Surface";
+
+    public static final String POS_TAG = "pos_tag";
+
+    public static final String STEM = "stem";
+
+    public static final String LEMMA = "stem";
+
+    public static final String UPPERCASE_COUNT = "UpperCaseCount";
+
+    public static final String LOWERCASE_COUNT = "LowerCaseCount";
+
+    public static final String DIGITS_COUNT = "DigitsCount";
+
+    public static final String SPACE_COUNT = "SpaceCount";
+
+    public static final String SYMBOLS_COUNT = "SymbolsCount";
+
+    public static final String DASH_COUNT = "DashCount";
+
+    public static final String ALL_UPPERCASE = "AllUppercase";
+
+    public static final String ALL_LOWERCASE = "AllLowercase";
+
+    public static final String INSIDE_CAPITALIZATION = "InsideCapitalization";
+
+    public static final String END_NUMBER = "EndsWithNumber";
 
 }

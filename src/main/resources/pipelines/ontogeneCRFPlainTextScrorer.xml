@@ -54,8 +54,8 @@
     <bean id="greek" 
           class="it.uniud.ailab.dcore.annotation.annotators.GreekLetterAnnotator" />
     
-    <bean id="gramshapes"
-          class="it.uniud.ailab.dcore.annotation.annotators.GramShapeAnnotator"/>
+    <bean id="tokenShapes"
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenShapeAnnotator"/>
             
     <!-- N-gram generator -->    
     <bean id="NGramGenerator"
@@ -102,84 +102,84 @@
     
     <!-- Affixes -->
     <bean id="entrezgene2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="entrezgene2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/entrezgene/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/entrezgene/suffixes.csv"/>
     </bean>
     
     <bean id="cellosaurus2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="cellosaurus2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/cellosaurus/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/cellosaurus/suffixes.csv"/>
     </bean>
     
     <bean id="ctdChem2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdChem2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/ctd_chemicals/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/ctd_chemicals/suffixes.csv"/>
     </bean>
     
     <bean id="ctdDis2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdDis2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/ctd_diseases/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/ctd_diseases/suffixes.csv"/>
     </bean>
     
     <bean id="mesh2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="mesh2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/mesh/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/mesh/suffixes.csv"/>
     </bean>
 
     <bean id="uniprot2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="uniprot2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/uniprot/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/uniprot/suffixes.csv"/>
     </bean>
     
     <bean id="entrezgene3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="entrezgene3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/entrezgene/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/entrezgene/suffixes.csv"/>
     </bean>
     
     <bean id="cellosaurus3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="cellosaurus3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/cellosaurus/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/cellosaurus/suffixes.csv"/>
     </bean>
     
     <bean id="ctdChem3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdChem3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/ctd_chemicals/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/ctd_chemicals/suffixes.csv"/>
     </bean>
     
     <bean id="ctdDis3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdDis3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/ctd_diseases/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/ctd_diseases/suffixes.csv"/>
     </bean>
     
     <bean id="mesh3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="mesh3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/mesh/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/mesh/suffixes.csv"/>
     </bean>
 
     <bean id="uniprot3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.AffixesAnnotator">
+           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="uniprot3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/uniprot/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/uniprot/suffixes.csv"/>
@@ -241,7 +241,7 @@
                 <!--<ref bean="dpm"/>-->
                 <ref bean="tfidf"/>
                 <ref bean="tokenTfIdf"/>
-                <ref bean="gramshapes"/>
+                <ref bean="tokenShapes"/>
                 <ref bean="greek"/>
                 <!-- affixes -->
                 <ref bean="cellosaurus2"/>
@@ -258,9 +258,9 @@
                 <ref bean="uniprot3"/>
                 
                 <!-- evaluate the keyphraseness -->
-                <ref bean="mlEvaluatorNnet"/> 
+                <!--<ref bean="mlEvaluatorNnet"/> -->
                 <ref bean="CRAFTchecker"/>
-                <ref bean="printer"/>
+                <!--<ref bean="printer"/>-->
                 <ref bean="conllprinter"/>
             </list>
         </property>        

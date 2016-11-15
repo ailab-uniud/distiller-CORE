@@ -94,7 +94,7 @@ public class TokenTfIdfAnnotator implements Annotator {
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-        initIndex(databasePath,component.getLanguage(), useStem);
+        initIndex(databasePath, component.getLanguage(), useStem);
 
         List<Sentence> sentences = DocumentUtils.getSentences(component);
 
@@ -102,16 +102,25 @@ public class TokenTfIdfAnnotator implements Annotator {
             for (Token t : s.getTokens()) {
                 if (!t.hasAnnotation(DefaultAnnotations.TFIDF)) {
 
-                    double tfIdf;
-
+                    double tf, idf, tfIdf;
                     if (useStem) {
-                        tfIdf = tfIdf(IOBlackboard.getCurrentDocument(),
+                        tf = tf(IOBlackboard.getCurrentDocument(),
                                 t.getStem().toLowerCase());
+
+                        idf = idf(t.getStem().toLowerCase());
                     } else {
-                        tfIdf = tfIdf(IOBlackboard.getCurrentDocument(),
+                        tf = tfIdf(IOBlackboard.getCurrentDocument(),
                                 t.getText().toLowerCase());
+
+                        idf = idf(t.getText().toLowerCase());
                     }
 
+                    tfIdf = tfIdf(tf, idf);
+
+                    t.addAnnotation(new FeatureAnnotation(
+                            DefaultAnnotations.TF,tf));
+                    t.addAnnotation(new FeatureAnnotation(
+                            DefaultAnnotations.IDF,idf));
                     t.addAnnotation(new FeatureAnnotation(
                             DefaultAnnotations.TFIDF, tfIdf));
                 }
@@ -130,6 +139,10 @@ public class TokenTfIdfAnnotator implements Annotator {
             n += doc.containsKey(term) ? 1 : 0;
         }
         return Math.log10(documents.size() / n);
+    }
+
+    private double tfIdf(double tf, double idf) {
+        return tf != 0 && idf != 0 ? tf * idf : 0;
     }
 
     private double tfIdf(String docId, String term) {
@@ -155,7 +168,7 @@ public class TokenTfIdfAnnotator implements Annotator {
         try {
 
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(docCachePath));
-            documents = (Map<String, Map<String,Integer>>) in.readObject();
+            documents = (Map<String, Map<String, Integer>>) in.readObject();
             in.close();
             System.out.println("Loaded document occurrences from cache.");
         } catch (IOException | ClassNotFoundException iOException) {
@@ -180,7 +193,7 @@ public class TokenTfIdfAnnotator implements Annotator {
         for (File f : (new File(docPath)).listFiles()) {
 
             System.out.println("Loading " + f.getAbsolutePath() + "...");
-            loadFile(f, locale,doStem);
+            loadFile(f, locale, doStem);
         }
 
         try {
@@ -192,7 +205,7 @@ public class TokenTfIdfAnnotator implements Annotator {
         } catch (IOException iOException) {
             System.out.println("Unable to save occurrences cache: " + iOException.getLocalizedMessage());
         }
-        
+
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(docLengthCachePath));
             out.writeObject(docLengths);
