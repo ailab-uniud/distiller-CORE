@@ -19,10 +19,8 @@
 package it.uniud.ailab.dcore.eval.datasets;
 
 import it.uniud.ailab.dcore.eval.GenericDataset;
-import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.wrappers.ontogene.KnowtatorEntityCheckerAnnotator;
-import it.uniud.ailab.dcore.wrappers.ontogene.OntogeneUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,10 +50,12 @@ import org.xml.sax.SAXException;
 /**
  * Loader for the CRAFT corpus.
  *
- * The input directory should be strucured as . ├── tsv the TSV files produced
- * by OntoGene (for processing with OntoGene pipeline) ├── txt txt files from
- * the CRAFT corpus └── knowtator-xml should contain one or more ontologies
- * contained in the knowtator-xml folder of the CRAFT corpus
+ * The input directory should be strucured as 
+ * . 
+ * ├──  tsv the TSV files produced by OntoGene (for processing with OntoGene pipeline) 
+ * ├──  txt txt files from the CRAFT corpus 
+ * └──  knowtator-xml should contain one or more ontologies contained in the knowtator-xml 
+ *      folder of the CRAFT corpus
  *
  *
  * @author Marco Basaldella

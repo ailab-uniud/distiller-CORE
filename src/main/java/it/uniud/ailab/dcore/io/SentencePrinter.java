@@ -30,7 +30,7 @@ public class SentencePrinter  implements FileWriterStage {
 
     @Override
     public String getFileSuffix() {
-        return "sentences";
+        return "sentences.csv";
     }
 
     @Override

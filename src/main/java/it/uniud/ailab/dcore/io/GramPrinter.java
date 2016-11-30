@@ -30,7 +30,7 @@ public class GramPrinter implements FileWriterStage {
 
     @Override
     public String getFileSuffix() {
-        return "grams";
+        return "grams.csv";
     }
 
     @Override

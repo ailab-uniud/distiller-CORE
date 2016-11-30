@@ -174,6 +174,6 @@ public class TokenPrinter implements FileWriterStage {
      */
     @Override
     public String getFileSuffix() {
-        return "tokens";
+        return "tokens.csv";
     }
 }

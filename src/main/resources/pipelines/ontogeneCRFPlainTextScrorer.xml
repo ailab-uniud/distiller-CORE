@@ -57,10 +57,12 @@
     <bean id="tokenShapes"
           class="it.uniud.ailab.dcore.annotation.annotators.TokenShapeAnnotator"/>
             
+    <bean id="craftTokensMarker" 
+          class="it.uniud.ailab.dcore.eval.datasets.CraftAnnotator" />
+    
     <!-- N-gram generator -->    
     <bean id="NGramGenerator"
-          class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" >
-    </bean>
+          class="it.uniud.ailab.dcore.annotation.annotators.RegexNGramGeneratorAnnotator" />
     
     <!-- Stopword filter -->
     <bean id="simpleStopword"
@@ -234,12 +236,12 @@
                 <ref bean="stemmer" />
                 <ref bean="sentenceIndex" />
                 <ref bean="tsvanalyzer"/>
-                <!-- annotate the n-grmas -->
+                <!-- annotate the n-grams -->
+                <ref bean="craftTokensMarker"/>
                 <ref bean="simpleStopword" />
                 <ref bean="regexFilter" />
                 <ref bean="statistical" />
                 <!--<ref bean="dpm"/>-->
-                <ref bean="tfidf"/>
                 <ref bean="tokenTfIdf"/>
                 <ref bean="tokenShapes"/>
                 <ref bean="greek"/>

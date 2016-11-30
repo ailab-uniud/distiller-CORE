@@ -40,7 +40,7 @@ public class OntoGeneTsvWriter extends CsvPrinter implements FileWriterStage {
 
     @Override
     public String getFileSuffix() {
-        return "distilled";
+        return "distilled.tsv";
     }
 
     @Override
