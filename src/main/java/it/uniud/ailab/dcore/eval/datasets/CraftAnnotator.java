@@ -22,6 +22,7 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
+import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
@@ -74,6 +75,8 @@ public class CraftAnnotator implements Annotator {
     private String datasetPath;
 
     private List<String> excludes = Arrays.asList("sections-and-typography");
+    
+    public final static String CRAFT_TOKEN = "Craft_Token";
 
     private void loadTerms() {
 
@@ -164,7 +167,7 @@ public class CraftAnnotator implements Annotator {
                         >= documentTermMap.firstKey().getLeft()) {
 
                     t.addAnnotation(
-                            new FeatureAnnotation("B_CRAFT", 1.0));
+                            new TextAnnotation(CRAFT_TOKEN,"B_CRAFT"));
 
                     for (int j = i + 1;
                             j < s.getTokens().size()
@@ -176,7 +179,7 @@ public class CraftAnnotator implements Annotator {
                             j++) {
 
                         s.getTokens().get(j).addAnnotation(
-                                new FeatureAnnotation("I_CRAFT", 1.0));
+                            new TextAnnotation(CRAFT_TOKEN,"I_CRAFT"));
 
                         // this is safe because
                         // 1- the upper limit of the two for cycles is the same 
@@ -195,6 +198,10 @@ public class CraftAnnotator implements Annotator {
                     if (documentTermMap.isEmpty()) {
                         return;
                     }
+                } else {
+                    // the token is not marked in the CRAFT corpus.
+                    t.addAnnotation(
+                            new TextAnnotation(CRAFT_TOKEN,"NO_CRAFT"));
                 }
             }
         }

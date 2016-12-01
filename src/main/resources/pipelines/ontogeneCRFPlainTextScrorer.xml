@@ -104,111 +104,93 @@
     
     <!-- Affixes -->
     <bean id="entrezgene2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="entrezgene2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/entrezgene/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/entrezgene/suffixes.csv"/>
     </bean>
     
     <bean id="cellosaurus2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="cellosaurus2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/cellosaurus/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/cellosaurus/suffixes.csv"/>
     </bean>
     
     <bean id="ctdChem2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdChem2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/ctd_chemicals/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/ctd_chemicals/suffixes.csv"/>
     </bean>
     
     <bean id="ctdDis2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdDis2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/ctd_diseases/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/ctd_diseases/suffixes.csv"/>
     </bean>
     
     <bean id="mesh2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="mesh2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/mesh/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/mesh/suffixes.csv"/>
     </bean>
 
     <bean id="uniprot2" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="uniprot2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/uniprot/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/uniprot/suffixes.csv"/>
     </bean>
     
     <bean id="entrezgene3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="entrezgene3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/entrezgene/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/entrezgene/suffixes.csv"/>
     </bean>
     
     <bean id="cellosaurus3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="cellosaurus3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/cellosaurus/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/cellosaurus/suffixes.csv"/>
     </bean>
     
     <bean id="ctdChem3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdChem3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/ctd_chemicals/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/ctd_chemicals/suffixes.csv"/>
     </bean>
     
     <bean id="ctdDis3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="ctdDis3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/ctd_diseases/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/ctd_diseases/suffixes.csv"/>
     </bean>
     
     <bean id="mesh3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="mesh3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/mesh/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/mesh/suffixes.csv"/>
     </bean>
 
     <bean id="uniprot3" 
-           class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenAffixesAnnotator">
         <property name="databaseName" value="uniprot3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/uniprot/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/uniprot/suffixes.csv"/>
     </bean>
         
     <!-- Evaluators -->
-    <bean id="mlEvaluator"
-          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <!-- Config for logistic regression -->
-        <!--
-        <property name="modelPath" value="models/keyphrase-extraction/glm.model"/>
-        <property name="modelParameters" value="type=&quot;response&quot;"/>
-        -->
-        
-        <!-- Config for neural network -->
-        <!--
-        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
-        <property name="modelParameters" value="type=&quot;raw&quot;"/>
-        <property name="requires" value="nnet" />
-        -->
-        
-        <!-- Config for C5.0 decision trees -->
-        <!--
-        <property name="modelPath" value="models/keyphrase-extraction/c50.model"/>
-        <property name="modelParameters" value="type=&quot;prob&quot;"/>
-        <property name="requires" value="C50" />
-        -->
+    <bean id="trainerGenerator"
+          class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteTrainerAnnotator">
+        <property name="targetColumn" value="CRAFT"/>
     </bean>
     
     <bean id="mlEvaluatorNnet"
@@ -264,6 +246,7 @@
                 <ref bean="CRAFTchecker"/>
                 <!--<ref bean="printer"/>-->
                 <ref bean="conllprinter"/>
+                <ref bean="trainerGenerator"/>
             </list>
         </property>        
     </bean> 
