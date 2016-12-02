@@ -21,7 +21,6 @@ package it.uniud.ailab.dcore.eval.datasets;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
-import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
 import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
@@ -193,10 +192,17 @@ public class CraftAnnotator implements Annotator {
                     }
 
                     documentTermMap.remove(documentTermMap.firstKey());
-                    //  if the term map is finished, we don't need to analyze
-                    // the remaining tokens.
+                    // if the term map is finished, we don't need to analyze
+                    // the remaining tokens, but they still have to be marked
+                    // as not annotated by the CRAFT corpus. So, we put in the map
+                    // a fake annotation that will be impossible to match. This 
+                    // way, all subsequent tokens will be marked as not 
+                    // annotated in the corpus.
                     if (documentTermMap.isEmpty()) {
-                        return;
+                        documentTermMap.put(
+                                new ComparablePair(
+                                        Integer.MAX_VALUE,
+                                        Integer.MAX_VALUE), "");
                     }
                 } else {
                     // the token is not marked in the CRAFT corpus.

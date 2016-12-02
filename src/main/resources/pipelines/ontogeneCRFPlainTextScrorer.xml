@@ -190,7 +190,7 @@
     <!-- Evaluators -->
     <bean id="trainerGenerator"
           class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteTrainerAnnotator">
-        <property name="targetColumn" value="CRAFT"/>
+        <property name="targetAnnotation" value="Craft_Token"/>
     </bean>
     
     <bean id="mlEvaluatorNnet"
