@@ -65,6 +65,7 @@ public class TextAnnotation extends Annotation {
         return super.getStringAt(0);
     }
 
+    @JsonIgnore
     public String getAnnotatedText() {
         return super.getStringAt(1);
     }

@@ -307,6 +307,7 @@ public class Blackboard {
      *
      * @return the annotations stored in the blackboard
      */
+    @JsonIgnore
     public List<Annotation> getAnnotations() {
         return annotations;
     }

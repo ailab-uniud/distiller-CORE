@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.uniud.ailab.dcore.annotation.Annotable;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
@@ -87,6 +88,7 @@ public class Token extends Annotable {
      *
      * @return the stem of the token.
      */
+    @JsonIgnore
     public String getStem() {
         return this.hasAnnotation(DefaultAnnotations.STEM) ? 
                 getAnnotation(DefaultAnnotations.STEM).getStringAt(0) :
@@ -98,6 +100,7 @@ public class Token extends Annotable {
      *
      * @return the POS tag of the token.
      */
+    @JsonIgnore
     public String getPoS() {
         return this.hasAnnotation(DefaultAnnotations.POS_TAG) ? 
                 getAnnotation(DefaultAnnotations.POS_TAG).getStringAt(0) :
@@ -109,6 +112,7 @@ public class Token extends Annotable {
      *
      * @return the lemma for token.
      */
+    @JsonIgnore
     public String getLemma() {
         return this.hasAnnotation(DefaultAnnotations.LEMMA) ? 
                 getAnnotation(DefaultAnnotations.LEMMA).getStringAt(0) :

@@ -141,6 +141,46 @@ public class CRFSuiteTrainerAnnotator implements Annotator {
 
                     }
 
+                    for (int subWindowWidth = 1; subWindowWidth <= windowWidth;
+                            subWindowWidth++) {
+
+                        for (int startIndex = Math.max(0, i - windowWidth);
+                                startIndex <  
+                                Math.min(s.getTokens().size() - subWindowWidth, 
+                                        i + windowWidth - subWindowWidth + 1);
+                                startIndex++) {
+
+                            // the left-hand side of the column: identifies
+                            // where the annotations comes from
+                            List<String> anns = new ArrayList<>();
+                            // the right-hand side of the column contains the
+                            // content of the annotation
+                            List<String> contents = new ArrayList<>();
+
+                            for (int j = startIndex;
+                                    j < startIndex + subWindowWidth + 1;
+                                    j++) {
+                                // this value is used to mark where the annotation
+                                // comes from (previous token, current token...)
+                                int index = j - i;
+                                anns.add("w[" + index + "]");
+                                contents.add(s.getTokens().get(j).getText());
+                            }
+
+                            line.add(
+                                    String.join("|", anns)
+                                    + "="
+                                    + String.join("|", contents)
+                            );
+                        }
+                    }
+                    
+                    if (i == 0) {
+                        line.add("__BOS__");
+                    } else if (i == s.getTokens().size() - 1) {
+                        line.add("__EOS__");
+                    }
+
                     out.println(String.join("\t", line));
                 }
 
