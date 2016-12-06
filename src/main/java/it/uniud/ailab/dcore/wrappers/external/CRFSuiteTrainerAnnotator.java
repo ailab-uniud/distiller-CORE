@@ -22,10 +22,13 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotation;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
+import it.uniud.ailab.dcore.io.FileWriterStage;
+import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.utils.Either;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,17 +39,23 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Generator of the CRFSuite training files.
  *
- * @author red
+ * @author Marco Basaldella
  */
-public class CRFSuiteTrainerAnnotator implements Annotator {
+public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
+        implements FileWriterStage {
+
+    public CRFSuiteTrainerAnnotator() {
+        super(true);
+    }
 
     private String targetAnnotation = null;
 
@@ -60,6 +69,13 @@ public class CRFSuiteTrainerAnnotator implements Annotator {
     // The annotations used to generate the file. The field is static
     // so that the annotator detects them for the first file in the dataset only.
     private static List<String> annotations;
+
+    // The types of the annotations above
+    private static List<Either<String, Number>> annotationTypes;
+
+    // The same annotations contained above, but sorted (used to preserve
+    // the index of the original ordering
+    private static List<String> sortedAnnotations;
 
     /**
      * This annotation will be the <b>first</b> column in the training file, so
@@ -81,37 +97,79 @@ public class CRFSuiteTrainerAnnotator implements Annotator {
         this.windowWidth = windowWidth;
     }
 
-    @Override
-    public void annotate(Blackboard blackboard, DocumentComponent component) {
-        if (targetAnnotation == null || targetAnnotation.isEmpty()) {
+    /**
+     * Loads the annotations IDs. The method creates a dummy CSV printer and
+     * lets it do the dirty work to avoid rewriting boilerplate code. Then, the
+     * target annotation is removed and the annotations are sorted
+     * alphabetically.
+     *
+     * @param c the component where to look the annotations
+     */
+    private void loadAnnotations(DocumentComponent c) {
+        loadTokens(c);
+
+        if (!getHeaders().contains(targetAnnotation)) {
             throw new RuntimeException(
-                    "Target column not set. \n"
-                    + "You must set the annotation used by CRFSuite to train the model!");
+                    "The annotation specified in setTargetAnnotation does not exist.");
         }
 
-        if (trainingFileName == null) {
-            trainingFileName = createRandomFile();
-        }
+        removeHeader(targetAnnotation);
 
-        printTrainingFile(blackboard.getStructure());
+        annotations = getHeaders();
+        annotationTypes = getHeaderTypes();
+
+        sortedAnnotations = annotations;
+        java.util.Collections.sort(sortedAnnotations);
 
     }
 
     /**
-     * Prints the training file.
+     * Generates the training file using a random file name and creating an
+     * empty file.
      *
-     * @param component the root of the document.
+     * @return the path to file that will contain the training data.
      */
-    private void printTrainingFile(DocumentComponent component) {
-        if (annotations == null) {
-            loadAnnotations(component);
+    private Path createRandomFile() {
+
+        Path path = Paths.get(FileSystem.getDistillerTmpPath());
+        File f;
+
+        do {
+            // csv format for easy debugging
+            String name = UUID.randomUUID().toString().replace("-", "")
+                    + getFileSuffix();
+            path = path.resolve(name);
+            f = path.toFile();
+        } while (f.exists());
+
+        // create (touch) the file. 
+        try {
+            new FileOutputStream(f).close();
+        } catch (IOException ex) {
+            Logger.getLogger(CRFSuiteTrainerAnnotator.class.getName()).
+                    log(Level.SEVERE, "Unable to create training file.", ex);
+            throw new RuntimeException("Unable to create training file.");
         }
 
-        try (FileWriter fw = new FileWriter(trainingFileName.toFile(), true);
+        return path;
+    }
+
+    @Override
+    public String getFileSuffix() {
+        return ".csv";
+    }
+
+    @Override
+    public void writeFile(String file, Blackboard b) {
+        if (annotations == null) {
+            loadAnnotations(b.getStructure());
+        }
+
+        try (FileWriter fw = new FileWriter(file, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter out = new PrintWriter(bw)) {
 
-            for (Sentence s : DocumentUtils.getSentences(component)) {
+            for (Sentence s : DocumentUtils.getSentences(b.getStructure())) {
 
                 for (int i = 0; i < s.getTokens().size(); i++) {
 
@@ -141,12 +199,26 @@ public class CRFSuiteTrainerAnnotator implements Annotator {
 
                     }
 
+                    // here we generate attributes using the tokens around 
+                    // the current one.
+                    // if e.g. the current token has index 0 and the window 
+                    // has width 2, we must generate the attributes from
+                    // the token pairs with index (-,2-,1),(-1,0) ... (1,2)
+                    // and the triplets with index (-2,-1,0), (-1,0,-1),
+                    // (0,1,2). 
+                    // Note that the window 2 DOES NOT MEAN that we get at 
+                    // most 2 tokens, but that we must consider ALL THE TOKENS
+                    // from (token-2) + (token+2).
+                    // Generate all the sub-windows
                     for (int subWindowWidth = 1; subWindowWidth <= windowWidth;
                             subWindowWidth++) {
 
+                        // Generate the couples, triplets, etc.
+                        // We must be sure not to go before the beginning
+                        // of the sentence and after the end of the sentence.
                         for (int startIndex = Math.max(0, i - windowWidth);
-                                startIndex <  
-                                Math.min(s.getTokens().size() - subWindowWidth, 
+                                startIndex
+                                < Math.min(s.getTokens().size() - subWindowWidth,
                                         i + windowWidth - subWindowWidth + 1);
                                 startIndex++) {
 
@@ -174,7 +246,55 @@ public class CRFSuiteTrainerAnnotator implements Annotator {
                             );
                         }
                     }
-                    
+
+                    // now repeat the same for all the other annotations.                    
+                    for (String annotation : sortedAnnotations) {
+                        // see the cycles above for explanation
+
+                        for (int j = Math.max(0, i - windowWidth);
+                                j < Math.min(s.getTokens().size(), i + windowWidth + 1);
+                                j++) {
+                            int index = j - i;
+                            String word = annotation+ 
+                                    "[" + index + "]=" + 
+                                    getAnnotationValueAsString(t,annotation);
+                            line.add(word);
+
+                        }
+
+                        // see the cycles above for explanation
+                        for (int subWindowWidth = 1; subWindowWidth <= windowWidth;
+                                subWindowWidth++) {
+                            for (int startIndex = Math.max(0, i - windowWidth);
+                                    startIndex
+                                    < Math.min(s.getTokens().size() - subWindowWidth,
+                                            i + windowWidth - subWindowWidth + 1);
+                                    startIndex++) {
+
+                                List<String> anns = new ArrayList<>();
+                                List<String> contents = new ArrayList<>();
+
+                                for (int j = startIndex;
+                                        j < startIndex + subWindowWidth + 1;
+                                        j++) {
+                                    int index = j - i;
+                                    anns.add(annotation + "[" + index + "]");
+                                    contents.add(
+                                            getAnnotationValueAsString(
+                                                    s.getTokens().get(j),
+                                                    annotation));
+                                }
+
+                                line.add(
+                                        String.join("|", anns)
+                                        + "="
+                                        + String.join("|", contents)
+                                );
+                            }
+                        }
+
+                    }
+
                     if (i == 0) {
                         line.add("__BOS__");
                     } else if (i == s.getTokens().size() - 1) {
@@ -193,57 +313,66 @@ public class CRFSuiteTrainerAnnotator implements Annotator {
         }
     }
 
-    /**
-     * Loads the annotations IDs. The method creates a dummy CSV printer and
-     * lets it do the dirty work to avoid rewriting boilerplate code. Then, the
-     * target annotation is removed and the annotations are sorted
-     * alphabetically.
-     *
-     * @param c the component where to look the annotations
-     */
-    private void loadAnnotations(DocumentComponent c) {
-        CsvPrinter printer = new CsvPrinter();
-        printer.loadTokens(c);
-        annotations = printer.getHeaders();
+    @Override
+    public void run(Blackboard b) {
 
-        if (!annotations.contains(targetAnnotation)) {
+        if (targetAnnotation == null || targetAnnotation.isEmpty()) {
             throw new RuntimeException(
-                    "The annotation specified in setTargetAnnotation does not exist.");
+                    "Target column not set. \n"
+                    + "You must set the annotation used by CRFSuite to train the model!");
         }
 
-        annotations.remove(targetAnnotation);
-        java.util.Collections.sort(annotations);
+        if (trainingFileName == null) {
+            trainingFileName = createRandomFile();
+        }
 
+        writeFile(trainingFileName.toString(), b);
+    }
+
+    @Override
+    public void writeFile(String fileName) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
-     * Generates the training file using a random file name and creating an
-     * empty file.
-     *
-     * @return the path to file that will contain the training data.
+     * Gets the first value of the given annotation on the given token. If the
+     * token does not contain an annotation, the method returns a default value.
+     * 
+     * @param t the token to analyze
+     * @param annotator the annotation to retrieve
+     * @return 
      */
-    private Path createRandomFile() {
+    private static String
+            getAnnotationValueAsString(Token t, 
+                    String annotator) {
 
-        Path path = Paths.get(FileSystem.getDistillerTmpPath());
-        File f;
+        int annotationId = annotations.indexOf(annotator);
 
-        do {
-            // csv format for easy debugging
-            String name = UUID.randomUUID().toString().replace("-", "") + ".csv";
-            path = path.resolve(name);
-            f = path.toFile();
-        } while (f.exists());
-
-        // create (touch) the file. 
-        try {
-            new FileOutputStream(f).close();
-        } catch (IOException ex) {
-            Logger.getLogger(CRFSuiteTrainerAnnotator.class.getName()).
-                    log(Level.SEVERE, "Unable to create training file.", ex);
-            throw new RuntimeException("Unable to create training file.");
+        if (t.getAnnotation(annotator) == null) {
+            if (annotationTypes.get(annotationId).isLeft()) {
+                return "§NULL§";
+            } else {
+                return "0";
+            }
+        }
+        
+        Either<String,Number> annotationValue =
+                t.getAnnotation(annotator).getValueAt(0);
+        
+        if (annotationValue.isLeft()) { // the annotation is a string
+            return annotationValue.getLeft();
+        } else { // the annotation is a number
+            return // if there's no decimal part in the numeric
+                    // value, avoid printing ".0"
+                    annotationValue.getRight().doubleValue()
+                    == Math.floor(annotationValue.getRight().doubleValue())
+                    ? String.format(
+                            Locale.US, "%d",
+                            annotationValue.getRight().intValue())
+                    : String.format(
+                            Locale.US, "%f",
+                            annotationValue.getRight().doubleValue());
         }
 
-        return path;
     }
-
 }

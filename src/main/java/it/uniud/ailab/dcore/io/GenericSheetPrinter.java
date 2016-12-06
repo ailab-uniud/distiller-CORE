@@ -288,7 +288,19 @@ public abstract class GenericSheetPrinter {
         }
 
     }
-
+    
+    /**
+     * Removes an header from the printer.
+     * 
+     * @param id the id of the header to remove.
+     */
+    public void removeHeader(String id)
+    {
+        headerTypes.remove(headers.indexOf(id));
+        headers.remove(id);
+    }
+    
+    
     /**
      * Clear the spreadsheet.
      */
