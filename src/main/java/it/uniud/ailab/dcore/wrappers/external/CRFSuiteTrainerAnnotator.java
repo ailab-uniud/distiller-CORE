@@ -20,8 +20,6 @@ package it.uniud.ailab.dcore.wrappers.external;
 
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotation;
-import it.uniud.ailab.dcore.annotation.Annotator;
-import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.FileWriterStage;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
@@ -64,7 +62,7 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
 
     // Width of the window used to train the CRFs, i.e. the number of tokens
     // before and after the current one.
-    private int windowWidth = 2;
+    private int windowWidth = 1;
 
     // The annotations used to generate the file. The field is static
     // so that the annotator detects them for the first file in the dataset only.
@@ -76,6 +74,9 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
     // The same annotations contained above, but sorted (used to preserve
     // the index of the original ordering
     private static List<String> sortedAnnotations;
+    
+    // The list of annotations to ignore
+    private List<String> ignores;
 
     /**
      * This annotation will be the <b>first</b> column in the training file, so
@@ -98,6 +99,15 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
     }
 
     /**
+     * Sets the annotations to ignore when generating the CRF suite input file.
+     * @param ignores the list with the ID of the annotators to ignore.
+     * 
+     */
+    public void setIgnores(List<String> ignores) {
+        this.ignores = ignores;
+    }
+
+    /**
      * Loads the annotations IDs. The method creates a dummy CSV printer and
      * lets it do the dirty work to avoid rewriting boilerplate code. Then, the
      * target annotation is removed and the annotations are sorted
@@ -115,10 +125,16 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
 
         removeHeader(targetAnnotation);
 
+        for (String ignore : ignores) {
+            removeHeader(ignore);
+        }
+        
+        
         annotations = getHeaders();
         annotationTypes = getHeaderTypes();
+        
 
-        sortedAnnotations = annotations;
+        sortedAnnotations = new ArrayList<>(annotations);
         java.util.Collections.sort(sortedAnnotations);
 
     }
@@ -255,9 +271,9 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
                                 j < Math.min(s.getTokens().size(), i + windowWidth + 1);
                                 j++) {
                             int index = j - i;
-                            String word = annotation+ 
-                                    "[" + index + "]=" + 
-                                    getAnnotationValueAsString(t,annotation);
+                            String word = annotation
+                                    + "[" + index + "]="
+                                    + getAnnotationValueAsString(t, annotation);
                             line.add(word);
 
                         }
@@ -337,13 +353,13 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
     /**
      * Gets the first value of the given annotation on the given token. If the
      * token does not contain an annotation, the method returns a default value.
-     * 
+     *
      * @param t the token to analyze
      * @param annotator the annotation to retrieve
-     * @return 
+     * @return
      */
     private static String
-            getAnnotationValueAsString(Token t, 
+            getAnnotationValueAsString(Token t,
                     String annotator) {
 
         int annotationId = annotations.indexOf(annotator);
@@ -352,25 +368,34 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
             if (annotationTypes.get(annotationId).isLeft()) {
                 return "§NULL§";
             } else {
-                return "0";
+                return "false";
             }
         }
-        
-        Either<String,Number> annotationValue =
-                t.getAnnotation(annotator).getValueAt(0);
-        
+
+        Either<String, Number> annotationValue
+                = t.getAnnotation(annotator).getValueAt(0);
+
         if (annotationValue.isLeft()) { // the annotation is a string
             return annotationValue.getLeft();
         } else { // the annotation is a number
+
+            double annValue = annotationValue.getRight().doubleValue();
+
+            if (annValue == 1.0) {
+                return "true";
+            } else if (annValue == 0.0) {
+                return "false";
+            }
+
             return // if there's no decimal part in the numeric
                     // value, avoid printing ".0"
-                    annotationValue.getRight().doubleValue()
-                    == Math.floor(annotationValue.getRight().doubleValue())
+                    annValue
+                    == Math.floor(annValue)
                     ? String.format(
-                            Locale.US, "%d",
+                            Locale.US, "true:%d",
                             annotationValue.getRight().intValue())
                     : String.format(
-                            Locale.US, "%f",
+                            Locale.US, "true:%f",
                             annotationValue.getRight().doubleValue());
         }
 

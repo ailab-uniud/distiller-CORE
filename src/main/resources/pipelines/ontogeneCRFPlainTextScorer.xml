@@ -55,7 +55,9 @@
           class="it.uniud.ailab.dcore.annotation.annotators.TokenGreekLetterAnnotator" />
     
     <bean id="tokenShapes"
-          class="it.uniud.ailab.dcore.annotation.annotators.TokenShapeAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenShapeAnnotator">
+        <property name="mode" value="BINARY"/>
+    </bean>
             
     <bean id="craftTokensMarker" 
           class="it.uniud.ailab.dcore.eval.datasets.CraftAnnotator" />
@@ -108,6 +110,7 @@
         <property name="databaseName" value="entrezgene2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/entrezgene/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/entrezgene/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="cellosaurus2" 
@@ -115,6 +118,7 @@
         <property name="databaseName" value="cellosaurus2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/cellosaurus/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/cellosaurus/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="ctdChem2" 
@@ -122,6 +126,7 @@
         <property name="databaseName" value="ctdChem2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/ctd_chemicals/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/ctd_chemicals/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="ctdDis2" 
@@ -129,6 +134,7 @@
         <property name="databaseName" value="ctdDis2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/ctd_diseases/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/ctd_diseases/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="mesh2" 
@@ -136,6 +142,7 @@
         <property name="databaseName" value="mesh2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/mesh/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/mesh/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
 
     <bean id="uniprot2" 
@@ -143,6 +150,7 @@
         <property name="databaseName" value="uniprot2"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/2/uniprot/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/2/uniprot/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="entrezgene3" 
@@ -150,6 +158,7 @@
         <property name="databaseName" value="entrezgene3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/entrezgene/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/entrezgene/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="cellosaurus3" 
@@ -157,6 +166,7 @@
         <property name="databaseName" value="cellosaurus3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/cellosaurus/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/cellosaurus/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="ctdChem3" 
@@ -164,6 +174,7 @@
         <property name="databaseName" value="ctdChem3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/ctd_chemicals/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/ctd_chemicals/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="ctdDis3" 
@@ -171,6 +182,7 @@
         <property name="databaseName" value="ctdDis3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/ctd_diseases/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/ctd_diseases/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
     
     <bean id="mesh3" 
@@ -178,6 +190,7 @@
         <property name="databaseName" value="mesh3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/mesh/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/mesh/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
 
     <bean id="uniprot3" 
@@ -185,12 +198,22 @@
         <property name="databaseName" value="uniprot3"/>        
         <property name="prefixPath" value="/usr/local/ontogene/affixes/3/uniprot/prefixes.csv"/>
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/uniprot/suffixes.csv"/>
+        <property name="mode" value="BINARY"/>
     </bean>
         
     <!-- Evaluators -->
     <bean id="trainerGenerator"
           class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteTrainerAnnotator">
         <property name="targetAnnotation" value="Craft_Token"/>
+        <property name="windowWidth" value="2"/>
+        <property name="ignores">
+            <list value-type="java.lang.String">
+                <value>ID</value>
+                <value>StartPosition</value>
+                <value>EndPosition</value>
+                <value>CharCount</value>
+            </list>
+        </property>
     </bean>
     
     <bean id="mlEvaluatorNnet"
@@ -224,7 +247,7 @@
                 <ref bean="regexFilter" />
                 <ref bean="statistical" />
                 <!--<ref bean="dpm"/>-->
-                <ref bean="tokenTfIdf"/>
+                <!--<ref bean="tokenTfIdf"/>-->
                 <ref bean="tokenShapes"/>
                 <ref bean="greek"/>
                 <!-- affixes -->

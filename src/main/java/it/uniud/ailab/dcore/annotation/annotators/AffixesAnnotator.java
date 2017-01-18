@@ -60,6 +60,7 @@ public class AffixesAnnotator implements Annotator {
 
         TOP50,
         TOP100,
+        BINARY,
         CONTINUOUS
     }
 
@@ -106,6 +107,14 @@ public class AffixesAnnotator implements Annotator {
         this.databaseName = databaseName;
     }
 
+    public AffixMode getMode() {
+        return mode;
+    }
+
+    public void setMode(AffixMode mode) {
+        this.mode = mode;
+    }
+
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
 
@@ -113,15 +122,15 @@ public class AffixesAnnotator implements Annotator {
 
         for (Sentence s : DocumentUtils.getSentences(component)) {
             for (Gram g : s.getGrams()) {
-                
+
                 // use a simpler tokenization of the surface
                 String[] tokens
-//                        = // get the tokens from the gram
-//                        Arrays.stream(g.getTokens().toArray(new Token[0])).
-//                        // get the text from the tokens
-//                        map(Token::getText).
-//                        // put the text of the tokens inside the array
-//                        toArray(String[]::new);
+                        //                        = // get the tokens from the gram
+                        //                        Arrays.stream(g.getTokens().toArray(new Token[0])).
+                        //                        // get the text from the tokens
+                        //                        map(Token::getText).
+                        //                        // put the text of the tokens inside the array
+                        //                        toArray(String[]::new);
                         = g.getSurface().toLowerCase().split(" -");
 
                 // the concept is: look if one of the words contains an affix.
@@ -154,7 +163,7 @@ public class AffixesAnnotator implements Annotator {
                 }
 
                 if (!(suffixes == null)) {
-                    
+
                     List<String> gramSuffixes = Arrays.stream(tokens)
                             .filter(token -> token.length() >= affixLength)
                             .map(token -> token.substring(token.length() - affixLength))

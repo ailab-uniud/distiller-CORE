@@ -167,7 +167,7 @@ public class OntogeneTsvAnalyzerAnnotator implements Annotator {
                                     log(Level.SEVERE,
                                             "Tokenization mismatch: " + prevT.getText()
                                             + " tokenized by OntoGene as " + term.getLeft());
-                            throw new AnnotationException(this,
+                             throw new AnnotationException(this,
                                     "Ontogene Tokenization mismatch");
                         }
                     }

@@ -24,17 +24,13 @@ import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
-import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Annotates grams with a value if they contain a word containing a an affix
@@ -60,6 +56,7 @@ public class TokenAffixesAnnotator implements Annotator {
 
         TOP50,
         TOP100,
+        BINARY,
         CONTINUOUS
     }
 
@@ -104,6 +101,14 @@ public class TokenAffixesAnnotator implements Annotator {
 
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
+    }
+    
+    public AffixMode getMode() {
+        return mode;
+    }
+
+    public void setMode(AffixMode mode) {
+        this.mode = mode;
     }
 
     @Override

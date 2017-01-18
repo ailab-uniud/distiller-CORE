@@ -115,9 +115,6 @@
             "pattern": "Sp/E/SP",
             "nounCount": 2
         }, {
-            "pattern": "Ss/CC",
-            "nounCount": 1
-        }, {
             "pattern": "Sp/B",
             "nounCount": 1
         }, {
@@ -268,9 +265,6 @@
             "pattern": "Sp/CC/Sn",
             "nounCount": 2
         }, {
-            "pattern": "Sp/CC",
-            "nounCount": 1
-        }, {
             "pattern": "Vf",
             "nounCount": 0
         }, {
@@ -342,9 +336,6 @@
         }, {
             "pattern": "Sp/Vf",
             "nounCount": 1
-        }, {
-            "pattern": "CS",
-            "nounCount": 0
         }, {
             "pattern": "As/SP",
             "nounCount": 1

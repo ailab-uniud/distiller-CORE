@@ -33,6 +33,23 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
  * @author Marco Basaldella
  */
 public class TokenShapeAnnotator implements Annotator {
+    
+    public enum Mode {
+        BINARY,
+        COUNT
+    }
+    
+    private Mode mode = Mode.COUNT;
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+    
+    
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -47,6 +64,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
+                    
+                    // switch to binary if necessary
+                    count = mode == Mode.COUNT ? count : 
+                            count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(
                             UPPERCASE_COUNT, count);
@@ -61,6 +82,9 @@ public class TokenShapeAnnotator implements Annotator {
                             t.getText().matches(
                             ".*[a-z0-9][A-Z].*") ? 1 : 0;
                             
+                    // switch to binary if necessary
+                    insideCapt = mode == Mode.COUNT ? insideCapt : 
+                            insideCapt > 0 ? 1 : 0;
 
                     FeatureAnnotation f2 = new FeatureAnnotation(
                             INSIDE_CAPITALIZATION, insideCapt);
@@ -75,6 +99,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
+                    
+                    // switch to binary if necessary
+                    count = mode == Mode.COUNT ? count : 
+                            count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(LOWERCASE_COUNT, count);
                     t.addAnnotation(f);
@@ -93,6 +121,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
+                    
+                    // switch to binary if necessary
+                    count = mode == Mode.COUNT ? count : 
+                            count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(DIGITS_COUNT, count);
                     t.addAnnotation(f);
@@ -113,6 +145,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
+                    
+                    // switch to binary if necessary
+                    count = mode == Mode.COUNT ? count : 
+                            count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(SYMBOLS_COUNT, count);
                     t.addAnnotation(f);
@@ -125,6 +161,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
+                    
+                    // switch to binary if necessary
+                    count = mode == Mode.COUNT ? count : 
+                            count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(DASH_COUNT, count);
                     t.addAnnotation(f);
