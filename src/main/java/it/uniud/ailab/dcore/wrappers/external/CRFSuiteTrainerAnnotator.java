@@ -74,7 +74,7 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
     // The same annotations contained above, but sorted (used to preserve
     // the index of the original ordering
     private static List<String> sortedAnnotations;
-    
+
     // The list of annotations to ignore
     private List<String> ignores;
 
@@ -100,8 +100,9 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
 
     /**
      * Sets the annotations to ignore when generating the CRF suite input file.
+     *
      * @param ignores the list with the ID of the annotators to ignore.
-     * 
+     *
      */
     public void setIgnores(List<String> ignores) {
         this.ignores = ignores;
@@ -128,11 +129,9 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
         for (String ignore : ignores) {
             removeHeader(ignore);
         }
-        
-        
+
         annotations = getHeaders();
         annotationTypes = getHeaderTypes();
-        
 
         sortedAnnotations = new ArrayList<>(annotations);
         java.util.Collections.sort(sortedAnnotations);
@@ -327,6 +326,25 @@ public class CRFSuiteTrainerAnnotator extends GenericSheetPrinter
             throw new RuntimeException("Error while writing the training file "
                     + trainingFileName.toString());
         }
+    }
+
+    /**
+     * Utility to generate the file for the CRFSuite tagger.
+     *
+     * @param b the blackboard that contains the document to tag.
+     * @return the Path where the tagger file is located.
+     */
+    public Path generateTaggerFile(Blackboard b) {
+
+        if (targetAnnotation == null || targetAnnotation.isEmpty()) {
+            throw new RuntimeException(
+                    "Target column not set. \n"
+                    + "You must set the annotation used by CRFSuite to train the model!");
+        }
+
+        Path outputPath = createRandomFile();
+        writeFile(outputPath.toString(), b);
+        return outputPath;
     }
 
     @Override

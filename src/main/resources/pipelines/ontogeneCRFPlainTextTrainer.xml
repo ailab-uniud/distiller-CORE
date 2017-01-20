@@ -202,8 +202,8 @@
     </bean>
         
     <!-- Evaluators -->
-    <bean id="crfEvaluator"
-          class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteEvaluator">
+    <bean id="trainerGenerator"
+          class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteTrainerAnnotator">
         <property name="targetAnnotation" value="Craft_Token"/>
         <property name="windowWidth" value="2"/>
         <property name="ignores">
@@ -214,9 +214,6 @@
                 <value>CharCount</value>
             </list>
         </property>
-        <property name="modelPath" 
-                  value="models/crfsuite/craft.model"
-        />
     </bean>
     
     <bean id="mlEvaluatorNnet"
@@ -271,8 +268,8 @@
                 <!--<ref bean="mlEvaluatorNnet"/> -->
                 <ref bean="CRAFTchecker"/>
                 <!--<ref bean="printer"/>-->
-                <ref bean="crfEvaluator"/>
                 <ref bean="conllprinter"/>
+                <ref bean="trainerGenerator"/>
             </list>
         </property>        
     </bean> 
