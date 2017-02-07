@@ -78,7 +78,7 @@ public class KnowtatorEntityCheckerAnnotator implements Annotator {
         Set<String> validTerms;
         // if using CRAFT 'ids'
         //OntogeneUtils.getCurrentDocumentPMID(inputDirectory
-        
+
         String pmid = new File(IOBlackboard.getCurrentDocument()).getName();
         pmid = pmid.lastIndexOf('.') < 0 ? pmid
                 : pmid.substring(0, pmid.indexOf('.'));
@@ -91,6 +91,10 @@ public class KnowtatorEntityCheckerAnnotator implements Annotator {
         }
 
         Collection<Keyphrase> kps = blackboard.getGramsByType(Keyphrase.KEYPHRASE);
+
+        if (kps == null || kps.size() == 0) {
+            return;
+        }
 
         for (Keyphrase k : kps) {
 

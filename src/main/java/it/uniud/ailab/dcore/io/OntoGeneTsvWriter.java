@@ -55,8 +55,8 @@ public class OntoGeneTsvWriter extends CsvPrinter implements FileWriterStage {
             String[] headers = {
                 OntogeneTsvAnalyzerAnnotator.DOCUMENT_ID,
                 GenericEvaluatorAnnotator.SCORE,
-                OntogeneTsvAnalyzerAnnotator.START_INDEX,
-                OntogeneTsvAnalyzerAnnotator.END_INDEX,
+                DefaultAnnotations.START_INDEX,
+                DefaultAnnotations.END_INDEX,
                 DefaultAnnotations.SURFACE
             };
 

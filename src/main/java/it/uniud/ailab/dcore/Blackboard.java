@@ -31,6 +31,7 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -185,7 +186,7 @@ public class Blackboard {
 
         Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
         if (grams == null) {
-            grams = new HashMap<>();
+            grams = new LinkedHashMap<>();
         }
         Gram gram = grams.get(newGram.getIdentifier());
 
@@ -210,7 +211,7 @@ public class Blackboard {
 
         Map<String, Gram> grams = generalNGramsContainer.get(newGram.getType());
         if (grams == null) {
-            grams = new HashMap<>();
+            grams = new LinkedHashMap<>();
         }
         Gram gram = grams.get(newGram.getIdentifier());
 
@@ -232,7 +233,7 @@ public class Blackboard {
      * Get the all the different kind of grams found in the document. This grams
      * are divided by type, stored in a Map using their identifier as key.
      *
-     * @return all the maps found in the document.
+     * @return all the grams found in the document.
      */
     public Map<String, Map<String, Gram>> getGrams() {
         return generalNGramsContainer;

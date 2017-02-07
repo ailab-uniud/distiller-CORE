@@ -80,11 +80,6 @@
         <property name="filter" value="[0-9]+(.[0-9]+)?|.*&lt;.*|.*&gt;.*"/>
     </bean>
     
-    <bean id="CRAFTchecker"
-          class="it.uniud.ailab.dcore.wrappers.ontogene.KnowtatorEntityCheckerAnnotator">
-        <property name="inputDirectory" value="/usr/local/craft/craft-1.0/" />
-    </bean>
-    
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
           class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
@@ -94,7 +89,7 @@
     
     <bean id="tfidf"
           class="it.uniud.ailab.dcore.annotation.annotators.CachedTfIdfAnnotator">
-        <property name="databasePath" value="/home/red/ontogene/unprocessed"/>
+        <property name="databasePath" value="/usr/local/ontogene/unprocessed"/>
     </bean>
     
     
@@ -200,7 +195,7 @@
         <property name="suffixPath" value="/usr/local/ontogene/affixes/3/uniprot/suffixes.csv"/>
         <property name="mode" value="BINARY"/>
     </bean>
-        
+
     <!-- Evaluators -->
     <bean id="trainerGenerator"
           class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteTrainerAnnotator">
@@ -215,16 +210,7 @@
             </list>
         </property>
     </bean>
-    
-    <bean id="mlEvaluatorNnet"
-          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" 
-                  value="/home/red/ontogene/models/model.chebi.RData"
-        />
-        <property name="modelParameters" value="type=&quot;raw&quot;"/>
-        <property name="requires" value="nnet" />
-    </bean>
-    
+
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.OntoGeneTsvWriter"/>
     
@@ -263,12 +249,8 @@
                 <ref bean="mesh3"/>
                 <ref bean="uniprot2"/>
                 <ref bean="uniprot3"/>
-                
                 <!-- evaluate the keyphraseness -->
-                <!--<ref bean="mlEvaluatorNnet"/> -->
-                <ref bean="CRAFTchecker"/>
-                <!--<ref bean="printer"/>-->
-                <ref bean="conllprinter"/>
+                <!--<ref bean="conllprinter"/>-->
                 <ref bean="trainerGenerator"/>
             </list>
         </property>        

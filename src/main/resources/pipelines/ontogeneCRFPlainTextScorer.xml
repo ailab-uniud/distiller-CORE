@@ -80,11 +80,6 @@
         <property name="filter" value="[0-9]+(.[0-9]+)?|.*&lt;.*|.*&gt;.*"/>
     </bean>
     
-    <bean id="CRAFTchecker"
-          class="it.uniud.ailab.dcore.wrappers.ontogene.KnowtatorEntityCheckerAnnotator">
-        <property name="inputDirectory" value="/usr/local/craft/craft-1.0/" />
-    </bean>
-    
     <!-- annotator for statistical features of grams -->
     <bean id="statistical" 
           class="it.uniud.ailab.dcore.annotation.annotators.StatisticalAnnotator"/>
@@ -94,7 +89,7 @@
     
     <bean id="tfidf"
           class="it.uniud.ailab.dcore.annotation.annotators.CachedTfIdfAnnotator">
-        <property name="databasePath" value="/home/red/ontogene/unprocessed"/>
+        <property name="databasePath" value="/usr/local/ontogene/unprocessed"/>
     </bean>
     
     
@@ -201,6 +196,28 @@
         <property name="mode" value="BINARY"/>
     </bean>
         
+    <bean id="suffix2" 
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenOwnAffixesAnnotator">
+        <property name="affixLength" value="2"/>
+    </bean>
+    
+    <bean id="suffix3" 
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenOwnAffixesAnnotator">
+        <property name="affixLength" value="3"/>
+    </bean> 
+    
+    <bean id="suffix4" 
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenOwnAffixesAnnotator">
+        <property name="affixLength" value="4"/>
+    </bean>
+    
+    <bean id="suffix5" 
+          class="it.uniud.ailab.dcore.annotation.annotators.TokenOwnAffixesAnnotator">
+        <property name="affixLength" value="5"/>
+    </bean>
+     
+         
+        
     <!-- Evaluators -->
     <bean id="crfEvaluator"
           class="it.uniud.ailab.dcore.wrappers.external.CRFSuiteEvaluator">
@@ -215,24 +232,15 @@
             </list>
         </property>
         <property name="modelPath" 
-                  value="models/crfsuite/craft.model"
+                  value="/tmp/model.out"
         />
     </bean>
     
-    <bean id="mlEvaluatorNnet"
-          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" 
-                  value="/home/red/ontogene/models/model.chebi.RData"
-        />
-        <property name="modelParameters" value="type=&quot;raw&quot;"/>
-        <property name="requires" value="nnet" />
-    </bean>
+    <bean id="transformer"
+          class="it.uniud.ailab.dcore.wrappers.ontogene.OntoGenePostCRFAnnotator"/>
     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.OntoGeneTsvWriter"/>
-    
-    <bean id="conllprinter"
-          class="it.uniud.ailab.dcore.io.CoNLL2000Printer"/>
     
     <bean id="defaultPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
@@ -266,13 +274,9 @@
                 <ref bean="mesh3"/>
                 <ref bean="uniprot2"/>
                 <ref bean="uniprot3"/>
-                
-                <!-- evaluate the keyphraseness -->
-                <!--<ref bean="mlEvaluatorNnet"/> -->
-                <ref bean="CRAFTchecker"/>
-                <!--<ref bean="printer"/>-->
                 <ref bean="crfEvaluator"/>
-                <ref bean="conllprinter"/>
+                <ref bean="transformer"/>
+                <ref bean="printer"/>
             </list>
         </property>        
     </bean> 

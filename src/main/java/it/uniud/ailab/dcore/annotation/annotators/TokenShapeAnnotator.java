@@ -33,12 +33,12 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
  * @author Marco Basaldella
  */
 public class TokenShapeAnnotator implements Annotator {
-    
+
     public enum Mode {
         BINARY,
         COUNT
     }
-    
+
     private Mode mode = Mode.COUNT;
 
     public Mode getMode() {
@@ -48,8 +48,8 @@ public class TokenShapeAnnotator implements Annotator {
     public void setMode(Mode mode) {
         this.mode = mode;
     }
-    
-    
+
+    public static final String IS_SYMBOL = "IsSymbol";
 
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
@@ -64,10 +64,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
-                    
+
                     // switch to binary if necessary
-                    count = mode == Mode.COUNT ? count : 
-                            count > 0 ? 1 : 0;
+                    count = mode == Mode.COUNT ? count
+                            : count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(
                             UPPERCASE_COUNT, count);
@@ -78,13 +78,13 @@ public class TokenShapeAnnotator implements Annotator {
                             ALL_UPPERCASE, allUpper);
                     t.addAnnotation(f1);
 
-                    int insideCapt = 
-                            t.getText().matches(
-                            ".*[a-z0-9][A-Z].*") ? 1 : 0;
-                            
+                    int insideCapt
+                            = t.getText().matches(
+                                    ".*[a-z0-9][A-Z].*") ? 1 : 0;
+
                     // switch to binary if necessary
-                    insideCapt = mode == Mode.COUNT ? insideCapt : 
-                            insideCapt > 0 ? 1 : 0;
+                    insideCapt = mode == Mode.COUNT ? insideCapt
+                            : insideCapt > 0 ? 1 : 0;
 
                     FeatureAnnotation f2 = new FeatureAnnotation(
                             INSIDE_CAPITALIZATION, insideCapt);
@@ -99,10 +99,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
-                    
+
                     // switch to binary if necessary
-                    count = mode == Mode.COUNT ? count : 
-                            count > 0 ? 1 : 0;
+                    count = mode == Mode.COUNT ? count
+                            : count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(LOWERCASE_COUNT, count);
                     t.addAnnotation(f);
@@ -121,10 +121,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
-                    
+
                     // switch to binary if necessary
-                    count = mode == Mode.COUNT ? count : 
-                            count > 0 ? 1 : 0;
+                    count = mode == Mode.COUNT ? count
+                            : count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(DIGITS_COUNT, count);
                     t.addAnnotation(f);
@@ -145,10 +145,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
-                    
+
                     // switch to binary if necessary
-                    count = mode == Mode.COUNT ? count : 
-                            count > 0 ? 1 : 0;
+                    count = mode == Mode.COUNT ? count
+                            : count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(SYMBOLS_COUNT, count);
                     t.addAnnotation(f);
@@ -161,10 +161,10 @@ public class TokenShapeAnnotator implements Annotator {
                             count++;
                         }
                     }
-                    
+
                     // switch to binary if necessary
-                    count = mode == Mode.COUNT ? count : 
-                            count > 0 ? 1 : 0;
+                    count = mode == Mode.COUNT ? count
+                            : count > 0 ? 1 : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(DASH_COUNT, count);
                     t.addAnnotation(f);
@@ -180,6 +180,19 @@ public class TokenShapeAnnotator implements Annotator {
                                     : 0;
 
                     FeatureAnnotation f = new FeatureAnnotation(END_NUMBER, endNumber);
+                    t.addAnnotation(f);
+                }
+
+                // Manage symbols
+                if (!t.hasAnnotation(IS_SYMBOL)) {
+
+                    int isSymbol = 
+                            t.getText().length() > 1 ?
+                            0 :
+                            Character.isLetterOrDigit(
+                            t.getText().charAt(0)) ? 0 : 1;
+
+                    FeatureAnnotation f = new FeatureAnnotation(IS_SYMBOL, isSymbol);
                     t.addAnnotation(f);
                 }
 

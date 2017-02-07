@@ -5,6 +5,8 @@ import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
+import static it.uniud.ailab.dcore.annotation.DefaultAnnotations.END_INDEX;
+import static it.uniud.ailab.dcore.annotation.DefaultAnnotations.START_INDEX;
 import it.uniud.ailab.dcore.annotation.annotations.FeatureAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.ScoredAnnotation;
 import it.uniud.ailab.dcore.annotation.annotations.TextAnnotation;
@@ -57,8 +59,6 @@ import java.util.logging.Logger;
  */
 public class OntogeneTsvAnalyzerAnnotator implements Annotator {
 
-    public static final String START_INDEX = "StartIndex";
-    public static final String END_INDEX = "EndIndex";
     public static final String DOCUMENT_ID = "PMID";
 
     private String docId = null;

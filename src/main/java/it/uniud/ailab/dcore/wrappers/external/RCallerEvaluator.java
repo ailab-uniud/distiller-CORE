@@ -100,6 +100,10 @@ public class RCallerEvaluator implements Annotator {
         Collection<Keyphrase> keyphrases
                 = blackboard.getGramsByType(Keyphrase.KEYPHRASE);
 
+        if (keyphrases == null || keyphrases.size() == 0) {
+            return;
+        }
+
         // Step 1: generate the candidates file
         FileSystem.createDirectoryIfNotExists(
                 FileSystem.getDistillerTmpPath());
