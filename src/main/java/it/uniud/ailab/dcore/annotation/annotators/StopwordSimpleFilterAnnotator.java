@@ -25,6 +25,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -119,7 +120,7 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
         }
 
         for (Gram g : blackboard.getKeyphrases()) {
-            Keyphrase k = (Keyphrase) g;
+            Keyphrase k = (Keyphrase) g;            
             if (stopwords.contains(k.getSurface())
                     || stopwords.contains(k.getTokens().get(0).getText())) {
                 blackboard.removeKeyphrase(k);
@@ -146,7 +147,6 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
             throw new UnsupportedOperationException("Language " + lang.getLanguage()
                     + " not available.");
         }
-        
         InputStreamReader is;
         // running from command-line and loading inside the JAR
         if (stopwordsPath.get(lang).contains("!")) {
@@ -155,7 +155,13 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
                             stopwordsPath.get(lang).substring(
                             stopwordsPath.get(lang).lastIndexOf("!") + 1)),
                     StandardCharsets.UTF_8);
-        } else {
+        }
+        //Arabic text encoding is almost UTF8
+        else if (lang.getLanguage().equals("ar")){
+            is = new InputStreamReader( 
+                    new FileInputStream(stopwordsPath.get(lang)),
+                    StandardCharsets.UTF_8);
+        }else {
             // normal operation
             is = new FileReader(stopwordsPath.get(lang));
         }

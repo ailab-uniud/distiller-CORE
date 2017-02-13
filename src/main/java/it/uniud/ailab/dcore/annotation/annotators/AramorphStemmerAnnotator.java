@@ -36,16 +36,11 @@ import java.util.List;
  * You can always annotate with stem also token of blackboard grams, just 
  * iterating on the list of grams selected by gram type.
  * 
- * @author Giorgia Chiaradia
+ * @author Muhammad Helmy
  */
 public class AramorphStemmerAnnotator implements Annotator {
 
-    /**
-     * Annotate tokens from every sentence with a proper stem based on the 
-     * language of the document. 
-     * It also annotate the mentions token, so to facilitate comparisons during
-     * aanaphora resolution task. 
-     * 
+    /**     
      * @param blackboard
      * @param component 
      */
@@ -56,7 +51,9 @@ public class AramorphStemmerAnnotator implements Annotator {
         //for every sentence
         for (Sentence sentence : sentences) 
             //for every token
-            for (Token t : sentence.getTokens()) 
+            for (Token t : sentence.getTokens()){
                 t.setStem(ArabicDocProcessing.lemmatizeDoc(t.getText()));
+                t.setLemma(t.getLemma());
+            }                
     }
 }

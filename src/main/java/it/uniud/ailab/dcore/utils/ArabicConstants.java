@@ -7,7 +7,7 @@ package it.uniud.ailab.dcore.utils;
 
 /**
  *
- * @author Muhammad
+ * @author Muhammad Helmy
  */
 public class ArabicConstants {
     public static String AL = "\u0627\u0644"; //Arabic Determiner Article (Alef Lam in UTF-8)

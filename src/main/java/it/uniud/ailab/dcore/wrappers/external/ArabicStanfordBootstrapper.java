@@ -29,6 +29,7 @@ import it.uniud.ailab.dcore.persistence.DocumentComposite;
 import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.utils.ArabicDocComponents;
 import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,43 +58,23 @@ public class ArabicStanfordBootstrapper implements Annotator {
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
-        if (tagger == null) {
-
-            tagger = new MaxentTagger(
-                    getClass().getClassLoader().
-                    getResource("stanford/arabic.tagger").getFile());
-
-        }
-        ArabicDocProcessing.init();
-        String docText = component.getText();
-        docText = ArabicDocProcessing.normalizeAlefAndYa(ArabicDocProcessing.preProcess(docText));
-
-        try {
-            docText = ArabicDocProcessing.processText(ArabicDocProcessing.SEGMENT, docText);
-        } catch (Exception ex) {
-            Logger.getLogger(ArabicStanfordBootstrapper.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
+        ArabicDocComponents arDocComps = (ArabicDocComponents)blackboard.getGramsByType(ArabicDocComponents.ARABICDOCCOMPONENTS).iterator().next();
+        //String docText = component.getText();
         
-        // apply the preprocess to the blackboard
-        blackboard.applyPreprocess(docText);
-        component = blackboard.getStructure();        
-        
-        String[] sentsTxts = docText.split("(!|\\?|\\.|:)");
+        String[] sentsTxts = (" " + arDocComps.taggedText + " ").split("(\\s\\S+/PUNC\\s)|(\\s[^\\p{InArabic}]+/[A-Z]+\\s)");
         for (int i = 0; i < sentsTxts.length; i++) {
             String txt = sentsTxts[i].trim();
             if (txt == null || txt.length() == 0) {
                 continue;
             }
-            Sentence distilledSentence = new Sentence(txt, new Locale("ar"), "" + i);
-            String sentTaggedTxt = ArabicDocProcessing.PoSTagText(txt).trim();
-            String[] sentTaggedWords = sentTaggedTxt.split(" ");
-            String[] sentWords = txt.split(" ");
+            Sentence distilledSentence = new Sentence(txt.replaceAll("(/\\S+)", ""), new Locale("ar"), "" + i);
+            String[] sentTaggedWords = txt.split(" ");
+            
             int j = 0;
             for (String taggedWord : sentTaggedWords) {
                 taggedWord = taggedWord.trim();
                 // this is the text of the token
-                String word = sentWords[j++];
+                String word = taggedWord.substring(0, taggedWord.indexOf("/"));
                 if (word == null || word.length() == 0) {
                     continue;
                 }

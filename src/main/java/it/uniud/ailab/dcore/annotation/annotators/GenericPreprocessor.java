@@ -26,12 +26,9 @@ import it.uniud.ailab.dcore.annotation.Annotator;
  * @author Marco Basaldella
  */
 public abstract class GenericPreprocessor implements Annotator {
-    
-    
+       
     protected void applyPreprocess(Blackboard b, String proprocessedText) {
         b.applyPreprocess(proprocessedText);
-    }
-
-    
+    }   
     
 }

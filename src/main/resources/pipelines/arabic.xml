@@ -49,14 +49,18 @@
     
     <!-- bean id="stanfordFast"
           class="it.uniud.ailab.dcore.wrappers.external.StanfordFastBootstrapperAnnotator" / -->
+    
     <bean id="arabicStanford"
           class="it.uniud.ailab.dcore.wrappers.external.ArabicStanfordBootstrapper" />
-    
+    <bean id="arabicPreprocessor"
+          class="it.uniud.ailab.dcore.annotation.annotators.preprocessors.ArabicPreprocessor" />
     <!-- bean id="stemmer"
           class="it.uniud.ailab.dcore.annotation.annotators.PorterStemmerAnnotator"/ -->
      <bean id="arabicStemmer"
            class="it.uniud.ailab.dcore.annotation.annotators.AramorphStemmerAnnotator"/>
-
+    <bean id="arabicCKPsFilter"
+          class="it.uniud.ailab.dcore.wrappers.external.ArabicCKPsFilter"/> 
+    
     <bean id="chunkingNer" 
           class="it.uniud.ailab.dcore.annotation.annotators.ChunkingNerAnnotator"/>    
     <bean id="coreferenceResolver" 
@@ -141,7 +145,7 @@
         <property name="stages">
             <list>
                 <!-- split the document -->
-                <!-- ref bean="stanfordFast"/ -->
+                <ref bean="arabicPreprocessor"/>
                 <ref bean="arabicStanford"/>
                 <!-- ref bean="stemmer"/ -->
                 <ref bean="arabicStemmer"/>
@@ -149,7 +153,8 @@
                 <!-- generate the n-grams -->
                 <ref bean="nGramGenerator"/> 
                 <!-- annotate the n-grams -->
-                <ref bean="simpleStopword" />
+                <ref bean="simpleStopword"/>
+                <ref bean="arabicCKPsFilter"/>
                 <ref bean="statistical" />
                 <!--<ref bean="tfidf" />
                 <ref bean="syuzhet" />
