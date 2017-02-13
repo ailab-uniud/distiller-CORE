@@ -82,8 +82,8 @@ public class ArabicPreprocessor extends GenericPreprocessor{
           if(atomicPhrases.get(i).length()!=0)
               phrasesText += atomicPhrases.get(i) + ".\n";
         arDocComps.parsedText = ArabicDocProcessing.parseText(phrasesText);
-        System.err.println(arDocComps.parsedText);
-        System.exit(0);
+        //System.err.println(arDocComps.parsedText);
+        //System.exit(0);
         getLegalPhrases(KP.KPTYPE_NP, "VP");
         getLegalPhrases(KP.KPTYPE_SENT, "VP|" + ArabicPOSCategories.CONNECTOR);
         getLegalPhrases(KP.KPTYPE_FRAG, "VP|" + ArabicPOSCategories.CONNECTOR);        

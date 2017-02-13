@@ -155,13 +155,7 @@ public class StopwordSimpleFilterAnnotator implements Annotator {
                             stopwordsPath.get(lang).substring(
                             stopwordsPath.get(lang).lastIndexOf("!") + 1)),
                     StandardCharsets.UTF_8);
-        }
-        //Arabic text encoding is almost UTF8
-        else if (lang.getLanguage().equals("ar")){
-            is = new InputStreamReader( 
-                    new FileInputStream(stopwordsPath.get(lang)),
-                    StandardCharsets.UTF_8);
-        }else {
+        } else {
             // normal operation
             is = new FileReader(stopwordsPath.get(lang));
         }
