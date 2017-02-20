@@ -18,6 +18,7 @@
  */
 package it.uniud.ailab.dcore.eval.datasets;
 
+import it.uniud.ailab.dcore.annotation.DefaultAnnotations;
 import it.uniud.ailab.dcore.eval.GenericDataset;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import java.io.File;
@@ -69,7 +70,7 @@ public class Akec extends GenericDataset {
     }
 
     public Akec(String goldStandardPath) {
-        super(goldStandardPath, "AKEC");
+        super(goldStandardPath, "AKEC",DefaultAnnotations.LEMMA);
     }
 
     @Override

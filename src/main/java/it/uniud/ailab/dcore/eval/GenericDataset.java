@@ -60,7 +60,7 @@ public abstract class GenericDataset implements Comparator<String> {
     private Map<String, String[]> testAnswers;
     
     /**
-     * A value that indicates wheter if the documents have already been loaded
+     * A value that indicates whether the documents have already been loaded
      * or not.
      */
     private boolean isLoaded;
@@ -71,6 +71,18 @@ public abstract class GenericDataset implements Comparator<String> {
     private final String identifier;
     
     /**
+     * This value instructs the {@link it.uniud.ailab.dcore.eval.TrainingSetGenerator}
+     * which annotation of the candidate item should use to compare it with
+     * the gold item, or to use its identifier if this value is empty or null.
+     * 
+     * If this value is "stem", for example, the generator will compare the stem
+     * of the candidate with the gold items.
+     * 
+     */
+    protected final String candidateAnnotation;
+    
+    
+    /**
      * Create a concrete dataset that will contain the data contained in the 
      * specified path.
      * 
@@ -78,9 +90,25 @@ public abstract class GenericDataset implements Comparator<String> {
      * @param identifier An output-friendly string that identifies the dataset.
      */
     public GenericDataset(String datasetPath,String identifier) {
+        this(datasetPath,identifier,null);
+    }
+    
+    /**
+     * Create a concrete dataset that will contain the data contained in the 
+     * specified path.
+     * 
+     * @param datasetPath The folder where the Dataset will look for the document. 
+     * @param identifier An output-friendly string that identifies the dataset.
+     * @param candidateAnnotation the annotation to use to compare the gold 
+     * elements. This value should be set to null or the empty string if
+     * the comparison must occour on the IDs
+     */
+    public GenericDataset(String datasetPath,String identifier,
+            String candidateAnnotation) {
         this.datasetPath = datasetPath;
         this.isLoaded = false;
         this.identifier = identifier;
+        this.candidateAnnotation = null;
     }
     
     /**
@@ -91,6 +119,17 @@ public abstract class GenericDataset implements Comparator<String> {
     public String getIdentifier() {
         return identifier;
     }
+
+    /**
+     * Access field {@link it.uniud.ailab.dcore.eval.GenericDataset#candidateAnnotation}.
+     * 
+     * @return the value of {@link it.uniud.ailab.dcore.eval.GenericDataset#candidateAnnotation}.
+     */
+    public String getCandidateAnnotation() {
+        return candidateAnnotation;
+    }
+
+    
     
     /**
      * Compares a <b>candidate</b> item with a <b>dataset provided</b> item. Please 

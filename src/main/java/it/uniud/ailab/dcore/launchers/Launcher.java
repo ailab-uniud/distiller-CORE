@@ -443,9 +443,15 @@ public class Launcher {
 
         GenericDataset kpDataset;
 
-        switch (dataset) {
+                switch (dataset) {
             case "semeval":
                 kpDataset = new SemEval2010(inputPath.getAbsolutePath());
+                break;
+            case "craft":
+                kpDataset = new Craft(inputPath.getAbsolutePath());
+                break;
+            case "akec":
+                kpDataset = new Akec(inputPath.getAbsolutePath());
                 break;
             default:
                 kpDataset = null;
@@ -484,12 +490,15 @@ public class Launcher {
 
         GenericDataset kpDataset;
 
-        switch (dataset) {
+                switch (dataset) {
             case "semeval":
                 kpDataset = new SemEval2010(inputPath.getAbsolutePath());
                 break;
-            case "craft" :
+            case "craft":
                 kpDataset = new Craft(inputPath.getAbsolutePath());
+                break;
+            case "akec":
+                kpDataset = new Akec(inputPath.getAbsolutePath());
                 break;
             default:
                 kpDataset = null;
@@ -499,7 +508,6 @@ public class Launcher {
             throw new UnsupportedOperationException(
                     "Unknown dataset:" + dataset);
         }
-
         IOBlackboard.setOutputPathPrefix(outputPath.getAbsolutePath()
                 + FileSystem.getSeparator()
                             );

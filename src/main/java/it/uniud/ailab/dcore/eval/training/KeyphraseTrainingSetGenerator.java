@@ -25,9 +25,9 @@ import it.uniud.ailab.dcore.eval.TrainingSetGenerator;
 import it.uniud.ailab.dcore.io.CsvPrinter;
 import it.uniud.ailab.dcore.io.GenericSheetPrinter;
 import it.uniud.ailab.dcore.io.IOBlackboard;
-import it.uniud.ailab.dcore.launchers.Launcher;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
+import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.utils.FileSystem;
 import it.uniud.ailab.dcore.utils.Pair;
 import java.util.ArrayList;
@@ -117,12 +117,36 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
                 candidate.putFeature(goldStandard.getIdentifier(), 0);
 
                 boolean found = false;
-                for (int i = 0; !found && i < answers.length; i++) {
-                    String answer = answers[i];
-                    for (int j = 0; !found && j < gram.getSurfaces().size(); j++) {
-                        if (goldStandard.compare(gram.getSurfaces().get(j), answer) == 0) {
-                            candidate.putFeature(goldStandard.getIdentifier(), 1);
-                            found = true;
+
+                if (goldStandard.getCandidateAnnotation() == null
+                        || (goldStandard.getCandidateAnnotation().isEmpty())) {
+                    for (int i = 0; !found && i < answers.length; i++) {
+                        String answer = answers[i];
+                        for (int j = 0; !found && j < gram.getSurfaces().size(); j++) {
+                            if (goldStandard.compare(gram.getSurfaces().get(j), answer) == 0) {
+                                candidate.putFeature(goldStandard.getIdentifier(), 1);
+                                found = true;
+                            }
+                        }
+                    }
+                } else {
+                    for (int i = 0; !found && i < answers.length; i++) {
+                        String answer = answers[i];
+                        for (int j = 0; !found && j < gram.getSurfaces().size(); j++) {
+                            String compareTo = "";
+                            for (Token t : gram.getTokenLists().get(j)) {
+                                compareTo = compareTo + " "
+                                        + t.getAnnotation(
+                                                goldStandard.getCandidateAnnotation()).
+                                        getStringAt(0);
+                            }
+                            
+                            compareTo = compareTo.trim();
+
+                            if (goldStandard.compare(compareTo, answer) == 0) {
+                                candidate.putFeature(goldStandard.getIdentifier(), 1);
+                                found = true;
+                            }
                         }
                     }
                 }
@@ -137,7 +161,7 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
 
             trainingSet.addPrinter(printer);
 
-            String filePath = IOBlackboard.getOutputPathPrefix() + documentEntry.getKey() + ".semeval";
+            String filePath = IOBlackboard.getOutputPathPrefix() + documentEntry.getKey() + ".csv";
             trainingSet.writeFile(filePath);
             System.out.println(
                     "Saved training file in " + filePath);
