@@ -33,19 +33,24 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
- * The class encapsulates the preprocessing tasks which are performed on the text before extracting candidate keyphrases (CKPs).
+ * The class encapsulates the preprocessing tasks which are performed on the 
+ * text before extracting candidate keyphrases (CKPs).
  * Preprocessing prepares the text for the next operations of Arabic KPE pipeline.
- * In addition, it creates all specific linguistic structures required for Arabic KPE process like noun phrases  and their components.
+ * In addition, it creates all specific linguistic structures required for Arabic 
+ * KPE process like noun phrases  and their components.
  * 
  * 
  * @author Muhammad Helmy
  */
 public class ArabicPreprocessor extends GenericPreprocessor{
     /** 
-     * arDocComps is a container for all specific structures and text forms which are necessary for the next steps of Arabic KPE.
+     * arDocComps is a container for all specific structures and text forms which 
+     * are necessary for the next steps of Arabic KPE.
      * After building arDocComps, it will be added to the {@link Blackboard} as a gram.
      */
-    ArabicDocComponents arDocComps = new ArabicDocComponents(ArabicDocComponents.ARABICDOCCOMPONENTS, null, null, ArabicDocComponents.ARABICDOCCOMPONENTS);
+    ArabicDocComponents arDocComps = new ArabicDocComponents(
+            ArabicDocComponents.ARABICDOCCOMPONENTS, null, null, ArabicDocComponents.ARABICDOCCOMPONENTS);
+    
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         ArabicDocProcessing.init();

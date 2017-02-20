@@ -28,9 +28,12 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.List;
 
 /**
- * This annotator annotates every token forming sentences with its lemmatized and stemmed forms (i.e lemma and stem).
- * Stemming and lemmatization processes are done by using <a href="http://www.nongnu.org/aramorph/">AraMorph</a> library. 
- * The functions of the library are encapsulated in {@link ArabicDocProcessing#lemmatizeDoc(String) lemmatizeDoc} and {@link ArabicDocProcessing#stemDoc(String) stemDoc} methods 
+ * This annotator annotates every token forming sentences with its lemmatized 
+ * and stemmed forms (i.e lemma and stem). Stemming and lemmatization processes 
+ * are done by using <a href="http://www.nongnu.org/aramorph/">AraMorph</a> library. 
+ * The functions of the library are encapsulated in
+ * {@link ArabicDocProcessing#lemmatizeDoc(String) lemmatizeDoc} and 
+ * {@link ArabicDocProcessing#stemDoc(String) stemDoc} methods 
  * 
  * @author Muhammad Helmy
  */
