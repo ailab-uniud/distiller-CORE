@@ -1,5 +1,5 @@
 /*
- * 	Copyright (C) 2015 Artificial Intelligence
+ * 	Copyright (C) 2016 Artificial Intelligence
  * 	Laboratory @ University of Udine.
  * 
  * 	This file is part of the Distiller-CORE library.
@@ -44,24 +44,15 @@ import java.util.logging.Logger;
 public class ArabicStanfordBootstrapper implements Annotator {
 
     /**
-     * The Stanford NLP pipeline. The field is marked static to be optimized for
-     * re-use, so that subsequent calls of annotate() don't have to reload
-     * definitions every time, even for different instances of the annotator.
-     */
-    private static MaxentTagger tagger = null;
-
-    /**
-     * Annotate the document by splitting the document, performing PoS tagging
-     * and Named Entity Recognition using the Stanford Core NLP tools.
+     * Annotate the document by splitting the document and performing PoS tagging
+     *  using the Stanford Core NLP tools.
      *
      * @param component the component to annotate.
      */
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         ArabicDocComponents arDocComps = (ArabicDocComponents)blackboard.getGramsByType(ArabicDocComponents.ARABICDOCCOMPONENTS).iterator().next();
-        //String docText = component.getText();
-        
-        String[] sentsTxts = (" " + arDocComps.taggedText + " ").split("(\\s\\S+/PUNC\\s)|(\\s[^\\p{InArabic}]+/[A-Z]+\\s)");
+        String[] sentsTxts = (" " + arDocComps.getTaggedText() + " ").split("(\\s\\S+/PUNC\\s)|(\\s[^\\p{InArabic}]+/[A-Z]+\\s)");
         for (int i = 0; i < sentsTxts.length; i++) {
             String txt = sentsTxts[i].trim();
             if (txt == null || txt.length() == 0) {

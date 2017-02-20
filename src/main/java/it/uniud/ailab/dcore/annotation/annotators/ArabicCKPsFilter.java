@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package it.uniud.ailab.dcore.wrappers.external;
+package it.uniud.ailab.dcore.annotation.annotators;
 
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.annotation.Annotator;
@@ -27,7 +27,10 @@ import it.uniud.ailab.dcore.utils.ArabicDocComponents;
 import it.uniud.ailab.dcore.utils.Phrase;
 
 /**
- *
+ * ArabicCKPsFilter is responsible for filtering the candidate keyphrases (CKPs) 
+ * by removing the CKP that is not a member of the legal noun phrases ({@link ArabicDocComponents#NPs}) of the document.
+ * 
+ * 
  * @author Muhammad Helmy
  */
 public class ArabicCKPsFilter implements Annotator{    
@@ -36,7 +39,7 @@ public class ArabicCKPsFilter implements Annotator{
         ArabicDocComponents arDocComps = (ArabicDocComponents)blackboard.getGramsByType(ArabicDocComponents.ARABICDOCCOMPONENTS).iterator().next();
         for (Gram g : blackboard.getKeyphrases()) {
             Keyphrase k = (Keyphrase) g;
-            int index = arDocComps.NPs.indexOf(new Phrase(g.getSurface()));
+            int index = arDocComps.getNPs().indexOf(new Phrase(g.getSurface()));
             if(index <0)
                 blackboard.removeKeyphrase(k);            
         }        

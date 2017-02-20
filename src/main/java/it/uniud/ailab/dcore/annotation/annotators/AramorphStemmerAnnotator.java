@@ -28,13 +28,9 @@ import it.uniud.ailab.dcore.utils.DocumentUtils;
 import java.util.List;
 
 /**
- * Implementation of Porter's Stemmer algorithm. 
- * This annotator annotates every token forming sentences with its stemming form.
- * Stemming process usually chops off the ends of words in the hope of obtaining
- * the base form of the word. It often includes the removal of derivational 
- * affixes. 
- * You can always annotate with stem also token of blackboard grams, just 
- * iterating on the list of grams selected by gram type.
+ * This annotator annotates every token forming sentences with its lemmatized and stemmed forms (i.e lemma and stem).
+ * Stemming and lemmatization processes are done by using <a href="http://www.nongnu.org/aramorph/">AraMorph</a> library. 
+ * The functions of the library are encapsulated in {@link ArabicDocProcessing#lemmatizeDoc(String) lemmatizeDoc} and {@link ArabicDocProcessing#stemDoc(String) stemDoc} methods 
  * 
  * @author Muhammad Helmy
  */
@@ -52,8 +48,8 @@ public class AramorphStemmerAnnotator implements Annotator {
         for (Sentence sentence : sentences) 
             //for every token
             for (Token t : sentence.getTokens()){
-                t.setStem(ArabicDocProcessing.lemmatizeDoc(t.getText()));
-                t.setLemma(t.getLemma());
+                t.setStem(ArabicDocProcessing.stemDoc(t.getText()));
+                t.setLemma(ArabicDocProcessing.lemmatizeDoc(t.getText()));
             }                
     }
 }

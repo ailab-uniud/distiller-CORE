@@ -6,30 +6,20 @@
 package it.uniud.ailab.dcore.utils;
 
 import edu.stanford.nlp.international.arabic.process.ArabicSegmenter;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import java.util.Collection;
 import java.util.List;
 import java.io.StringReader;
 
 import edu.stanford.nlp.process.Tokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
-import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import gpl.pierrick.brihaye.aramorph.AraMorph;
 import gpl.pierrick.brihaye.aramorph.Solution;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -49,7 +39,7 @@ public class ArabicDocProcessing {
     public final static int PREPROCESS=1, SEGMENT = 2, PARSE=3;
     private static AraMorph am; 
     private static ArabicSegmenter arSeg;
-    public static String generatedLemmas;
+    public static String generatedLemmas, generatedStems;
     static{
         Properties props = new Properties();
         props.put("loadClassifier", ArabicDocProcessing.class.getClassLoader().getResource("stanford/arabic-segmenter-atb+bn+arztrain.ser.gz").getFile());
@@ -60,9 +50,11 @@ public class ArabicDocProcessing {
     }
     public static void init(){
         generatedLemmas = " ";
+        generatedStems = " ";
     }
     public static void stop(){
         generatedLemmas = null;
+        generatedStems = null;
     }
     public static String readDocumentText(String filePath){
         String docContent = "";
@@ -121,7 +113,31 @@ public class ArabicDocProcessing {
         lemmatizedText = lemmatizedText.replaceAll("ـ[\u0030-\u0039]", "");
         lemmatizedText = lemmatizedText.replaceAll("[^\u0621-\u063A\u0641-\u064A\u0660-\u0669\u0030-\u0039\u0020]", "");
         return lemmatizedText.trim();       
-    } 
+    }
+    public static String stemDoc(String pureText){
+        Pattern pattern = Pattern.compile("\\p{InArabic}+");
+        Matcher matcher = pattern.matcher(pureText);
+        String stemmedText = "";
+        while (matcher.find()) {
+            String word = matcher.group();            
+            if(generatedStems.contains(" " + word + " "))
+                stemmedText += word + " ";
+            else if(am.analyzeToken(word)){
+                String lw = ((Solution)am.getWordSolutions(word).iterator().next()).getLemma();
+                if(lw==null || lw.length()<1)
+                    lw = word;
+                stemmedText += lw + " ";
+                generatedStems += stemmedText + " ";
+            }
+            else{
+                stemmedText += word + " "; 
+                generatedStems += word + " ";
+            }
+        }      
+        stemmedText = stemmedText.replaceAll("ـ[\u0030-\u0039]", "");
+        stemmedText = stemmedText.replaceAll("[^\u0621-\u063A\u0641-\u064A\u0660-\u0669\u0030-\u0039\u0020]", "");
+        return stemmedText.trim();       
+    }
     public static String  segmentText(String text){
         return arSeg.segmentString(text);
     }
@@ -192,7 +208,7 @@ public class ArabicDocProcessing {
         while (matcher.find()) {
             String word = matcher.group();
             if(StringUtils.countMatches(docText, word)>5 && !words.contains(word)
-                    && !ArabicConstants.stopWords.contains(word)){
+                    && !ArabicConstants.getStopWords().contains(word)){
                 words.add(word);
                 
             }
