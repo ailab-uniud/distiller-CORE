@@ -117,37 +117,11 @@ public class KeyphraseTrainingSetGenerator extends TrainingSetGenerator {
                 candidate.putFeature(goldStandard.getIdentifier(), 0);
 
                 boolean found = false;
-
-                if (goldStandard.getCandidateAnnotation() == null
-                        || (goldStandard.getCandidateAnnotation().isEmpty())) {
-                    for (int i = 0; !found && i < answers.length; i++) {
-                        String answer = answers[i];
-                        for (int j = 0; !found && j < gram.getSurfaces().size(); j++) {
-                            if (goldStandard.compare(gram.getSurfaces().get(j), answer) == 0) {
-                                candidate.putFeature(goldStandard.getIdentifier(), 1);
-                                found = true;
-                            }
-                        }
-                    }
-                } else {
-                    for (int i = 0; !found && i < answers.length; i++) {
-                        String answer = answers[i];
-                        for (int j = 0; !found && j < gram.getSurfaces().size(); j++) {
-                            String compareTo = "";
-                            for (Token t : gram.getTokenLists().get(j)) {
-                                compareTo = compareTo + " "
-                                        + t.getAnnotation(
-                                                goldStandard.getCandidateAnnotation()).
-                                        getStringAt(0);
-                            }
-                            
-                            compareTo = compareTo.trim();
-
-                            if (goldStandard.compare(compareTo, answer) == 0) {
-                                candidate.putFeature(goldStandard.getIdentifier(), 1);
-                                found = true;
-                            }
-                        }
+                for (int i = 0; !found && i < answers.length; i++) {
+                    String answer = answers[i];
+                    if (goldStandard.compare(gram, answer) == 0) {
+                        candidate.putFeature(goldStandard.getIdentifier(), 1);
+                        found = true;
                     }
                 }
             }

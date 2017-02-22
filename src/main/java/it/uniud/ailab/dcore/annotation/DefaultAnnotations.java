@@ -26,6 +26,8 @@ package it.uniud.ailab.dcore.annotation;
  * @author Marco Basaldella
  */
 public class DefaultAnnotations {
+    
+    public static final String ID = "ID";
 
     public static final String START_INDEX = "StartPosition";
 

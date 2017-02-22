@@ -31,7 +31,7 @@ import java.util.Map;
  * 
  * @author Marco Basaldella
  */
-public abstract class GenericDataset implements Comparator<String> {
+public abstract class GenericDataset implements Comparator<Object> {
     
     /**
      * The path where the evaluator will find the input documents and the
@@ -142,7 +142,7 @@ public abstract class GenericDataset implements Comparator<String> {
      * @return 0 if o1 and o2 are equal, another number (indetermined) otherwise.
      */
     @Override
-    public abstract int compare(String o1, String o2);
+    public abstract int compare(Object o1, Object o2);
     
     /**
      * Loads the input documents and returns them.

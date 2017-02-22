@@ -57,7 +57,8 @@ import java.util.List;
 public abstract class Annotation {
 
     private final String[] FORBIDDEN_NAMES
-            = {"annotator", "name", "id", "identifier"};
+            = {"annotator", "name", "id", "identifier", "IDENTIFIER",
+            DefaultAnnotations.ID};
 
     private final char[] FORBIDDEN_CHARS
             = {'$','\n','\t','\r'};
