@@ -60,7 +60,7 @@ public class TagMeTokenAnnotator implements Annotator, GenericWikipediaAnnotator
     /**
      * The endpoint of TagMe's API.
      */
-    private final String tagmeEndpoint = "http://tagme.di.unipi.it/tag";
+    private final String tagmeEndpoint = "https://tagme.d4science.org/tagme/tag?";
     
     /**
      * The API key for TagMe. You can get one writing an email to
@@ -103,7 +103,7 @@ public class TagMeTokenAnnotator implements Annotator, GenericWikipediaAnnotator
         // Request parameters and other properties.
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("text", text));
-        params.add(new BasicNameValuePair("key", apiKey));
+        params.add(new BasicNameValuePair("gcube-token", apiKey));
         params.add(new BasicNameValuePair("lang", lang));
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -126,7 +126,7 @@ public class TagMeTokenAnnotator implements Annotator, GenericWikipediaAnnotator
                 Iterator<JSONObject> iterator = annotationBlock.iterator();
                 while (iterator.hasNext()) {
                     JSONObject tag = (iterator.next());
-                    Float rho = Float.parseFloat((String) tag.get("rho"));
+                    Double rho = (Double)tag.get("rho");
                     if (rho > 0.15) {
                         String spot = (String) tag.get("spot");
                         String lemma = (String) tag.get("title");

@@ -41,6 +41,9 @@
         <constructor-arg value="pt" type="java.lang.String"/>
     </bean>
     
+    <bean id="arabic" class="java.util.Locale">
+        <constructor-arg value="ar" type="java.lang.String"/>
+    </bean>
     
     
     <!-- Language detectors -->  
@@ -126,6 +129,16 @@
         <property name="cut" value="5"/>
     </bean> 
     
+    <!-- Annotators for the arabic language -->
+    <bean id="arabicStanford"
+          class="it.uniud.ailab.dcore.wrappers.external.ArabicStanfordBootstrapper" />
+    <bean id="arabicPreprocessor"
+          class="it.uniud.ailab.dcore.annotation.annotators.preprocessors.ArabicPreprocessor" />
+    <bean id="arabicStemmer"
+          class="it.uniud.ailab.dcore.annotation.annotators.AramorphStemmerAnnotator"/>
+    <bean id="arabicCKPsFilter"
+          class="it.uniud.ailab.dcore.annotation.annotators.ArabicCKPsFilter"/> 
+    
     <!-- Evaluators -->
     <bean id="mlEvaluator"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
@@ -143,9 +156,16 @@
         -->
     </bean>
     
-    <bean id="mlEvaluatorNnet"
-              class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
+    <bean id="mlEvaluatorEng"
+          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
         <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelParameters" value="type=&quot;raw&quot;"/>
+        <property name="requires" value="nnet" />
+    </bean>
+    
+    <bean id="mlEvaluatorAr"
+          class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
+        <property name="modelPath" value="models/keyphrase-extraction/nnet.akec.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
@@ -167,7 +187,7 @@
                 <ref bean="statistical" />
                 <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
-                <ref bean="mlEvaluatorNnet"/> 
+                <ref bean="mlEvaluatorEng"/> 
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
                 <ref bean="printer" />
@@ -175,7 +195,7 @@
         </property>        
     </bean> 
     
-    <bean id="italianPipeline"
+    <bean id="openNlpPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
@@ -189,7 +209,7 @@
                 <ref bean="statistical" />
                 <ref bean="dpm"/>
                 <!-- evaluate the keyphraseness -->
-                <ref bean="mlEvaluator"/>
+                <ref bean="mlEvaluatorEng"/>
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
                 <ref bean="printer" />
@@ -197,24 +217,22 @@
         </property>        
     </bean> 
     
-    <bean id="romanianPipeline"
+    <bean id="arabicPipeline"
           class="it.uniud.ailab.dcore.Pipeline">
         <property name="stages">
             <list>
                 <!-- split the document -->
-                <ref bean="openNLP"/>
-                <ref bean="stemmer" />
+                <ref bean="arabicPreprocessor"/>
+                <ref bean="arabicStanford"/>
+                <ref bean="arabicStemmer"/>
                 <!-- generate the n-grams -->
-                <ref bean="simpleNGramGenerator"/>
-                <!-- annotate the n-grmas -->
+                <ref bean="simpleNGramGenerator"/> 
+                <!-- annotate the n-grams -->
+                <ref bean="simpleStopword"/>
+                <ref bean="arabicCKPsFilter"/>
                 <ref bean="statistical" />
-                <ref bean="simpleStopword" />
-                <ref bean="dpm"/>
-                <!-- evaluate the keyphraseness -->
-                <ref bean="mlEvaluator"/>
-                <!-- filter the non-interesting output -->
-                <!-- <ref bean="skylineGramFilter"/>-->
-                <ref bean="printer" />
+                <ref bean="mlEvaluatorAr"/>
+                <ref bean="printer"/>
             </list>
         </property>        
     </bean> 
@@ -231,15 +249,19 @@
                 </entry>
                 <entry
                     key-ref="italian" 
-                    value-ref="italianPipeline">
+                    value-ref="openNlpPipeline">
                 </entry>
                 <entry
                     key-ref="romanian" 
-                    value-ref="romanianPipeline">
+                    value-ref="openNlpPipeline">
                 </entry>
                 <entry
                     key-ref="portoguese" 
-                    value-ref="romanianPipeline">
+                    value-ref="openNlpPipeline">
+                </entry>
+                <entry
+                    key-ref="arabic" 
+                    value-ref="arabicPipeline">
                 </entry>
             </map>
         </property>
