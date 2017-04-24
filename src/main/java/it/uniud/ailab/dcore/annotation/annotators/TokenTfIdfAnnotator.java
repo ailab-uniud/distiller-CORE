@@ -256,10 +256,10 @@ public class TokenTfIdfAnnotator implements Annotator {
             }
 
         } catch (FileNotFoundException e) {
-            throw new AnnotationException(new RawTdidfAnnotator(),
+            throw new AnnotationException(new RawTfIdfAnnotator(),
                     "Can't read the tf-idf database.", e);
         } catch (IOException e) {
-            throw new AnnotationException(new RawTdidfAnnotator(),
+            throw new AnnotationException(new RawTfIdfAnnotator(),
                     "Can't read the tf-idf  database.", e);
         } finally {
             if (br != null) {

@@ -274,10 +274,10 @@ public class CachedTfIdfAnnotator implements Annotator {
             }
 
         } catch (FileNotFoundException e) {
-            throw new AnnotationException(new RawTdidfAnnotator(),
+            throw new AnnotationException(new RawTfIdfAnnotator(),
                     "Can't read the tf-idf database.", e);
         } catch (IOException e) {
-            throw new AnnotationException(new RawTdidfAnnotator(),
+            throw new AnnotationException(new RawTfIdfAnnotator(),
                     "Can't read the tf-idf  database.", e);
         } finally {
             if (br != null) {
@@ -291,7 +291,7 @@ public class CachedTfIdfAnnotator implements Annotator {
 
         // if for some uknwown reason still didn't work
         if (tokenizedDocument.isEmpty()) {
-            throw new AnnotationException(new RawTdidfAnnotator(),
+            throw new AnnotationException(new RawTfIdfAnnotator(),
                     "Can't read the tf-idf  database.");
         }
 

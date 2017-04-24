@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Artificial Intelligence
+ * Copyright (C) 2016 Artificial Intelligence
  * Laboratory @ University of Udine.
  *
  * This program is free software; you can redistribute it and/or
@@ -19,31 +19,38 @@
 package it.uniud.ailab.dcore.annotation.annotators;
 
 import it.uniud.ailab.dcore.Blackboard;
+import it.uniud.ailab.dcore.annotation.AnnotationException;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.io.IOBlackboard;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
 import it.uniud.ailab.dcore.persistence.Gram;
 import it.uniud.ailab.dcore.persistence.Keyphrase;
 import it.uniud.ailab.dcore.persistence.Sentence;
-import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
 import it.uniud.ailab.dcore.utils.DocumentUtils;
+import it.uniud.ailab.dcore.utils.SnowballStemmerSelector;
+import it.uniud.ailab.dcore.wrappers.external.OpenNlpBootstrapperAnnotator;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.tartarus.snowball.SnowballStemmer;
 
 /**
- * A simple and raw tf-idf calculator for Arabic n-grams. Firstly, it purifies the document by removing diacritics and non-Arabic symbols.
- * Then, it tokenizes each document using OpenNLP, lemmatizes them with <a href="http://www.nongnu.org/aramorph/">AraMorph</a> library, and marks each token 
+ * A simple and raw tf-idf calculator for n-grams. It tokenizes each document 
+ * using OpenNLP, stems them with the Tartarus Stemmer, and marks each token 
  * with a leading and trailing '§' mark.
  *
- * Then, when the tf-idf value of a token is calculated
+ * Then, when the tf-idf value of a token is search
  *
- * @author Muhammad Helmy
+ * @author Marco Basaldella
  */
-public class ArabicRawTdidfAnnotator implements Annotator {
+public class RawTfIdfAnnotator implements Annotator {
 
     public static final String TFIDF = "tf-idf";
 
@@ -55,19 +62,34 @@ public class ArabicRawTdidfAnnotator implements Annotator {
     @Override
     public void annotate(Blackboard blackboard, DocumentComponent component) {
         initIndex(component.getLanguage());
+
         List<Sentence> sentences = DocumentUtils.getSentences(component);
-        ArabicDocProcessing.init();
+
         for (Sentence s : sentences) {
             for (Gram g : s.getGrams()) {
                 if (!g.hasAnnotation(TFIDF)) {
-                    String stemmedSurface = g.getSurface();          
-                    stemmedSurface = ArabicDocProcessing.preProcess(stemmedSurface);
-                    stemmedSurface = ArabicDocProcessing.purifyDoc(stemmedSurface);
-                    stemmedSurface = ArabicDocProcessing.segmentText(stemmedSurface);
-                    stemmedSurface = ArabicDocProcessing.lemmatizeDoc(stemmedSurface);
-                    String[] tokenizedSurface = stemmedSurface.split(" ");
+
+                    String stemmedSurface = g.getSurface();
+
+                    String[] tokenizedSurface
+                            = OpenNlpBootstrapperAnnotator.
+                            tokenizeText(stemmedSurface,
+                                    component.getLanguage().getLanguage());
+
+                    SnowballStemmer stemmer = SnowballStemmerSelector.
+                            getStemmerForLanguage(component.getLanguage());
+
+                    for (int i = 0; i < tokenizedSurface.length; i++) {
+
+                        stemmer.setCurrent(tokenizedSurface[i]);
+                        if (stemmer.stem()) {
+                            tokenizedSurface[i] = stemmer.getCurrent();
+                        }
+                    }
+
                     stemmedSurface = String.join(" ",
                             markTokens(tokenizedSurface)).trim();
+
                     ((Keyphrase) g).putFeature(TFIDF,
                             tfIdf(
                                     IOBlackboard.getCurrentDocument(),
@@ -75,7 +97,6 @@ public class ArabicRawTdidfAnnotator implements Annotator {
                 }
             }
         }
-        ArabicDocProcessing.stop();
     }
 
     private double tf(String docId, String term) {
@@ -123,20 +144,61 @@ public class ArabicRawTdidfAnnotator implements Annotator {
             loadFile(f, locale);
         }
     }
+
     private static void loadFile(File f, Locale locale) {
-        ArabicDocProcessing.init();
-        String text = ArabicDocProcessing.readDocumentText(f.getPath());
-        text = ArabicDocProcessing.preProcess(text);
-        text = ArabicDocProcessing.purifyDoc(text);
-        text = ArabicDocProcessing.segmentText(text);
-        text = ArabicDocProcessing.lemmatizeDoc(text);
-        String[] tokenizedDocument = text.split(" ");
-        String documentText = (String.join(" ", markTokens(tokenizedDocument))
+        BufferedReader br = null;
+        StringBuilder document = new StringBuilder();
+        String line;
+
+        int tokenCount = 0;
+
+        try {
+
+            br = new BufferedReader(new FileReader(f));
+            while ((line = br.readLine()) != null) {
+
+                String[] tokenizedDocument
+                        = OpenNlpBootstrapperAnnotator.
+                        tokenizeText(line, locale.getLanguage());
+
+                SnowballStemmer stemmer = SnowballStemmerSelector.getStemmerForLanguage(locale);
+
+                for (int i = 0; i < tokenizedDocument.length; i++) {
+
+                    stemmer.setCurrent(tokenizedDocument[i]);
+                    if (stemmer.stem()) {
+                        tokenizedDocument[i] = stemmer.getCurrent();
+                    }
+                }
+
+                tokenCount += tokenizedDocument.length;
+
+                document.append(String.join(" ", markTokens(tokenizedDocument))
                         .trim());
-        //document.append(" ");
+                document.append(" ");
+
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new AnnotationException(new RawTfIdfAnnotator(),
+                    "Can't read the tf-idf database.", e);
+        } catch (IOException e) {
+            throw new AnnotationException(new RawTfIdfAnnotator(),
+                    "Can't read the tf-idf  database.", e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    // don't care
+                }
+            }
+        }
+
+        String documentText = document.toString().trim();
         documents.put(f.getAbsolutePath(), documentText);
-        docLengths.put(f.getAbsolutePath(), tokenizedDocument.length);
-        ArabicDocProcessing.stop();
+        docLengths.put(f.getAbsolutePath(), tokenCount);
+
     }
 
     private static String[] markTokens(String[] tokens) {
@@ -144,6 +206,7 @@ public class ArabicRawTdidfAnnotator implements Annotator {
         for (int i = 0; i < tokens.length; i++) {
             tokens[i] = "§" + tokens[i] + "§";
         }
+
         return tokens;
     }
 

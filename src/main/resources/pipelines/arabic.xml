@@ -53,6 +53,8 @@
     <bean id="simpleStopword"
           class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
     </bean>
+    <bean id="artfidf" 
+          class="it.uniud.ailab.dcore.annotation.annotators.ArabicRawTfIdfAnnotator"/>
     
     <!-- Evaluators -->
     <bean id="linearEvaluator"
@@ -119,6 +121,7 @@
                 <ref bean="simpleStopword"/>
                 <ref bean="arabicCKPsFilter"/>
                 <ref bean="statistical" />
+                <ref bean="artfidf"/>
                 <ref bean="linearEvaluator"/>
                 <ref bean="printer"/>
             </list>

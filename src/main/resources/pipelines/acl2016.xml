@@ -69,7 +69,7 @@
     </bean>
     
     <bean id="tfidf"
-          class="it.uniud.ailab.dcore.annotation.annotators.RawTdidfAnnotator"/>
+          class="it.uniud.ailab.dcore.annotation.annotators.RawTfIdfAnnotator"/>
     
     <bean id="simpleStopword"
           class="it.uniud.ailab.dcore.annotation.annotators.StopwordSimpleFilterAnnotator" >
