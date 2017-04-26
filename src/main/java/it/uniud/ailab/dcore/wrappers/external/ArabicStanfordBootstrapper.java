@@ -21,7 +21,6 @@
  */
 package it.uniud.ailab.dcore.wrappers.external;
 
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import java.util.Locale;
 import it.uniud.ailab.dcore.annotation.Annotator;
 import it.uniud.ailab.dcore.persistence.DocumentComponent;
@@ -30,9 +29,6 @@ import it.uniud.ailab.dcore.persistence.Sentence;
 import it.uniud.ailab.dcore.persistence.Token;
 import it.uniud.ailab.dcore.Blackboard;
 import it.uniud.ailab.dcore.utils.ArabicDocComponents;
-import it.uniud.ailab.dcore.utils.ArabicDocProcessing;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A bootstrapper annotator for the Arabic language developed using the Stanford

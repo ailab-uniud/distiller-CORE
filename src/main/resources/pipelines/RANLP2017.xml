@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--      
-  	Copyright (C) 2015 Artificial Intelligence
+  	Copyright (C) 2017 Artificial Intelligence
   	Laboratory @ University of Udine.
   
   	This file is part of the Distiller-CORE library.
@@ -202,17 +202,19 @@
     
     <bean id="mlEvaluatorEng"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" value="models/keyphrase-extraction/nnet.model"/>
+        <property name="modelPath" value="models/keyphrase-extraction/ranlp2017/semeval7.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
     
     <bean id="mlEvaluatorAr"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" value="models/keyphrase-extraction/nnet.akec.model"/>
+        <property name="modelPath" value="models/keyphrase-extraction/ranlp2017/akec7.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
+    
+    <alias name="mlEvaluatorAr" alias="evaluator"/>
     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.GramPrinter"/>
@@ -232,7 +234,7 @@
                 <ref bean="dpm"/>
                 <ref bean="tfidf"/>
                 <!-- evaluate the keyphraseness -->
-                <ref bean="linearEvaluator"/> 
+                <ref bean="evaluator"/> 
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
                 <ref bean="printer" />
@@ -255,7 +257,7 @@
                 <ref bean="dpm"/>
                 <ref bean="tfidf"/>
                 <!-- evaluate the keyphraseness -->
-                <ref bean="linearEvaluator"/>
+                <ref bean="evaluator"/>
                 <!-- filter the non-interesting output -->
                 <!-- <ref bean="skylineGramFilter"/>-->
                 <ref bean="printer" />
@@ -277,8 +279,9 @@
                 <ref bean="simpleStopword"/>
                 <ref bean="arabicCKPsFilter"/>
                 <ref bean="statistical" />
+                <ref bean="dpm"/>
                 <ref bean="artfidf"/>
-                <ref bean="linearEvaluator"/>
+                <ref bean="evaluator"/>
                 <ref bean="printer"/>
             </list>
         </property>        
