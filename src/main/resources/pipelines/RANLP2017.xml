@@ -202,19 +202,19 @@
     
     <bean id="mlEvaluatorEng"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" value="models/keyphrase-extraction/ranlp2017/semeval7.model"/>
+        <property name="modelPath" value="models/keyphrase-extraction/ranlp2017/semeval6.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
     
     <bean id="mlEvaluatorAr"
           class="it.uniud.ailab.dcore.wrappers.external.RCallerEvaluator">
-        <property name="modelPath" value="models/keyphrase-extraction/ranlp2017/akec7.model"/>
+        <property name="modelPath" value="models/keyphrase-extraction/ranlp2017/akec6.model"/>
         <property name="modelParameters" value="type=&quot;raw&quot;"/>
         <property name="requires" value="nnet" />
     </bean>
     
-    <alias name="mlEvaluatorAr" alias="evaluator"/>
+    <alias name="mlEvaluatorEng" alias="evaluator"/>
     
     <bean id="printer"
           class="it.uniud.ailab.dcore.io.GramPrinter"/>
